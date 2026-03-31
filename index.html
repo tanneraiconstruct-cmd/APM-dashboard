@@ -100,6 +100,28 @@
 
 
 
+
+  /* LOGIN SCREEN */
+  .login-overlay{position:fixed;inset:0;background:var(--michels-black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;padding:24px}
+  .login-box{background:var(--white);border-radius:14px;width:min(420px,100%);overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+  .login-header{background:var(--michels-black);padding:28px 32px 24px;text-align:center;border-bottom:3px solid var(--michels-red)}
+  .login-body{padding:28px 32px}
+  .login-footer{padding:16px 32px 24px;text-align:center}
+  .login-error{background:var(--red-light);color:var(--red);font-size:12px;padding:8px 12px;border-radius:6px;margin-bottom:14px;display:none;border:1px solid #fca5a5}
+  .login-input-wrap{margin-bottom:14px}
+  .login-input-wrap label{font-size:11px;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block}
+  .login-input-wrap input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;font-size:14px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;transition:border-color .15s}
+  .login-input-wrap input:focus{border-color:var(--michels-red)}
+  .btn-login{width:100%;padding:11px;background:var(--michels-red);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;transition:background .15s}
+  .btn-login:hover{background:var(--michels-red-dark)}
+  .login-tagline{color:#888;font-size:12px;margin-top:12px}
+  .login-user-list{margin-top:8px;font-size:11px;color:var(--text-muted);text-align:center}
+
+  /* USER MANAGEMENT */
+  .user-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border-radius:20px;padding:4px 10px;font-size:12px;color:#ddd;cursor:pointer;border:1px solid rgba(255,255,255,0.15);transition:background .15s}
+  .user-badge:hover{background:rgba(255,255,255,0.18)}
+  .user-avatar{width:22px;height:22px;border-radius:50%;background:var(--michels-red);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+
   /* TODO SECTION */
   .todo-section{background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:24px;overflow:hidden}
   .todo-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
@@ -129,7 +151,45 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
-<div class="dashboard">
+
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-header">
+      <svg viewBox="0 0 300 64" xmlns="http://www.w3.org/2000/svg" style="height:46px;width:auto;margin:0 auto;display:block">
+        <defs>
+          <linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#a00d1e"/>
+            <stop offset="45%" stop-color="#c8102e"/>
+            <stop offset="100%" stop-color="#e8324a"/>
+          </linearGradient>
+          <style>.lm{font-family:"Alfa Slab One","Rockwell",serif;font-size:42px;fill:url(#lg2);letter-spacing:3px}.lr{font-family:"Alfa Slab One",serif;font-size:13px;fill:url(#lg2)}.ls{font-family:"DM Sans","Arial",sans-serif;font-weight:700;font-size:13px;fill:#ffffff;letter-spacing:1.5px}</style>
+        </defs>
+        <text x="2" y="42" class="lm">MICHELS</text>
+        <text x="258" y="19" class="lr">&#174;</text>
+        <text x="14" y="59" class="ls">POWER, INC.</text>
+      </svg>
+      <div style="color:#888;font-size:11px;margin-top:10px;letter-spacing:1px;text-transform:uppercase">APM Dashboard</div>
+    </div>
+    <div class="login-body">
+      <div class="login-error" id="login-error">Incorrect username or password. Please try again.</div>
+      <div class="login-input-wrap">
+        <label>Username</label>
+        <input type="text" id="login-username" placeholder="Enter your username" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-password').focus()">
+      </div>
+      <div class="login-input-wrap">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')attemptLogin()">
+      </div>
+      <button class="btn-login" onclick="attemptLogin()">Sign In</button>
+    </div>
+    <div class="login-footer">
+      <div class="login-tagline">Michels Power Inc. — Internal Use Only</div>
+    </div>
+  </div>
+</div>
+
+<div class="dashboard" id="main-dashboard" style="display:none">
   <div class="header">
     <div class="header-left">
       <svg class="logo-img" viewBox="0 0 300 64" xmlns="http://www.w3.org/2000/svg" style="height:50px;width:auto">
@@ -159,7 +219,7 @@
         <div class="header-sub">Associate Project Manager</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px"><div class="header-date" id="header-date"></div><button class="btn-sm" onclick="openModal('supabase-modal')" style="font-size:11px;color:#aaa;border-color:rgba(255,255,255,0.2);padding:4px 10px">⚙ DB Setup</button></div>
+    <div style="display:flex;align-items:center;gap:12px"><div class="header-date" id="header-date"></div><span id="current-user-badge" class="user-badge" onclick="openModal('user-modal')" style="display:none"><span class="user-avatar" id="user-avatar-initials">?</span><span id="current-user-name">User</span></span><button class="btn-sm" onclick="openModal('supabase-modal')" style="font-size:11px;color:#aaa;border-color:rgba(255,255,255,0.2);padding:4px 10px">⚙ DB Setup</button><button class="btn-sm" onclick="logout()" style="font-size:11px;color:#f87171;border-color:rgba(248,113,113,0.3);padding:4px 10px">Sign Out</button></div>
   </div>
 
   <div class="nav">
@@ -461,8 +521,151 @@ async function sbInsert(table, row){ if(sb) await sb.from(table).insert(row); }
 async function sbUpdate(table, id, row){ if(sb) await sb.from(table).update(row).eq('id',id); }
 async function sbDelete(table, id){ if(sb) await sb.from(table).delete().eq('id',id); }
 
-loadSBConfig();
-loadData();
+
+// ── AUTH SYSTEM ────────────────────────────────────────────
+// Default admin user (hashed). Users stored in localStorage.
+// Password hashing uses a simple but effective method for client-side auth.
+async function hashPassword(password){
+  const msgBuffer = new TextEncoder().encode(password + 'michels_apm_salt');
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+let currentUser = null;
+
+function loadUsers(){
+  try{ return JSON.parse(localStorage.getItem('apm_users') || '[]'); }catch(e){ return []; }
+}
+function saveUsers(users){
+  localStorage.setItem('apm_users', JSON.stringify(users));
+}
+
+async function initDefaultAdmin(){
+  const users = loadUsers();
+  if(!users.length){
+    const hash = await hashPassword('Michels2024!');
+    saveUsers([{username:'admin',displayName:'Administrator',role:'admin',hash}]);
+  }
+}
+
+async function attemptLogin(){
+  const username = document.getElementById('login-username').value.trim().toLowerCase();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display='none';
+  if(!username||!password){ errEl.style.display='block'; errEl.textContent='Please enter your username and password.'; return; }
+  const hash = await hashPassword(password);
+  const users = loadUsers();
+  const user = users.find(u=>u.username.toLowerCase()===username && u.hash===hash);
+  if(!user){ errEl.style.display='block'; errEl.textContent='Incorrect username or password. Please try again.'; document.getElementById('login-password').value=''; return; }
+  currentUser = user;
+  sessionStorage.setItem('apm_session', JSON.stringify({username:user.username,displayName:user.displayName,role:user.role}));
+  showDashboard();
+}
+
+function checkSession(){
+  try{
+    const s = JSON.parse(sessionStorage.getItem('apm_session')||'null');
+    if(s){ currentUser=s; showDashboard(); return true; }
+  }catch(e){}
+  return false;
+}
+
+function showDashboard(){
+  document.getElementById('login-overlay').style.display='none';
+  document.getElementById('main-dashboard').style.display='';
+  // Show user badge
+  const badge = document.getElementById('current-user-badge');
+  const nameEl = document.getElementById('current-user-name');
+  const initEl = document.getElementById('user-avatar-initials');
+  if(badge && currentUser){
+    nameEl.textContent = currentUser.displayName||currentUser.username;
+    const parts = (currentUser.displayName||currentUser.username).split(' ');
+    initEl.textContent = parts.map(p=>p[0]).join('').toUpperCase().substring(0,2);
+    badge.style.display='inline-flex';
+    // Hide user management button for non-admins
+    if(currentUser.role!=='admin') badge.onclick=null;
+  }
+  loadSBConfig();
+  loadData();
+}
+
+function logout(){
+  currentUser=null;
+  sessionStorage.removeItem('apm_session');
+  document.getElementById('main-dashboard').style.display='none';
+  document.getElementById('login-overlay').style.display='flex';
+  document.getElementById('login-username').value='';
+  document.getElementById('login-password').value='';
+  document.getElementById('login-error').style.display='none';
+  document.getElementById('current-user-badge').style.display='none';
+}
+
+// ── USER MANAGEMENT ────────────────────────────────────────
+function renderUserList(){
+  const users = loadUsers();
+  const el = document.getElementById('user-list');
+  if(!el) return;
+  if(!users.length){ el.innerHTML='<div style="color:var(--text-muted);font-size:12px">No users yet.</div>'; return; }
+  el.innerHTML = users.map(u=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--michels-red);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">
+          ${(u.displayName||u.username).split(' ').map(p=>p[0]).join('').toUpperCase().substring(0,2)}
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:500">${u.displayName||u.username}</div>
+          <div style="font-size:11px;color:var(--text-muted)">@${u.username} &middot; ${u.role}</div>
+        </div>
+      </div>
+      ${u.username==='admin'?'<span style="font-size:11px;color:var(--text-muted)">Protected</span>':`<button class="btn-sm btn-danger" onclick="removeUser('${u.username}')">Remove</button>`}
+    </div>
+  `).join('');
+}
+
+async function addUser(){
+  const username = document.getElementById('new-username').value.trim().toLowerCase();
+  const displayName = document.getElementById('new-displayname').value.trim();
+  const password = document.getElementById('new-password').value;
+  const role = document.getElementById('new-role').value;
+  const errEl = document.getElementById('user-add-error');
+  errEl.style.display='none';
+  if(!username||!password){ errEl.style.display='block'; errEl.textContent='Username and password are required.'; return; }
+  const users = loadUsers();
+  if(users.find(u=>u.username===username)){ errEl.style.display='block'; errEl.textContent='That username already exists.'; return; }
+  const hash = await hashPassword(password);
+  users.push({username,displayName:displayName||username,role,hash});
+  saveUsers(users);
+  ['new-username','new-displayname','new-password'].forEach(id=>document.getElementById(id).value='');
+  renderUserList();
+}
+
+function removeUser(username){
+  if(username==='admin') return;
+  let users = loadUsers();
+  users = users.filter(u=>u.username!==username);
+  saveUsers(users);
+  renderUserList();
+}
+
+// Override openModal to render user list when user modal opens
+const _origOpenModal = openModal;
+function openModal(id){
+  if(id==='user-modal'){
+    if(currentUser?.role!=='admin'){ alert('Only admins can manage users.'); return; }
+    renderUserList();
+  }
+  _origOpenModal(id);
+}
+
+// Init
+initDefaultAdmin().then(()=>{
+  if(!checkSession()){
+    document.getElementById('login-overlay').style.display='flex';
+  }
+});
+
 
 // --- TODO REMINDER LOGIC ---
 let doneTodos = [];
@@ -812,6 +1015,37 @@ renderAll();
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('supabase-modal')">Cancel</button>
       <button class="btn-add" onclick="saveSupabaseConfig()">Save &amp; Connect</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="user-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="user-modal-title">Manage Users</span>
+      <button class="modal-close" onclick="closeModal('user-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="user-list" style="margin-bottom:16px"></div>
+      <div style="border-top:1px solid var(--border);padding-top:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--text-mid);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">Add New User</div>
+        <div class="form-row">
+          <div><label>Username</label><input type="text" id="new-username" placeholder="e.g. jsmith"></div>
+          <div><label>Display Name</label><input type="text" id="new-displayname" placeholder="e.g. John Smith"></div>
+        </div>
+        <div class="form-row-full"><label>Password</label><input type="password" id="new-password" placeholder="Set a password"></div>
+        <div class="form-row-full"><label>Role</label>
+          <select id="new-role">
+            <option value="admin">Admin (can manage users)</option>
+            <option value="user">User (view &amp; edit data only)</option>
+          </select>
+        </div>
+        <div id="user-add-error" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none"></div>
+        <button class="btn-add" onclick="addUser()" style="width:100%;justify-content:center">Add User</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('user-modal')">Close</button>
     </div>
   </div>
 </div>
