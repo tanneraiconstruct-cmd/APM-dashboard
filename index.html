@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APM Project Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --michels-red:#c8102e;--michels-red-dark:#a00d24;--michels-red-light:#fdeaed;
+    --michels-black:#1a1a1a;--michels-dark:#2a2a2a;
+    --accent:#c8102e;--accent-light:#fdeaed;
+    --amber:#d97706;--amber-light:#fef3c7;
+    --green:#15803d;--green-light:#dcfce7;
+    --red:#c8102e;--red-light:#fdeaed;
+    --blue-light:#eff6ff;
+    --text:#1a1a1a;--text-mid:#474747;--text-muted:#888888;
+    --border:#e2e0e0;--surface:#f9f8f8;--white:#ffffff;
+  }
+  body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);min-height:100vh}
+  .dashboard{display:grid;grid-template-rows:auto auto 1fr;min-height:100vh}
+
+  .header{background:var(--michels-black);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--michels-red)}
+  .header-left{display:flex;align-items:center;gap:16px}
+  .logo-img{display:block;flex-shrink:0}
+  .header-divider{width:1px;height:36px;background:rgba(255,255,255,0.15)}
+  .header-title{color:#fff;font-size:15px;font-weight:600;letter-spacing:-0.3px}
+  .header-sub{color:#aaaaaa;font-size:11px;margin-top:2px}
+  .header-date{color:#aaaaaa;font-size:12px;font-family:'DM Mono',monospace}
+
+  .nav{background:var(--michels-dark);padding:0 24px;display:flex;gap:2px;border-bottom:1px solid rgba(255,255,255,0.07)}
+  .nav-tab{padding:10px 16px;font-size:13px;font-weight:500;color:#aaaaaa;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
+  .nav-tab:hover{color:#ffffff}
+  .nav-tab.active{color:#fff;border-bottom-color:var(--michels-red)}
+
+  .main{padding:20px 24px;display:none}
+  .main.active{display:block}
+
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .section-title{font-size:15px;font-weight:600;color:var(--text)}
+  .btn-add{background:var(--michels-red);color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+  .btn-add:hover{background:var(--michels-red-dark)}
+  .btn-sm{background:transparent;border:1px solid var(--border);color:var(--text-mid);padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+  .btn-sm:hover{background:var(--surface)}
+  .btn-danger{border-color:#fca5a5;color:var(--red)}
+  .btn-danger:hover{background:#fee2e2}
+
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+  .stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+  .stat-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+  .stat-value{font-size:26px;font-weight:600;color:var(--text);line-height:1}
+  .stat-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
+  .stat-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500}
+  .badge-green{background:var(--green-light);color:var(--green)}
+  .badge-amber{background:var(--amber-light);color:var(--amber)}
+  .badge-red{background:var(--red-light);color:var(--red)}
+  .badge-blue{background:#eef2f7;color:#374151}
+  .badge-gray{background:#f1f5f9;color:var(--text-mid)}
+
+  .table-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+  table{width:100%;border-collapse:collapse;table-layout:fixed}
+  thead tr{background:var(--surface)}
+  th{padding:10px 14px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;text-align:left;border-bottom:1px solid var(--border)}
+  td{padding:10px 14px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#f8fafc}
+  .truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .progress-bar-bg{background:#e2e8f0;border-radius:4px;height:6px;width:100%;min-width:60px}
+  .progress-bar-fill{height:6px;border-radius:4px;background:var(--michels-red);transition:width .3s}
+
+  .status{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+  .priority{font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px}
+
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+  .modal-overlay.open{display:flex}
+  .modal{background:var(--white);border-radius:12px;width:min(520px,92vw);max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .modal-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .modal-title{font-size:15px;font-weight:600}
+  .modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);line-height:1;padding:2px 6px}
+  .modal-body{padding:20px}
+  .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  .form-row-full{margin-bottom:12px}
+  label{display:block;font-size:11px;font-weight:600;color:var(--text-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+  input[type=text],input[type=date],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);outline:none;transition:border-color .15s}
+  input:focus,select:focus,textarea:focus{border-color:var(--michels-red)}
+  textarea{resize:vertical;min-height:72px}
+
+  .project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
+  .project-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;transition:box-shadow .15s}
+  .project-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+  .project-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+  .project-name{font-size:14px;font-weight:600;color:var(--text)}
+  .project-actions{display:flex;gap:6px;margin-top:12px}
+
+  .empty{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px}
+  .empty-icon{font-size:28px;margin-bottom:8px}
+
+
+
+  /* TODO SECTION */
+  .todo-section{background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:24px;overflow:hidden}
+  .todo-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+  .todo-header-left{display:flex;align-items:center;gap:10px}
+  .todo-title{font-size:13px;font-weight:600;color:var(--text)}
+  .todo-badge{background:var(--red-light);color:var(--red);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+  .todo-controls{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)}
+  .todo-controls label{font-size:11px;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin:0}
+  .todo-controls input[type=number]{width:52px;padding:4px 6px;font-size:12px;margin:0}
+  .todo-list{padding:0}
+  .todo-item{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);transition:background .12s}
+  .todo-item:last-child{border-bottom:none}
+  .todo-item:hover{background:var(--surface)}
+  .todo-item.done{opacity:.5}
+  .todo-item.done .todo-item-title{text-decoration:line-through;color:var(--text-muted)}
+  .todo-check{width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s}
+  .todo-check.checked{background:var(--green);border-color:var(--green)}
+  .todo-check.checked::after{content:'✓';color:#fff;font-size:11px;font-weight:600}
+  .todo-item-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+  .todo-item-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .todo-item-age{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
+  .todo-urgency-high{color:var(--red);font-weight:600}
+  .todo-urgency-med{color:var(--amber);font-weight:600}
+  .todo-empty{padding:20px 16px;text-align:center;font-size:12px;color:var(--text-muted)}
+
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<div class="dashboard">
+  <div class="header">
+    <div class="header-left">
+      <svg class="logo-img" viewBox="0 0 300 64" xmlns="http://www.w3.org/2000/svg" style="height:50px;width:auto">
+  <defs>
+    <linearGradient id="michels-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#a00d1e"/>
+      <stop offset="45%"  stop-color="#c8102e"/>
+      <stop offset="100%" stop-color="#e8324a"/>
+    </linearGradient>
+    <linearGradient id="reg-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#a00d1e"/>
+      <stop offset="100%" stop-color="#e8324a"/>
+    </linearGradient>
+    <style>
+      .m-main { font-family: 'Alfa Slab One', 'Rockwell Extra Bold', 'Rockwell', 'Georgia', serif; font-weight: 400; font-size: 42px; fill: url(#michels-grad); letter-spacing: 3px; }
+      .m-reg   { font-family: 'Alfa Slab One', 'Rockwell', serif; font-weight: 400; font-size: 13px; fill: url(#reg-grad); }
+      .m-sub   { font-family: 'DM Sans', 'Arial Narrow', 'Arial', sans-serif; font-weight: 700; font-size: 13px; fill: #ffffff; letter-spacing: 1.5px; }
+    </style>
+  </defs>
+  <text x="2" y="42" class="m-main">MICHELS</text>
+  <text x="258" y="19" class="m-reg">&#174;</text>
+  <text x="14" y="59" class="m-sub">POWER, INC.</text>
+</svg>
+      <div class="header-divider"></div>
+      <div>
+        <div class="header-title">Project Dashboard</div>
+        <div class="header-sub">Associate Project Manager</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px"><div class="header-date" id="header-date"></div><button class="btn-sm" onclick="openModal('supabase-modal')" style="font-size:11px;color:#aaa;border-color:rgba(255,255,255,0.2);padding:4px 10px">⚙ DB Setup</button></div>
+  </div>
+
+  <div class="nav">
+    <div class="nav-tab active" data-tab="projects">Active Projects</div>
+    <div class="nav-tab" data-tab="rfi">RFI Log</div>
+    <div class="nav-tab" data-tab="submittal">Submittal Log</div>
+    <div class="nav-tab" data-tab="rental">Rental Equipment</div>
+  </div>
+
+  <!-- ACTIVE PROJECTS -->
+  <div class="main active" id="tab-projects">
+    <div class="stat-row" id="project-stats"></div>
+    
+
+    <!-- TODO REMINDER SECTION -->
+    <div class="todo-section">
+      <div class="todo-header">
+        <div class="todo-header-left">
+          <div class="todo-title">Follow-up Reminders</div>
+          <span class="todo-badge" id="todo-count">0</span>
+        </div>
+        <div class="todo-controls">
+          <label>Remind after</label>
+          <input type="number" id="reminder-days" min="1" max="60" value="7" onchange="saveDays();renderTodos()">
+          <label>days since submission</label>
+          <button class="btn-sm" onclick="clearDoneTodos()" style="margin-left:6px">Clear done</button>
+        </div>
+      </div>
+      <div class="todo-list" id="todo-list"></div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">Active Projects</div>
+      <button class="btn-add" onclick="openModal('project-modal')">+ New Project</button>
+    </div>
+    <div class="project-grid" id="project-grid"></div>
+  </div>
+
+  <!-- RFI LOG -->
+  <div class="main" id="tab-rfi">
+    <div class="section-header">
+      <div class="section-title">RFI Log</div>
+      <button class="btn-add" onclick="openModal('rfi-modal')">+ New RFI</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th style="width:70px">RFI #</th>
+          <th style="width:22%">Subject</th>
+          <th style="width:16%">Project</th>
+          <th style="width:13%">Submitted</th>
+          <th style="width:13%">Due</th>
+          <th style="width:12%">Status</th>
+          <th style="width:10%">Priority</th>
+          <th style="width:80px">Actions</th>
+        </tr></thead>
+        <tbody id="rfi-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SUBMITTAL LOG -->
+  <div class="main" id="tab-submittal">
+    <div class="section-header">
+      <div class="section-title">Submittal Log</div>
+      <button class="btn-add" onclick="openModal('submittal-modal')">+ New Submittal</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th style="width:80px">Sub #</th>
+          <th style="width:22%">Description</th>
+          <th style="width:16%">Project</th>
+          <th style="width:13%">Spec Sec</th>
+          <th style="width:13%">Submitted</th>
+          <th style="width:12%">Status</th>
+          <th style="width:10%">Ball in Court</th>
+          <th style="width:80px">Actions</th>
+        </tr></thead>
+        <tbody id="submittal-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RENTAL EQUIPMENT -->
+  <div class="main" id="tab-rental">
+    <div class="section-header">
+      <div class="section-title">Rental Equipment</div>
+      <button class="btn-add" onclick="openModal('rental-modal')">+ New Rental</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th style="width:20%">Equipment</th>
+          <th style="width:16%">Project</th>
+          <th style="width:14%">Vendor</th>
+          <th style="width:11%">On Site</th>
+          <th style="width:14%">Release Date</th>
+          <th style="width:14%">Status</th>
+          <th style="width:80px">Actions</th>
+        </tr></thead>
+        <tbody id="rental-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="project-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="project-modal-title">New Project</span>
+      <button class="modal-close" onclick="closeModal('project-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="p-id" value="">
+      <div class="form-row-full"><label>Project Name</label><input type="text" id="p-name" placeholder="e.g. Riverside Medical Expansion"></div>
+      <div class="form-row">
+        <div><label>Client</label><input type="text" id="p-client" placeholder="Client name"></div>
+        <div><label>Project Number</label><input type="text" id="p-number" placeholder="e.g. 2024-001"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Start Date</label><input type="date" id="p-start"></div>
+        <div><label>End Date</label><input type="date" id="p-end"></div>
+      </div>
+      <div class="form-row-full">
+        <div><label>Status</label>
+          <select id="p-status">
+            <option>Pre-Construction</option><option>In Progress</option><option>On Hold</option><option>Closeout</option><option>Complete</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-full"><label>Notes</label><textarea id="p-notes" placeholder="Brief description or notes..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('project-modal')">Cancel</button>
+      <button class="btn-add" id="project-save-btn" onclick="saveProject()">Save Project</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="rfi-modal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">New RFI</span><button class="modal-close" onclick="closeModal('rfi-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div><label>RFI #</label><input type="text" id="rfi-num" placeholder="e.g. RFI-001"></div>
+        <div><label>Project</label><select id="rfi-project"><option value="">Select project</option></select></div>
+      </div>
+      <div class="form-row-full"><label>Subject</label><input type="text" id="rfi-subject" placeholder="Brief subject description"></div>
+      <div class="form-row">
+        <div><label>Date Submitted</label><input type="date" id="rfi-submitted"></div>
+        <div><label>Response Due</label><input type="date" id="rfi-due"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Status</label>
+          <select id="rfi-status">
+            <option>Open</option><option>Under Review</option><option>Answered</option><option>Closed</option>
+          </select>
+        </div>
+        <div><label>Priority</label>
+          <select id="rfi-priority">
+            <option>Low</option><option>Medium</option><option>High</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-full"><label>Description / Question</label><textarea id="rfi-desc" placeholder="Detailed question or description..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('rfi-modal')">Cancel</button>
+      <button class="btn-add" onclick="saveRFI()">Save RFI</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="submittal-modal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">New Submittal</span><button class="modal-close" onclick="closeModal('submittal-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div><label>Submittal #</label><input type="text" id="sub-num" placeholder="e.g. SUB-001"></div>
+        <div><label>Project</label><select id="sub-project"><option value="">Select project</option></select></div>
+      </div>
+      <div class="form-row-full"><label>Description</label><input type="text" id="sub-desc" placeholder="e.g. Structural Steel Shop Drawings"></div>
+      <div class="form-row">
+        <div><label>Spec Section</label><input type="text" id="sub-spec" placeholder="e.g. 05 12 00"></div>
+        <div><label>Date Submitted</label><input type="date" id="sub-date"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Status</label>
+          <select id="sub-status">
+            <option>Pending</option><option>Under Review</option><option>Approved</option><option>Approved as Noted</option><option>Revise & Resubmit</option><option>Rejected</option>
+          </select>
+        </div>
+        <div><label>Ball in Court</label>
+          <select id="sub-bic">
+            <option>Contractor</option><option>Architect</option><option>Engineer</option><option>Owner</option><option>PM</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('submittal-modal')">Cancel</button>
+      <button class="btn-add" onclick="saveSubmittal()">Save Submittal</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+const today = new Date();
+document.getElementById('header-date').textContent = today.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+let projects = [];
+let rfis = [];
+let submittals = [];
+let rental = [];
+let nextId = 1;
+
+// ── SUPABASE CONFIG ───────────────────────────────────────
+let sb = null;
+function loadSBConfig(){
+  const url = localStorage.getItem('apm_sb_url');
+  const key = localStorage.getItem('apm_sb_key');
+  if(url && key){
+    try{ sb = supabase.createClient(url.trim(), key.trim()); }catch(e){ sb=null; }
+  }
+  const urlEl=document.getElementById('sb-url');
+  const keyEl=document.getElementById('sb-key');
+  if(urlEl && url) urlEl.value=url;
+  if(keyEl && key) keyEl.value=key;
+}
+function saveSupabaseConfig(){
+  const url=document.getElementById('sb-url').value.trim();
+  const key=document.getElementById('sb-key').value.trim();
+  if(!url||!key){ setSBStatus('Please fill in both fields.','var(--red)'); return; }
+  localStorage.setItem('apm_sb_url', url);
+  localStorage.setItem('apm_sb_key', key);
+  try{ sb = supabase.createClient(url, key); }catch(e){ setSBStatus('Invalid credentials: '+e.message,'var(--red)'); return; }
+  setSBStatus('Connected! Loading data...','var(--green)');
+  setTimeout(()=>{ closeModal('supabase-modal'); loadData(); },800);
+}
+function setSBStatus(msg,color){
+  const el=document.getElementById('sb-status');
+  if(el){ el.textContent=msg; el.style.color=color||'var(--text-muted)'; }
+}
+
+// ── DATA LAYER (Supabase with localStorage fallback) ──────
+function saveLocal(){
+  try{
+    localStorage.setItem('apm_projects',   JSON.stringify(projects));
+    localStorage.setItem('apm_rfis',       JSON.stringify(rfis));
+    localStorage.setItem('apm_submittals', JSON.stringify(submittals));
+    localStorage.setItem('apm_rental',     JSON.stringify(rental));
+    localStorage.setItem('apm_done_todos', JSON.stringify(doneTodos));
+  }catch(e){}
+}
+
+function saveData(){ saveLocal(); }
+
+async function loadData(){
+  if(!sb){
+    // fallback to localStorage
+    try{
+      projects   = JSON.parse(localStorage.getItem('apm_projects')   || '[]');
+      rfis       = JSON.parse(localStorage.getItem('apm_rfis')       || '[]');
+      submittals = JSON.parse(localStorage.getItem('apm_submittals') || '[]');
+      rental     = JSON.parse(localStorage.getItem('apm_rental')     || '[]');
+      doneTodos  = JSON.parse(localStorage.getItem('apm_done_todos') || '[]');
+    }catch(e){}
+    renderAll(); return;
+  }
+  try{
+    const [p,r,s,rn] = await Promise.all([
+      sb.from('projects').select('*').order('id'),
+      sb.from('rfis').select('*').order('id'),
+      sb.from('submittals').select('*').order('id'),
+      sb.from('rental').select('*').order('id'),
+    ]);
+    projects   = (p.data||[]).map(x=>({...x, start:x.start_date, end:x.end_date}));
+    rfis       = (r.data||[]).map(x=>({...x, submitted:x.submitted, due:x.due, desc:x.description}));
+    submittals = (s.data||[]).map(x=>({...x, date:x.submitted_date, desc:x.description}));
+    rental     = (rn.data||[]).map(x=>({...x, onsite:x.onsite_date, offsite:x.release_date}));
+    // load doneTodos from localStorage (lightweight, no table needed)
+    doneTodos  = JSON.parse(localStorage.getItem('apm_done_todos') || '[]');
+    saveLocal();
+  }catch(e){ console.error('Supabase load error',e); }
+  renderAll();
+}
+
+async function saveData(){
+  saveLocal();
+  if(!sb) return;
+  // Supabase writes happen in individual save functions below
+}
+
+// ── SUPABASE WRITE HELPERS ────────────────────────────────
+async function sbInsert(table, row){ if(sb) await sb.from(table).insert(row); }
+async function sbUpdate(table, id, row){ if(sb) await sb.from(table).update(row).eq('id',id); }
+async function sbDelete(table, id){ if(sb) await sb.from(table).delete().eq('id',id); }
+
+loadSBConfig();
+loadData();
+
+// --- TODO REMINDER LOGIC ---
+let doneTodos = [];
+let reminderDays = 7;
+function loadTodoState(){
+  try{
+    doneTodos = JSON.parse(localStorage.getItem('apm_done_todos')||'[]');
+    reminderDays = parseInt(localStorage.getItem('apm_reminder_days')||'7');
+    const inp = document.getElementById('reminder-days');
+    if(inp) inp.value = reminderDays;
+  }catch(e){}
+}
+function saveDays(){
+  reminderDays = parseInt(document.getElementById('reminder-days').value)||7;
+  localStorage.setItem('apm_reminder_days', String(reminderDays));
+}
+function toggleTodo(key){
+  if(doneTodos.includes(key)) doneTodos=doneTodos.filter(k=>k!==key);
+  else doneTodos.push(key);
+  localStorage.setItem('apm_done_todos', JSON.stringify(doneTodos));
+  renderTodos();
+}
+function clearDoneTodos(){
+  doneTodos=[];
+  localStorage.setItem('apm_done_todos','[]');
+  renderTodos();
+}
+function daysSince(dateStr){
+  if(!dateStr) return null;
+  const d=new Date(dateStr+'T00:00:00');
+  return Math.floor((Date.now()-d.getTime())/(1000*60*60*24));
+}
+function renderTodos(){
+  const list = document.getElementById('todo-list');
+  const countEl = document.getElementById('todo-count');
+  if(!list) return;
+  const threshold = reminderDays;
+  const items = [];
+
+  rfis.forEach(r=>{
+    if(['Answered','Closed'].includes(r.status)) return;
+    const days = daysSince(r.submitted);
+    if(days===null||days<threshold) return;
+    items.push({key:`rfi-${r.id}`,type:'RFI',num:r.num,subject:r.subject,project:r.project,status:r.status,days});
+  });
+  submittals.forEach(s=>{
+    if(['Approved','Approved as Noted','Rejected'].includes(s.status)) return;
+    const days = daysSince(s.date);
+    if(days===null||days<threshold) return;
+    items.push({key:`sub-${s.id}`,type:'Submittal',num:s.num,subject:s.desc,project:s.project,status:s.status,days});
+  });
+
+  items.sort((a,b)=>b.days-a.days);
+  const pending = items.filter(i=>!doneTodos.includes(i.key));
+  countEl.textContent = pending.length;
+  countEl.style.display = pending.length ? 'inline-flex' : 'none';
+
+  if(!items.length){
+    list.innerHTML=`<div class="todo-empty">No follow-ups needed — all open RFIs and submittals are within the ${threshold}-day window.</div>`;
+    return;
+  }
+  list.innerHTML = items.map(item=>{
+    const done = doneTodos.includes(item.key);
+    const urgency = item.days >= threshold*3 ? 'todo-urgency-high' : item.days >= threshold*2 ? 'todo-urgency-med' : '';
+    const daysLabel = `${item.days} days since submission`;
+    return `<div class="todo-item${done?' done':''}">
+      <div class="todo-check${done?' checked':''}" onclick="toggleTodo('${item.key}')"></div>
+      <div>
+        <div class="todo-item-title">${item.type} ${item.num} — ${item.subject}</div>
+        <div class="todo-item-meta">
+          <span class="status ${statusColors[item.status]||'badge-gray'}">${item.status}</span>
+          <span style="font-size:11px;color:var(--text-muted)">${item.project}</span>
+          <span class="todo-item-age ${urgency}">${daysLabel}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+loadTodoState();
+
+const statusColors={
+  'In Progress':'badge-blue','Pre-Construction':'badge-gray','On Hold':'badge-amber','Closeout':'badge-green',
+  'Open':'badge-red','Under Review':'badge-amber','Answered':'badge-green','Closed':'badge-gray',
+  'Pending':'badge-gray','Approved':'badge-green','Approved as Noted':'badge-green','Revise & Resubmit':'badge-amber','Rejected':'badge-red',
+  'Not Ordered':'badge-gray','On Order':'badge-blue','In Transit':'badge-amber','Delivered':'badge-green','Installed':'badge-green',
+  'Ordered':'badge-amber','On Site':'badge-blue','Release':'badge-green'
+};
+const priorityColors={'High':'badge-red','Medium':'badge-amber','Low':'badge-blue'};
+
+function badge(text,cls){return`<span class="status ${cls||statusColors[text]||'badge-gray'}">${text}</span>`}
+function prio(text){return`<span class="priority ${priorityColors[text]||'badge-gray'}">${text}</span>`}
+function fmt(d){if(!d)return'—';const p=d.split('-');return`${p[1]}/${p[2]}/${p[0]}`}
+
+function calcPct(start, end){
+  if(!start||!end) return 0;
+  const s=new Date(start).getTime();
+  const e=new Date(end).getTime();
+  const n=Date.now();
+  if(n<=s) return 0;
+  if(n>=e) return 100;
+  return Math.round((n-s)/(e-s)*100);
+}
+function renderProjects(){
+  const g=document.getElementById('project-grid');
+  const s=document.getElementById('project-stats');
+  const openRFIs=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
+  const openSubs=submittals.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
+  const rentalCount=rental.filter(r=>r.status!=='Release').length;
+  s.innerHTML=`
+    <div class="stat-card"><div class="stat-label">Total Projects</div><div class="stat-value">${projects.length}</div><div class="stat-sub">All active</div></div>
+    <div class="stat-card"><div class="stat-label">Open RFIs</div><div class="stat-value">${openRFIs}</div><span class="stat-badge badge-red">Pending response</span></div>
+    <div class="stat-card"><div class="stat-label">Open Submittals</div><div class="stat-value">${openSubs}</div><span class="stat-badge badge-amber">Pending review</span></div>
+    <div class="stat-card"><div class="stat-label">Rental Equipment</div><div class="stat-value">${rentalCount}</div><span class="stat-badge badge-gray">On site</span></div>
+  `;
+  if(!projects.length){g.innerHTML='<div class="empty"><div class="empty-icon">📁</div>No projects yet. Click "+ New Project" to get started.</div>';return}
+  g.innerHTML=projects.map(p=>`
+    <div class="project-card">
+      <div class="project-card-header">
+        <div>
+          <div class="project-name">${p.name}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'DM Mono',monospace">${p.number}</div>
+        </div>
+        ${badge(p.status)}
+      </div>
+      <div style="font-size:12px;color:var(--text-mid);margin-bottom:8px">Client: <strong>${p.client}</strong></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">${fmt(p.start)} → ${fmt(p.end)}</div>
+      <div style="font-size:11px;color:var(--text-mid);margin-bottom:4px;display:flex;justify-content:space-between"><span>Progress</span><span>${calcPct(p.start,p.end)}%</span></div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${calcPct(p.start,p.end)}%"></div></div>
+      ${p.notes?`<div style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5">${p.notes}</div>`:''}
+      <div class="project-actions">
+        <button class="btn-sm" onclick="editProject(${p.id})">Edit</button>
+        <button class="btn-sm btn-danger" onclick="deleteItem('projects',${p.id})">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderRFI(){
+  const body=document.getElementById('rfi-body');
+  if(!rfis.length){body.innerHTML=`<tr><td colspan="8" class="empty">No RFIs logged yet.</td></tr>`;return}
+  body.innerHTML=rfis.map(r=>`
+    <tr>
+      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${r.num}</td>
+      <td class="truncate">${r.subject}</td>
+      <td class="truncate">${r.project}</td>
+      <td>${fmt(r.submitted)}</td>
+      <td>${fmt(r.due)}</td>
+      <td>${badge(r.status)}</td>
+      <td>${prio(r.priority)}</td>
+      <td><button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+function renderSubmittals(){
+  const body=document.getElementById('submittal-body');
+  if(!submittals.length){body.innerHTML=`<tr><td colspan="8" class="empty">No submittals logged yet.</td></tr>`;return}
+  body.innerHTML=submittals.map(s=>`
+    <tr>
+      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${s.num}</td>
+      <td class="truncate">${s.desc}</td>
+      <td class="truncate">${s.project}</td>
+      <td class="truncate">${s.spec}</td>
+      <td>${fmt(s.date)}</td>
+      <td>${badge(s.status)}</td>
+      <td class="truncate">${s.bic}</td>
+      <td><button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+
+
+function populateProjectSelects(){
+  const ids=['rfi-project','sub-project','ren-project'];
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    const cur=el.value;
+    el.innerHTML='<option value="">Select project</option>'+projects.map(p=>`<option value="${p.name}"${p.name===cur?' selected':''}>${p.name}</option>`).join('');
+  });
+}
+
+
+function renderRental(){
+  const body=document.getElementById('rental-body');
+  if(!rental.length){body.innerHTML=`<tr><td colspan="8" class="empty">No rental equipment logged yet.</td></tr>`;return}
+  body.innerHTML=rental.map(r=>`
+    <tr>
+      <td class="truncate">${r.name}</td>
+      <td class="truncate">${r.project}</td>
+      <td class="truncate">${r.vendor}</td>
+      <td>${fmt(r.onsite)}</td>
+      <td>${fmt(r.offsite)}</td>
+      <td>${badge(r.status)}</td>
+      <td><button class="btn-sm btn-danger" onclick="deleteItem('rental',${r.id})">Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+async function saveRental(){
+  const name=val('ren-name');if(!name)return alert('Equipment name required.');
+  const data={name,project:val('ren-project'),vendor:val('ren-vendor'),onsite_date:val('ren-onsite'),release_date:val('ren-offsite'),status:val('ren-status')};
+  if(sb){ const res=await sb.from('rental').insert(data).select(); if(res.data?.[0]) rental.push({...res.data[0],onsite:res.data[0].onsite_date,offsite:res.data[0].release_date}); }
+  else rental.push({id:nextId++,...data,onsite:data.onsite_date,offsite:data.release_date});
+  ['ren-name','ren-vendor','ren-onsite','ren-offsite'].forEach(id=>document.getElementById(id).value='');
+  closeModal('rental-modal');saveLocal();renderAll();
+}
+
+
+
+
+
+
+
+
+
+
+// ── DRAFT GENERATOR ────────────────────────────────────────
+
+
+function renderAll(){renderProjects();renderRFI();renderSubmittals();renderRental();renderTodos();populateProjectSelects()}
+
+function openModal(id){populateProjectSelects();document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function val(id){return document.getElementById(id).value.trim()}
+
+function editProject(id){
+  const p=projects.find(x=>x.id===id);
+  if(!p)return;
+  document.getElementById('project-modal-title').textContent='Edit Project';
+  document.getElementById('project-save-btn').textContent='Update Project';
+  document.getElementById('p-id').value=id;
+  document.getElementById('p-name').value=p.name;
+  document.getElementById('p-client').value=p.client||'';
+  document.getElementById('p-number').value=p.number||'';
+  document.getElementById('p-start').value=p.start||'';
+  document.getElementById('p-end').value=p.end||'';
+  document.getElementById('p-status').value=p.status||'In Progress';
+  document.getElementById('p-notes').value=p.notes||'';
+  openModal('project-modal');
+}
+async function saveProject(){
+  const name=val('p-name');if(!name)return alert('Project name required.');
+  const editId=document.getElementById('p-id').value;
+  const data={name,client:val('p-client'),number:val('p-number'),start_date:val('p-start'),end_date:val('p-end'),status:val('p-status'),notes:val('p-notes')};
+  if(editId){
+    const id=parseInt(editId);
+    const idx=projects.findIndex(x=>x.id===id);
+    if(idx>-1){ projects[idx]={...projects[idx],...data,start:data.start_date,end:data.end_date}; await sbUpdate('projects',id,data); }
+  } else {
+    const row={...data};
+    if(sb){ const res=await sb.from('projects').insert(row).select(); if(res.data?.[0]) projects.push({...res.data[0],start:res.data[0].start_date,end:res.data[0].end_date}); }
+    else { projects.push({id:nextId++,...data,start:data.start_date,end:data.end_date}); }
+  }
+  ['p-id','p-name','p-client','p-number','p-start','p-end','p-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('project-modal-title').textContent='New Project';
+  document.getElementById('project-save-btn').textContent='Save Project';
+  closeModal('project-modal');saveLocal();renderAll();
+}
+async function saveRFI(){
+  const num=val('rfi-num'),subject=val('rfi-subject');if(!num||!subject)return alert('RFI # and subject required.');
+  const data={num,project:val('rfi-project'),subject,submitted:val('rfi-submitted'),due:val('rfi-due'),status:val('rfi-status'),priority:val('rfi-priority'),description:val('rfi-desc')};
+  if(sb){ const res=await sb.from('rfis').insert(data).select(); if(res.data?.[0]) rfis.push({...res.data[0],desc:res.data[0].description}); }
+  else rfis.push({id:nextId++,...data,desc:data.description});
+  ['rfi-num','rfi-subject','rfi-submitted','rfi-due','rfi-desc'].forEach(id=>document.getElementById(id).value='');
+  closeModal('rfi-modal');saveLocal();renderAll();
+}
+async function saveSubmittal(){
+  const num=val('sub-num'),desc=val('sub-desc');if(!num||!desc)return alert('Submittal # and description required.');
+  const data={num,project:val('sub-project'),description:desc,spec:val('sub-spec'),submitted_date:val('sub-date'),status:val('sub-status'),bic:val('sub-bic')};
+  if(sb){ const res=await sb.from('submittals').insert(data).select(); if(res.data?.[0]) submittals.push({...res.data[0],desc:res.data[0].description,date:res.data[0].submitted_date}); }
+  else submittals.push({id:nextId++,...data,desc,date:data.submitted_date});
+  ['sub-num','sub-desc','sub-spec','sub-date'].forEach(id=>document.getElementById(id).value='');
+  closeModal('submittal-modal');saveLocal();renderAll();
+}
+
+async function deleteItem(store,id){
+  const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental'};
+  if(store==='projects')projects=projects.filter(x=>x.id!==id);
+  else if(store==='rfis')rfis=rfis.filter(x=>x.id!==id);
+  else if(store==='submittals')submittals=submittals.filter(x=>x.id!==id);
+  else if(store==='rental')rental=rental.filter(x=>x.id!==id);
+  if(tableMap[store]) await sbDelete(tableMap[store],id);
+  saveLocal();renderAll();
+}
+
+document.querySelectorAll('.nav-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')});
+});
+
+renderAll();
+</script>
+
+<div class="modal-overlay" id="rental-modal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">New Rental Equipment</span><button class="modal-close" onclick="closeModal('rental-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div><label>Equipment</label><input type="text" id="ren-name" placeholder="e.g. 60-Ton Crane"></div>
+        <div><label>Project</label><select id="ren-project"><option value="">Select project</option></select></div>
+      </div>
+      <div class="form-row-full">
+        <div><label>Vendor / Rental Co.</label><input type="text" id="ren-vendor" placeholder="e.g. United Rentals"></div>
+      </div>
+      <div class="form-row">
+        <div><label>On Site Date</label><input type="date" id="ren-onsite"></div>
+        <div><label>Release Date</label><input type="date" id="ren-offsite"></div>
+      </div>
+      <div class="form-row-full"><label>Status</label>
+        <select id="ren-status">
+          <option>Ordered</option><option>On Site</option><option>Release</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('rental-modal')">Cancel</button>
+      <button class="btn-add" onclick="saveRental()">Save Rental</button>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal-overlay" id="supabase-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Supabase Database Setup</span>
+      <button class="modal-close" onclick="closeModal('supabase-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--text-mid);line-height:1.6">
+        Paste your Supabase credentials below. Find them at <strong>supabase.com → Settings → API</strong>.<br>These are stored locally and only used to connect to your own database.
+      </div>
+      <div class="form-row-full"><label>Project URL</label><input type="text" id="sb-url" placeholder="https://xxxx.supabase.co"></div>
+      <div class="form-row-full"><label>Anon / Public Key</label><textarea id="sb-key" style="min-height:80px;font-family:monospace;font-size:11px" placeholder="eyJhbGci..."></textarea></div>
+      <div id="sb-status" style="font-size:12px;margin-top:8px;min-height:18px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('supabase-modal')">Cancel</button>
+      <button class="btn-add" onclick="saveSupabaseConfig()">Save &amp; Connect</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
