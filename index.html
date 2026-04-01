@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>APM Project Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
@@ -104,15 +104,15 @@
   /* LOGIN SCREEN */
   .login-overlay{position:fixed;inset:0;background:var(--michels-black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;padding:24px}
   .login-box{background:var(--white);border-radius:14px;width:min(420px,100%);overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
-  .login-header{background:var(--michels-black);padding:28px 32px 24px;text-align:center;border-bottom:3px solid var(--michels-red)}
+  .login-header{background:var(--michels-black);padding:28px 32px 24px;text-align:center;border-bottom:3px solid var(--michels-red);display:flex;flex-direction:column;align-items:center;justify-content:center}
   .login-body{padding:28px 32px}
   .login-footer{padding:16px 32px 24px;text-align:center}
   .login-error{background:var(--red-light);color:var(--red);font-size:12px;padding:8px 12px;border-radius:6px;margin-bottom:14px;display:none;border:1px solid #fca5a5}
   .login-input-wrap{margin-bottom:14px}
   .login-input-wrap label{font-size:11px;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block}
-  .login-input-wrap input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;font-size:14px;font-family:"DM Sans",sans-serif;color:var(--text);outline:none;transition:border-color .15s}
+  .login-input-wrap input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color .15s}
   .login-input-wrap input:focus{border-color:var(--michels-red)}
-  .btn-login{width:100%;padding:11px;background:var(--michels-red);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;transition:background .15s}
+  .btn-login{width:100%;padding:11px;background:var(--michels-red);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
   .btn-login:hover{background:var(--michels-red-dark)}
   .login-tagline{color:#888;font-size:12px;margin-top:12px}
   .login-user-list{margin-top:8px;font-size:11px;color:var(--text-muted);text-align:center}
@@ -149,6 +149,9 @@
 
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -156,20 +159,24 @@
 <div class="login-overlay" id="login-overlay">
   <div class="login-box">
     <div class="login-header">
-      <svg viewBox="0 0 300 64" xmlns="http://www.w3.org/2000/svg" style="height:46px;width:auto;margin:0 auto;display:block">
+      <svg viewBox="0 0 260 65" xmlns="http://www.w3.org/2000/svg" style="height:52px;width:240px;display:block">
         <defs>
           <linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#a00d1e"/>
             <stop offset="45%" stop-color="#c8102e"/>
             <stop offset="100%" stop-color="#e8324a"/>
           </linearGradient>
-          <style>.lm{font-family:"Alfa Slab One","Rockwell",serif;font-size:42px;fill:url(#lg2);letter-spacing:3px}.lr{font-family:"Alfa Slab One",serif;font-size:13px;fill:url(#lg2)}.ls{font-family:"DM Sans","Arial",sans-serif;font-weight:700;font-size:13px;fill:#ffffff;letter-spacing:1.5px}</style>
+          <style>
+            .lm{font-family:"Alfa Slab One","Rockwell",serif;font-size:42px;fill:url(#lg2);letter-spacing:3px;text-anchor:middle}
+            .ls{font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;fill:#ffffff;letter-spacing:1.5px;text-anchor:middle}
+            .lr{font-family:"Alfa Slab One","Rockwell",serif;font-size:11px;fill:url(#lg2)}
+          </style>
         </defs>
-        <text x="2" y="42" class="lm">MICHELS</text>
-        <text x="258" y="19" class="lr">&#174;</text>
-        <text x="14" y="59" class="ls">POWER, INC.</text>
+        <text x="130" y="40" class="lm">MICHELS</text>
+        <text x="252" y="12" class="lr">&#174;</text>
+        <text x="130" y="57" class="ls">POWER, INC.</text>
       </svg>
-      <div style="color:#888;font-size:11px;margin-top:10px;letter-spacing:1px;text-transform:uppercase">APM Dashboard</div>
+      <div style="color:#888;font-size:11px;margin-top:10px;letter-spacing:1px;text-transform:uppercase;text-align:center;width:100%">APM Dashboard</div>
     </div>
     <div class="login-body">
       <div class="login-error" id="login-error">Incorrect username or password. Please try again.</div>
@@ -180,6 +187,10 @@
       <div class="login-input-wrap">
         <label>Password</label>
         <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')attemptLogin()">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+        <input type="checkbox" id="remember-me" style="width:15px;height:15px;accent-color:var(--michels-red);cursor:pointer">
+        <label for="remember-me" style="font-size:13px;color:var(--text-mid);font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer;margin:0">Remember me for 30 days</label>
       </div>
       <button class="btn-login" onclick="attemptLogin()">Sign In</button>
     </div>
@@ -192,26 +203,22 @@
 <div class="dashboard" id="main-dashboard" style="display:none">
   <div class="header">
     <div class="header-left">
-      <svg class="logo-img" viewBox="0 0 300 64" xmlns="http://www.w3.org/2000/svg" style="height:50px;width:auto">
+      <svg class="logo-img" viewBox="0 0 260 60" xmlns="http://www.w3.org/2000/svg" style="height:50px;width:240px">
   <defs>
     <linearGradient id="michels-grad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%"   stop-color="#a00d1e"/>
       <stop offset="45%"  stop-color="#c8102e"/>
       <stop offset="100%" stop-color="#e8324a"/>
     </linearGradient>
-    <linearGradient id="reg-grad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%"   stop-color="#a00d1e"/>
-      <stop offset="100%" stop-color="#e8324a"/>
-    </linearGradient>
     <style>
-      .m-main { font-family: 'Alfa Slab One', 'Rockwell Extra Bold', 'Rockwell', 'Georgia', serif; font-weight: 400; font-size: 42px; fill: url(#michels-grad); letter-spacing: 3px; }
-      .m-reg   { font-family: 'Alfa Slab One', 'Rockwell', serif; font-weight: 400; font-size: 13px; fill: url(#reg-grad); }
-      .m-sub   { font-family: 'DM Sans', 'Arial Narrow', 'Arial', sans-serif; font-weight: 700; font-size: 13px; fill: #ffffff; letter-spacing: 1.5px; }
+      .m-main { font-family: 'Alfa Slab One', 'Rockwell Extra Bold', 'Rockwell', 'Georgia', serif; font-weight: 400; font-size: 42px; fill: url(#michels-grad); letter-spacing: 3px; text-anchor: middle; }
+      .m-sub  { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 13px; fill: #ffffff; letter-spacing: 1.5px; text-anchor: middle; }
+      .m-reg  { font-family: 'Alfa Slab One', 'Rockwell', serif; font-size: 11px; fill: url(#michels-grad); }
     </style>
   </defs>
-  <text x="2" y="42" class="m-main">MICHELS</text>
-  <text x="258" y="19" class="m-reg">&#174;</text>
-  <text x="14" y="59" class="m-sub">POWER, INC.</text>
+  <text x="130" y="40" class="m-main">MICHELS</text>
+  <text x="252" y="12" class="m-reg">&#174;</text>
+  <text x="130" y="57" class="m-sub">POWER, INC.</text>
 </svg>
       <div class="header-divider"></div>
       <div>
@@ -233,6 +240,23 @@
   <div class="main active" id="tab-projects">
     <div class="stat-row" id="project-stats"></div>
     
+
+    <!-- REPORT SECTION -->
+    <div class="todo-section" style="margin-bottom:16px">
+      <div class="todo-header">
+        <div class="todo-header-left">
+          <div class="todo-title">Project Summary Report</div>
+          <span class="todo-badge" id="report-count" style="display:none">0</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <select id="report-filter" onchange="renderReportPreview()" style="font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:5px;font-family:'DM Sans',sans-serif">
+            <option value="">All Projects</option>
+          </select>
+          <button class="btn-add" onclick="generateSummaryPDF()" style="font-size:12px">&#8595; Generate PDF</button>
+        </div>
+      </div>
+      <div id="report-preview" style="padding:12px 16px"></div>
+    </div>
 
     <!-- TODO REMINDER SECTION -->
     <div class="todo-section">
@@ -262,7 +286,11 @@
   <div class="main" id="tab-rfi">
     <div class="section-header">
       <div class="section-title">RFI Log</div>
-      <button class="btn-add" onclick="openModal('rfi-modal')">+ New RFI</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="exportToExcel('rfi')">&#8595; Excel</button>
+        <button class="btn-sm" onclick="exportToPDF('rfi')">&#8595; PDF</button>
+        <button class="btn-add" onclick="openModal('rfi-modal')">+ New RFI</button>
+      </div>
     </div>
     <div class="table-wrap">
       <table>
@@ -285,7 +313,11 @@
   <div class="main" id="tab-submittal">
     <div class="section-header">
       <div class="section-title">Submittal Log</div>
-      <button class="btn-add" onclick="openModal('submittal-modal')">+ New Submittal</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="exportToExcel('submittal')">&#8595; Excel</button>
+        <button class="btn-sm" onclick="exportToPDF('submittal')">&#8595; PDF</button>
+        <button class="btn-add" onclick="openModal('submittal-modal')">+ New Submittal</button>
+      </div>
     </div>
     <div class="table-wrap">
       <table>
@@ -308,7 +340,11 @@
   <div class="main" id="tab-rental">
     <div class="section-header">
       <div class="section-title">Rental Equipment</div>
-      <button class="btn-add" onclick="openModal('rental-modal')">+ New Rental</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="exportToExcel('rental')">&#8595; Excel</button>
+        <button class="btn-sm" onclick="exportToPDF('rental')">&#8595; PDF</button>
+        <button class="btn-add" onclick="openModal('rental-modal')">+ New Rental</button>
+      </div>
     </div>
     <div class="table-wrap">
       <table>
@@ -326,6 +362,7 @@
     </div>
   </div>
 </div>
+
 
 <!-- MODALS -->
 <div class="modal-overlay" id="project-modal">
@@ -430,6 +467,8 @@
 
 
 <script>
+
+const MICHELS_LOGO_B64 = "data:image/png;base64,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";
 const today = new Date();
 document.getElementById('header-date').textContent = today.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
@@ -523,8 +562,6 @@ async function sbDelete(table, id){ if(sb) await sb.from(table).delete().eq('id'
 
 
 // ── AUTH SYSTEM ────────────────────────────────────────────
-// Default admin user (hashed). Users stored in localStorage.
-// Password hashing uses a simple but effective method for client-side auth.
 async function hashPassword(password){
   const msgBuffer = new TextEncoder().encode(password + 'michels_apm_salt');
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -533,19 +570,65 @@ async function hashPassword(password){
 }
 
 let currentUser = null;
+let cachedUsers = [];
 
-function loadUsers(){
-  try{ return JSON.parse(localStorage.getItem('apm_users') || '[]'); }catch(e){ return []; }
+// Load users from Supabase, fall back to localStorage
+async function loadUsers(){
+  if(sb){
+    try{
+      const res = await sb.from('users').select('*').order('id');
+      if(!res.error){
+        cachedUsers = (res.data||[]).map(u=>({
+          username: u.username,
+          displayName: u.display_name||u.username,
+          role: u.role||'user',
+          hash: u.hash,
+          id: u.id
+        }));
+        localStorage.setItem('apm_users', JSON.stringify(cachedUsers));
+        return cachedUsers;
+      }
+    }catch(e){ console.error('loadUsers error',e); }
+  }
+  try{ cachedUsers = JSON.parse(localStorage.getItem('apm_users')||'[]'); }catch(e){ cachedUsers=[]; }
+  return cachedUsers;
 }
-function saveUsers(users){
+
+async function saveUserToDB(user){
+  if(sb){
+    try{
+      const res = await sb.from('users').insert({
+        username: user.username,
+        display_name: user.displayName,
+        role: user.role,
+        hash: user.hash
+      });
+      if(res.error){ console.error('saveUserToDB insert error',res.error); return false; }
+    }catch(e){ console.error('saveUserToDB error',e); return false; }
+  }
+  // sync to localStorage
+  let users = JSON.parse(localStorage.getItem('apm_users')||'[]');
+  users = users.filter(u=>u.username!==user.username);
+  users.push(user);
+  localStorage.setItem('apm_users', JSON.stringify(users));
+  return true;
+}
+
+async function deleteUserFromDB(username){
+  if(sb){
+    try{ await sb.from('users').delete().eq('username', username); }catch(e){ console.error('deleteUserFromDB error',e); }
+  }
+  let users = JSON.parse(localStorage.getItem('apm_users')||'[]');
+  users = users.filter(u=>u.username!==username);
   localStorage.setItem('apm_users', JSON.stringify(users));
 }
 
 async function initDefaultAdmin(){
-  const users = loadUsers();
+  const users = await loadUsers();
   if(!users.length){
     const hash = await hashPassword('Michels2024!');
-    saveUsers([{username:'admin',displayName:'Administrator',role:'admin',hash}]);
+    const admin = {username:'admin',displayName:'Administrator',role:'admin',hash};
+    await saveUserToDB(admin);
   }
 }
 
@@ -555,19 +638,43 @@ async function attemptLogin(){
   const errEl = document.getElementById('login-error');
   errEl.style.display='none';
   if(!username||!password){ errEl.style.display='block'; errEl.textContent='Please enter your username and password.'; return; }
+  // Show loading state
+  const btn = document.querySelector('.btn-login');
+  btn.textContent='Signing in...'; btn.disabled=true;
   const hash = await hashPassword(password);
-  const users = loadUsers();
+  const users = await loadUsers();
   const user = users.find(u=>u.username.toLowerCase()===username && u.hash===hash);
+  btn.textContent='Sign In'; btn.disabled=false;
   if(!user){ errEl.style.display='block'; errEl.textContent='Incorrect username or password. Please try again.'; document.getElementById('login-password').value=''; return; }
   currentUser = user;
-  sessionStorage.setItem('apm_session', JSON.stringify({username:user.username,displayName:user.displayName,role:user.role}));
+  const sessionData = JSON.stringify({username:user.username,displayName:user.displayName,role:user.role});
+  sessionStorage.setItem('apm_session', sessionData);
+  // Remember Me - store in localStorage with expiry
+  const rememberMe = document.getElementById('remember-me')?.checked;
+  if(rememberMe){
+    const expiry = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 days
+    localStorage.setItem('apm_remember', JSON.stringify({session:sessionData, expiry}));
+  } else {
+    localStorage.removeItem('apm_remember');
+  }
   showDashboard();
 }
 
 function checkSession(){
   try{
+    // Check active session first
     const s = JSON.parse(sessionStorage.getItem('apm_session')||'null');
     if(s){ currentUser=s; showDashboard(); return true; }
+    // Check Remember Me
+    const r = JSON.parse(localStorage.getItem('apm_remember')||'null');
+    if(r && r.expiry > Date.now()){
+      const s2 = JSON.parse(r.session);
+      currentUser = s2;
+      sessionStorage.setItem('apm_session', r.session);
+      showDashboard(); return true;
+    } else if(r) {
+      localStorage.removeItem('apm_remember'); // expired, clean up
+    }
   }catch(e){}
   return false;
 }
@@ -575,7 +682,6 @@ function checkSession(){
 function showDashboard(){
   document.getElementById('login-overlay').style.display='none';
   document.getElementById('main-dashboard').style.display='';
-  // Show user badge
   const badge = document.getElementById('current-user-badge');
   const nameEl = document.getElementById('current-user-name');
   const initEl = document.getElementById('user-avatar-initials');
@@ -584,7 +690,6 @@ function showDashboard(){
     const parts = (currentUser.displayName||currentUser.username).split(' ');
     initEl.textContent = parts.map(p=>p[0]).join('').toUpperCase().substring(0,2);
     badge.style.display='inline-flex';
-    // Hide user management button for non-admins
     if(currentUser.role!=='admin') badge.onclick=null;
   }
   loadSBConfig();
@@ -594,6 +699,7 @@ function showDashboard(){
 function logout(){
   currentUser=null;
   sessionStorage.removeItem('apm_session');
+  localStorage.removeItem('apm_remember');
   document.getElementById('main-dashboard').style.display='none';
   document.getElementById('login-overlay').style.display='flex';
   document.getElementById('login-username').value='';
@@ -603,8 +709,8 @@ function logout(){
 }
 
 // ── USER MANAGEMENT ────────────────────────────────────────
-function renderUserList(){
-  const users = loadUsers();
+async function renderUserList(){
+  const users = await loadUsers();
   const el = document.getElementById('user-list');
   if(!el) return;
   if(!users.length){ el.innerHTML='<div style="color:var(--text-muted);font-size:12px">No users yet.</div>'; return; }
@@ -630,26 +736,30 @@ async function addUser(){
   const password = document.getElementById('new-password').value;
   const role = document.getElementById('new-role').value;
   const errEl = document.getElementById('user-add-error');
+  const addBtn = document.querySelector('#user-modal .btn-add');
   errEl.style.display='none';
   if(!username||!password){ errEl.style.display='block'; errEl.textContent='Username and password are required.'; return; }
-  const users = loadUsers();
-  if(users.find(u=>u.username===username)){ errEl.style.display='block'; errEl.textContent='That username already exists.'; return; }
+  // Always fetch fresh from Supabase to check duplicates
+  const users = await loadUsers();
+  if(users.find(u=>u.username.toLowerCase()===username)){
+    errEl.style.display='block'; errEl.textContent='That username already exists.'; return;
+  }
+  if(addBtn){ addBtn.textContent='Adding...'; addBtn.disabled=true; }
   const hash = await hashPassword(password);
-  users.push({username,displayName:displayName||username,role,hash});
-  saveUsers(users);
+  const newUser = {username,displayName:displayName||username,role,hash};
+  const ok = await saveUserToDB(newUser);
+  if(addBtn){ addBtn.textContent='Add User'; addBtn.disabled=false; }
+  if(!ok){ errEl.style.display='block'; errEl.textContent='Error saving user. Please try again.'; return; }
   ['new-username','new-displayname','new-password'].forEach(id=>document.getElementById(id).value='');
   renderUserList();
 }
 
-function removeUser(username){
+async function removeUser(username){
   if(username==='admin') return;
-  let users = loadUsers();
-  users = users.filter(u=>u.username!==username);
-  saveUsers(users);
+  await deleteUserFromDB(username);
   renderUserList();
 }
 
-// Override openModal to render user list when user modal opens
 const _origOpenModal = openModal;
 function openModal(id){
   if(id==='user-modal'){
@@ -659,7 +769,7 @@ function openModal(id){
   _origOpenModal(id);
 }
 
-// Init
+localStorage.removeItem('apm_users');
 initDefaultAdmin().then(()=>{
   if(!checkSession()){
     document.getElementById('login-overlay').style.display='flex';
@@ -750,7 +860,6 @@ const statusColors={
   'In Progress':'badge-blue','Pre-Construction':'badge-gray','On Hold':'badge-amber','Closeout':'badge-green',
   'Open':'badge-red','Under Review':'badge-amber','Answered':'badge-green','Closed':'badge-gray',
   'Pending':'badge-gray','Approved':'badge-green','Approved as Noted':'badge-green','Revise & Resubmit':'badge-amber','Rejected':'badge-red',
-  'Not Ordered':'badge-gray','On Order':'badge-blue','In Transit':'badge-amber','Delivered':'badge-green','Installed':'badge-green',
   'Ordered':'badge-amber','On Site':'badge-blue','Release':'badge-green'
 };
 const priorityColors={'High':'badge-red','Medium':'badge-amber','Low':'badge-blue'};
@@ -886,7 +995,708 @@ async function saveRental(){
 // ── DRAFT GENERATOR ────────────────────────────────────────
 
 
-function renderAll(){renderProjects();renderRFI();renderSubmittals();renderRental();renderTodos();populateProjectSelects()}
+
+// ── EXCEL EXPORT ───────────────────────────────────────────
+function exportToExcel(type){
+  if(typeof XLSX === 'undefined'){ alert('Excel library not loaded yet. Please try again in a moment.'); return; }
+
+  let data = [];
+  let filename = '';
+
+  if(type === 'rfi'){
+    filename = 'RFI_Log.xlsx';
+    data = rfis.map(r=>({
+      'RFI #':        r.num||'',
+      'Subject':      r.subject||'',
+      'Project':      r.project||'',
+      'Date Submitted': r.submitted||'',
+      'Response Due': r.due||'',
+      'Status':       r.status||'',
+      'Priority':     r.priority||'',
+      'Description':  r.desc||r.description||''
+    }));
+  } else if(type === 'submittal'){
+    filename = 'Submittal_Log.xlsx';
+    data = submittals.map(s=>({
+      'Submittal #':   s.num||'',
+      'Description':   s.desc||s.description||'',
+      'Project':       s.project||'',
+      'Spec Section':  s.spec||'',
+      'Date Submitted':s.date||s.submitted_date||'',
+      'Status':        s.status||'',
+      'Ball in Court': s.bic||''
+    }));
+  } else if(type === 'rental'){
+    filename = 'Rental_Equipment.xlsx';
+    data = rental.map(r=>({
+      'Equipment':    r.name||'',
+      'Project':      r.project||'',
+      'Vendor':       r.vendor||'',
+      'On Site Date': r.onsite||r.onsite_date||'',
+      'Release Date': r.offsite||r.release_date||'',
+      'Status':       r.status||''
+    }));
+  }
+
+  if(!data.length){ alert('No data to export yet.'); return; }
+
+  const ws = XLSX.utils.json_to_sheet(data);
+
+  // Style column widths
+  const colWidths = Object.keys(data[0]).map(k=>({ wch: Math.max(k.length, 15) }));
+  ws['!cols'] = colWidths;
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, type==='rfi'?'RFI Log':type==='submittal'?'Submittal Log':'Rental Equipment');
+
+  // Add metadata sheet
+  const meta = XLSX.utils.aoa_to_sheet([
+    ['Michels Power Inc. — APM Dashboard Export'],
+    ['Generated:', new Date().toLocaleString()],
+    ['Total Records:', data.length]
+  ]);
+  XLSX.utils.book_append_sheet(wb, meta, 'Info');
+
+  XLSX.writeFile(wb, filename);
+}
+
+// ── PDF EXPORT ─────────────────────────────────────────────
+async function exportToPDF(type){
+  if(typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined'){
+    alert('PDF library not loaded yet. Please try again in a moment.'); return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const pw = 297; const ph = 210;
+  const red = [200,16,46]; const black = [26,26,26]; const white = [255,255,255];
+  const lightGray = [249,248,248]; const midGray = [226,224,224]; const darkGray = [80,80,80];
+
+  let title='', filename='', columns=[], rows=[], stats=[];
+
+  if(type==='rfi'){
+    title='RFI Log'; filename='RFI_Log.pdf';
+    columns=['RFI #','Subject','Project','Submitted','Due','Status','Priority'];
+    rows=rfis.map(r=>[r.num||'',r.subject||'',r.project||'',r.submitted||'',r.due||'',r.status||'',r.priority||'']);
+    const open=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
+    const high=rfis.filter(r=>r.priority==='High').length;
+    stats=[
+      {label:'Total RFIs', value:rfis.length},
+      {label:'Open', value:open},
+      {label:'Answered', value:rfis.filter(r=>r.status==='Answered').length},
+      {label:'High Priority', value:high}
+    ];
+  } else if(type==='submittal'){
+    title='Submittal Log'; filename='Submittal_Log.pdf';
+    columns=['Sub #','Description','Project','Spec Section','Submitted','Status','Ball in Court'];
+    rows=submittals.map(s=>[s.num||'',s.desc||s.description||'',s.project||'',s.spec||'',s.date||s.submitted_date||'',s.status||'',s.bic||'']);
+    stats=[
+      {label:'Total Submittals', value:submittals.length},
+      {label:'Pending', value:submittals.filter(s=>['Pending','Under Review'].includes(s.status)).length},
+      {label:'Approved', value:submittals.filter(s=>s.status==='Approved'||s.status==='Approved as Noted').length},
+      {label:'Revise & Resubmit', value:submittals.filter(s=>s.status==='Revise & Resubmit').length}
+    ];
+  } else if(type==='rental'){
+    title='Rental Equipment'; filename='Rental_Equipment.pdf';
+    columns=['Equipment','Project','Vendor','On Site Date','Release Date','Status'];
+    rows=rental.map(r=>[r.name||'',r.project||'',r.vendor||'',r.onsite||r.onsite_date||'',r.offsite||r.release_date||'',r.status||'']);
+    stats=[
+      {label:'Total Equipment', value:rental.length},
+      {label:'Ordered', value:rental.filter(r=>r.status==='Ordered').length},
+      {label:'On Site', value:rental.filter(r=>r.status==='On Site').length},
+      {label:'Released', value:rental.filter(r=>r.status==='Release').length}
+    ];
+  }
+
+  if(!rows.length){ alert('No data to export yet.'); return; }
+
+  // ── HEADER BAR ──────────────────────────────────────────
+  // Black background
+  doc.setFillColor(...black);
+  doc.rect(0, 0, pw, 28, 'F');
+  // Red accent stripe
+  doc.setFillColor(...red);
+  doc.rect(0, 26, pw, 2.5, 'F');
+  // Left red block for logo
+  doc.setFillColor(...red);
+  doc.rect(0, 0, 2, 28, 'F');
+
+  // Draw MICHELS logo - no ® no POWER INC, centered and visually clean
+  await document.fonts.ready;
+  const logoCanvas = document.createElement('canvas');
+  logoCanvas.width = 1200; logoCanvas.height = 158;
+  const lctx = logoCanvas.getContext('2d');
+  lctx.imageSmoothingEnabled = true;
+  lctx.imageSmoothingQuality = 'high';
+
+  // Gradient
+  const grad = lctx.createLinearGradient(0, 0, 0, 158);
+  grad.addColorStop(0,    '#a00d1e');
+  grad.addColorStop(0.45, '#c8102e');
+  grad.addColorStop(1,    '#e8324a');
+
+  // MICHELS only - large, bold, centered
+  lctx.font = "400 140px 'Alfa Slab One', 'Rockwell', serif";
+  lctx.letterSpacing = '10px';
+  lctx.textAlign = 'center';
+  lctx.fillStyle = grad;
+  lctx.fillText('MICHELS', 600, 131);
+
+  const logoData = logoCanvas.toDataURL('image/png', 1.0);
+  doc.addImage(logoData, 'PNG', 7, 4, 58, 17);
+
+  // Thin red underline accent below logo
+  doc.setDrawColor(...red);
+  doc.setLineWidth(0.8);
+  doc.line(7, 24, 65, 24);
+
+  // Vertical divider
+  doc.setDrawColor(100,100,100);
+  doc.setLineWidth(0.3);
+  doc.line(70, 4, 70, 24);
+
+  // Report title
+  doc.setTextColor(...white);
+  doc.setFontSize(16);
+  doc.setFont('helvetica','bold');
+  doc.text(title, pw/2, 13, {align:'center'});
+
+  // Subtitle
+  doc.setFontSize(8);
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(180,180,180);
+  doc.text('Michels Power Inc.  —  APM Dashboard', pw/2, 20, {align:'center'});
+
+  // Date top right
+  doc.setTextColor(180,180,180);
+  doc.setFontSize(7.5);
+  doc.text('Generated: ' + new Date().toLocaleString(), pw-10, 10, {align:'right'});
+  doc.text('Records: ' + rows.length, pw-10, 17, {align:'right'});
+
+  // ── SUMMARY STATS BAR ───────────────────────────────────
+  const statsY = 32;
+  const boxW = (pw - 20) / stats.length;
+  stats.forEach((s, i) => {
+    const x = 10 + i * boxW;
+    // Card background
+    doc.setFillColor(245, 244, 244);
+    doc.roundedRect(x, statsY, boxW-3, 18, 2, 2, 'F');
+    // Red top accent
+    doc.setFillColor(...red);
+    doc.rect(x, statsY, boxW-3, 1.5, 'F');
+    // Value
+    doc.setTextColor(...black);
+    doc.setFontSize(18);
+    doc.setFont('helvetica','bold');
+    doc.text(String(s.value), x + (boxW-3)/2, statsY+11, {align:'center'});
+    // Label
+    doc.setFontSize(7);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(...darkGray);
+    doc.text(s.label.toUpperCase(), x + (boxW-3)/2, statsY+16, {align:'center'});
+  });
+
+  // ── TABLE ───────────────────────────────────────────────
+  doc.autoTable({
+    head: [columns],
+    body: rows,
+    startY: statsY + 22,
+    theme: 'plain',
+    headStyles: {
+      fillColor: black,
+      textColor: white,
+      fontStyle: 'bold',
+      fontSize: 8.5,
+      cellPadding: {top:4, bottom:4, left:4, right:4}
+    },
+    bodyStyles: {
+      fontSize: 8,
+      textColor: [40,40,40],
+      cellPadding: {top:3.5, bottom:3.5, left:4, right:4}
+    },
+    alternateRowStyles: { fillColor: [249,248,248] },
+    styles: {
+      lineColor: [220,218,218],
+      lineWidth: 0.25,
+      overflow: 'ellipsize'
+    },
+    columnStyles: { 0: {fontStyle:'bold'} },
+    margin: {left:10, right:10},
+    didDrawPage: (data)=>{
+      // Thin red line at top of each continuation page
+      if(data.pageNumber > 1){
+        doc.setFillColor(...black);
+        doc.rect(0, 0, pw, 8, 'F');
+        doc.setFillColor(...red);
+        doc.rect(0, 8, pw, 1.5, 'F');
+        doc.setTextColor(...white);
+        doc.setFontSize(8);
+        doc.setFont('helvetica','bold');
+        doc.text(`${title}  —  Michels Power Inc.`, 14, 5.5);
+        doc.setTextColor(180,180,180);
+        doc.setFont('helvetica','normal');
+        doc.text(`Page ${data.pageNumber}`, pw-10, 5.5, {align:'right'});
+      }
+      // ── FOOTER ──────────────────────────────────────────
+      const footY = ph - 8;
+      doc.setDrawColor(...red);
+      doc.setLineWidth(0.5);
+      doc.line(10, footY - 2, pw-10, footY - 2);
+      doc.setFontSize(7);
+      doc.setTextColor(...darkGray);
+      doc.setFont('helvetica','normal');
+      doc.text('Michels Power Inc.  |  APM Dashboard', 10, footY+1);
+      doc.text(`Page ${data.pageNumber}  |  ${new Date().toLocaleDateString()}`, pw/2, footY+1, {align:'center'});
+      doc.text('CONFIDENTIAL — Internal Use Only', pw-10, footY+1, {align:'right'});
+    }
+  });
+
+  // ── SIGNATURE BLOCK ─────────────────────────────────────
+  const finalY = doc.lastAutoTable.finalY + 10;
+  // Only add if it fits on current page
+  if(finalY < ph - 35){
+    doc.setDrawColor(...midGray);
+    doc.setLineWidth(0.3);
+
+    const preparedBy = currentUser ? (currentUser.displayName || currentUser.username) : 'Unknown';
+    const lineY = finalY + 10;
+    const sigX = 10;
+    const sigLineW = 80;
+
+    // Signature line
+    doc.setDrawColor(...darkGray);
+    doc.setLineWidth(0.4);
+    doc.line(sigX, lineY, sigX + sigLineW, lineY);
+    // Name pre-filled
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(...black);
+    doc.text(preparedBy, sigX, lineY - 2);
+    // Label
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(...black);
+    doc.text('Prepared By', sigX, lineY + 5);
+    // Date line - auto-filled with today's date
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(...darkGray);
+    doc.text('Date: ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}), sigX, lineY + 9);
+  }
+
+  doc.save(filename);
+}
+
+// ── PROJECT SUMMARY REPORT ────────────────────────────────
+function projectHealth(p){
+  const pct = calcPct(p.start_date||p.start, p.end_date||p.end);
+  const highR = rfis.filter(r=>r.project===p.name&&r.priority==='High'&&!['Answered','Closed'].includes(r.status)).length;
+  const openR = rfis.filter(r=>r.project===p.name&&!['Answered','Closed'].includes(r.status)).length;
+  const openS = submittals.filter(s=>s.project===p.name&&!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
+  if(p.status==='On Hold')                         return {label:'On Hold',  cls:'badge-amber', color:[180,120,0],  bg:[255,243,200]};
+  if(['Complete','Closeout'].includes(p.status))   return {label:'Closeout', cls:'badge-green', color:[21,128,61],  bg:[220,252,231]};
+  if(highR>0||openR>5||openS>5)                    return {label:'At Risk',  cls:'badge-red',   color:[180,16,30],  bg:[254,226,226]};
+  if(pct>0&&pct<100)                               return {label:'On Track', cls:'badge-green', color:[21,128,61],  bg:[220,252,231]};
+  return {label:'Pending', cls:'badge-gray', color:[80,80,80], bg:[241,245,249]};
+}
+
+function renderReportPreview(){
+  const sel = document.getElementById('report-filter');
+  const preview = document.getElementById('report-preview');
+  const badge = document.getElementById('report-count');
+  if(!sel||!preview) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">All Projects</option>' +
+    projects.map(p=>`<option value="${p.id}"${p.id==cur?' selected':''}>${p.name}</option>`).join('');
+  const filtered = cur ? projects.filter(p=>p.id==cur) : projects;
+  if(badge){ badge.textContent=filtered.length; badge.style.display=filtered.length?'inline-flex':'none'; }
+  if(!filtered.length){
+    preview.innerHTML='<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:16px">No projects to preview.</div>';
+    return;
+  }
+  preview.innerHTML = filtered.map(p=>{
+    const pct = calcPct(p.start_date||p.start, p.end_date||p.end);
+    const h = projectHealth(p);
+    const openR = rfis.filter(r=>r.project===p.name&&!['Answered','Closed'].includes(r.status)).length;
+    const openS = submittals.filter(s=>s.project===p.name&&!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
+    const onSite = rental.filter(r=>r.project===p.name&&r.status!=='Release').length;
+    return `<div style="display:grid;grid-template-columns:1fr auto;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">
+          ${p.name} <span class="status ${h.cls}" style="font-size:10px;margin-left:6px">${h.label}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:5px">${[p.client,p.number].filter(Boolean).join(' · ')}</div>
+        <div style="display:flex;gap:14px;font-size:11px;color:var(--text-mid)">
+          <span>Open RFIs: <strong>${openR}</strong></span>
+          <span>Open Submittals: <strong>${openS}</strong></span>
+          <span>Rental On Site: <strong>${onSite}</strong></span>
+        </div>
+      </div>
+      <div style="text-align:right;min-width:90px">
+        <div style="font-size:22px;font-weight:700;color:var(--michels-red)">${pct}%</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">complete</div>
+        <div class="progress-bar-bg" style="width:90px"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function generateSummaryPDF(){
+  if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){alert('PDF library not loaded yet.');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const pw=210; const ph=297;
+  const red=[200,16,46]; const black=[26,26,26]; const white=[255,255,255];
+  const darkGray=[80,80,80]; const midGray=[180,180,180]; const lightGray=[245,244,244];
+  const borderGray=[210,208,208];
+
+  const sel=document.getElementById('report-filter');
+  const filtered=sel?.value?projects.filter(p=>p.id==sel.value):projects;
+  if(!filtered.length){alert('No projects to report on.');return;}
+
+  await document.fonts.ready;
+
+  const fmtD=d=>{if(!d)return'—';const p=d.split('-');return`${p[1]}/${p[2]}/${p[0]}`;};
+  const todayStr=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const preparedBy=(typeof currentUser!=='undefined'&&currentUser)?(currentUser.displayName||currentUser.username):'APM';
+  const reminderDays=parseInt(document.getElementById('reminder-days')?.value||'7');
+
+  // ── LOGO ──────────────────────────────────────────────────
+  const lScale=6; const lW=340*lScale; const lH=60*lScale;
+  const lc=document.createElement('canvas'); lc.width=lW; lc.height=lH;
+  const lx=lc.getContext('2d');
+  lx.imageSmoothingEnabled=true; lx.imageSmoothingQuality='high';
+  lx.fillStyle='#1a1a1a'; lx.fillRect(0,0,lW,lH);
+  const lg=lx.createLinearGradient(0,0,0,lH);
+  lg.addColorStop(0,'#c0102a'); lg.addColorStop(0.5,'#c8102e'); lg.addColorStop(1,'#a80e26');
+  const fs=44*lScale;
+  lx.font=`400 ${fs}px 'Alfa Slab One','Rockwell',serif`;
+  lx.letterSpacing=`${4*lScale}px`; lx.textAlign='left'; lx.textBaseline='middle';
+  lx.fillStyle=lg; lx.fillText('MICHELS',12*lScale,lH*0.52);
+  lx.font=`400 ${fs}px 'Alfa Slab One','Rockwell',serif`;
+  lx.letterSpacing=`${4*lScale}px`;
+  const mw=lx.measureText('MICHELS').width;
+  lx.font=`400 ${12*lScale}px 'Alfa Slab One',serif`;
+  lx.letterSpacing='0px'; lx.textBaseline='top';
+  lx.fillText('®',12*lScale+mw+lScale*1.5,lScale*2);
+  const logoData=lc.toDataURL('image/png',1.0);
+  const logoW=58; const logoH=logoW*(lH/lW);
+
+  // ── REUSABLE HEADER/FOOTER ────────────────────────────────
+  function drawHeader(title){
+    doc.setFillColor(...black); doc.rect(0,0,pw,28,'F');
+    doc.setFillColor(...red); doc.rect(0,26,pw,2.5,'F');
+    doc.setFillColor(...red); doc.rect(0,0,3,28,'F');
+    doc.addImage(logoData,'PNG',8,(28-logoH)/2,logoW,logoH);
+    doc.setDrawColor(100,100,100); doc.setLineWidth(0.3); doc.line(70,4,70,24);
+    doc.setTextColor(...white); doc.setFontSize(13); doc.setFont('helvetica','bold');
+    doc.text(title,pw/2,14,{align:'center'});
+    doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(180,180,180);
+    doc.text('Michels Power Inc.  —  APM Dashboard',pw/2,21,{align:'center'});
+    doc.setFontSize(7.5); doc.text(todayStr,pw-10,10,{align:'right'});
+    doc.text('CONFIDENTIAL',pw-10,17,{align:'right'});
+  }
+  function drawFooter(label){
+    const fy=ph-8;
+    doc.setDrawColor(...red); doc.setLineWidth(0.5); doc.line(10,fy-2,pw-10,fy-2);
+    doc.setFontSize(7); doc.setTextColor(...darkGray); doc.setFont('helvetica','normal');
+    doc.text('Michels Power Inc.  |  APM Dashboard',10,fy+1);
+    doc.text(label||todayStr,pw/2,fy+1,{align:'center'});
+    doc.text('CONFIDENTIAL — Internal Use Only',pw-10,fy+1,{align:'right'});
+  }
+  function secTitle(text,y){
+    doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+    doc.text(text,10,y);
+    doc.setDrawColor(...red); doc.setLineWidth(0.6); doc.line(10,y+2,pw-10,y+2);
+    return y+10;
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // PAGE 1 — OVERVIEW
+  // ══════════════════════════════════════════════════════════
+  drawHeader('Project Summary Report');
+  let y=36;
+
+  // Stat cards
+  const totalOpenRFIs=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
+  const totalOpenSubs=submittals.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
+  const totalRental=rental.filter(r=>r.status!=='Release').length;
+  const avgPct=filtered.length?Math.round(filtered.reduce((a,p)=>a+calcPct(p.start_date||p.start,p.end_date||p.end),0)/filtered.length):0;
+  const statCards=[
+    {label:'Total Projects', value:filtered.length, color:black},
+    {label:'Avg. Complete',  value:avgPct+'%',       color:red},
+    {label:'Open RFIs',      value:totalOpenRFIs,    color:totalOpenRFIs>0?red:darkGray},
+    {label:'Open Submittals',value:totalOpenSubs,    color:totalOpenSubs>0?[180,100,0]:darkGray},
+    {label:'Rental On Site', value:totalRental,      color:darkGray},
+  ];
+  const cw=(pw-20)/statCards.length;
+  statCards.forEach((c,i)=>{
+    const cx=10+i*cw;
+    doc.setFillColor(...lightGray); doc.roundedRect(cx,y,cw-3,20,2,2,'F');
+    doc.setFillColor(...c.color); doc.rect(cx,y,cw-3,1.5,'F');
+    doc.setFontSize(17); doc.setFont('helvetica','bold'); doc.setTextColor(...c.color);
+    doc.text(String(c.value),cx+(cw-3)/2,y+13,{align:'center'});
+    doc.setFontSize(6.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+    doc.text(c.label.toUpperCase(),cx+(cw-3)/2,y+18,{align:'center'});
+  });
+  y+=28;
+
+  // Health indicators
+  y=secTitle('OVERALL PROJECT HEALTH',y);
+  const maxPerRow=4; const hcw=(pw-20)/Math.min(filtered.length,maxPerRow);
+  filtered.forEach((p,i)=>{
+    if(i>0&&i%maxPerRow===0) y+=32;
+    const h=projectHealth(p);
+    const pct=calcPct(p.start_date||p.start,p.end_date||p.end);
+    const cx=10+(i%maxPerRow)*hcw;
+    doc.setFillColor(...h.bg); doc.roundedRect(cx,y,hcw-4,28,2,2,'F');
+    doc.setFillColor(...h.color); doc.rect(cx,y,hcw-4,2,'F');
+    doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+    doc.text(p.name.substring(0,22),cx+(hcw-4)/2,y+9,{align:'center'});
+    doc.setFontSize(13); doc.setFont('helvetica','bold'); doc.setTextColor(...h.color);
+    doc.text(h.label,cx+(hcw-4)/2,y+19,{align:'center'});
+    doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+    doc.text(`${pct}% complete`,cx+(hcw-4)/2,y+25,{align:'center'});
+  });
+  y+=36;
+
+  // Executive Summary
+  y=secTitle('EXECUTIVE SUMMARY',y);
+  const onTrack=filtered.filter(p=>projectHealth(p).label==='On Track').length;
+  const atRisk=filtered.filter(p=>projectHealth(p).label==='At Risk').length;
+  const onHold=filtered.filter(p=>projectHealth(p).label==='On Hold').length;
+  const closeout=filtered.filter(p=>['Closeout','Complete'].includes(p.status)).length;
+  const highRFIs=rfis.filter(r=>r.priority==='High'&&!['Answered','Closed'].includes(r.status)).length;
+  const overdueRFIs=rfis.filter(r=>{
+    if(['Answered','Closed'].includes(r.status)) return false;
+    if(!r.submitted) return false;
+    return Math.floor((Date.now()-new Date(r.submitted+'T00:00:00').getTime())/86400000)>=reminderDays;
+  });
+  const overdueSubs=submittals.filter(s=>{
+    if(['Approved','Approved as Noted','Rejected'].includes(s.status)) return false;
+    const dt=s.submitted_date||s.date; if(!dt) return false;
+    return Math.floor((Date.now()-new Date(dt+'T00:00:00').getTime())/86400000)>=reminderDays;
+  });
+
+  let summary=`As of ${todayStr}, Michels Power Inc. is actively managing ${filtered.length} project${filtered.length!==1?'s':''} with an average completion rate of ${avgPct}%. `;
+  if(onTrack>0) summary+=`${onTrack} project${onTrack!==1?'s are':' is'} currently on track and progressing as scheduled. `;
+  if(atRisk>0) summary+=`${atRisk} project${atRisk!==1?'s require':'requires'} immediate attention and ${atRisk!==1?'are':'is'} classified as at risk. `;
+  if(onHold>0) summary+=`${onHold} project${onHold!==1?'s are':' is'} currently on hold pending further direction. `;
+  if(closeout>0) summary+=`${closeout} project${closeout!==1?'s are':' is'} in the closeout or completion phase. `;
+  summary+=`\n\nThere ${totalOpenRFIs===1?'is':'are'} currently ${totalOpenRFIs} open RFI${totalOpenRFIs!==1?'s':''}`;
+  if(highRFIs>0) summary+=`, of which ${highRFIs} ${highRFIs===1?'is':'are'} classified as high priority`;
+  summary+=`. There ${totalOpenSubs===1?'is':'are'} ${totalOpenSubs} submittal${totalOpenSubs!==1?'s':''} pending review or approval. `;
+  if(overdueRFIs.length+overdueSubs.length>0) summary+=`${overdueRFIs.length+overdueSubs.length} item${(overdueRFIs.length+overdueSubs.length)!==1?'s':''} have exceeded the ${reminderDays}-day follow-up threshold and require prompt attention. `;
+  if(totalRental>0) summary+=`There ${totalRental===1?'is':'are'} currently ${totalRental} piece${totalRental!==1?'s':''} of rental equipment active across all projects.`;
+
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(40,40,40);
+  summary.split('\n\n').forEach(para=>{
+    const lines=doc.splitTextToSize(para.trim(),pw-20);
+    doc.text(lines,10,y); y+=lines.length*5+4;
+  });
+  y+=4;
+
+  // Key Action Items
+  y=secTitle('KEY ACTION ITEMS',y);
+  const actions=[];
+  rfis.filter(r=>r.priority==='High'&&!['Answered','Closed'].includes(r.status)).forEach(r=>{
+    actions.push({level:'HIGH',type:'RFI',label:`${r.num} — ${r.subject}`,project:r.project,detail:`Status: ${r.status} | Submitted: ${fmtD(r.submitted)}`});
+  });
+  overdueRFIs.filter(r=>r.priority!=='High').forEach(r=>{
+    const d=Math.floor((Date.now()-new Date(r.submitted+'T00:00:00').getTime())/86400000);
+    actions.push({level:'FOLLOW-UP',type:'RFI',label:`${r.num} — ${r.subject}`,project:r.project,detail:`${d} days since submission | Status: ${r.status}`});
+  });
+  overdueSubs.forEach(s=>{
+    const dt=s.submitted_date||s.date;
+    const d=Math.floor((Date.now()-new Date(dt+'T00:00:00').getTime())/86400000);
+    actions.push({level:'FOLLOW-UP',type:'Sub',label:`${s.num} — ${s.desc||s.description||''}`,project:s.project,detail:`${d} days since submission | Status: ${s.status}`});
+  });
+  filtered.filter(p=>p.status==='On Hold').forEach(p=>{
+    actions.push({level:'REVIEW',type:'Project',label:p.name,project:p.client||'',detail:'Project is on hold — review status with stakeholders'});
+  });
+
+  const prioColors={'HIGH':[180,16,30],'FOLLOW-UP':[180,100,0],'REVIEW':[21,80,150]};
+  const prioBg={'HIGH':[254,226,226],'FOLLOW-UP':[255,243,200],'REVIEW':[219,234,254]};
+
+  if(!actions.length){
+    doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,12,2,2,'F');
+    doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+    doc.text('No critical action items at this time. All projects are progressing as expected.',pw/2,y+8,{align:'center'});
+    y+=18;
+  } else {
+    actions.slice(0,10).forEach(item=>{
+      if(y>ph-30){drawFooter('Page 1  |  Overview');doc.addPage();drawHeader('Key Action Items (cont.)');y=36;}
+      const pc=prioColors[item.level]||darkGray;
+      const pb=prioBg[item.level]||lightGray;
+      doc.setFillColor(...pb); doc.roundedRect(10,y,pw-20,16,2,2,'F');
+      doc.setFillColor(...pc); doc.roundedRect(10,y,24,16,2,2,'F');
+      doc.setFontSize(6); doc.setFont('helvetica','bold'); doc.setTextColor(...white);
+      doc.text(item.level,22,y+6.5,{align:'center'});
+      doc.text(item.type,22,y+11.5,{align:'center'});
+      doc.setFontSize(8.5); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+      doc.text(String(item.label).substring(0,52),37,y+6);
+      doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+      doc.text(item.detail,37,y+12);
+      if(item.project){doc.setFontSize(7);doc.setTextColor(...midGray);doc.text(item.project,pw-12,y+6,{align:'right'});}
+      y+=20;
+    });
+  }
+  drawFooter('Page 1  |  Overview');
+
+  // ══════════════════════════════════════════════════════════
+  // ONE PAGE PER PROJECT
+  // ══════════════════════════════════════════════════════════
+  filtered.forEach((p,pi)=>{
+    doc.addPage();
+    drawHeader(`Project Status  —  ${pi+1} of ${filtered.length}`);
+    let y=36;
+
+    const pct=calcPct(p.start_date||p.start,p.end_date||p.end);
+    const h=projectHealth(p);
+    const projRFIs=rfis.filter(r=>r.project===p.name);
+    const projSubs=submittals.filter(s=>s.project===p.name);
+    const projRental=rental.filter(r=>r.project===p.name);
+    const openR=projRFIs.filter(r=>!['Answered','Closed'].includes(r.status));
+    const openS=projSubs.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status));
+    const onSiteR=projRental.filter(r=>r.status!=='Release');
+
+    // Title card
+    doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,24,3,3,'F');
+    doc.setFillColor(...h.color); doc.rect(10,y,4,24,'F');
+    doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+    doc.text(p.name||'',17,y+10);
+    doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+    const meta=[p.client&&`Client: ${p.client}`,p.number&&`#${p.number}`,p.start&&`Start: ${fmtD(p.start_date||p.start)}`,p.end&&`End: ${fmtD(p.end_date||p.end)}`].filter(Boolean).join('   |   ');
+    doc.text(meta,17,y+18);
+    doc.setFillColor(...h.bg); doc.roundedRect(pw-50,y+5,38,13,2,2,'F');
+    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...h.color);
+    doc.text(h.label,pw-31,y+13.5,{align:'center'});
+    y+=32;
+
+    // Stat cards
+    const sts=[
+      {label:'% Complete',     value:`${pct}%`,           color:h.color},
+      {label:'Open RFIs',      value:String(openR.length), color:openR.length>0?red:darkGray},
+      {label:'Open Submittals',value:String(openS.length), color:openS.length>0?[180,100,0]:darkGray},
+      {label:'Rental On Site', value:String(onSiteR.length),color:darkGray},
+    ];
+    const sw=(pw-20)/sts.length;
+    sts.forEach((s,i)=>{
+      const sx=10+i*sw;
+      doc.setFillColor(255,255,255); doc.setDrawColor(...borderGray); doc.setLineWidth(0.4);
+      doc.roundedRect(sx,y,sw-4,20,2,2,'FD');
+      doc.setFillColor(...s.color); doc.rect(sx,y,sw-4,1.5,'F');
+      doc.setFontSize(17); doc.setFont('helvetica','bold'); doc.setTextColor(...s.color);
+      doc.text(s.value,sx+(sw-4)/2,y+13,{align:'center'});
+      doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+      doc.text(s.label.toUpperCase(),sx+(sw-4)/2,y+18,{align:'center'});
+    });
+    y+=26;
+
+    // Progress bar
+    doc.setFillColor(226,224,224); doc.roundedRect(10,y,pw-20,5,2,2,'F');
+    const fw=Math.max(0,Math.min((pct/100)*(pw-20),pw-20));
+    if(fw>0){doc.setFillColor(...red); doc.roundedRect(10,y,fw,5,2,2,'F');}
+    doc.setFontSize(7); doc.setTextColor(...darkGray);
+    doc.text(`${pct}% complete`,pw-10,y+4,{align:'right'});
+    y+=12;
+
+    // Notes
+    if(p.notes&&p.notes.trim()){
+      const noteLines=doc.splitTextToSize(p.notes.trim(),pw-30);
+      const nh=noteLines.length*4.5+10;
+      doc.setFillColor(249,248,248); doc.roundedRect(10,y,pw-20,nh,2,2,'F');
+      doc.setFillColor(...red); doc.rect(10,y,2,nh,'F');
+      doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+      doc.text('Notes',15,y+6);
+      doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60);
+      doc.text(noteLines,15,y+11);
+      y+=nh+8;
+    }
+
+    // RFI Table
+    y=secTitle(`RFIs  (${openR.length} open / ${projRFIs.length} total)`,y);
+    if(!projRFIs.length){
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...midGray);
+      doc.text('No RFIs logged for this project.',10,y); y+=10;
+    } else {
+      doc.autoTable({
+        head:[['RFI #','Subject','Submitted','Due','Status','Priority']],
+        body:projRFIs.map(r=>[r.num||'',r.subject||'',fmtD(r.submitted),fmtD(r.due),r.status||'',r.priority||'']),
+        startY:y, theme:'grid',
+        headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
+        bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
+        alternateRowStyles:{fillColor:[249,248,248]},
+        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'ellipsize'},
+        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:20},3:{cellWidth:20},4:{cellWidth:24},5:{cellWidth:18}},
+        margin:{left:10,right:10},
+      });
+      y=doc.lastAutoTable.finalY+8;
+    }
+
+    // Submittal Table
+    y=secTitle(`Submittals  (${openS.length} open / ${projSubs.length} total)`,y);
+    if(!projSubs.length){
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...midGray);
+      doc.text('No submittals logged for this project.',10,y); y+=10;
+    } else {
+      doc.autoTable({
+        head:[['Sub #','Description','Spec Section','Submitted','Status','Ball in Court']],
+        body:projSubs.map(s=>[s.num||'',s.desc||s.description||'',s.spec||'',fmtD(s.submitted_date||s.date),s.status||'',s.bic||'']),
+        startY:y, theme:'grid',
+        headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
+        bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
+        alternateRowStyles:{fillColor:[249,248,248]},
+        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'ellipsize'},
+        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:22},3:{cellWidth:20},4:{cellWidth:30},5:{cellWidth:24}},
+        margin:{left:10,right:10},
+      });
+      y=doc.lastAutoTable.finalY+8;
+    }
+
+    // Rental Table
+    if(projRental.length){
+      y=secTitle(`Rental Equipment  (${onSiteR.length} on site)`,y);
+      doc.autoTable({
+        head:[['Equipment','Vendor','On Site Date','Release Date','Status']],
+        body:projRental.map(r=>[r.name||'',r.vendor||'—',fmtD(r.onsite||r.onsite_date),fmtD(r.offsite||r.release_date),r.status||'']),
+        startY:y, theme:'grid',
+        headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
+        bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
+        alternateRowStyles:{fillColor:[249,248,248]},
+        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'ellipsize'},
+        columnStyles:{0:{fontStyle:'bold',cellWidth:45},1:{cellWidth:35},2:{cellWidth:24},3:{cellWidth:24},4:{cellWidth:22}},
+        margin:{left:10,right:10},
+      });
+    }
+    drawFooter(`${p.name}  |  Page ${pi+2}`);
+  });
+
+  // ══════════════════════════════════════════════════════════
+  // SIGN-OFF PAGE
+  // ══════════════════════════════════════════════════════════
+  doc.addPage();
+  drawHeader('Report Sign-Off');
+  let sy=50;
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60);
+  const closing=doc.splitTextToSize(`This report was generated on ${todayStr} and covers ${filtered.length} active project${filtered.length!==1?'s':''} managed by Michels Power Inc. All data is sourced directly from the APM Dashboard and reflects current project status at the time of generation.`,pw-20);
+  doc.text(closing,10,sy); sy+=closing.length*5+16;
+  doc.setDrawColor(...darkGray); doc.setLineWidth(0.5);
+  doc.line(10,sy+12,100,sy+12);
+  doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+  doc.text(preparedBy,10,sy+9);
+  doc.setFontSize(8.5); doc.setFont('helvetica','bold');
+  doc.text('Prepared By',10,sy+18);
+  doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+  doc.text('Michels Power Inc.  |  APM Dashboard',10,sy+24);
+  doc.text('Date: '+todayStr,10,sy+30);
+  doc.setFillColor(...red); doc.rect(10,sy+35,90,1.5,'F');
+  drawFooter(`Page ${filtered.length+2}  |  Sign-Off`);
+
+  doc.save('Michels_Project_Summary_Report.pdf');
+}
+
+
+function renderAll(){renderProjects();renderReportPreview();renderRFI();renderSubmittals();renderRental();renderTodos();populateProjectSelects()}
 
 function openModal(id){populateProjectSelects();document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
@@ -1009,7 +1819,7 @@ renderAll();
         Paste your Supabase credentials below. Find them at <strong>supabase.com → Settings → API</strong>.<br>These are stored locally and only used to connect to your own database.
       </div>
       <div class="form-row-full"><label>Project URL</label><input type="text" id="sb-url" placeholder="https://xxxx.supabase.co"></div>
-      <div class="form-row-full"><label>Anon / Public Key</label><textarea id="sb-key" style="min-height:80px;font-family:monospace;font-size:11px" placeholder="eyJhbGci..."></textarea></div>
+      <div class="form-row-full"><label>Anon / Public Key</label><textarea id="sb-key" style="min-height:80px;font-family:'DM Mono',monospace;font-size:11px" placeholder="eyJhbGci..."></textarea></div>
       <div id="sb-status" style="font-size:12px;margin-top:8px;min-height:18px"></div>
     </div>
     <div class="modal-footer">
@@ -1049,5 +1859,6 @@ renderAll();
     </div>
   </div>
 </div>
+
 </body>
 </html>
