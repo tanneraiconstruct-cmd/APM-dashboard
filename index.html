@@ -5,11 +5,289 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>APM Project Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<style>
+/* ── styles.css ───────────────────────────────────────────
+   All application styles
+*/
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --michels-red:#c8102e;--michels-red-dark:#a00d24;--michels-red-light:#fdeaed;
+  --michels-black:#1a1a1a;--michels-dark:#2a2a2a;
+  --accent:#c8102e;--accent-light:#fdeaed;
+  --amber:#d97706;--amber-light:#fef3c7;
+  --green:#15803d;--green-light:#dcfce7;
+  --red:#c8102e;--red-light:#fdeaed;
+  --blue-light:#eff6ff;
+  --text:#1a1a1a;--text-mid:#474747;--text-muted:#888888;
+  --border:#e2e0e0;--surface:#f9f8f8;--white:#ffffff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);min-height:100vh}
+.dashboard{display:grid;grid-template-rows:auto auto 1fr;min-height:100vh}
+
+.header{background:var(--michels-black);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--michels-red)}
+.header-left{display:flex;align-items:center;gap:16px;min-width:0}
+.logo-img{display:block;flex-shrink:0}
+.header-divider{width:1px;height:36px;background:rgba(255,255,255,0.15)}
+.header-title{color:#fff;font-size:15px;font-weight:600;letter-spacing:-0.3px}
+.header-sub{color:#aaaaaa;font-size:11px;margin-top:2px}
+.header-date{color:#666;font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.3px;line-height:1.4;text-align:right}
+.settings-wrap{position:relative}
+.btn-settings{background:transparent;border:1px solid rgba(255,255,255,0.15);color:#aaa;padding:5px 11px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background .15s,border-color .15s}
+.btn-settings:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.25);color:#fff}
+.settings-dropdown{display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.14);min-width:180px;z-index:200;overflow:hidden}
+.settings-dropdown.open{display:block}
+.settings-item{display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:13px;color:var(--text);cursor:pointer;transition:background .12s;border:none;background:none;width:100%;font-family:'DM Sans',sans-serif;text-align:left}
+.settings-item:hover{background:var(--surface)}
+.settings-item svg{flex-shrink:0;opacity:.6}
+.settings-divider{height:1px;background:var(--border);margin:4px 0}
+.settings-item.danger{color:var(--red)}
+.settings-item.danger:hover{background:#fff1f1}
+.settings-item.danger svg{opacity:.7}
+
+.nav{background:var(--michels-dark);padding:0 24px;display:flex;gap:2px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.nav-tab{padding:10px 16px;font-size:13px;font-weight:500;color:#aaaaaa;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
+.nav-tab:hover{color:#ffffff}
+.nav-tab.active{color:#fff;border-bottom-color:var(--michels-red)}
+
+.main{padding:20px 24px;display:none}
+.main.active{display:block}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:15px;font-weight:600;color:var(--text)}
+.btn-add{background:var(--michels-red);color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.btn-add:hover{background:var(--michels-red-dark)}
+.btn-sm{background:transparent;border:1px solid var(--border);color:var(--text-mid);padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-sm:hover{background:var(--surface)}
+.btn-danger{border-color:#fca5a5;color:var(--red)}
+.btn-danger:hover{background:#fee2e2}
+
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.stat-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.stat-value{font-size:26px;font-weight:600;color:var(--text);line-height:1}
+.stat-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
+.stat-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-blue{background:#eef2f7;color:#374151}
+.badge-gray{background:#f1f5f9;color:var(--text-mid)}
+
+.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow-x:auto;overflow-y:hidden;margin-bottom:20px}
+table{width:100%;min-width:900px;border-collapse:collapse;table-layout:fixed}
+thead tr{background:var(--surface)}
+th{padding:10px 14px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:10px 14px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8fafc}
+.truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.progress-bar-bg{background:#e2e8f0;border-radius:4px;height:6px;width:100%;min-width:60px}
+.progress-bar-fill{height:6px;border-radius:4px;background:var(--michels-red);transition:width .3s}
+
+.status{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.priority{font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:12px;width:min(520px,92vw);max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:15px;font-weight:600}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);line-height:1;padding:2px 6px}
+.modal-body{padding:20px}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-row-full{margin-bottom:12px}
+label{display:block;font-size:11px;font-weight:600;color:var(--text-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+input[type=text],input[type=password],input[type=date],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--michels-red)}
+textarea{resize:vertical;min-height:72px}
+
+.project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
+.project-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;transition:box-shadow .15s}
+.project-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.project-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;min-width:0}
+.project-name{font-size:14px;font-weight:600;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis}
+.project-actions{display:flex;gap:6px;margin-top:12px}
+
+.empty{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px}
+.empty-icon{font-size:28px;margin-bottom:8px}
+
+/* LOGIN SCREEN */
+.login-overlay{position:fixed;inset:0;background:var(--michels-black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;padding:24px}
+.login-box{background:var(--white);border-radius:14px;width:min(420px,100%);overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.login-header{background:var(--michels-black);padding:28px 32px 24px;text-align:center;border-bottom:3px solid var(--michels-red);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.login-body{padding:28px 32px}
+.login-footer{padding:16px 32px 24px;text-align:center}
+.login-error{background:var(--red-light);color:var(--red);font-size:12px;padding:8px 12px;border-radius:6px;margin-bottom:14px;display:none;border:1px solid #fca5a5}
+.login-input-wrap{margin-bottom:14px}
+.login-input-wrap label{font-size:11px;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block}
+.login-input-wrap input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color .15s}
+.login-input-wrap input:focus{border-color:var(--michels-red)}
+.btn-login{width:100%;padding:11px;background:var(--michels-red);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-login:hover{background:var(--michels-red-dark)}
+.login-tagline{color:#888;font-size:12px;margin-top:12px}
+.login-user-list{margin-top:8px;font-size:11px;color:var(--text-muted);text-align:center}
+
+/* USER MANAGEMENT */
+.user-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border-radius:20px;padding:4px 10px;font-size:12px;color:#ddd;cursor:pointer;border:1px solid rgba(255,255,255,0.15);transition:background .15s}
+.user-badge:hover{background:rgba(255,255,255,0.18)}
+.user-avatar{width:22px;height:22px;border-radius:50%;background:var(--michels-red);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* TODO SECTION */
+.todo-section{background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:24px;overflow:hidden}
+.todo-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+.todo-header-left{display:flex;align-items:center;gap:10px;min-width:0}
+.todo-title{font-size:13px;font-weight:600;color:var(--text)}
+.todo-badge{background:var(--red-light);color:var(--red);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.todo-controls{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)}
+.todo-controls label{font-size:11px;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin:0}
+.todo-controls input[type=number]{width:52px;padding:4px 6px;font-size:12px;margin:0}
+.todo-list{padding:0}
+.todo-item{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);transition:background .12s}
+.todo-item:last-child{border-bottom:none}
+.todo-item:hover{background:var(--surface)}
+.todo-item.done{opacity:.5}
+.todo-item.done .todo-item-title{text-decoration:line-through;color:var(--text-muted)}
+.todo-check{width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s}
+.todo-check.checked{background:var(--green);border-color:var(--green)}
+.todo-check.checked::after{content:'✓';color:#fff;font-size:11px;font-weight:600}
+.todo-item-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.todo-item-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.todo-item-age{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
+.todo-urgency-high{color:var(--red);font-weight:600}
+.todo-urgency-med{color:var(--amber);font-weight:600}
+.todo-empty{padding:20px 16px;text-align:center;font-size:12px;color:var(--text-muted)}
+.todo-item.snoozed{opacity:.45}
+.todo-item.snoozed .todo-item-title{color:var(--text-muted)}
+.snooze-wrap{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.snooze-select{padding:3px 5px;font-size:11px;border:1px solid var(--border);border-radius:5px;font-family:'DM Sans',sans-serif;color:var(--text-mid);background:var(--white);cursor:pointer}
+.btn-snooze{background:transparent;border:1px solid var(--border);color:var(--amber);padding:4px 9px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background .12s}
+.btn-snooze:hover{background:var(--amber-light)}
+.btn-snooze.active{background:var(--amber-light);border-color:var(--amber);font-weight:600}
+
+/* FLATPICKR — Michels brand theme */
+.flatpickr-input{cursor:pointer!important}
+.flatpickr-input.active,.flatpickr-input:focus{border-color:var(--michels-red)!important;outline:none}
+/* Calendar popup */
+.flatpickr-calendar{
+  font-family:'DM Sans',sans-serif!important;
+  border:1px solid var(--border)!important;
+  border-radius:12px!important;
+  box-shadow:0 12px 40px rgba(0,0,0,.14)!important;
+  overflow:hidden;
+  padding:0!important;
+  width:280px!important;
+}
+/* Month header */
+.flatpickr-months{
+  background:var(--michels-black)!important;
+  border-radius:0!important;
+  padding:4px 0!important;
+}
+.flatpickr-month{height:40px!important}
+.flatpickr-current-month{
+  font-size:13px!important;
+  font-weight:600!important;
+  color:#fff!important;
+  padding-top:8px!important;
+}
+.flatpickr-current-month input.cur-year{color:#fff!important;font-weight:600!important}
+.flatpickr-current-month .flatpickr-monthDropdown-months{
+  color:#fff!important;
+  background:transparent!important;
+  font-weight:600!important;
+  font-size:13px!important;
+  -webkit-appearance:none;
+  appearance:none;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months:hover{background:rgba(255,255,255,.1)!important}
+/* Prev/next arrows */
+.flatpickr-prev-month,.flatpickr-next-month{
+  padding:8px 10px!important;
+  color:#fff!important;
+  fill:#fff!important;
+}
+.flatpickr-prev-month:hover svg,.flatpickr-next-month:hover svg{fill:var(--michels-red)!important}
+/* Weekday header */
+.flatpickr-weekdays{background:#f4f3f3!important;padding:4px 0!important}
+.flatpickr-weekday{
+  color:var(--text-muted)!important;
+  font-size:10.5px!important;
+  font-weight:700!important;
+  letter-spacing:.4px!important;
+  text-transform:uppercase!important;
+}
+/* Day grid */
+.flatpickr-days{border:none!important}
+.dayContainer{padding:6px!important;gap:2px!important}
+.flatpickr-day{
+  border-radius:7px!important;
+  height:34px!important;
+  line-height:34px!important;
+  font-size:13px!important;
+  color:var(--text)!important;
+  font-family:'DM Sans',sans-serif!important;
+  border:none!important;
+  max-width:34px!important;
+}
+.flatpickr-day:hover,.flatpickr-day.prevMonthDay:hover,.flatpickr-day.nextMonthDay:hover{
+  background:var(--michels-red-light)!important;
+  color:var(--michels-red)!important;
+  border:none!important;
+}
+.flatpickr-day.selected,.flatpickr-day.selected:hover,.flatpickr-day.startRange,.flatpickr-day.endRange{
+  background:var(--michels-red)!important;
+  border-color:var(--michels-red)!important;
+  color:#fff!important;
+  font-weight:600!important;
+}
+.flatpickr-day.today{
+  border:1.5px solid var(--michels-red)!important;
+  color:var(--michels-red)!important;
+  font-weight:600!important;
+}
+.flatpickr-day.today:hover{
+  background:var(--michels-red-light)!important;
+}
+.flatpickr-day.today.selected{
+  color:#fff!important;
+  border-color:var(--michels-red)!important;
+}
+.flatpickr-day.prevMonthDay,.flatpickr-day.nextMonthDay{color:#bbb!important}
+/* Date input field — add calendar icon via padding */
+.flatpickr-input{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;
+  background-position:right 10px center!important;
+  padding-right:32px!important;
+}
+
+/* FOCUS STATES */
+button:focus-visible,
+.nav-tab:focus-visible,
+.user-badge:focus-visible,
+.todo-check:focus-visible,
+.modal-close:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
+
+/* RESPONSIVE — 768px and below */
+@media(max-width:768px){
+  .header,.section-header,.todo-header{flex-direction:column;align-items:stretch;gap:12px}
+  .stat-row,.form-row,.project-grid{grid-template-columns:1fr}
+  .nav{overflow-x:auto;padding:0 12px}
+  .main{padding:16px 12px}
+}
+</style>
 </head>
 <body>
 
@@ -84,13 +362,31 @@
         <div class="header-sub" id="header-sub">APM Dashboard</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px">
+    <div style="display:flex;align-items:center;gap:10px">
       <div class="header-date" id="header-date"></div>
-      <span id="role-pill" style="display:none;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 9px;border-radius:20px;font-family:'DM Mono',monospace"></span>
       <span id="current-user-badge" class="user-badge" style="display:none"><span class="user-avatar" id="user-avatar-initials">?</span><span id="current-user-name">User</span></span>
-      <button id="btn-manage-users" class="btn-sm" onclick="openModal('user-modal')" style="display:none;font-size:11px;color:#aaa;border-color:rgba(255,255,255,0.2);padding:4px 10px">&#128101; Users</button>
-      <button id="btn-db-setup" class="btn-sm" onclick="openModal('supabase-modal')" style="display:none;font-size:11px;color:#aaa;border-color:rgba(255,255,255,0.2);padding:4px 10px">&#9881; DB Setup</button>
-      <button class="btn-sm" onclick="logout()" style="font-size:11px;color:#f87171;border-color:rgba(248,113,113,0.3);padding:4px 10px">Sign Out</button>
+      <!-- Settings dropdown -->
+      <div class="settings-wrap" id="settings-wrap">
+        <button class="btn-settings" onclick="toggleSettings()" id="btn-settings" aria-haspopup="true" aria-expanded="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </button>
+        <div class="settings-dropdown" id="settings-dropdown">
+          <button id="settings-manage-users" class="settings-item" onclick="closeSettings();openModal('user-modal')" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Manage Users
+          </button>
+          <button id="settings-db-setup" class="settings-item" onclick="closeSettings();openModal('supabase-modal')" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            DB Setup
+          </button>
+          <div class="settings-divider" id="settings-divider" style="display:none"></div>
+          <button class="settings-item danger" onclick="closeSettings();logout()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -134,6 +430,7 @@
           <input type="number" id="reminder-days" min="1" max="60" value="7" onchange="saveDays();renderTodos()">
           <label>days since submission</label>
           <button class="btn-sm" onclick="clearDoneTodos()" style="margin-left:6px">Clear done</button>
+          <button class="btn-sm" onclick="clearSnoozes()" title="Remove all active snoozes">Clear snoozes</button>
         </div>
       </div>
       <div class="todo-list" id="todo-list"></div>
@@ -264,8 +561,9 @@
 
 <div class="modal-overlay" id="rfi-modal">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title">New RFI</span><button class="modal-close" onclick="closeModal('rfi-modal')">×</button></div>
+    <div class="modal-header"><span class="modal-title" id="rfi-modal-title">New RFI</span><button class="modal-close" onclick="closeModal('rfi-modal')">×</button></div>
     <div class="modal-body">
+      <input type="hidden" id="rfi-edit-id" value="">
       <div class="form-row">
         <div><label>RFI #</label><input type="text" id="rfi-num" placeholder="e.g. RFI-001"></div>
         <div><label>Project</label><select id="rfi-project"><option value="">Select project</option></select></div>
@@ -291,15 +589,16 @@
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('rfi-modal')">Cancel</button>
-      <button class="btn-add" onclick="saveRFI()">Save RFI</button>
+      <button class="btn-add" id="rfi-save-btn" onclick="saveRFI()">Save RFI</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="submittal-modal">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title">New Submittal</span><button class="modal-close" onclick="closeModal('submittal-modal')">×</button></div>
+    <div class="modal-header"><span class="modal-title" id="sub-modal-title">New Submittal</span><button class="modal-close" onclick="closeModal('submittal-modal')">×</button></div>
     <div class="modal-body">
+      <input type="hidden" id="sub-edit-id" value="">
       <div class="form-row">
         <div><label>Submittal #</label><input type="text" id="sub-num" placeholder="e.g. SUB-001"></div>
         <div><label>Project</label><select id="sub-project"><option value="">Select project</option></select></div>
@@ -324,15 +623,16 @@
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('submittal-modal')">Cancel</button>
-      <button class="btn-add" onclick="saveSubmittal()">Save Submittal</button>
+      <button class="btn-add" id="sub-save-btn" onclick="saveSubmittal()">Save Submittal</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="rental-modal">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title">New Rental Equipment</span><button class="modal-close" onclick="closeModal('rental-modal')">×</button></div>
+    <div class="modal-header"><span class="modal-title" id="ren-modal-title">New Rental Equipment</span><button class="modal-close" onclick="closeModal('rental-modal')">×</button></div>
     <div class="modal-body">
+      <input type="hidden" id="ren-edit-id" value="">
       <div class="form-row">
         <div><label>Equipment</label><input type="text" id="ren-name" placeholder="e.g. 60-Ton Crane"></div>
         <div><label>Project</label><select id="ren-project"><option value="">Select project</option></select></div>
@@ -352,7 +652,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('rental-modal')">Cancel</button>
-      <button class="btn-add" onclick="saveRental()">Save Rental</button>
+      <button class="btn-add" id="ren-save-btn" onclick="saveRental()">Save Rental</button>
     </div>
   </div>
 </div>
@@ -366,6 +666,9 @@
     <div class="modal-body">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--text-mid);line-height:1.6">
         Paste your Supabase credentials below. Find them at <strong>supabase.com → Settings → API</strong>.<br>These are stored locally and only used to connect to your own database.
+      </div>
+      <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:11.5px;color:#78350f;line-height:1.6">
+        <strong>Security requirement:</strong> You must enable <strong>Row Level Security (RLS)</strong> on all Supabase tables (<code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">projects</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">rfis</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">submittals</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">rental</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">users</code>) and configure appropriate policies. Without RLS, anyone with the anon key can read or write all data directly. The app's role checks are client-side only and cannot substitute for server-side enforcement.
       </div>
       <div class="form-row-full"><label>Project URL</label><input type="text" id="sb-url" placeholder="https://xxxx.supabase.co"></div>
       <div class="form-row-full"><label>Anon / Public Key</label><textarea id="sb-key" style="min-height:80px;font-family:'DM Mono',monospace;font-size:11px" placeholder="eyJhbGci..."></textarea></div>
@@ -411,21 +714,1839 @@
   </div>
 </div>
 
-<!-- LOCAL JS — load order matters: config → app → data → auth → users → permissions → render → todos → crud → reports → exports → init -->
-<script src="js/config.js"></script>
-<script src="js/app.js"></script>
-<script src="js/data.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/users.js"></script>
-<script src="js/permissions.js"></script>
-<script src="js/render.js"></script>
-<script src="js/todos.js"></script>
-<script src="js/crud.js"></script>
-<script src="js/reports.js"></script>
-<script src="js/exports.js"></script>
+<!-- ── config.js ── -->
 <script>
-// ── Initialization ──────────────────────────────────────
+// ── SUPABASE AUTO-CONNECT ──────────────────────────────────
+// Paste your credentials here once. The app will connect automatically
+// on every visit without needing the DB Setup modal.
+// Use ONLY the anon/public key — never the service_role key.
+// Find these at: supabase.com → your project → Settings → API
+const SUPABASE_URL      = '';   // e.g. 'https://abcdefgh.supabase.co'
+const SUPABASE_ANON_KEY = '';   // e.g. 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+
+// Role permissions, colors, and shared constants
+
+const ROLE_PERMISSIONS = {
+  apm: {
+    label: 'Associate PM',
+    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    readonlyTabs: [],
+    canEdit: true,
+    canDelete: false,
+    canExport: true,
+    canManageUsers: false,
+    canDBSetup: false,
+  },
+  pm: {
+    label: 'Project Manager',
+    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    readonlyTabs: [],
+    canEdit: true,
+    canDelete: true,
+    canExport: true,
+    canManageUsers: false,
+    canDBSetup: false,
+  },
+  regional: {
+    label: 'Regional Manager',
+    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    readonlyTabs: [],
+    canEdit: true,
+    canDelete: true,
+    canExport: true,
+    canManageUsers: true,
+    canDBSetup: true,
+  },
+  // Legacy 'admin' maps to regional for backward compat
+  admin: {
+    label: 'Regional Manager',
+    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    readonlyTabs: [],
+    canEdit: true,
+    canDelete: true,
+    canExport: true,
+    canManageUsers: true,
+    canDBSetup: true,
+  },
+  superadmin: {
+    label: 'Super Admin',
+    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    readonlyTabs: [],
+    canEdit: true,
+    canDelete: true,
+    canExport: true,
+    canManageUsers: true,
+    canDBSetup: true,
+  },
+};
+
+// Role color accents shown in header badge
+const ROLE_COLORS = {
+  apm:        { bg: '#1e3a5f', text: '#93c5fd' },
+  pm:         { bg: '#14532d', text: '#86efac' },
+  regional:   { bg: '#78350f', text: '#fcd34d' },
+  admin:      { bg: '#78350f', text: '#fcd34d' },
+  superadmin: { bg: '#3b0764', text: '#d8b4fe' },
+};
+
+const statusColors = {
+  'In Progress':'badge-blue','Pre-Construction':'badge-gray','On Hold':'badge-amber','Closeout':'badge-green','Complete':'badge-green',
+  'Open':'badge-red','Under Review':'badge-amber','Answered':'badge-green','Closed':'badge-gray',
+  'Pending':'badge-gray','Approved':'badge-green','Approved as Noted':'badge-green','Revise & Resubmit':'badge-amber','Rejected':'badge-red',
+  'Ordered':'badge-amber','On Site':'badge-blue','Release':'badge-green'
+};
+const priorityColors = {'High':'badge-red','Medium':'badge-amber','Low':'badge-blue'};
+</script>
+
+<!-- ── app.js ── -->
+<script>
+// Global state variables, utility functions, modal helpers,
+// badge/format helpers, renderAll, tab & modal event listeners,
+// and initialization bootstrap
+
+// ── GLOBAL STATE ─────────────────────────────────────────
+let projects = [];
+let rfis = [];
+let submittals = [];
+let rental = [];
+let nextId = 1;
+let sb = null;
+let currentUser = null;
+let cachedUsers = [];
+let doneTodos = [];
+let snoozedTodos = {}; // key → ISO date string (snooze-until)
+let reminderDays = 7;
+let dataLoaded = false;
+let loadToken = 0;
+
+// ── HEADER DATE ──────────────────────────────────────────
+const today = new Date();
+document.getElementById('header-date').innerHTML =
+  `<div style="font-size:11px;color:#999;font-family:'DM Sans',sans-serif;font-weight:500">${today.toLocaleDateString('en-US',{weekday:'long'})}</div>` +
+  `<div style="font-size:10px;color:#666;font-family:'DM Mono',monospace;letter-spacing:.3px">${today.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>`;
+
+// ── UTILITY FUNCTIONS ────────────────────────────────────
+function badge(text,cls){return`<span class="status ${cls||statusColors[text]||'badge-gray'}">${text}</span>`}
+function prio(text){return`<span class="priority ${priorityColors[text]||'badge-gray'}">${text}</span>`}
+function fmt(d){if(!d)return'—';const p=d.split('-');return`${p[1]}/${p[2]}/${p[0]}`}
+function val(id){return document.getElementById(id).value.trim()}
+
+function calcPct(start, end){
+  if(!start||!end) return 0;
+  const s=new Date(start).getTime();
+  const e=new Date(end).getTime();
+  const n=Date.now();
+  if(n<=s) return 0;
+  if(n>=e) return 100;
+  return Math.round((n-s)/(e-s)*100);
+}
+
+// ── MODAL HELPERS ────────────────────────────────────────
+// project-modal excluded: creating a project doesn't require preloaded relational data
+const DATA_DEPENDENT_MODALS = ['rfi-modal','submittal-modal','rental-modal'];
+
+// resetModal clears a modal back to its default "new" state.
+// Pass noReset=true from editProject() to preserve pre-filled edit values.
+function resetModal(id){
+  if(id==='project-modal')     resetProjectModal();
+  else if(id==='rfi-modal')    resetRFIModal();
+  else if(id==='submittal-modal') resetSubmittalModal();
+  else if(id==='rental-modal') resetRentalModal();
+}
+
+function openModal(id, noReset=false){
+  if(DATA_DEPENDENT_MODALS.includes(id) && !dataLoaded){
+    alert('Data is still loading. Please try again in a moment.'); return;
+  }
+  if(id==='user-modal'){
+    if(!getPerms().canManageUsers){ alert('You do not have permission to manage users.'); return; }
+    renderUserList();
+  }
+  if(!noReset) resetModal(id);
+  populateProjectSelects();
+  const el=document.getElementById(id);
+  if(!el){ console.warn('openModal: no element found for id "'+id+'"'); return; }
+  el.classList.add('open');
+}
+function closeModal(id){
+  const el=document.getElementById(id);
+  if(!el){ console.warn('closeModal: no element found for id "'+id+'"'); return; }
+  el.classList.remove('open');
+}
+
+// ── SETTINGS DROPDOWN ────────────────────────────────────
+function toggleSettings(){
+  const dd = document.getElementById('settings-dropdown');
+  const btn = document.getElementById('btn-settings');
+  const isOpen = dd.classList.toggle('open');
+  btn.setAttribute('aria-expanded', isOpen);
+}
+function closeSettings(){
+  const dd = document.getElementById('settings-dropdown');
+  const btn = document.getElementById('btn-settings');
+  dd.classList.remove('open');
+  btn.setAttribute('aria-expanded','false');
+}
+// Show/hide settings menu items based on role permissions
+function applySettingsPermissions(perms){
+  const p = perms || getPerms();
+  const itemUsers   = document.getElementById('settings-manage-users');
+  const itemDB      = document.getElementById('settings-db-setup');
+  const divider     = document.getElementById('settings-divider');
+  const showAdmin   = p.canManageUsers || p.canDBSetup;
+  if(itemUsers) itemUsers.style.display = p.canManageUsers ? '' : 'none';
+  if(itemDB)    itemDB.style.display    = p.canDBSetup    ? '' : 'none';
+  if(divider)   divider.style.display   = showAdmin       ? '' : 'none';
+}
+// Close dropdown when clicking outside
+document.addEventListener('click', e=>{
+  const wrap = document.getElementById('settings-wrap');
+  if(wrap && !wrap.contains(e.target)) closeSettings();
+});
+
+// ── FLATPICKR DATE HELPERS ───────────────────────────────
+// Set a date value on an element — uses Flatpickr API if initialized,
+// falls back to raw .value for non-date fields (hidden inputs, etc.)
+function setDateVal(id, value=''){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(el._flatpickr) el._flatpickr.setDate(value || '', false);
+  else el.value = value || '';
+}
+
+// Clear a list of field IDs — Flatpickr-aware for date inputs
+function clearFields(ids){
+  ids.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(el._flatpickr) el._flatpickr.clear();
+    else el.value = '';
+  });
+}
+
+// Initialize Flatpickr on every date input in the document.
+// Safe to call multiple times — skips already-initialized inputs.
+function initDatePickers(){
+  document.querySelectorAll('input[type="date"]').forEach(el=>{
+    if(el._flatpickr) return;
+    flatpickr(el, {
+      dateFormat: 'Y-m-d',       // keeps stored value as YYYY-MM-DD
+      allowInput: true,           // user can also type manually
+      disableMobile: false,       // on mobile, use native picker (better UX)
+      monthSelectorType: 'static',
+    });
+  });
+}
+
+// ── RENDER ALL ───────────────────────────────────────────
+function renderAll(){
+  renderProjects();
+  renderReportPreview();
+  renderRFI();
+  renderSubmittals();
+  renderRental();
+  renderTodos();
+  populateProjectSelects();
+  applyWritePermissions();
+}
+
+// ── TAB NAVIGATION EVENT LISTENERS ──────────────────────
+document.querySelectorAll('.nav-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ── MODAL OVERLAY CLICK-TO-CLOSE ────────────────────────
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')});
+});
+</script>
+
+<!-- ── data.js ── -->
+<script>
+// Supabase setup, config persistence, and data load/save layer
+
+// ── SUPABASE CONFIG ───────────────────────────────────────
+function loadSBConfig(){
+  // Hardcoded constants (config.js) take priority over localStorage.
+  // This lets GitHub-hosted deployments connect automatically without any manual setup.
+  const url = (SUPABASE_URL      && SUPABASE_URL.trim())      || localStorage.getItem('apm_sb_url') || '';
+  const key = (SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.trim()) || localStorage.getItem('apm_sb_key') || '';
+  if(url && key){
+    try{ sb = supabase.createClient(url.trim(), key.trim()); }catch(e){ sb=null; }
+    // Keep localStorage in sync so verifyCurrentUser and other checks work offline too
+    if(url) localStorage.setItem('apm_sb_url', url);
+    if(key) localStorage.setItem('apm_sb_key', key);
+  }
+  const urlEl=document.getElementById('sb-url');
+  const keyEl=document.getElementById('sb-key');
+  if(urlEl && url) urlEl.value=url;
+  if(keyEl && key) keyEl.value=key;
+}
+
+async function saveSupabaseConfig(){
+  const url=document.getElementById('sb-url').value.trim();
+  const key=document.getElementById('sb-key').value.trim();
+  if(!url||!key){ setSBStatus('Please fill in both fields.','var(--red)'); return; }
+  localStorage.setItem('apm_sb_url', url);
+  localStorage.setItem('apm_sb_key', key);
+  try{ sb = supabase.createClient(url, key); }catch(e){ setSBStatus('Invalid credentials: '+e.message,'var(--red)'); return; }
+  setSBStatus('Connected! Loading data...','var(--green)');
+  try{
+    await loadData();
+    if(!dataLoaded){ setSBStatus('Connection succeeded but data failed to load. Check your table permissions.','var(--red)'); return; }
+    closeModal('supabase-modal');
+  }catch(e){
+    setSBStatus('Error loading data: '+e.message,'var(--red)');
+  }
+}
+
+function setSBStatus(msg,color){
+  const el=document.getElementById('sb-status');
+  if(el){ el.textContent=msg; el.style.color=color||'var(--text-muted)'; }
+}
+
+// ── DATA LAYER (Supabase with localStorage fallback) ──────
+function saveLocal(){
+  try{
+    localStorage.setItem('apm_projects',   JSON.stringify(projects));
+    localStorage.setItem('apm_rfis',       JSON.stringify(rfis));
+    localStorage.setItem('apm_submittals', JSON.stringify(submittals));
+    localStorage.setItem('apm_rental',     JSON.stringify(rental));
+    localStorage.setItem('apm_done_todos', JSON.stringify(doneTodos));
+  }catch(e){}
+}
+
+function saveData(){
+  saveLocal();
+  if(!sb) return;
+  // Supabase writes happen in individual save functions
+}
+
+async function loadData(){
+  // Reset state at the top of every load — prevents stale "ready" state during reconnect
+  dataLoaded = false;
+  const token = ++loadToken;
+
+  if(!sb){
+    // fallback to localStorage
+    try{
+      projects   = JSON.parse(localStorage.getItem('apm_projects')   || '[]');
+      rfis       = JSON.parse(localStorage.getItem('apm_rfis')       || '[]');
+      submittals = JSON.parse(localStorage.getItem('apm_submittals') || '[]');
+      rental     = JSON.parse(localStorage.getItem('apm_rental')     || '[]');
+      doneTodos  = JSON.parse(localStorage.getItem('apm_done_todos') || '[]');
+    }catch(e){}
+    // Only commit if this is still the latest load request
+    if(token !== loadToken) return;
+    dataLoaded = true; renderAll(); return;
+  }
+  try{
+    const [p,r,s,rn] = await Promise.all([
+      sb.from('projects').select('*').order('id'),
+      sb.from('rfis').select('*').order('id'),
+      sb.from('submittals').select('*').order('id'),
+      sb.from('rental').select('*').order('id'),
+    ]);
+    // Discard results if a newer load has started
+    if(token !== loadToken) return;
+    // Check each table for Supabase errors before overwriting local state.
+    // Without this, a permission error or missing table silently looks like "no data"
+    // and would wipe the localStorage cache with empty arrays.
+    if(p.error || r.error || s.error || rn.error){
+      const err = p.error || r.error || s.error || rn.error;
+      console.error('Supabase table error', err);
+      throw new Error(err.message || 'Failed to load one or more tables — check table permissions in Supabase.');
+    }
+    projects   = (p.data||[]).map(x=>({...x, start:x.start_date, end:x.end_date}));
+    rfis       = (r.data||[]).map(x=>({...x, desc:x.description}));
+    submittals = (s.data||[]).map(x=>({...x, date:x.submitted_date, desc:x.description}));
+    rental     = (rn.data||[]).map(x=>({...x, onsite:x.onsite_date, offsite:x.release_date}));
+    doneTodos  = JSON.parse(localStorage.getItem('apm_done_todos') || '[]');
+    saveLocal();
+  }catch(e){ console.error('Supabase load error',e); return; }
+  if(token !== loadToken) return;
+  dataLoaded = true; renderAll();
+}
+
+// ── SUPABASE WRITE HELPERS ────────────────────────────────
+async function sbInsert(table, row){ if(sb) await sb.from(table).insert(row); }
+async function sbUpdate(table, id, row){ if(sb) await sb.from(table).update(row).eq('id',id); }
+async function sbDelete(table, id){ if(sb) await sb.from(table).delete().eq('id',id); }
+</script>
+
+<!-- ── auth.js ── -->
+<script>
+// Password hashing, user loading/saving, login, session, logout
+
+async function hashPassword(password){
+  const msgBuffer = new TextEncoder().encode(password + 'michels_apm_salt');
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// Load users from Supabase, fall back to localStorage
+async function loadUsers(){
+  if(sb){
+    try{
+      const res = await sb.from('users').select('*').order('id');
+      if(!res.error){
+        cachedUsers = (res.data||[]).map(u=>({
+          username: u.username,
+          displayName: u.display_name||u.username,
+          role: u.role||'user',
+          hash: u.hash,
+          id: u.id
+        }));
+        localStorage.setItem('apm_users', JSON.stringify(cachedUsers));
+        return cachedUsers;
+      }
+    }catch(e){ console.error('loadUsers error',e); }
+  }
+  try{ cachedUsers = JSON.parse(localStorage.getItem('apm_users')||'[]'); }catch(e){ cachedUsers=[]; }
+  return cachedUsers;
+}
+
+async function saveUserToDB(user){
+  if(sb){
+    try{
+      const res = await sb.from('users').insert({
+        username: user.username,
+        display_name: user.displayName,
+        role: user.role,
+        hash: user.hash
+      });
+      if(res.error){ console.error('saveUserToDB insert error',res.error); return false; }
+    }catch(e){ console.error('saveUserToDB error',e); return false; }
+  }
+  // sync to localStorage
+  let users = JSON.parse(localStorage.getItem('apm_users')||'[]');
+  users = users.filter(u=>u.username!==user.username);
+  users.push(user);
+  localStorage.setItem('apm_users', JSON.stringify(users));
+  return true;
+}
+
+async function deleteUserFromDB(username){
+  if(sb){
+    try{ await sb.from('users').delete().eq('username', username); }catch(e){ console.error('deleteUserFromDB error',e); }
+  }
+  let users = JSON.parse(localStorage.getItem('apm_users')||'[]');
+  users = users.filter(u=>u.username!==username);
+  localStorage.setItem('apm_users', JSON.stringify(users));
+}
+
+async function initDefaultAdmin(){
+  const users = await loadUsers();
+  if(!users.length){
+    // Generate a random first-run password using the Web Crypto API.
+    // A known default (e.g. "Michels2024!") would let anyone reach a fresh
+    // environment and immediately take over, so we generate one instead.
+    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
+    const arr = new Uint8Array(14);
+    crypto.getRandomValues(arr);
+    const pw = Array.from(arr).map(b => chars[b % chars.length]).join('');
+    const hash = await hashPassword(pw);
+    const admin = {username:'admin',displayName:'Administrator',role:'superadmin',hash};
+    await saveUserToDB(admin);
+    // Show generated credentials once — they will not be displayed again
+    setTimeout(()=>{
+      alert(
+        'First-run setup complete.\n\n' +
+        'A default administrator account has been created:\n\n' +
+        '  Username: admin\n' +
+        '  Password: ' + pw + '\n\n' +
+        'Copy this password now — it will not be shown again.\n' +
+        'After signing in, create your own account and remove this default.'
+      );
+    }, 400);
+  }
+}
+
+async function attemptLogin(){
+  const username = document.getElementById('login-username').value.trim().toLowerCase();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display='none';
+  if(!username||!password){ errEl.style.display='block'; errEl.textContent='Please enter your username and password.'; return; }
+  // Show loading state
+  const btn = document.querySelector('.btn-login');
+  btn.textContent='Signing in...'; btn.disabled=true;
+  const hash = await hashPassword(password);
+  const users = await loadUsers();
+  const user = users.find(u=>u.username.toLowerCase()===username && u.hash===hash);
+  btn.textContent='Sign In'; btn.disabled=false;
+  if(!user){ errEl.style.display='block'; errEl.textContent='Incorrect username or password. Please try again.'; document.getElementById('login-password').value=''; return; }
+  currentUser = user;
+  const sessionData = JSON.stringify({username:user.username,displayName:user.displayName,role:user.role});
+  sessionStorage.setItem('apm_session', sessionData);
+  // Remember Me - store in localStorage with expiry
+  const rememberMe = document.getElementById('remember-me')?.checked;
+  if(rememberMe){
+    const expiry = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 days
+    localStorage.setItem('apm_remember', JSON.stringify({session:sessionData, expiry}));
+  } else {
+    localStorage.removeItem('apm_remember');
+  }
+  showDashboard();
+}
+
+function checkSession(){
+  try{
+    // Check active session first
+    const s = JSON.parse(sessionStorage.getItem('apm_session')||'null');
+    if(s){ currentUser=s; showDashboard(); return true; }
+    // Check Remember Me
+    const r = JSON.parse(localStorage.getItem('apm_remember')||'null');
+    if(r && r.expiry > Date.now()){
+      const s2 = JSON.parse(r.session);
+      currentUser = s2;
+      sessionStorage.setItem('apm_session', r.session);
+      showDashboard(); return true;
+    } else if(r) {
+      localStorage.removeItem('apm_remember'); // expired, clean up
+    }
+  }catch(e){}
+  return false;
+}
+
+function showDashboard(){
+  document.getElementById('login-overlay').style.display='none';
+  document.getElementById('main-dashboard').style.display='';
+  const perms = getPerms();
+
+  // ── User badge ──────────────────────────────────────────
+  const badge = document.getElementById('current-user-badge');
+  const nameEl = document.getElementById('current-user-name');
+  const initEl = document.getElementById('user-avatar-initials');
+  if(badge && currentUser){
+    nameEl.textContent = currentUser.displayName||currentUser.username;
+    const parts = (currentUser.displayName||currentUser.username).split(' ');
+    initEl.textContent = parts.map(p=>p[0]).join('').toUpperCase().substring(0,2);
+    badge.style.display='inline-flex';
+  }
+
+  // ── Header subtitle ─────────────────────────────────────
+  const sub = document.getElementById('header-sub');
+  if(sub) sub.textContent = perms.label;
+
+  // ── Show/hide settings menu items by permission ─────────
+  applySettingsPermissions(perms);
+
+  // ── Nav tab visibility ───────────────────────────────────
+  document.querySelectorAll('.nav-tab').forEach(tab=>{
+    const tabKey = tab.dataset.tab;
+    const allowed = perms.tabs.includes(tabKey);
+    tab.style.display = allowed ? '' : 'none';
+  });
+  // If the currently active tab got hidden, switch to first allowed tab
+  const activeTab = document.querySelector('.nav-tab.active');
+  if(activeTab && activeTab.style.display==='none'){
+    const firstAllowed = document.querySelector('.nav-tab:not([style*="display: none"])');
+    if(firstAllowed) firstAllowed.click();
+  }
+
+  loadSBConfig();
+  loadData();
+  verifyCurrentUser(); // async — corrects role if tampered or changed by an admin
+}
+
+// Re-verify the restored session against the live user store.
+// This catches role changes made by admins and detects deleted accounts.
+// It also makes localStorage role tampering visible: if someone edits
+// apm_session to claim superadmin, the check will demote them back to
+// their actual stored role (or log them out if the account is gone).
+async function verifyCurrentUser(){
+  if(!currentUser) return;
+  try{
+    const users = await loadUsers();
+    const match = users.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
+    if(!match){
+      logout();
+      alert('Your account no longer exists. Please contact an administrator.');
+      return;
+    }
+    if(match.role !== currentUser.role){
+      // Role was changed — update the session to reflect the real role
+      currentUser = {username:match.username, displayName:match.displayName||match.username, role:match.role};
+      sessionStorage.setItem('apm_session', JSON.stringify(currentUser));
+      // Re-apply header UI and permission state
+      const perms = getPerms();
+      const roleColor = ROLE_COLORS[match.role] || ROLE_COLORS.apm;
+      const sub = document.getElementById('header-sub');
+      if(sub) sub.textContent = perms.label;
+      applySettingsPermissions(perms);
+      document.querySelectorAll('.nav-tab').forEach(tab=>{
+        tab.style.display = perms.tabs.includes(tab.dataset.tab) ? '' : 'none';
+      });
+      applyWritePermissions();
+    }
+  }catch(e){ /* Network error — trust cached session for this visit */ }
+}
+
+function logout(){
+  currentUser=null;
+  sessionStorage.removeItem('apm_session');
+  localStorage.removeItem('apm_remember');
+  document.getElementById('main-dashboard').style.display='none';
+  document.getElementById('login-overlay').style.display='flex';
+  document.getElementById('login-username').value='';
+  document.getElementById('login-password').value='';
+  document.getElementById('login-error').style.display='none';
+  document.getElementById('current-user-badge').style.display='none';
+}
+</script>
+
+<!-- ── users.js ── -->
+<script>
+// User management: render list, add, remove
+
+async function renderUserList(){
+  const users = await loadUsers();
+  const el = document.getElementById('user-list');
+  if(!el) return;
+  if(!users.length){ el.innerHTML='<div style="color:var(--text-muted);font-size:12px">No users yet.</div>'; return; }
+  const roleLabels = {superadmin:'Super Admin',regional:'Regional Mgr',admin:'Regional Mgr',pm:'Project Manager',apm:'APM',user:'User'};
+  const rolePillStyle = {
+    superadmin:'background:#3b0764;color:#d8b4fe',
+    regional:'background:#78350f;color:#fcd34d',
+    admin:'background:#78350f;color:#fcd34d',
+    pm:'background:#14532d;color:#86efac',
+    apm:'background:#1e3a5f;color:#93c5fd',
+    user:'background:#374151;color:#d1d5db',
+  };
+  el.innerHTML = users.map(u=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--michels-red);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">
+          ${(u.displayName||u.username).split(' ').map(p=>p[0]).join('').toUpperCase().substring(0,2)}
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px">
+            ${u.displayName||u.username}
+            <span style="font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace;${rolePillStyle[u.role]||rolePillStyle.user}">${roleLabels[u.role]||u.role}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">@${u.username}</div>
+        </div>
+      </div>
+      ${u.username==='admin'?'<span style="font-size:11px;color:var(--text-muted)">Protected</span>':`<button class="btn-sm btn-danger" onclick="removeUser('${u.username}')">Remove</button>`}
+    </div>
+  `).join('');
+}
+
+async function addUser(){
+  const username = document.getElementById('new-username').value.trim().toLowerCase();
+  const displayName = document.getElementById('new-displayname').value.trim();
+  const password = document.getElementById('new-password').value;
+  const role = document.getElementById('new-role').value;
+  const errEl = document.getElementById('user-add-error');
+  const addBtn = document.querySelector('#user-modal .btn-add');
+  errEl.style.display='none';
+  if(!username||!password){ errEl.style.display='block'; errEl.textContent='Username and password are required.'; return; }
+  // Always fetch fresh from Supabase to check duplicates
+  const users = await loadUsers();
+  if(users.find(u=>u.username.toLowerCase()===username)){
+    errEl.style.display='block'; errEl.textContent='That username already exists.'; return;
+  }
+  if(addBtn){ addBtn.textContent='Adding...'; addBtn.disabled=true; }
+  const hash = await hashPassword(password);
+  const newUser = {username,displayName:displayName||username,role,hash};
+  const ok = await saveUserToDB(newUser);
+  if(addBtn){ addBtn.textContent='Add User'; addBtn.disabled=false; }
+  if(!ok){ errEl.style.display='block'; errEl.textContent='Error saving user. Please try again.'; return; }
+  ['new-username','new-displayname','new-password'].forEach(id=>document.getElementById(id).value='');
+  renderUserList();
+}
+
+async function removeUser(username){
+  if(username==='admin') return;
+  await deleteUserFromDB(username);
+  renderUserList();
+}
+</script>
+
+<!-- ── permissions.js ── -->
+<script>
+// Role-based permission helpers and UI enforcement
+
+function getPerms(){ return ROLE_PERMISSIONS[currentUser?.role] || ROLE_PERMISSIONS.apm; }
+
+// Returns true if current user can perform a write action on a given tab
+function canWrite(tab){
+  const p = getPerms();
+  return p.canEdit && !p.readonlyTabs.includes(tab);
+}
+
+// Apply write/delete permissions after each render.
+// Hides "+ New" and "Delete" buttons for roles without canEdit/canDelete.
+// Centralised here so every renderAll() call enforces it automatically.
+function applyWritePermissions(){
+  const p = getPerms();
+
+  // Add/new buttons — keyed by their onclick string fragment
+  const addButtons = document.querySelectorAll('.btn-add[onclick*="openModal("]');
+  addButtons.forEach(btn=>{
+    // Determine which tab this button belongs to by walking up to .main
+    const tab = btn.closest('.main');
+    const tabKey = tab ? tab.id.replace('tab-','') : null;
+    const allow = tabKey ? canWrite(tabKey) : p.canEdit;
+    btn.style.display = allow ? '' : 'none';
+  });
+
+  // Delete buttons
+  const delButtons = document.querySelectorAll('.btn-danger[onclick*="deleteItem"]');
+  delButtons.forEach(btn=>{
+    btn.style.display = p.canDelete ? '' : 'none';
+  });
+
+  // Edit buttons — project cards and log table rows
+  document.querySelectorAll('.btn-sm[onclick*="editProject"]').forEach(btn=>{
+    btn.style.display = canWrite('projects') ? '' : 'none';
+  });
+  document.querySelectorAll('.btn-sm[onclick*="editRFI"]').forEach(btn=>{
+    btn.style.display = canWrite('rfi') ? '' : 'none';
+  });
+  document.querySelectorAll('.btn-sm[onclick*="editSubmittal"]').forEach(btn=>{
+    btn.style.display = canWrite('submittal') ? '' : 'none';
+  });
+  document.querySelectorAll('.btn-sm[onclick*="editRental"]').forEach(btn=>{
+    btn.style.display = canWrite('rental') ? '' : 'none';
+  });
+
+  // Export buttons — always show if canExport
+  const exportBtns = document.querySelectorAll('.btn-sm[onclick*="exportTo"]');
+  exportBtns.forEach(btn=>{ btn.style.display = p.canExport ? '' : 'none'; });
+
+  // PDF summary button
+  const pdfBtn = document.querySelector('.btn-add[onclick*="generateSummaryPDF"]');
+  if(pdfBtn) pdfBtn.style.display = p.canExport ? '' : 'none';
+}
+</script>
+
+<!-- ── render.js ── -->
+<script>
+// Render functions for projects, RFIs, submittals, rental,
+// and project select dropdowns
+
+function renderProjects(){
+  const g=document.getElementById('project-grid');
+  const s=document.getElementById('project-stats');
+  const openRFIs=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
+  const openSubs=submittals.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
+  const onSiteRental=rental.filter(r=>r.status!=='Release').length;
+  s.innerHTML=`
+    <div class="stat-card">
+      <div class="stat-label">Projects</div>
+      <div class="stat-value">${projects.length}</div>
+      <div class="stat-sub">${projects.filter(p=>p.status==='In Progress').length} in progress</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">RFIs</div>
+      <div class="stat-value">${rfis.length}</div>
+      <div class="stat-sub">${openRFIs} open</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Submittals</div>
+      <div class="stat-value">${submittals.length}</div>
+      <div class="stat-sub">${openSubs} pending</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Rental</div>
+      <div class="stat-value">${rental.length}</div>
+      <div class="stat-sub">${onSiteRental} on site</div>
+    </div>
+  `;
+  if(!projects.length){g.innerHTML='<div class="empty"><div class="empty-icon">📁</div>No projects yet. Click "+ New Project" to get started.</div>';return}
+  g.innerHTML=projects.map(p=>`
+    <div class="project-card">
+      <div class="project-card-header">
+        <div>
+          <div class="project-name">${p.name}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'DM Mono',monospace">${p.number}</div>
+        </div>
+        ${badge(p.status)}
+      </div>
+      <div style="font-size:12px;color:var(--text-mid);margin-bottom:8px">Client: <strong>${p.client}</strong></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">${fmt(p.start)} → ${fmt(p.end)}</div>
+      <div style="font-size:11px;color:var(--text-mid);margin-bottom:4px;display:flex;justify-content:space-between"><span>Progress</span><span>${calcPct(p.start,p.end)}%</span></div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${calcPct(p.start,p.end)}%"></div></div>
+      ${p.notes?`<div style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5">${p.notes}</div>`:''}
+      <div class="project-actions">
+        <button class="btn-sm" onclick="editProject(${p.id})">Edit</button>
+        <button class="btn-sm btn-danger" onclick="deleteItem('projects',${p.id})">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderRFI(){
+  const body=document.getElementById('rfi-body');
+  if(!rfis.length){body.innerHTML=`<tr><td colspan="8" class="empty">No RFIs logged yet.</td></tr>`;return}
+  body.innerHTML=rfis.map(r=>`
+    <tr>
+      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${r.num}</td>
+      <td class="truncate">${r.subject}</td>
+      <td class="truncate">${r.project}</td>
+      <td>${fmt(r.submitted)}</td>
+      <td>${fmt(r.due)}</td>
+      <td>${badge(r.status)}</td>
+      <td>${prio(r.priority)}</td>
+      <td style="white-space:nowrap"><button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+function renderSubmittals(){
+  const body=document.getElementById('submittal-body');
+  if(!submittals.length){body.innerHTML=`<tr><td colspan="8" class="empty">No submittals logged yet.</td></tr>`;return}
+  body.innerHTML=submittals.map(s=>`
+    <tr>
+      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${s.num}</td>
+      <td class="truncate">${s.desc}</td>
+      <td class="truncate">${s.project}</td>
+      <td class="truncate">${s.spec}</td>
+      <td>${fmt(s.date)}</td>
+      <td>${badge(s.status)}</td>
+      <td class="truncate">${s.bic}</td>
+      <td style="white-space:nowrap"><button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+function renderRental(){
+  const body=document.getElementById('rental-body');
+  if(!rental.length){body.innerHTML=`<tr><td colspan="8" class="empty">No rental equipment logged yet.</td></tr>`;return}
+  body.innerHTML=rental.map(r=>`
+    <tr>
+      <td class="truncate">${r.name}</td>
+      <td class="truncate">${r.project}</td>
+      <td class="truncate">${r.vendor}</td>
+      <td>${fmt(r.onsite)}</td>
+      <td>${fmt(r.offsite)}</td>
+      <td>${badge(r.status)}</td>
+      <td style="white-space:nowrap"><button class="btn-sm" onclick="editRental(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rental',${r.id})">Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+function populateProjectSelects(){
+  const ids=['rfi-project','sub-project','ren-project'];
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    const cur=el.value;
+    el.innerHTML='<option value="">Select project</option>'+projects.map(p=>`<option value="${p.name}"${p.name===cur?' selected':''}>${p.name}</option>`).join('');
+  });
+}
+</script>
+
+<!-- ── todos.js ── -->
+<script>
+// Follow-up reminder / todo logic
+
+function loadTodoState(){
+  try{
+    doneTodos = JSON.parse(localStorage.getItem('apm_done_todos')||'[]');
+    snoozedTodos = JSON.parse(localStorage.getItem('apm_snoozed_todos')||'{}');
+    reminderDays = parseInt(localStorage.getItem('apm_reminder_days')||'7');
+    const inp = document.getElementById('reminder-days');
+    if(inp) inp.value = reminderDays;
+  }catch(e){}
+}
+
+function saveDays(){
+  reminderDays = parseInt(document.getElementById('reminder-days').value)||7;
+  localStorage.setItem('apm_reminder_days', String(reminderDays));
+}
+
+function toggleTodo(key){
+  if(doneTodos.includes(key)) doneTodos=doneTodos.filter(k=>k!==key);
+  else doneTodos.push(key);
+  localStorage.setItem('apm_done_todos', JSON.stringify(doneTodos));
+  renderTodos();
+}
+
+function clearDoneTodos(){
+  doneTodos=[];
+  localStorage.setItem('apm_done_todos','[]');
+  renderTodos();
+}
+
+function clearSnoozes(){
+  snoozedTodos={};
+  localStorage.setItem('apm_snoozed_todos','{}');
+  renderTodos();
+}
+
+function snoozeItem(key, days){
+  const until = new Date();
+  until.setDate(until.getDate() + days);
+  snoozedTodos[key] = until.toISOString().slice(0,10); // YYYY-MM-DD
+  localStorage.setItem('apm_snoozed_todos', JSON.stringify(snoozedTodos));
+  renderTodos();
+}
+
+function isSnoozed(key){
+  const until = snoozedTodos[key];
+  if(!until) return false;
+  const today = new Date().toISOString().slice(0,10);
+  return until > today;
+}
+
+function snoozeUntilLabel(key){
+  const until = snoozedTodos[key];
+  if(!until) return '';
+  const d = new Date(until+'T00:00:00');
+  return 'Snoozed until ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+function daysSince(dateStr){
+  if(!dateStr) return null;
+  const d=new Date(dateStr+'T00:00:00');
+  return Math.floor((Date.now()-d.getTime())/(1000*60*60*24));
+}
+
+function renderTodos(){
+  const list = document.getElementById('todo-list');
+  const countEl = document.getElementById('todo-count');
+  if(!list) return;
+  const threshold = reminderDays;
+  const items = [];
+
+  rfis.forEach(r=>{
+    if(['Answered','Closed'].includes(r.status)) return;
+    const days = daysSince(r.submitted);
+    if(days===null||days<threshold) return;
+    items.push({key:`rfi-${r.id}`,type:'RFI',num:r.num,subject:r.subject,project:r.project,status:r.status,days});
+  });
+  submittals.forEach(s=>{
+    if(['Approved','Approved as Noted','Rejected'].includes(s.status)) return;
+    const days = daysSince(s.date);
+    if(days===null||days<threshold) return;
+    items.push({key:`sub-${s.id}`,type:'Submittal',num:s.num,subject:s.desc,project:s.project,status:s.status,days});
+  });
+
+  items.sort((a,b)=>b.days-a.days);
+  // Pending = not done AND not snoozed
+  const pending = items.filter(i=>!doneTodos.includes(i.key) && !isSnoozed(i.key));
+  countEl.textContent = pending.length;
+  countEl.style.display = pending.length ? 'inline-flex' : 'none';
+
+  if(!items.length){
+    list.innerHTML=`<div class="todo-empty">No follow-ups needed — all open RFIs and submittals are within the ${threshold}-day window.</div>`;
+    return;
+  }
+  list.innerHTML = items.map(item=>{
+    const done = doneTodos.includes(item.key);
+    const snoozed = isSnoozed(item.key);
+    const urgency = item.days >= threshold*3 ? 'todo-urgency-high' : item.days >= threshold*2 ? 'todo-urgency-med' : '';
+    const daysLabel = `${item.days} days since submission`;
+    const snoozeLabel = snoozed ? snoozeUntilLabel(item.key) : '';
+    return `<div class="todo-item${done?' done':''}${snoozed?' snoozed':''}">
+      <div class="todo-check${done?' checked':''}" onclick="toggleTodo('${item.key}')"></div>
+      <div>
+        <div class="todo-item-title">${item.type} ${item.num} — ${item.subject}</div>
+        <div class="todo-item-meta">
+          <span class="status ${statusColors[item.status]||'badge-gray'}">${item.status}</span>
+          <span style="font-size:11px;color:var(--text-muted)">${item.project}</span>
+          <span class="todo-item-age ${urgency}">${daysLabel}</span>
+          ${snoozeLabel ? `<span style="font-size:11px;color:var(--amber);font-family:'DM Mono',monospace">⏸ ${snoozeLabel}</span>` : ''}
+        </div>
+      </div>
+      <div class="snooze-wrap">
+        <select class="snooze-select" id="snooze-sel-${item.key}">
+          <option value="1">1 day</option>
+          <option value="2">2 days</option>
+          <option value="3">3 days</option>
+        </select>
+        <button class="btn-snooze${snoozed?' active':''}" onclick="snoozeItem('${item.key}', parseInt(document.getElementById('snooze-sel-${item.key}').value))" title="${snoozed?snoozeLabel:'Snooze this item'}">
+          ${snoozed ? '⏸ Snoozed' : '⏸ Snooze'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+</script>
+
+<!-- ── crud.js ── -->
+<script>
+// Create, read, update, delete operations for all data types
+
+// ── MODAL RESET FUNCTIONS ─────────────────────────────────
+function resetProjectModal(){
+  clearFields(['p-id','p-name','p-client','p-number','p-start','p-end','p-notes']);
+  document.getElementById('p-status').value='Pre-Construction';
+  document.getElementById('project-modal-title').textContent='New Project';
+  document.getElementById('project-save-btn').textContent='Save Project';
+}
+function resetRFIModal(){
+  clearFields(['rfi-edit-id','rfi-num','rfi-subject','rfi-submitted','rfi-due','rfi-desc']);
+  document.getElementById('rfi-project').value='';
+  document.getElementById('rfi-status').value='Open';
+  document.getElementById('rfi-priority').value='Low';
+  document.getElementById('rfi-modal-title').textContent='New RFI';
+  document.getElementById('rfi-save-btn').textContent='Save RFI';
+}
+function resetSubmittalModal(){
+  clearFields(['sub-edit-id','sub-num','sub-desc','sub-spec','sub-date']);
+  document.getElementById('sub-project').value='';
+  document.getElementById('sub-status').value='Pending';
+  document.getElementById('sub-bic').value='Contractor';
+  document.getElementById('sub-modal-title').textContent='New Submittal';
+  document.getElementById('sub-save-btn').textContent='Save Submittal';
+}
+function resetRentalModal(){
+  clearFields(['ren-edit-id','ren-name','ren-vendor','ren-onsite','ren-offsite']);
+  document.getElementById('ren-project').value='';
+  document.getElementById('ren-status').value='Ordered';
+  document.getElementById('ren-modal-title').textContent='New Rental Equipment';
+  document.getElementById('ren-save-btn').textContent='Save Rental';
+}
+
+function editProject(id){
+  if(!canWrite('projects')){ alert('You do not have permission to edit projects.'); return; }
+  const p=projects.find(x=>x.id===id);
+  if(!p)return;
+  document.getElementById('project-modal-title').textContent='Edit Project';
+  document.getElementById('project-save-btn').textContent='Update Project';
+  document.getElementById('p-id').value=id;
+  document.getElementById('p-name').value=p.name;
+  document.getElementById('p-client').value=p.client||'';
+  document.getElementById('p-number').value=p.number||'';
+  setDateVal('p-start', p.start||'');
+  setDateVal('p-end', p.end||'');
+  document.getElementById('p-status').value=p.status||'In Progress';
+  document.getElementById('p-notes').value=p.notes||'';
+  openModal('project-modal', true); // noReset=true — preserve pre-filled edit values
+}
+
+function editRFI(id){
+  if(!canWrite('rfi')){ alert('You do not have permission to edit RFIs.'); return; }
+  const r=rfis.find(x=>x.id===id);
+  if(!r)return;
+  document.getElementById('rfi-modal-title').textContent='Edit RFI';
+  document.getElementById('rfi-save-btn').textContent='Update RFI';
+  document.getElementById('rfi-edit-id').value=id;
+  document.getElementById('rfi-num').value=r.num||'';
+  document.getElementById('rfi-subject').value=r.subject||'';
+  document.getElementById('rfi-project').value=r.project||'';
+  setDateVal('rfi-submitted', r.submitted||'');
+  setDateVal('rfi-due', r.due||'');
+  document.getElementById('rfi-status').value=r.status||'Open';
+  document.getElementById('rfi-priority').value=r.priority||'Low';
+  document.getElementById('rfi-desc').value=r.desc||r.description||'';
+  openModal('rfi-modal', true);
+}
+
+function editSubmittal(id){
+  if(!canWrite('submittal')){ alert('You do not have permission to edit submittals.'); return; }
+  const s=submittals.find(x=>x.id===id);
+  if(!s)return;
+  document.getElementById('sub-modal-title').textContent='Edit Submittal';
+  document.getElementById('sub-save-btn').textContent='Update Submittal';
+  document.getElementById('sub-edit-id').value=id;
+  document.getElementById('sub-num').value=s.num||'';
+  document.getElementById('sub-desc').value=s.desc||s.description||'';
+  document.getElementById('sub-project').value=s.project||'';
+  document.getElementById('sub-spec').value=s.spec||'';
+  setDateVal('sub-date', s.date||s.submitted_date||'');
+  document.getElementById('sub-status').value=s.status||'Pending';
+  document.getElementById('sub-bic').value=s.bic||'Contractor';
+  openModal('submittal-modal', true);
+}
+
+function editRental(id){
+  if(!canWrite('rental')){ alert('You do not have permission to edit rental records.'); return; }
+  const r=rental.find(x=>x.id===id);
+  if(!r)return;
+  document.getElementById('ren-modal-title').textContent='Edit Rental Equipment';
+  document.getElementById('ren-save-btn').textContent='Update Rental';
+  document.getElementById('ren-edit-id').value=id;
+  document.getElementById('ren-name').value=r.name||'';
+  document.getElementById('ren-project').value=r.project||'';
+  document.getElementById('ren-vendor').value=r.vendor||'';
+  setDateVal('ren-onsite', r.onsite||r.onsite_date||'');
+  setDateVal('ren-offsite', r.offsite||r.release_date||'');
+  document.getElementById('ren-status').value=r.status||'Ordered';
+  openModal('rental-modal', true);
+}
+
+async function saveProject(){
+  if(!getPerms().canEdit){ alert('You do not have permission to create or edit projects.'); return; }
+  const name=val('p-name');if(!name)return alert('Project name required.');
+  const editId=document.getElementById('p-id').value;
+  const data={name,client:val('p-client'),number:val('p-number'),start_date:val('p-start'),end_date:val('p-end'),status:val('p-status'),notes:val('p-notes')};
+  if(editId){
+    const id=parseInt(editId);
+    const idx=projects.findIndex(x=>x.id===id);
+    if(idx>-1){ projects[idx]={...projects[idx],...data,start:data.start_date,end:data.end_date}; await sbUpdate('projects',id,data); }
+  } else {
+    const row={...data};
+    if(sb){ const res=await sb.from('projects').insert(row).select(); if(res.error){ alert('Failed to save project: '+res.error.message); return; } if(res.data?.[0]) projects.push({...res.data[0],start:res.data[0].start_date,end:res.data[0].end_date}); }
+    else { projects.push({id:nextId++,...data,start:data.start_date,end:data.end_date}); }
+  }
+  resetProjectModal();
+  closeModal('project-modal');saveLocal();renderAll();
+}
+
+async function saveRFI(){
+  if(!getPerms().canEdit){ alert('You do not have permission to create or edit RFIs.'); return; }
+  const num=val('rfi-num'),subject=val('rfi-subject');if(!num||!subject)return alert('RFI # and subject required.');
+  const editId=document.getElementById('rfi-edit-id').value;
+  const data={num,project:val('rfi-project'),subject,submitted:val('rfi-submitted'),due:val('rfi-due'),status:val('rfi-status'),priority:val('rfi-priority'),description:val('rfi-desc')};
+  if(editId){
+    const id=parseInt(editId);
+    const idx=rfis.findIndex(x=>x.id===id);
+    if(idx>-1){ rfis[idx]={...rfis[idx],...data,desc:data.description}; await sbUpdate('rfis',id,data); }
+  } else {
+    if(sb){ const res=await sb.from('rfis').insert(data).select(); if(res.error){ alert('Failed to save RFI: '+res.error.message); return; } if(res.data?.[0]) rfis.push({...res.data[0],desc:res.data[0].description}); }
+    else rfis.push({id:nextId++,...data,desc:data.description});
+  }
+  resetRFIModal();
+  closeModal('rfi-modal');saveLocal();renderAll();
+}
+
+async function saveSubmittal(){
+  if(!getPerms().canEdit){ alert('You do not have permission to create or edit submittals.'); return; }
+  const num=val('sub-num'),desc=val('sub-desc');if(!num||!desc)return alert('Submittal # and description required.');
+  const editId=document.getElementById('sub-edit-id').value;
+  const data={num,project:val('sub-project'),description:desc,spec:val('sub-spec'),submitted_date:val('sub-date'),status:val('sub-status'),bic:val('sub-bic')};
+  if(editId){
+    const id=parseInt(editId);
+    const idx=submittals.findIndex(x=>x.id===id);
+    if(idx>-1){ submittals[idx]={...submittals[idx],...data,desc,date:data.submitted_date}; await sbUpdate('submittals',id,data); }
+  } else {
+    if(sb){ const res=await sb.from('submittals').insert(data).select(); if(res.error){ alert('Failed to save submittal: '+res.error.message); return; } if(res.data?.[0]) submittals.push({...res.data[0],desc:res.data[0].description,date:res.data[0].submitted_date}); }
+    else submittals.push({id:nextId++,...data,desc,date:data.submitted_date});
+  }
+  resetSubmittalModal();
+  closeModal('submittal-modal');saveLocal();renderAll();
+}
+
+async function saveRental(){
+  if(!getPerms().canEdit){ alert('You do not have permission to create or edit rental records.'); return; }
+  const name=val('ren-name');if(!name)return alert('Equipment name required.');
+  const editId=document.getElementById('ren-edit-id').value;
+  const data={name,project:val('ren-project'),vendor:val('ren-vendor'),onsite_date:val('ren-onsite'),release_date:val('ren-offsite'),status:val('ren-status')};
+  if(editId){
+    const id=parseInt(editId);
+    const idx=rental.findIndex(x=>x.id===id);
+    if(idx>-1){ rental[idx]={...rental[idx],...data,onsite:data.onsite_date,offsite:data.release_date}; await sbUpdate('rental',id,data); }
+  } else {
+    if(sb){ const res=await sb.from('rental').insert(data).select(); if(res.error){ alert('Failed to save rental: '+res.error.message); return; } if(res.data?.[0]) rental.push({...res.data[0],onsite:res.data[0].onsite_date,offsite:res.data[0].release_date}); }
+    else rental.push({id:nextId++,...data,onsite:data.onsite_date,offsite:data.release_date});
+  }
+  resetRentalModal();
+  closeModal('rental-modal');saveLocal();renderAll();
+}
+
+async function deleteItem(store,id){
+  if(!getPerms().canDelete){ alert('You do not have permission to delete records.'); return; }
+  const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental'};
+  if(store==='projects')projects=projects.filter(x=>x.id!==id);
+  else if(store==='rfis')rfis=rfis.filter(x=>x.id!==id);
+  else if(store==='submittals')submittals=submittals.filter(x=>x.id!==id);
+  else if(store==='rental')rental=rental.filter(x=>x.id!==id);
+  if(tableMap[store]) await sbDelete(tableMap[store],id);
+  saveLocal();renderAll();
+}
+</script>
+
+<!-- ── reports.js ── -->
+<script>
+// Project health scoring, report preview, and PDF summary generation
+
+function projectHealth(p){
+  const pct = calcPct(p.start_date||p.start, p.end_date||p.end);
+  const highR = rfis.filter(r=>r.project===p.name&&r.priority==='High'&&!['Answered','Closed'].includes(r.status)).length;
+  const openR = rfis.filter(r=>r.project===p.name&&!['Answered','Closed'].includes(r.status)).length;
+  const openS = submittals.filter(s=>s.project===p.name&&!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
+  if(p.status==='On Hold')                         return {label:'On Hold',  cls:'badge-amber', color:[180,120,0],  bg:[255,243,200]};
+  if(['Complete','Closeout'].includes(p.status))   return {label:'Closeout', cls:'badge-green', color:[21,128,61],  bg:[220,252,231]};
+  if(highR>0||openR>5||openS>5)                    return {label:'At Risk',  cls:'badge-red',   color:[180,16,30],  bg:[254,226,226]};
+  if(pct>0&&pct<100)                               return {label:'On Track', cls:'badge-green', color:[21,128,61],  bg:[220,252,231]};
+  return {label:'Pending', cls:'badge-gray', color:[80,80,80], bg:[241,245,249]};
+}
+
+function renderReportPreview(){
+  const sel = document.getElementById('report-filter');
+  const preview = document.getElementById('report-preview');
+  const badge = document.getElementById('report-count');
+  if(!sel||!preview) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">All Projects</option>' +
+    projects.map(p=>`<option value="${p.id}"${p.id==cur?' selected':''}>${p.name}</option>`).join('');
+  const filtered = cur ? projects.filter(p=>p.id==cur) : projects;
+  if(badge){ badge.textContent=filtered.length; badge.style.display=filtered.length?'inline-flex':'none'; }
+  if(!filtered.length){
+    preview.innerHTML='<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:16px">No projects to preview.</div>';
+    return;
+  }
+  preview.innerHTML = filtered.map(p=>{
+    const pct = calcPct(p.start_date||p.start, p.end_date||p.end);
+    const h = projectHealth(p);
+    const openR = rfis.filter(r=>r.project===p.name&&!['Answered','Closed'].includes(r.status)).length;
+    const openS = submittals.filter(s=>s.project===p.name&&!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
+    const onSite = rental.filter(r=>r.project===p.name&&r.status!=='Release').length;
+    return `<div style="display:grid;grid-template-columns:1fr auto;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">
+          ${p.name} <span class="status ${h.cls}" style="font-size:10px;margin-left:6px">${h.label}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:5px">${[p.client,p.number].filter(Boolean).join(' · ')}</div>
+        <div style="display:flex;gap:14px;font-size:11px;color:var(--text-mid)">
+          <span>Open RFIs: <strong>${openR}</strong></span>
+          <span>Open Submittals: <strong>${openS}</strong></span>
+          <span>Rental On Site: <strong>${onSite}</strong></span>
+        </div>
+      </div>
+      <div style="text-align:right;min-width:90px">
+        <div style="font-size:22px;font-weight:700;color:var(--michels-red)">${pct}%</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">complete</div>
+        <div class="progress-bar-bg" style="width:90px"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function generateSummaryPDF(){
+  if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){alert('PDF library not loaded yet.');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const pw=210; const ph=297;
+  const red=[200,16,46]; const black=[26,26,26]; const white=[255,255,255];
+  const darkGray=[80,80,80]; const midGray=[180,180,180]; const lightGray=[245,244,244];
+  const borderGray=[210,208,208];
+
+  const sel=document.getElementById('report-filter');
+  const filtered=sel?.value?projects.filter(p=>p.id==sel.value):projects;
+  if(!filtered.length){alert('No projects to report on.');return;}
+
+  await document.fonts.ready;
+
+  const fmtD=d=>{if(!d)return'—';const p=d.split('-');return`${p[1]}/${p[2]}/${p[0]}`;};
+  const todayStr=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const preparedBy=(typeof currentUser!=='undefined'&&currentUser)?(currentUser.displayName||currentUser.username):'APM';
+  const reminderDays=parseInt(document.getElementById('reminder-days')?.value||'7');
+
+  // ── LOGO ──────────────────────────────────────────────────
+  const lScale=6; const lW=340*lScale; const lH=60*lScale;
+  const lc=document.createElement('canvas'); lc.width=lW; lc.height=lH;
+  const lx=lc.getContext('2d');
+  lx.imageSmoothingEnabled=true; lx.imageSmoothingQuality='high';
+  lx.fillStyle='#1a1a1a'; lx.fillRect(0,0,lW,lH);
+  const lg=lx.createLinearGradient(0,0,0,lH);
+  lg.addColorStop(0,'#c0102a'); lg.addColorStop(0.5,'#c8102e'); lg.addColorStop(1,'#a80e26');
+  const fs=44*lScale;
+  lx.font=`400 ${fs}px 'Alfa Slab One','Rockwell',serif`;
+  lx.letterSpacing=`${4*lScale}px`; lx.textAlign='left'; lx.textBaseline='middle';
+  lx.fillStyle=lg; lx.fillText('MICHELS',12*lScale,lH*0.52);
+  lx.font=`400 ${fs}px 'Alfa Slab One','Rockwell',serif`;
+  lx.letterSpacing=`${4*lScale}px`;
+  const mw=lx.measureText('MICHELS').width;
+  lx.font=`400 ${12*lScale}px 'Alfa Slab One',serif`;
+  lx.letterSpacing='0px'; lx.textBaseline='top';
+  lx.fillText('®',12*lScale+mw+lScale*1.5,lScale*2);
+  const logoData=lc.toDataURL('image/png',1.0);
+  const logoW=58; const logoH=logoW*(lH/lW);
+
+  // ── REUSABLE HEADER/FOOTER ────────────────────────────────
+  function drawHeader(title){
+    doc.setFillColor(...black); doc.rect(0,0,pw,28,'F');
+    doc.setFillColor(...red); doc.rect(0,26,pw,2.5,'F');
+    doc.setFillColor(...red); doc.rect(0,0,3,28,'F');
+    doc.addImage(logoData,'PNG',8,(28-logoH)/2,logoW,logoH);
+    doc.setDrawColor(100,100,100); doc.setLineWidth(0.3); doc.line(70,4,70,24);
+    doc.setTextColor(...white); doc.setFontSize(13); doc.setFont('helvetica','bold');
+    doc.text(title,pw/2,14,{align:'center'});
+    doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(180,180,180);
+    doc.text('Michels Power Inc.  —  APM Dashboard',pw/2,21,{align:'center'});
+    doc.setFontSize(7.5); doc.text(todayStr,pw-10,10,{align:'right'});
+    doc.text('CONFIDENTIAL',pw-10,17,{align:'right'});
+  }
+  function drawFooter(label){
+    const fy=ph-8;
+    doc.setDrawColor(...red); doc.setLineWidth(0.5); doc.line(10,fy-2,pw-10,fy-2);
+    doc.setFontSize(7); doc.setTextColor(...darkGray); doc.setFont('helvetica','normal');
+    doc.text('Michels Power Inc.  |  APM Dashboard',10,fy+1);
+    doc.text(label||todayStr,pw/2,fy+1,{align:'center'});
+    doc.text('CONFIDENTIAL — Internal Use Only',pw-10,fy+1,{align:'right'});
+  }
+  function secTitle(text,y){
+    doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+    doc.text(text,10,y);
+    doc.setDrawColor(...red); doc.setLineWidth(0.6); doc.line(10,y+2,pw-10,y+2);
+    return y+10;
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // PAGE 1 — OVERVIEW
+  // ══════════════════════════════════════════════════════════
+  drawHeader('Project Summary Report');
+  let y=36;
+
+  // Stat cards
+  const totalOpenRFIs=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
+  const totalOpenSubs=submittals.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
+  const totalRental=rental.filter(r=>r.status!=='Release').length;
+  const avgPct=filtered.length?Math.round(filtered.reduce((a,p)=>a+calcPct(p.start_date||p.start,p.end_date||p.end),0)/filtered.length):0;
+  const statCards=[
+    {label:'Total Projects', value:filtered.length, color:black},
+    {label:'Avg. Complete',  value:avgPct+'%',       color:red},
+    {label:'Open RFIs',      value:totalOpenRFIs,    color:totalOpenRFIs>0?red:darkGray},
+    {label:'Open Submittals',value:totalOpenSubs,    color:totalOpenSubs>0?[180,100,0]:darkGray},
+    {label:'Rental On Site', value:totalRental,      color:darkGray},
+  ];
+  const cw=(pw-20)/statCards.length;
+  statCards.forEach((c,i)=>{
+    const cx=10+i*cw;
+    doc.setFillColor(...lightGray); doc.roundedRect(cx,y,cw-3,20,2,2,'F');
+    doc.setFillColor(...c.color); doc.rect(cx,y,cw-3,1.5,'F');
+    doc.setFontSize(17); doc.setFont('helvetica','bold'); doc.setTextColor(...c.color);
+    doc.text(String(c.value),cx+(cw-3)/2,y+13,{align:'center'});
+    doc.setFontSize(6.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+    doc.text(c.label.toUpperCase(),cx+(cw-3)/2,y+18,{align:'center'});
+  });
+  y+=28;
+
+  // Health indicators
+  y=secTitle('OVERALL PROJECT HEALTH',y);
+  const maxPerRow=4; const hcw=(pw-20)/Math.min(filtered.length,maxPerRow);
+  filtered.forEach((p,i)=>{
+    if(i>0&&i%maxPerRow===0) y+=32;
+    const h=projectHealth(p);
+    const pct=calcPct(p.start_date||p.start,p.end_date||p.end);
+    const cx=10+(i%maxPerRow)*hcw;
+    doc.setFillColor(...h.bg); doc.roundedRect(cx,y,hcw-4,28,2,2,'F');
+    doc.setFillColor(...h.color); doc.rect(cx,y,hcw-4,2,'F');
+    doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+    doc.text(p.name.substring(0,22),cx+(hcw-4)/2,y+9,{align:'center'});
+    doc.setFontSize(13); doc.setFont('helvetica','bold'); doc.setTextColor(...h.color);
+    doc.text(h.label,cx+(hcw-4)/2,y+19,{align:'center'});
+    doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+    doc.text(`${pct}% complete`,cx+(hcw-4)/2,y+25,{align:'center'});
+  });
+  y+=36;
+
+  // Executive Summary
+  y=secTitle('EXECUTIVE SUMMARY',y);
+  const onTrack=filtered.filter(p=>projectHealth(p).label==='On Track').length;
+  const atRisk=filtered.filter(p=>projectHealth(p).label==='At Risk').length;
+  const onHold=filtered.filter(p=>projectHealth(p).label==='On Hold').length;
+  const closeout=filtered.filter(p=>['Closeout','Complete'].includes(p.status)).length;
+  const highRFIs=rfis.filter(r=>r.priority==='High'&&!['Answered','Closed'].includes(r.status)).length;
+  const overdueRFIs=rfis.filter(r=>{
+    if(['Answered','Closed'].includes(r.status)) return false;
+    if(!r.submitted) return false;
+    return Math.floor((Date.now()-new Date(r.submitted+'T00:00:00').getTime())/86400000)>=reminderDays;
+  });
+  const overdueSubs=submittals.filter(s=>{
+    if(['Approved','Approved as Noted','Rejected'].includes(s.status)) return false;
+    const dt=s.submitted_date||s.date; if(!dt) return false;
+    return Math.floor((Date.now()-new Date(dt+'T00:00:00').getTime())/86400000)>=reminderDays;
+  });
+
+  let summary=`As of ${todayStr}, Michels Power Inc. is actively managing ${filtered.length} project${filtered.length!==1?'s':''} with an average completion rate of ${avgPct}%. `;
+  if(onTrack>0) summary+=`${onTrack} project${onTrack!==1?'s are':' is'} currently on track and progressing as scheduled. `;
+  if(atRisk>0) summary+=`${atRisk} project${atRisk!==1?'s require':'requires'} immediate attention and ${atRisk!==1?'are':'is'} classified as at risk. `;
+  if(onHold>0) summary+=`${onHold} project${onHold!==1?'s are':' is'} currently on hold pending further direction. `;
+  if(closeout>0) summary+=`${closeout} project${closeout!==1?'s are':' is'} in the closeout or completion phase. `;
+  summary+=`\n\nThere ${totalOpenRFIs===1?'is':'are'} currently ${totalOpenRFIs} open RFI${totalOpenRFIs!==1?'s':''}`;
+  if(highRFIs>0) summary+=`, of which ${highRFIs} ${highRFIs===1?'is':'are'} classified as high priority`;
+  summary+=`. There ${totalOpenSubs===1?'is':'are'} ${totalOpenSubs} submittal${totalOpenSubs!==1?'s':''} pending review or approval. `;
+  if(overdueRFIs.length+overdueSubs.length>0) summary+=`${overdueRFIs.length+overdueSubs.length} item${(overdueRFIs.length+overdueSubs.length)!==1?'s':''} have exceeded the ${reminderDays}-day follow-up threshold and require prompt attention. `;
+  if(totalRental>0) summary+=`There ${totalRental===1?'is':'are'} currently ${totalRental} piece${totalRental!==1?'s':''} of rental equipment active across all projects.`;
+
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(40,40,40);
+  summary.split('\n\n').forEach(para=>{
+    const lines=doc.splitTextToSize(para.trim(),pw-20);
+    doc.text(lines,10,y); y+=lines.length*5+4;
+  });
+  y+=4;
+
+  // Key Action Items
+  y=secTitle('KEY ACTION ITEMS',y);
+  const actions=[];
+  rfis.filter(r=>r.priority==='High'&&!['Answered','Closed'].includes(r.status)).forEach(r=>{
+    actions.push({level:'HIGH',type:'RFI',label:`${r.num} — ${r.subject}`,project:r.project,detail:`Status: ${r.status} | Submitted: ${fmtD(r.submitted)}`});
+  });
+  overdueRFIs.filter(r=>r.priority!=='High').forEach(r=>{
+    const d=Math.floor((Date.now()-new Date(r.submitted+'T00:00:00').getTime())/86400000);
+    actions.push({level:'FOLLOW-UP',type:'RFI',label:`${r.num} — ${r.subject}`,project:r.project,detail:`${d} days since submission | Status: ${r.status}`});
+  });
+  overdueSubs.forEach(s=>{
+    const dt=s.submitted_date||s.date;
+    const d=Math.floor((Date.now()-new Date(dt+'T00:00:00').getTime())/86400000);
+    actions.push({level:'FOLLOW-UP',type:'Sub',label:`${s.num} — ${s.desc||s.description||''}`,project:s.project,detail:`${d} days since submission | Status: ${s.status}`});
+  });
+  filtered.filter(p=>p.status==='On Hold').forEach(p=>{
+    actions.push({level:'REVIEW',type:'Project',label:p.name,project:p.client||'',detail:'Project is on hold — review status with stakeholders'});
+  });
+
+  const prioColors={'HIGH':[180,16,30],'FOLLOW-UP':[180,100,0],'REVIEW':[21,80,150]};
+  const prioBg={'HIGH':[254,226,226],'FOLLOW-UP':[255,243,200],'REVIEW':[219,234,254]};
+
+  if(!actions.length){
+    doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,12,2,2,'F');
+    doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+    doc.text('No critical action items at this time. All projects are progressing as expected.',pw/2,y+8,{align:'center'});
+    y+=18;
+  } else {
+    actions.slice(0,10).forEach(item=>{
+      if(y>ph-30){drawFooter('Page 1  |  Overview');doc.addPage();drawHeader('Key Action Items (cont.)');y=36;}
+      const pc=prioColors[item.level]||darkGray;
+      const pb=prioBg[item.level]||lightGray;
+      doc.setFillColor(...pb); doc.roundedRect(10,y,pw-20,16,2,2,'F');
+      doc.setFillColor(...pc); doc.roundedRect(10,y,24,16,2,2,'F');
+      doc.setFontSize(6); doc.setFont('helvetica','bold'); doc.setTextColor(...white);
+      doc.text(item.level,22,y+6.5,{align:'center'});
+      doc.text(item.type,22,y+11.5,{align:'center'});
+      doc.setFontSize(8.5); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+      doc.text(String(item.label).substring(0,52),37,y+6);
+      doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+      doc.text(item.detail,37,y+12);
+      if(item.project){doc.setFontSize(7);doc.setTextColor(...midGray);doc.text(item.project,pw-12,y+6,{align:'right'});}
+      y+=20;
+    });
+  }
+  drawFooter('Page 1  |  Overview');
+
+  // ══════════════════════════════════════════════════════════
+  // ONE PAGE PER PROJECT
+  // ══════════════════════════════════════════════════════════
+  filtered.forEach((p,pi)=>{
+    doc.addPage();
+    drawHeader(`Project Status  —  ${pi+1} of ${filtered.length}`);
+    let y=36;
+
+    const pct=calcPct(p.start_date||p.start,p.end_date||p.end);
+    const h=projectHealth(p);
+    const projRFIs=rfis.filter(r=>r.project===p.name);
+    const projSubs=submittals.filter(s=>s.project===p.name);
+    const projRental=rental.filter(r=>r.project===p.name);
+    const openR=projRFIs.filter(r=>!['Answered','Closed'].includes(r.status));
+    const openS=projSubs.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status));
+    const onSiteR=projRental.filter(r=>r.status!=='Release');
+
+    // Title card
+    doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,24,3,3,'F');
+    doc.setFillColor(...h.color); doc.rect(10,y,4,24,'F');
+    doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+    doc.text(p.name||'',17,y+10);
+    doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+    const meta=[p.client&&`Client: ${p.client}`,p.number&&`#${p.number}`,p.start&&`Start: ${fmtD(p.start_date||p.start)}`,p.end&&`End: ${fmtD(p.end_date||p.end)}`].filter(Boolean).join('   |   ');
+    doc.text(meta,17,y+18);
+    doc.setFillColor(...h.bg); doc.roundedRect(pw-50,y+5,38,13,2,2,'F');
+    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...h.color);
+    doc.text(h.label,pw-31,y+13.5,{align:'center'});
+    y+=32;
+
+    // Stat cards
+    const sts=[
+      {label:'% Complete',     value:`${pct}%`,           color:h.color},
+      {label:'Open RFIs',      value:String(openR.length), color:openR.length>0?red:darkGray},
+      {label:'Open Submittals',value:String(openS.length), color:openS.length>0?[180,100,0]:darkGray},
+      {label:'Rental On Site', value:String(onSiteR.length),color:darkGray},
+    ];
+    const sw=(pw-20)/sts.length;
+    sts.forEach((s,i)=>{
+      const sx=10+i*sw;
+      doc.setFillColor(255,255,255); doc.setDrawColor(...borderGray); doc.setLineWidth(0.4);
+      doc.roundedRect(sx,y,sw-4,20,2,2,'FD');
+      doc.setFillColor(...s.color); doc.rect(sx,y,sw-4,1.5,'F');
+      doc.setFontSize(17); doc.setFont('helvetica','bold'); doc.setTextColor(...s.color);
+      doc.text(s.value,sx+(sw-4)/2,y+13,{align:'center'});
+      doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+      doc.text(s.label.toUpperCase(),sx+(sw-4)/2,y+18,{align:'center'});
+    });
+    y+=26;
+
+    // Progress bar
+    doc.setFillColor(226,224,224); doc.roundedRect(10,y,pw-20,5,2,2,'F');
+    const fw=Math.max(0,Math.min((pct/100)*(pw-20),pw-20));
+    if(fw>0){doc.setFillColor(...red); doc.roundedRect(10,y,fw,5,2,2,'F');}
+    doc.setFontSize(7); doc.setTextColor(...darkGray);
+    doc.text(`${pct}% complete`,pw-10,y+4,{align:'right'});
+    y+=12;
+
+    // Notes
+    if(p.notes&&p.notes.trim()){
+      const noteLines=doc.splitTextToSize(p.notes.trim(),pw-30);
+      const nh=noteLines.length*4.5+10;
+      doc.setFillColor(249,248,248); doc.roundedRect(10,y,pw-20,nh,2,2,'F');
+      doc.setFillColor(...red); doc.rect(10,y,2,nh,'F');
+      doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+      doc.text('Notes',15,y+6);
+      doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60);
+      doc.text(noteLines,15,y+11);
+      y+=nh+8;
+    }
+
+    // RFI Table
+    y=secTitle(`RFIs  (${openR.length} open / ${projRFIs.length} total)`,y);
+    if(!projRFIs.length){
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...midGray);
+      doc.text('No RFIs logged for this project.',10,y); y+=10;
+    } else {
+      doc.autoTable({
+        head:[['RFI #','Subject','Submitted','Due','Status','Priority']],
+        body:projRFIs.map(r=>[r.num||'',r.subject||'',fmtD(r.submitted),fmtD(r.due),r.status||'',r.priority||'']),
+        startY:y, theme:'grid',
+        headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
+        bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
+        alternateRowStyles:{fillColor:[249,248,248]},
+        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'ellipsize'},
+        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:20},3:{cellWidth:20},4:{cellWidth:24},5:{cellWidth:18}},
+        margin:{left:10,right:10},
+      });
+      y=doc.lastAutoTable.finalY+8;
+    }
+
+    // Submittal Table
+    y=secTitle(`Submittals  (${openS.length} open / ${projSubs.length} total)`,y);
+    if(!projSubs.length){
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...midGray);
+      doc.text('No submittals logged for this project.',10,y); y+=10;
+    } else {
+      doc.autoTable({
+        head:[['Sub #','Description','Spec Section','Submitted','Status','Ball in Court']],
+        body:projSubs.map(s=>[s.num||'',s.desc||s.description||'',s.spec||'',fmtD(s.submitted_date||s.date),s.status||'',s.bic||'']),
+        startY:y, theme:'grid',
+        headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
+        bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
+        alternateRowStyles:{fillColor:[249,248,248]},
+        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'ellipsize'},
+        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:22},3:{cellWidth:20},4:{cellWidth:30},5:{cellWidth:24}},
+        margin:{left:10,right:10},
+      });
+      y=doc.lastAutoTable.finalY+8;
+    }
+
+    // Rental Table
+    if(projRental.length){
+      y=secTitle(`Rental Equipment  (${onSiteR.length} on site)`,y);
+      doc.autoTable({
+        head:[['Equipment','Vendor','On Site Date','Release Date','Status']],
+        body:projRental.map(r=>[r.name||'',r.vendor||'—',fmtD(r.onsite||r.onsite_date),fmtD(r.offsite||r.release_date),r.status||'']),
+        startY:y, theme:'grid',
+        headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
+        bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
+        alternateRowStyles:{fillColor:[249,248,248]},
+        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'ellipsize'},
+        columnStyles:{0:{fontStyle:'bold',cellWidth:45},1:{cellWidth:35},2:{cellWidth:24},3:{cellWidth:24},4:{cellWidth:22}},
+        margin:{left:10,right:10},
+      });
+    }
+    drawFooter(`${p.name}  |  Page ${pi+2}`);
+  });
+
+  // ══════════════════════════════════════════════════════════
+  // SIGN-OFF PAGE
+  // ══════════════════════════════════════════════════════════
+  doc.addPage();
+  drawHeader('Report Sign-Off');
+  let sy=50;
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60);
+  const closing=doc.splitTextToSize(`This report was generated on ${todayStr} and covers ${filtered.length} active project${filtered.length!==1?'s':''} managed by Michels Power Inc. All data is sourced directly from the APM Dashboard and reflects current project status at the time of generation.`,pw-20);
+  doc.text(closing,10,sy); sy+=closing.length*5+16;
+  doc.setDrawColor(...darkGray); doc.setLineWidth(0.5);
+  doc.line(10,sy+12,100,sy+12);
+  doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+  doc.text(preparedBy,10,sy+9);
+  doc.setFontSize(8.5); doc.setFont('helvetica','bold');
+  doc.text('Prepared By',10,sy+18);
+  doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+  doc.text('Michels Power Inc.  |  APM Dashboard',10,sy+24);
+  doc.text('Date: '+todayStr,10,sy+30);
+  doc.setFillColor(...red); doc.rect(10,sy+35,90,1.5,'F');
+  drawFooter(`Page ${filtered.length+2}  |  Sign-Off`);
+
+  doc.save('Michels_Project_Summary_Report.pdf');
+}
+</script>
+
+<!-- ── exports.js ── -->
+<script>
+// Excel and PDF export for RFI, Submittal, and Rental logs
+
+// ── EXCEL EXPORT ─────────────────────────────────────────
+function exportToExcel(type){
+  if(typeof XLSX === 'undefined'){ alert('Excel library not loaded yet. Please try again in a moment.'); return; }
+
+  let data = [];
+  let filename = '';
+
+  if(type === 'rfi'){
+    filename = 'RFI_Log.xlsx';
+    data = rfis.map(r=>({
+      'RFI #':        r.num||'',
+      'Subject':      r.subject||'',
+      'Project':      r.project||'',
+      'Date Submitted': r.submitted||'',
+      'Response Due': r.due||'',
+      'Status':       r.status||'',
+      'Priority':     r.priority||'',
+      'Description':  r.desc||r.description||''
+    }));
+  } else if(type === 'submittal'){
+    filename = 'Submittal_Log.xlsx';
+    data = submittals.map(s=>({
+      'Submittal #':   s.num||'',
+      'Description':   s.desc||s.description||'',
+      'Project':       s.project||'',
+      'Spec Section':  s.spec||'',
+      'Date Submitted':s.date||s.submitted_date||'',
+      'Status':        s.status||'',
+      'Ball in Court': s.bic||''
+    }));
+  } else if(type === 'rental'){
+    filename = 'Rental_Equipment.xlsx';
+    data = rental.map(r=>({
+      'Equipment':    r.name||'',
+      'Project':      r.project||'',
+      'Vendor':       r.vendor||'',
+      'On Site Date': r.onsite||r.onsite_date||'',
+      'Release Date': r.offsite||r.release_date||'',
+      'Status':       r.status||''
+    }));
+  }
+
+  if(!data.length){ alert('No data to export yet.'); return; }
+
+  const ws = XLSX.utils.json_to_sheet(data);
+
+  // Style column widths
+  const colWidths = Object.keys(data[0]).map(k=>({ wch: Math.max(k.length, 15) }));
+  ws['!cols'] = colWidths;
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, type==='rfi'?'RFI Log':type==='submittal'?'Submittal Log':'Rental Equipment');
+
+  // Add metadata sheet
+  const meta = XLSX.utils.aoa_to_sheet([
+    ['Michels Power Inc. — APM Dashboard Export'],
+    ['Generated:', new Date().toLocaleString()],
+    ['Total Records:', data.length]
+  ]);
+  XLSX.utils.book_append_sheet(wb, meta, 'Info');
+
+  XLSX.writeFile(wb, filename);
+}
+
+// ── PDF EXPORT ────────────────────────────────────────────
+async function exportToPDF(type){
+  if(typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined'){
+    alert('PDF library not loaded yet. Please try again in a moment.'); return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const pw = 297; const ph = 210;
+  const red = [200,16,46]; const black = [26,26,26]; const white = [255,255,255];
+  const lightGray = [249,248,248]; const midGray = [226,224,224]; const darkGray = [80,80,80];
+
+  let title='', filename='', columns=[], rows=[], stats=[];
+
+  if(type==='rfi'){
+    title='RFI Log'; filename='RFI_Log.pdf';
+    columns=['RFI #','Subject','Project','Submitted','Due','Status','Priority'];
+    rows=rfis.map(r=>[r.num||'',r.subject||'',r.project||'',r.submitted||'',r.due||'',r.status||'',r.priority||'']);
+    const open=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
+    const high=rfis.filter(r=>r.priority==='High').length;
+    stats=[
+      {label:'Total RFIs', value:rfis.length},
+      {label:'Open', value:open},
+      {label:'Answered', value:rfis.filter(r=>r.status==='Answered').length},
+      {label:'High Priority', value:high}
+    ];
+  } else if(type==='submittal'){
+    title='Submittal Log'; filename='Submittal_Log.pdf';
+    columns=['Sub #','Description','Project','Spec Section','Submitted','Status','Ball in Court'];
+    rows=submittals.map(s=>[s.num||'',s.desc||s.description||'',s.project||'',s.spec||'',s.date||s.submitted_date||'',s.status||'',s.bic||'']);
+    stats=[
+      {label:'Total Submittals', value:submittals.length},
+      {label:'Pending', value:submittals.filter(s=>['Pending','Under Review'].includes(s.status)).length},
+      {label:'Approved', value:submittals.filter(s=>s.status==='Approved'||s.status==='Approved as Noted').length},
+      {label:'Revise & Resubmit', value:submittals.filter(s=>s.status==='Revise & Resubmit').length}
+    ];
+  } else if(type==='rental'){
+    title='Rental Equipment'; filename='Rental_Equipment.pdf';
+    columns=['Equipment','Project','Vendor','On Site Date','Release Date','Status'];
+    rows=rental.map(r=>[r.name||'',r.project||'',r.vendor||'',r.onsite||r.onsite_date||'',r.offsite||r.release_date||'',r.status||'']);
+    stats=[
+      {label:'Total Equipment', value:rental.length},
+      {label:'Ordered', value:rental.filter(r=>r.status==='Ordered').length},
+      {label:'On Site', value:rental.filter(r=>r.status==='On Site').length},
+      {label:'Released', value:rental.filter(r=>r.status==='Release').length}
+    ];
+  }
+
+  if(!rows.length){ alert('No data to export yet.'); return; }
+
+  // ── HEADER BAR ──────────────────────────────────────────
+  doc.setFillColor(...black);
+  doc.rect(0, 0, pw, 28, 'F');
+  doc.setFillColor(...red);
+  doc.rect(0, 26, pw, 2.5, 'F');
+  doc.setFillColor(...red);
+  doc.rect(0, 0, 2, 28, 'F');
+
+  // Draw MICHELS logo
+  await document.fonts.ready;
+  const logoCanvas = document.createElement('canvas');
+  logoCanvas.width = 1200; logoCanvas.height = 158;
+  const lctx = logoCanvas.getContext('2d');
+  lctx.imageSmoothingEnabled = true;
+  lctx.imageSmoothingQuality = 'high';
+
+  const grad = lctx.createLinearGradient(0, 0, 0, 158);
+  grad.addColorStop(0,    '#a00d1e');
+  grad.addColorStop(0.45, '#c8102e');
+  grad.addColorStop(1,    '#e8324a');
+
+  lctx.font = "400 140px 'Alfa Slab One', 'Rockwell', serif";
+  lctx.letterSpacing = '10px';
+  lctx.textAlign = 'center';
+  lctx.fillStyle = grad;
+  lctx.fillText('MICHELS', 600, 131);
+
+  const logoData = logoCanvas.toDataURL('image/png', 1.0);
+  doc.addImage(logoData, 'PNG', 7, 4, 58, 17);
+
+  doc.setDrawColor(...red);
+  doc.setLineWidth(0.8);
+  doc.line(7, 24, 65, 24);
+
+  doc.setDrawColor(100,100,100);
+  doc.setLineWidth(0.3);
+  doc.line(70, 4, 70, 24);
+
+  doc.setTextColor(...white);
+  doc.setFontSize(16);
+  doc.setFont('helvetica','bold');
+  doc.text(title, pw/2, 13, {align:'center'});
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(180,180,180);
+  doc.text('Michels Power Inc.  —  APM Dashboard', pw/2, 20, {align:'center'});
+
+  doc.setTextColor(180,180,180);
+  doc.setFontSize(7.5);
+  doc.text('Generated: ' + new Date().toLocaleString(), pw-10, 10, {align:'right'});
+  doc.text('Records: ' + rows.length, pw-10, 17, {align:'right'});
+
+  // ── SUMMARY STATS BAR ─────────────────────────────────
+  const statsY = 32;
+  const boxW = (pw - 20) / stats.length;
+  stats.forEach((s, i) => {
+    const x = 10 + i * boxW;
+    doc.setFillColor(245, 244, 244);
+    doc.roundedRect(x, statsY, boxW-3, 18, 2, 2, 'F');
+    doc.setFillColor(...red);
+    doc.rect(x, statsY, boxW-3, 1.5, 'F');
+    doc.setTextColor(...black);
+    doc.setFontSize(18);
+    doc.setFont('helvetica','bold');
+    doc.text(String(s.value), x + (boxW-3)/2, statsY+11, {align:'center'});
+    doc.setFontSize(7);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(...darkGray);
+    doc.text(s.label.toUpperCase(), x + (boxW-3)/2, statsY+16, {align:'center'});
+  });
+
+  // ── TABLE ──────────────────────────────────────────────
+  doc.autoTable({
+    head: [columns],
+    body: rows,
+    startY: statsY + 22,
+    theme: 'plain',
+    headStyles: {
+      fillColor: black,
+      textColor: white,
+      fontStyle: 'bold',
+      fontSize: 8.5,
+      cellPadding: {top:4, bottom:4, left:4, right:4}
+    },
+    bodyStyles: {
+      fontSize: 8,
+      textColor: [40,40,40],
+      cellPadding: {top:3.5, bottom:3.5, left:4, right:4}
+    },
+    alternateRowStyles: { fillColor: [249,248,248] },
+    styles: {
+      lineColor: [220,218,218],
+      lineWidth: 0.25,
+      overflow: 'ellipsize'
+    },
+    columnStyles: { 0: {fontStyle:'bold'} },
+    margin: {left:10, right:10},
+    didDrawPage: (data)=>{
+      if(data.pageNumber > 1){
+        doc.setFillColor(...black);
+        doc.rect(0, 0, pw, 8, 'F');
+        doc.setFillColor(...red);
+        doc.rect(0, 8, pw, 1.5, 'F');
+        doc.setTextColor(...white);
+        doc.setFontSize(8);
+        doc.setFont('helvetica','bold');
+        doc.text(`${title}  —  Michels Power Inc.`, 14, 5.5);
+        doc.setTextColor(180,180,180);
+        doc.setFont('helvetica','normal');
+        doc.text(`Page ${data.pageNumber}`, pw-10, 5.5, {align:'right'});
+      }
+      const footY = ph - 8;
+      doc.setDrawColor(...red);
+      doc.setLineWidth(0.5);
+      doc.line(10, footY - 2, pw-10, footY - 2);
+      doc.setFontSize(7);
+      doc.setTextColor(...darkGray);
+      doc.setFont('helvetica','normal');
+      doc.text('Michels Power Inc.  |  APM Dashboard', 10, footY+1);
+      doc.text(`Page ${data.pageNumber}  |  ${new Date().toLocaleDateString()}`, pw/2, footY+1, {align:'center'});
+      doc.text('CONFIDENTIAL — Internal Use Only', pw-10, footY+1, {align:'right'});
+    }
+  });
+
+  // ── SIGNATURE BLOCK ──────────────────────────────────
+  const finalY = doc.lastAutoTable.finalY + 10;
+  if(finalY < ph - 35){
+    doc.setDrawColor(...midGray);
+    doc.setLineWidth(0.3);
+
+    const preparedBy = currentUser ? (currentUser.displayName || currentUser.username) : 'Unknown';
+    const lineY = finalY + 10;
+    const sigX = 10;
+    const sigLineW = 80;
+
+    doc.setDrawColor(...darkGray);
+    doc.setLineWidth(0.4);
+    doc.line(sigX, lineY, sigX + sigLineW, lineY);
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(...black);
+    doc.text(preparedBy, sigX, lineY - 2);
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(...black);
+    doc.text('Prepared By', sigX, lineY + 5);
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(...darkGray);
+    doc.text('Date: ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}), sigX, lineY + 9);
+  }
+
+  doc.save(filename);
+}
+</script>
+
+<!-- ── Initialization ── -->
+<script>
 // Run after all modules are loaded.
+initDatePickers(); // replace native date inputs with Flatpickr
 loadTodoState();
 initDefaultAdmin().then(()=>{
   if(!checkSession()){
