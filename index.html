@@ -165,13 +165,20 @@ textarea{resize:vertical;min-height:72px}
 .todo-urgency-high{color:var(--red);font-weight:600}
 .todo-urgency-med{color:var(--amber);font-weight:600}
 .todo-empty{padding:20px 16px;text-align:center;font-size:12px;color:var(--text-muted)}
-.todo-item.snoozed{opacity:.45}
-.todo-item.snoozed .todo-item-title{color:var(--text-muted)}
-.snooze-wrap{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.snooze-select{padding:3px 5px;font-size:11px;border:1px solid var(--border);border-radius:5px;font-family:'DM Sans',sans-serif;color:var(--text-mid);background:var(--white);cursor:pointer}
-.btn-snooze{background:transparent;border:1px solid var(--border);color:var(--amber);padding:4px 9px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background .12s}
-.btn-snooze:hover{background:var(--amber-light)}
-.btn-snooze.active{background:var(--amber-light);border-color:var(--amber);font-weight:600}
+.snooze-wrap{position:relative;flex-shrink:0}
+.btn-snooze{background:transparent;border:1px solid var(--border);color:var(--amber);padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background .12s,border-color .12s;display:inline-flex;align-items:center;gap:5px}
+.btn-snooze:hover{background:var(--amber-light);border-color:var(--amber)}
+.btn-snooze svg{width:12px;height:12px;opacity:.7;transition:transform .15s}
+.snooze-wrap.open .btn-snooze svg.caret{transform:rotate(180deg)}
+.snooze-dd{display:none;position:absolute;right:0;top:calc(100% + 5px);background:var(--white);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:150px;z-index:300;overflow:hidden}
+.snooze-wrap.open .snooze-dd{display:block}
+.snooze-dd-item{display:block;width:100%;padding:9px 13px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;border:none;background:none;cursor:pointer;text-align:left;transition:background .1s}
+.snooze-dd-item:hover{background:var(--amber-light);color:var(--amber)}
+.snooze-dd-divider{height:1px;background:var(--border);margin:3px 0}
+.snooze-custom-wrap{padding:8px 10px}
+.snooze-custom-input{width:100%;padding:5px 8px;font-size:11px;border:1px solid var(--border);border-radius:5px;font-family:'DM Mono',monospace;color:var(--text);background:var(--white);cursor:pointer}
+.snooze-custom-wrap .btn-snooze-confirm{display:block;width:100%;margin-top:6px;padding:5px 0;background:var(--amber);border:none;border-radius:5px;font-size:11px;font-family:'DM Sans',sans-serif;color:#fff;cursor:pointer;font-weight:600;transition:opacity .12s}
+.snooze-custom-wrap .btn-snooze-confirm:hover{opacity:.85}
 
 /* FLATPICKR — Michels brand theme */
 .flatpickr-input{cursor:pointer!important}
@@ -898,10 +905,12 @@ function applySettingsPermissions(perms){
   if(itemDB)    itemDB.style.display    = p.canDBSetup    ? '' : 'none';
   if(divider)   divider.style.display   = showAdmin       ? '' : 'none';
 }
-// Close dropdown when clicking outside
+// Close dropdowns when clicking outside
 document.addEventListener('click', e=>{
   const wrap = document.getElementById('settings-wrap');
   if(wrap && !wrap.contains(e.target)) closeSettings();
+  // Close any open snooze menus if clicking outside them
+  if(!e.target.closest('.snooze-wrap')) closeAllSnoozeMenus();
 });
 
 // ── FLATPICKR DATE HELPERS ───────────────────────────────
@@ -1074,9 +1083,18 @@ async function loadData(){
 }
 
 // ── SUPABASE WRITE HELPERS ────────────────────────────────
-async function sbInsert(table, row){ if(sb) await sb.from(table).insert(row); }
-async function sbUpdate(table, id, row){ if(sb) await sb.from(table).update(row).eq('id',id); }
-async function sbDelete(table, id){ if(sb) await sb.from(table).delete().eq('id',id); }
+// All helpers return {error} so callers can abort before mutating local state.
+async function sbInsert(table, row){ if(sb) return await sb.from(table).insert(row); return {error:null}; }
+async function sbUpdate(table, id, row){
+  if(!sb) return {error:null};
+  const res = await sb.from(table).update(row).eq('id',id);
+  return res; // {data, error}
+}
+async function sbDelete(table, id){
+  if(!sb) return {error:null};
+  const res = await sb.from(table).delete().eq('id',id);
+  return res; // {data, error}
+}
 </script>
 
 <!-- ── auth.js ── -->
@@ -1134,11 +1152,15 @@ async function saveUserToDB(user){
 
 async function deleteUserFromDB(username){
   if(sb){
-    try{ await sb.from('users').delete().eq('username', username); }catch(e){ console.error('deleteUserFromDB error',e); }
+    try{
+      const res = await sb.from('users').delete().eq('username', username);
+      if(res.error){ console.error('deleteUserFromDB error',res.error); alert('Failed to delete user: '+res.error.message); return false; }
+    }catch(e){ console.error('deleteUserFromDB error',e); alert('Failed to delete user. Please try again.'); return false; }
   }
   let users = JSON.parse(localStorage.getItem('apm_users')||'[]');
   users = users.filter(u=>u.username!==username);
   localStorage.setItem('apm_users', JSON.stringify(users));
+  return true;
 }
 
 async function initDefaultAdmin(){
@@ -1274,7 +1296,13 @@ async function verifyCurrentUser(){
     if(match.role !== currentUser.role){
       // Role was changed — update the session to reflect the real role
       currentUser = {username:match.username, displayName:match.displayName||match.username, role:match.role};
-      sessionStorage.setItem('apm_session', JSON.stringify(currentUser));
+      const updatedSession = JSON.stringify(currentUser);
+      sessionStorage.setItem('apm_session', updatedSession);
+      // Keep apm_remember in sync so stale role isn't restored on next launch
+      try{
+        const r = JSON.parse(localStorage.getItem('apm_remember')||'null');
+        if(r && r.expiry > Date.now()) localStorage.setItem('apm_remember', JSON.stringify({session:updatedSession, expiry:r.expiry}));
+      }catch(e){}
       // Re-apply header UI and permission state
       const perms = getPerms();
       const roleColor = ROLE_COLORS[match.role] || ROLE_COLORS.apm;
@@ -1585,9 +1613,38 @@ function clearSnoozes(){
 function snoozeItem(key, days){
   const until = new Date();
   until.setDate(until.getDate() + days);
-  snoozedTodos[key] = until.toISOString().slice(0,10); // YYYY-MM-DD
+  snoozedTodos[key] = until.toISOString().slice(0,10);
   localStorage.setItem('apm_snoozed_todos', JSON.stringify(snoozedTodos));
+  closeAllSnoozeMenus();
   renderTodos();
+}
+
+function snoozeCustomConfirm(key){
+  const inp = document.getElementById('snooze-date-'+key);
+  if(!inp || !inp.value){ return; }
+  snoozedTodos[key] = inp.value;
+  localStorage.setItem('apm_snoozed_todos', JSON.stringify(snoozedTodos));
+  closeAllSnoozeMenus();
+  renderTodos();
+}
+
+function openSnoozeMenu(key, e){
+  e.stopPropagation();
+  const wrap = document.getElementById('snooze-wrap-'+key);
+  if(!wrap) return;
+  const isOpen = wrap.classList.contains('open');
+  closeAllSnoozeMenus();
+  if(!isOpen) wrap.classList.add('open');
+}
+
+function closeAllSnoozeMenus(){
+  document.querySelectorAll('.snooze-wrap.open').forEach(el=>el.classList.remove('open'));
+}
+
+function showSnoozeCustom(key){
+  const panel = document.getElementById('snooze-custom-'+key);
+  if(!panel) return;
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
 }
 
 function isSnoozed(key){
@@ -1636,39 +1693,58 @@ function renderTodos(){
   countEl.textContent = pending.length;
   countEl.style.display = pending.length ? 'inline-flex' : 'none';
 
-  if(!items.length){
+  // Only show items that are not done and not snoozed
+  const visible = items.filter(i => !doneTodos.includes(i.key) && !isSnoozed(i.key));
+  if(!visible.length){
     list.innerHTML=`<div class="todo-empty">No follow-ups needed — all open RFIs and submittals are within the ${threshold}-day window.</div>`;
     return;
   }
-  list.innerHTML = items.map(item=>{
+  list.innerHTML = visible.map(item=>{
     const done = doneTodos.includes(item.key);
-    const snoozed = isSnoozed(item.key);
     const urgency = item.days >= threshold*3 ? 'todo-urgency-high' : item.days >= threshold*2 ? 'todo-urgency-med' : '';
     const daysLabel = `${item.days} days since submission`;
-    const snoozeLabel = snoozed ? snoozeUntilLabel(item.key) : '';
-    return `<div class="todo-item${done?' done':''}${snoozed?' snoozed':''}">
-      <div class="todo-check${done?' checked':''}" onclick="toggleTodo('${item.key}')"></div>
+    const safeKey = item.key.replace(/'/g,"\\'");
+    return `<div class="todo-item${done?' done':''}">
+      <div class="todo-check${done?' checked':''}" onclick="toggleTodo('${safeKey}')"></div>
       <div>
         <div class="todo-item-title">${item.type} ${item.num} — ${item.subject}</div>
         <div class="todo-item-meta">
           <span class="status ${statusColors[item.status]||'badge-gray'}">${item.status}</span>
           <span style="font-size:11px;color:var(--text-muted)">${item.project}</span>
           <span class="todo-item-age ${urgency}">${daysLabel}</span>
-          ${snoozeLabel ? `<span style="font-size:11px;color:var(--amber);font-family:'DM Mono',monospace">⏸ ${snoozeLabel}</span>` : ''}
         </div>
       </div>
-      <div class="snooze-wrap">
-        <select class="snooze-select" id="snooze-sel-${item.key}">
-          <option value="1">1 day</option>
-          <option value="2">2 days</option>
-          <option value="3">3 days</option>
-        </select>
-        <button class="btn-snooze${snoozed?' active':''}" onclick="snoozeItem('${item.key}', parseInt(document.getElementById('snooze-sel-${item.key}').value))" title="${snoozed?snoozeLabel:'Snooze this item'}">
-          ${snoozed ? '⏸ Snoozed' : '⏸ Snooze'}
+      <div class="snooze-wrap" id="snooze-wrap-${item.key}">
+        <button class="btn-snooze" onclick="openSnoozeMenu('${safeKey}',event)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>
+          Snooze
+          <svg class="caret" viewBox="0 0 10 6" fill="currentColor"><path d="M0 0l5 6 5-6z"/></svg>
         </button>
+        <div class="snooze-dd" id="snooze-dd-${item.key}">
+          <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',1)">1 day</button>
+          <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',2)">2 days</button>
+          <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',3)">3 days</button>
+          <div class="snooze-dd-divider"></div>
+          <button class="snooze-dd-item" onclick="showSnoozeCustom('${safeKey}')">Custom date…</button>
+          <div class="snooze-custom-wrap" id="snooze-custom-${item.key}" style="display:none">
+            <input class="snooze-custom-input" id="snooze-date-${item.key}" type="text" placeholder="Pick a date" readonly>
+            <button class="btn-snooze-confirm" onclick="snoozeCustomConfirm('${safeKey}')">Confirm</button>
+          </div>
+        </div>
       </div>
     </div>`;
   }).join('');
+  // Init Flatpickr on any custom snooze inputs
+  visible.forEach(item=>{
+    const inp = document.getElementById('snooze-date-'+item.key);
+    if(inp && !inp._flatpickr){
+      flatpickr(inp, {
+        minDate: 'today',
+        dateFormat: 'Y-m-d',
+        disableMobile: true
+      });
+    }
+  });
 }
 </script>
 
@@ -1783,7 +1859,11 @@ async function saveProject(){
   if(editId){
     const id=parseInt(editId);
     const idx=projects.findIndex(x=>x.id===id);
-    if(idx>-1){ projects[idx]={...projects[idx],...data,start:data.start_date,end:data.end_date}; await sbUpdate('projects',id,data); }
+    if(idx>-1){
+      const res=await sbUpdate('projects',id,data);
+      if(res.error){ alert('Failed to update project: '+res.error.message); return; }
+      projects[idx]={...projects[idx],...data,start:data.start_date,end:data.end_date};
+    }
   } else {
     const row={...data};
     if(sb){ const res=await sb.from('projects').insert(row).select(); if(res.error){ alert('Failed to save project: '+res.error.message); return; } if(res.data?.[0]) projects.push({...res.data[0],start:res.data[0].start_date,end:res.data[0].end_date}); }
@@ -1801,7 +1881,11 @@ async function saveRFI(){
   if(editId){
     const id=parseInt(editId);
     const idx=rfis.findIndex(x=>x.id===id);
-    if(idx>-1){ rfis[idx]={...rfis[idx],...data,desc:data.description}; await sbUpdate('rfis',id,data); }
+    if(idx>-1){
+      const res=await sbUpdate('rfis',id,data);
+      if(res.error){ alert('Failed to update RFI: '+res.error.message); return; }
+      rfis[idx]={...rfis[idx],...data,desc:data.description};
+    }
   } else {
     if(sb){ const res=await sb.from('rfis').insert(data).select(); if(res.error){ alert('Failed to save RFI: '+res.error.message); return; } if(res.data?.[0]) rfis.push({...res.data[0],desc:res.data[0].description}); }
     else rfis.push({id:nextId++,...data,desc:data.description});
@@ -1818,7 +1902,11 @@ async function saveSubmittal(){
   if(editId){
     const id=parseInt(editId);
     const idx=submittals.findIndex(x=>x.id===id);
-    if(idx>-1){ submittals[idx]={...submittals[idx],...data,desc,date:data.submitted_date}; await sbUpdate('submittals',id,data); }
+    if(idx>-1){
+      const res=await sbUpdate('submittals',id,data);
+      if(res.error){ alert('Failed to update submittal: '+res.error.message); return; }
+      submittals[idx]={...submittals[idx],...data,desc,date:data.submitted_date};
+    }
   } else {
     if(sb){ const res=await sb.from('submittals').insert(data).select(); if(res.error){ alert('Failed to save submittal: '+res.error.message); return; } if(res.data?.[0]) submittals.push({...res.data[0],desc:res.data[0].description,date:res.data[0].submitted_date}); }
     else submittals.push({id:nextId++,...data,desc,date:data.submitted_date});
@@ -1835,7 +1923,11 @@ async function saveRental(){
   if(editId){
     const id=parseInt(editId);
     const idx=rental.findIndex(x=>x.id===id);
-    if(idx>-1){ rental[idx]={...rental[idx],...data,onsite:data.onsite_date,offsite:data.release_date}; await sbUpdate('rental',id,data); }
+    if(idx>-1){
+      const res=await sbUpdate('rental',id,data);
+      if(res.error){ alert('Failed to update rental: '+res.error.message); return; }
+      rental[idx]={...rental[idx],...data,onsite:data.onsite_date,offsite:data.release_date};
+    }
   } else {
     if(sb){ const res=await sb.from('rental').insert(data).select(); if(res.error){ alert('Failed to save rental: '+res.error.message); return; } if(res.data?.[0]) rental.push({...res.data[0],onsite:res.data[0].onsite_date,offsite:res.data[0].release_date}); }
     else rental.push({id:nextId++,...data,onsite:data.onsite_date,offsite:data.release_date});
@@ -1847,11 +1939,14 @@ async function saveRental(){
 async function deleteItem(store,id){
   if(!getPerms().canDelete){ alert('You do not have permission to delete records.'); return; }
   const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental'};
+  if(tableMap[store]){
+    const res=await sbDelete(tableMap[store],id);
+    if(res.error){ alert('Failed to delete record: '+res.error.message); return; }
+  }
   if(store==='projects')projects=projects.filter(x=>x.id!==id);
   else if(store==='rfis')rfis=rfis.filter(x=>x.id!==id);
   else if(store==='submittals')submittals=submittals.filter(x=>x.id!==id);
   else if(store==='rental')rental=rental.filter(x=>x.id!==id);
-  if(tableMap[store]) await sbDelete(tableMap[store],id);
   saveLocal();renderAll();
 }
 </script>
