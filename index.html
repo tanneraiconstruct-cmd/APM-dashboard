@@ -73,6 +73,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .stat-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
 .stat-value{font-size:26px;font-weight:600;color:var(--text);line-height:1}
 .stat-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
+.stat-project-row{display:flex;align-items:baseline;gap:6px;padding:3px 0;border-bottom:1px solid var(--border);line-height:1.3}
+.stat-project-row:last-child{border-bottom:none}
+.stat-project-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--michels-red);font-weight:500;white-space:nowrap;flex-shrink:0}
+.stat-project-name{font-size:12px;color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .stat-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500}
 .badge-green{background:var(--green-light);color:var(--green)}
 .badge-amber{background:var(--amber-light);color:var(--amber)}
@@ -179,6 +183,19 @@ textarea{resize:vertical;min-height:72px}
 .snooze-custom-input{width:100%;padding:5px 8px;font-size:11px;border:1px solid var(--border);border-radius:5px;font-family:'DM Mono',monospace;color:var(--text);background:var(--white);cursor:pointer}
 .snooze-custom-wrap .btn-snooze-confirm{display:block;width:100%;margin-top:6px;padding:5px 0;background:var(--amber);border:none;border-radius:5px;font-size:11px;font-family:'DM Sans',sans-serif;color:#fff;cursor:pointer;font-weight:600;transition:opacity .12s}
 .snooze-custom-wrap .btn-snooze-confirm:hover{opacity:.85}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--michels-black);color:#fff;padding:11px 16px;border-radius:8px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast-bar{width:3px;min-height:18px;background:var(--michels-red);border-radius:2px;flex-shrink:0;align-self:stretch}
+/* TABLE FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.filter-input{padding:6px 10px;font-size:12px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);outline:none;transition:border-color .15s}
+.filter-input:focus{border-color:var(--michels-red)}
+.filter-clear{background:none;border:none;font-size:11px;color:var(--text-muted);cursor:pointer;padding:4px 6px;border-radius:4px;font-family:'DM Sans',sans-serif}
+.filter-clear:hover{color:var(--red);background:var(--red-light)}
+/* LOADING */
+.loading-cell{text-align:center!important;padding:32px 20px!important;color:var(--text-muted)!important;font-size:13px!important}
 
 /* FLATPICKR — Michels brand theme */
 .flatpickr-input{cursor:pointer!important}
@@ -460,6 +477,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <button class="btn-add" onclick="openModal('rfi-modal')">+ New RFI</button>
       </div>
     </div>
+    <div class="filter-bar">
+      <input class="filter-input" id="rfi-filter-text" placeholder="Search # or subject…" oninput="renderRFI()" style="width:210px">
+      <select class="filter-input" id="rfi-filter-project" onchange="renderRFI()"><option value="">All Projects</option></select>
+      <select class="filter-input" id="rfi-filter-status" onchange="renderRFI()">
+        <option value="">All Statuses</option><option>Open</option><option>Under Review</option><option>Answered</option><option>Closed</option>
+      </select>
+      <button class="filter-clear" onclick="clearRFIFilters()">Clear filters</button>
+    </div>
     <div class="table-wrap">
       <table>
         <thead><tr>
@@ -487,6 +512,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <button class="btn-add" onclick="openModal('submittal-modal')">+ New Submittal</button>
       </div>
     </div>
+    <div class="filter-bar">
+      <input class="filter-input" id="sub-filter-text" placeholder="Search # or description…" oninput="renderSubmittals()" style="width:210px">
+      <select class="filter-input" id="sub-filter-project" onchange="renderSubmittals()"><option value="">All Projects</option></select>
+      <select class="filter-input" id="sub-filter-status" onchange="renderSubmittals()">
+        <option value="">All Statuses</option><option>Pending</option><option>Under Review</option><option>Approved</option><option>Approved as Noted</option><option>Revise &amp; Resubmit</option><option>Rejected</option>
+      </select>
+      <button class="filter-clear" onclick="clearSubFilters()">Clear filters</button>
+    </div>
     <div class="table-wrap">
       <table>
         <thead><tr>
@@ -513,6 +546,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <button class="btn-sm" onclick="exportToPDF('rental')">&#8595; PDF</button>
         <button class="btn-add" onclick="openModal('rental-modal')">+ New Rental</button>
       </div>
+    </div>
+    <div class="filter-bar">
+      <input class="filter-input" id="ren-filter-text" placeholder="Search equipment or vendor…" oninput="renderRental()" style="width:210px">
+      <select class="filter-input" id="ren-filter-project" onchange="renderRental()"><option value="">All Projects</option></select>
+      <select class="filter-input" id="ren-filter-status" onchange="renderRental()">
+        <option value="">All Statuses</option><option>Ordered</option><option>On Site</option><option>Released</option>
+      </select>
+      <button class="filter-clear" onclick="clearRentalFilters()">Clear filters</button>
     </div>
     <div class="table-wrap">
       <table>
@@ -653,7 +694,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       </div>
       <div class="form-row-full"><label>Status</label>
         <select id="ren-status">
-          <option>Ordered</option><option>On Site</option><option>Release</option>
+          <option>Ordered</option><option>On Site</option><option>Released</option>
         </select>
       </div>
     </div>
@@ -800,7 +841,7 @@ const statusColors = {
   'In Progress':'badge-blue','Pre-Construction':'badge-gray','On Hold':'badge-amber','Closeout':'badge-green','Complete':'badge-green',
   'Open':'badge-red','Under Review':'badge-amber','Answered':'badge-green','Closed':'badge-gray',
   'Pending':'badge-gray','Approved':'badge-green','Approved as Noted':'badge-green','Revise & Resubmit':'badge-amber','Rejected':'badge-red',
-  'Ordered':'badge-amber','On Site':'badge-blue','Release':'badge-green'
+  'Ordered':'badge-amber','On Site':'badge-blue','Release':'badge-green','Released':'badge-green'
 };
 const priorityColors = {'High':'badge-red','Medium':'badge-amber','Low':'badge-blue'};
 </script>
@@ -947,6 +988,29 @@ function initDatePickers(){
   });
 }
 
+// ── TOAST NOTIFICATION ───────────────────────────────────
+function showToast(msg){
+  const t = document.getElementById('toast');
+  const m = document.getElementById('toast-msg');
+  if(!t||!m) return;
+  m.textContent = msg;
+  t.classList.remove('show');
+  void t.offsetWidth; // force reflow to restart animation
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ── LOADING STATE ─────────────────────────────────────────
+function setLoadingState(){
+  const row = `<tr><td colspan="9" class="loading-cell">Loading data…</td></tr>`;
+  ['rfi-body','submittal-body','rental-body'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.innerHTML=row;
+  });
+  const g=document.getElementById('project-grid');
+  if(g) g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text-muted);font-size:13px">Loading data…</div>';
+}
+
 // ── RENDER ALL ───────────────────────────────────────────
 function renderAll(){
   renderProjects();
@@ -1040,6 +1104,7 @@ async function loadData(){
   // Reset state at the top of every load — prevents stale "ready" state during reconnect
   dataLoaded = false;
   const token = ++loadToken;
+  if(sb) setLoadingState();
 
   if(!sb){
     // fallback to localStorage
@@ -1052,6 +1117,7 @@ async function loadData(){
     }catch(e){}
     // Only commit if this is still the latest load request
     if(token !== loadToken) return;
+    nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental].map(x=>x.id||0)) + 1;
     dataLoaded = true; renderAll(); return;
   }
   try{
@@ -1076,6 +1142,7 @@ async function loadData(){
     submittals = (s.data||[]).map(x=>({...x, date:x.submitted_date, desc:x.description}));
     rental     = (rn.data||[]).map(x=>({...x, onsite:x.onsite_date, offsite:x.release_date}));
     doneTodos  = JSON.parse(localStorage.getItem('apm_done_todos') || '[]');
+    nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental].map(x=>x.id||0)) + 1;
     saveLocal();
   }catch(e){ console.error('Supabase load error',e); return; }
   if(token !== loadToken) return;
@@ -1305,7 +1372,6 @@ async function verifyCurrentUser(){
       }catch(e){}
       // Re-apply header UI and permission state
       const perms = getPerms();
-      const roleColor = ROLE_COLORS[match.role] || ROLE_COLORS.apm;
       const sub = document.getElementById('header-sub');
       if(sub) sub.textContent = perms.label;
       applySettingsPermissions(perms);
@@ -1376,6 +1442,7 @@ async function addUser(){
   const addBtn = document.querySelector('#user-modal .btn-add');
   errEl.style.display='none';
   if(!username||!password){ errEl.style.display='block'; errEl.textContent='Username and password are required.'; return; }
+  if(password.length < 6){ errEl.style.display='block'; errEl.textContent='Password must be at least 6 characters.'; return; }
   // Always fetch fresh from Supabase to check duplicates
   const users = await loadUsers();
   if(users.find(u=>u.username.toLowerCase()===username)){
@@ -1393,8 +1460,8 @@ async function addUser(){
 
 async function removeUser(username){
   if(username==='admin') return;
-  await deleteUserFromDB(username);
-  renderUserList();
+  const ok = await deleteUserFromDB(username);
+  if(ok !== false){ renderUserList(); showToast('User removed.'); }
 }
 </script>
 
@@ -1466,27 +1533,25 @@ function renderProjects(){
   const s=document.getElementById('project-stats');
   const openRFIs=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
   const openSubs=submittals.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
-  const onSiteRental=rental.filter(r=>r.status!=='Release').length;
+  const projectList = projects.length
+    ? projects.map(p=>`<div class="stat-project-row"><span class="stat-project-num">${p.number||'—'}</span><span class="stat-project-name">${p.name}</span></div>`).join('')
+    : `<div style="font-size:11px;color:var(--text-muted)">No projects yet.</div>`;
   s.innerHTML=`
-    <div class="stat-card">
+    <div class="stat-card" style="max-height:150px;overflow-y:auto">
       <div class="stat-label">Projects</div>
-      <div class="stat-value">${projects.length}</div>
-      <div class="stat-sub">${projects.filter(p=>p.status==='In Progress').length} in progress</div>
+      ${projectList}
     </div>
     <div class="stat-card">
       <div class="stat-label">RFIs</div>
       <div class="stat-value">${rfis.length}</div>
-      <div class="stat-sub">${openRFIs} open</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Submittals</div>
       <div class="stat-value">${submittals.length}</div>
-      <div class="stat-sub">${openSubs} pending</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Rental</div>
+      <div class="stat-label">Rental Equipment</div>
       <div class="stat-value">${rental.length}</div>
-      <div class="stat-sub">${onSiteRental} on site</div>
     </div>
   `;
   if(!projects.length){g.innerHTML='<div class="empty"><div class="empty-icon">📁</div>No projects yet. Click "+ New Project" to get started.</div>';return}
@@ -1514,8 +1579,18 @@ function renderProjects(){
 
 function renderRFI(){
   const body=document.getElementById('rfi-body');
+  const txt=(document.getElementById('rfi-filter-text')?.value||'').toLowerCase();
+  const proj=document.getElementById('rfi-filter-project')?.value||'';
+  const stat=document.getElementById('rfi-filter-status')?.value||'';
+  let rows=rfis.filter(r=>{
+    if(proj && r.project!==proj) return false;
+    if(stat && r.status!==stat) return false;
+    if(txt && !(r.num||'').toLowerCase().includes(txt) && !(r.subject||'').toLowerCase().includes(txt)) return false;
+    return true;
+  });
   if(!rfis.length){body.innerHTML=`<tr><td colspan="8" class="empty">No RFIs logged yet.</td></tr>`;return}
-  body.innerHTML=rfis.map(r=>`
+  if(!rows.length){body.innerHTML=`<tr><td colspan="8" class="empty">No RFIs match the current filters.</td></tr>`;return}
+  body.innerHTML=rows.map(r=>`
     <tr>
       <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${r.num}</td>
       <td class="truncate">${r.subject}</td>
@@ -1528,11 +1603,25 @@ function renderRFI(){
     </tr>
   `).join('');
 }
+function clearRFIFilters(){
+  ['rfi-filter-text','rfi-filter-project','rfi-filter-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  renderRFI();
+}
 
 function renderSubmittals(){
   const body=document.getElementById('submittal-body');
+  const txt=(document.getElementById('sub-filter-text')?.value||'').toLowerCase();
+  const proj=document.getElementById('sub-filter-project')?.value||'';
+  const stat=document.getElementById('sub-filter-status')?.value||'';
+  let rows=submittals.filter(s=>{
+    if(proj && s.project!==proj) return false;
+    if(stat && s.status!==stat) return false;
+    if(txt && !(s.num||'').toLowerCase().includes(txt) && !(s.desc||'').toLowerCase().includes(txt)) return false;
+    return true;
+  });
   if(!submittals.length){body.innerHTML=`<tr><td colspan="8" class="empty">No submittals logged yet.</td></tr>`;return}
-  body.innerHTML=submittals.map(s=>`
+  if(!rows.length){body.innerHTML=`<tr><td colspan="8" class="empty">No submittals match the current filters.</td></tr>`;return}
+  body.innerHTML=rows.map(s=>`
     <tr>
       <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${s.num}</td>
       <td class="truncate">${s.desc}</td>
@@ -1545,11 +1634,25 @@ function renderSubmittals(){
     </tr>
   `).join('');
 }
+function clearSubFilters(){
+  ['sub-filter-text','sub-filter-project','sub-filter-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  renderSubmittals();
+}
 
 function renderRental(){
   const body=document.getElementById('rental-body');
+  const txt=(document.getElementById('ren-filter-text')?.value||'').toLowerCase();
+  const proj=document.getElementById('ren-filter-project')?.value||'';
+  const stat=document.getElementById('ren-filter-status')?.value||'';
+  let rows=rental.filter(r=>{
+    if(proj && r.project!==proj) return false;
+    if(stat && r.status!==stat) return false;
+    if(txt && !(r.name||'').toLowerCase().includes(txt) && !(r.vendor||'').toLowerCase().includes(txt)) return false;
+    return true;
+  });
   if(!rental.length){body.innerHTML=`<tr><td colspan="8" class="empty">No rental equipment logged yet.</td></tr>`;return}
-  body.innerHTML=rental.map(r=>`
+  if(!rows.length){body.innerHTML=`<tr><td colspan="8" class="empty">No equipment matches the current filters.</td></tr>`;return}
+  body.innerHTML=rows.map(r=>`
     <tr>
       <td class="truncate">${r.name}</td>
       <td class="truncate">${r.project}</td>
@@ -1561,13 +1664,27 @@ function renderRental(){
     </tr>
   `).join('');
 }
+function clearRentalFilters(){
+  ['ren-filter-text','ren-filter-project','ren-filter-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  renderRental();
+}
 
 function populateProjectSelects(){
-  const ids=['rfi-project','sub-project','ren-project'];
-  ids.forEach(id=>{
+  // Form selects in modals
+  const formIds=['rfi-project','sub-project','ren-project'];
+  formIds.forEach(id=>{
     const el=document.getElementById(id);
+    if(!el) return;
     const cur=el.value;
     el.innerHTML='<option value="">Select project</option>'+projects.map(p=>`<option value="${p.name}"${p.name===cur?' selected':''}>${p.name}</option>`).join('');
+  });
+  // Filter dropdowns in table tabs
+  const filterIds=['rfi-filter-project','sub-filter-project','ren-filter-project'];
+  filterIds.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    const cur=el.value;
+    el.innerHTML='<option value="">All Projects</option>'+projects.map(p=>`<option value="${p.name}"${p.name===cur?' selected':''}>${p.name}</option>`).join('');
   });
 }
 </script>
@@ -1678,30 +1795,31 @@ function renderTodos(){
     if(['Answered','Closed'].includes(r.status)) return;
     const days = daysSince(r.submitted);
     if(days===null||days<threshold) return;
-    items.push({key:`rfi-${r.id}`,type:'RFI',num:r.num,subject:r.subject,project:r.project,status:r.status,days});
+    items.push({key:`rfi-${r.id}`,id:r.id,type:'RFI',num:r.num,subject:r.subject,project:r.project,status:r.status,days});
   });
   submittals.forEach(s=>{
     if(['Approved','Approved as Noted','Rejected'].includes(s.status)) return;
     const days = daysSince(s.date);
     if(days===null||days<threshold) return;
-    items.push({key:`sub-${s.id}`,type:'Submittal',num:s.num,subject:s.desc,project:s.project,status:s.status,days});
+    items.push({key:`sub-${s.id}`,id:s.id,type:'Submittal',num:s.num,subject:s.desc,project:s.project,status:s.status,days});
   });
 
   items.sort((a,b)=>b.days-a.days);
-  // Pending = not done AND not snoozed
-  const pending = items.filter(i=>!doneTodos.includes(i.key) && !isSnoozed(i.key));
-  countEl.textContent = pending.length;
-  countEl.style.display = pending.length ? 'inline-flex' : 'none';
+  // Active = not done AND not snoozed (shown normally + counted in badge)
+  const active = items.filter(i=>!doneTodos.includes(i.key) && !isSnoozed(i.key));
+  countEl.textContent = active.length;
+  countEl.style.display = active.length ? 'inline-flex' : 'none';
 
-  // Only show items that are not done and not snoozed
-  const visible = items.filter(i => !doneTodos.includes(i.key) && !isSnoozed(i.key));
+  // Snoozed items are fully hidden; done items shown faded at bottom
+  const visible = items.filter(i=>!isSnoozed(i.key));
   if(!visible.length){
     list.innerHTML=`<div class="todo-empty">No follow-ups needed — all open RFIs and submittals are within the ${threshold}-day window.</div>`;
     return;
   }
-  list.innerHTML = visible.map(item=>{
+
+  function todoItemHTML(item){
     const done = doneTodos.includes(item.key);
-    const urgency = item.days >= threshold*3 ? 'todo-urgency-high' : item.days >= threshold*2 ? 'todo-urgency-med' : '';
+    const urgency = !done && item.days >= threshold*3 ? 'todo-urgency-high' : !done && item.days >= threshold*2 ? 'todo-urgency-med' : '';
     const daysLabel = `${item.days} days since submission`;
     const safeKey = item.key.replace(/'/g,"\\'");
     return `<div class="todo-item${done?' done':''}">
@@ -1714,35 +1832,40 @@ function renderTodos(){
           <span class="todo-item-age ${urgency}">${daysLabel}</span>
         </div>
       </div>
-      <div class="snooze-wrap" id="snooze-wrap-${item.key}">
-        <button class="btn-snooze" onclick="openSnoozeMenu('${safeKey}',event)">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>
-          Snooze
-          <svg class="caret" viewBox="0 0 10 6" fill="currentColor"><path d="M0 0l5 6 5-6z"/></svg>
-        </button>
-        <div class="snooze-dd" id="snooze-dd-${item.key}">
-          <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',1)">1 day</button>
-          <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',2)">2 days</button>
-          <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',3)">3 days</button>
-          <div class="snooze-dd-divider"></div>
-          <button class="snooze-dd-item" onclick="showSnoozeCustom('${safeKey}')">Custom date…</button>
-          <div class="snooze-custom-wrap" id="snooze-custom-${item.key}" style="display:none">
-            <input class="snooze-custom-input" id="snooze-date-${item.key}" type="text" placeholder="Pick a date" readonly>
-            <button class="btn-snooze-confirm" onclick="snoozeCustomConfirm('${safeKey}')">Confirm</button>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <button class="btn-sm" onclick="${item.type==='RFI'?`editRFI(${item.id})`:`editSubmittal(${item.id})`}" title="Edit this ${item.type}">Edit</button>
+        <div class="snooze-wrap" id="snooze-wrap-${item.key}">
+          <button class="btn-snooze" onclick="openSnoozeMenu('${safeKey}',event)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>
+            Snooze
+            <svg class="caret" viewBox="0 0 10 6" fill="currentColor"><path d="M0 0l5 6 5-6z"/></svg>
+          </button>
+          <div class="snooze-dd" id="snooze-dd-${item.key}">
+            <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',1)">1 day</button>
+            <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',2)">2 days</button>
+            <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',3)">3 days</button>
+            <div class="snooze-dd-divider"></div>
+            <button class="snooze-dd-item" onclick="showSnoozeCustom('${safeKey}')">Custom date…</button>
+            <div class="snooze-custom-wrap" id="snooze-custom-${item.key}" style="display:none">
+              <input class="snooze-custom-input" id="snooze-date-${item.key}" type="text" placeholder="Pick a date" readonly>
+              <button class="btn-snooze-confirm" onclick="snoozeCustomConfirm('${safeKey}')">Confirm</button>
+            </div>
           </div>
         </div>
       </div>
     </div>`;
-  }).join('');
-  // Init Flatpickr on any custom snooze inputs
+  }
+
+  // Active items first, then done items (faded at bottom)
+  const activeItems = visible.filter(i=>!doneTodos.includes(i.key));
+  const doneItems   = visible.filter(i=> doneTodos.includes(i.key));
+  list.innerHTML = [...activeItems, ...doneItems].map(todoItemHTML).join('');
+
+  // Init Flatpickr on custom snooze inputs
   visible.forEach(item=>{
     const inp = document.getElementById('snooze-date-'+item.key);
     if(inp && !inp._flatpickr){
-      flatpickr(inp, {
-        minDate: 'today',
-        dateFormat: 'Y-m-d',
-        disableMobile: true
-      });
+      flatpickr(inp, { minDate:'today', dateFormat:'Y-m-d', disableMobile:false });
     }
   });
 }
@@ -1871,6 +1994,7 @@ async function saveProject(){
   }
   resetProjectModal();
   closeModal('project-modal');saveLocal();renderAll();
+  showToast(editId ? 'Project updated.' : 'Project saved.');
 }
 
 async function saveRFI(){
@@ -1892,6 +2016,7 @@ async function saveRFI(){
   }
   resetRFIModal();
   closeModal('rfi-modal');saveLocal();renderAll();
+  showToast(editId ? 'RFI updated.' : 'RFI saved.');
 }
 
 async function saveSubmittal(){
@@ -1913,6 +2038,7 @@ async function saveSubmittal(){
   }
   resetSubmittalModal();
   closeModal('submittal-modal');saveLocal();renderAll();
+  showToast(editId ? 'Submittal updated.' : 'Submittal saved.');
 }
 
 async function saveRental(){
@@ -1934,10 +2060,12 @@ async function saveRental(){
   }
   resetRentalModal();
   closeModal('rental-modal');saveLocal();renderAll();
+  showToast(editId ? 'Rental updated.' : 'Rental saved.');
 }
 
 async function deleteItem(store,id){
   if(!getPerms().canDelete){ alert('You do not have permission to delete records.'); return; }
+  if(!confirm('Delete this record? This cannot be undone.')) return;
   const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental'};
   if(tableMap[store]){
     const res=await sbDelete(tableMap[store],id);
@@ -1948,6 +2076,7 @@ async function deleteItem(store,id){
   else if(store==='submittals')submittals=submittals.filter(x=>x.id!==id);
   else if(store==='rental')rental=rental.filter(x=>x.id!==id);
   saveLocal();renderAll();
+  showToast('Record deleted.');
 }
 </script>
 
@@ -1986,7 +2115,7 @@ function renderReportPreview(){
     const h = projectHealth(p);
     const openR = rfis.filter(r=>r.project===p.name&&!['Answered','Closed'].includes(r.status)).length;
     const openS = submittals.filter(s=>s.project===p.name&&!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
-    const onSite = rental.filter(r=>r.project===p.name&&r.status!=='Release').length;
+    const onSite = rental.filter(r=>r.project===p.name&&r.status!=='Release'&&r.status!=='Released').length;
     return `<div style="display:grid;grid-template-columns:1fr auto;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
       <div>
         <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">
@@ -2087,7 +2216,7 @@ async function generateSummaryPDF(){
   // Stat cards
   const totalOpenRFIs=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
   const totalOpenSubs=submittals.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
-  const totalRental=rental.filter(r=>r.status!=='Release').length;
+  const totalRental=rental.filter(r=>r.status!=='Release'&&r.status!=='Released').length;
   const avgPct=filtered.length?Math.round(filtered.reduce((a,p)=>a+calcPct(p.start_date||p.start,p.end_date||p.end),0)/filtered.length):0;
   const statCards=[
     {label:'Total Projects', value:filtered.length, color:black},
@@ -2225,7 +2354,7 @@ async function generateSummaryPDF(){
     const projRental=rental.filter(r=>r.project===p.name);
     const openR=projRFIs.filter(r=>!['Answered','Closed'].includes(r.status));
     const openS=projSubs.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status));
-    const onSiteR=projRental.filter(r=>r.status!=='Release');
+    const onSiteR=projRental.filter(r=>r.status!=='Release'&&r.status!=='Released');
 
     // Title card
     doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,24,3,3,'F');
@@ -2475,7 +2604,7 @@ async function exportToPDF(type){
       {label:'Total Equipment', value:rental.length},
       {label:'Ordered', value:rental.filter(r=>r.status==='Ordered').length},
       {label:'On Site', value:rental.filter(r=>r.status==='On Site').length},
-      {label:'Released', value:rental.filter(r=>r.status==='Release').length}
+      {label:'Released', value:rental.filter(r=>r.status==='Release'||r.status==='Released').length}
     ];
   }
 
@@ -2652,6 +2781,9 @@ initDefaultAdmin().then(()=>{
   // which calls renderAll() once data is ready — no early render needed.
 });
 </script>
+
+<!-- Toast notification -->
+<div id="toast" class="toast"><div class="toast-bar"></div><span id="toast-msg"></span></div>
 
 </body>
 </html>
