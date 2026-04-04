@@ -831,6 +831,14 @@ async function loadData(){
     ]);
     // Discard results if a newer load has started
     if(token !== loadToken) return;
+    // Check each table for Supabase errors before overwriting local state.
+    // Without this, a permission error or missing table silently looks like "no data"
+    // and would wipe the localStorage cache with empty arrays.
+    if(p.error || r.error || s.error || rn.error){
+      const err = p.error || r.error || s.error || rn.error;
+      console.error('Supabase table error', err);
+      throw new Error(err.message || 'Failed to load one or more tables — check table permissions in Supabase.');
+    }
     projects   = (p.data||[]).map(x=>({...x, start:x.start_date, end:x.end_date}));
     rfis       = (r.data||[]).map(x=>({...x, desc:x.description}));
     submittals = (s.data||[]).map(x=>({...x, date:x.submitted_date, desc:x.description}));
@@ -913,9 +921,27 @@ async function deleteUserFromDB(username){
 async function initDefaultAdmin(){
   const users = await loadUsers();
   if(!users.length){
-    const hash = await hashPassword('Michels2024!');
+    // Generate a random first-run password using the Web Crypto API.
+    // A known default (e.g. "Michels2024!") would let anyone reach a fresh
+    // environment and immediately take over, so we generate one instead.
+    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
+    const arr = new Uint8Array(14);
+    crypto.getRandomValues(arr);
+    const pw = Array.from(arr).map(b => chars[b % chars.length]).join('');
+    const hash = await hashPassword(pw);
     const admin = {username:'admin',displayName:'Administrator',role:'superadmin',hash};
     await saveUserToDB(admin);
+    // Show generated credentials once — they will not be displayed again
+    setTimeout(()=>{
+      alert(
+        'First-run setup complete.\n\n' +
+        'A default administrator account has been created:\n\n' +
+        '  Username: admin\n' +
+        '  Password: ' + pw + '\n\n' +
+        'Copy this password now — it will not be shown again.\n' +
+        'After signing in, create your own account and remove this default.'
+      );
+    }, 400);
   }
 }
 
@@ -1018,6 +1044,45 @@ function showDashboard(){
 
   loadSBConfig();
   loadData();
+  verifyCurrentUser(); // async — corrects role if tampered or changed by an admin
+}
+
+// Re-verify the restored session against the live user store.
+// This catches role changes made by admins and detects deleted accounts.
+// It also makes localStorage role tampering visible: if someone edits
+// apm_session to claim superadmin, the check will demote them back to
+// their actual stored role (or log them out if the account is gone).
+async function verifyCurrentUser(){
+  if(!currentUser) return;
+  try{
+    const users = await loadUsers();
+    const match = users.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
+    if(!match){
+      logout();
+      alert('Your account no longer exists. Please contact an administrator.');
+      return;
+    }
+    if(match.role !== currentUser.role){
+      // Role was changed — update the session to reflect the real role
+      currentUser = {username:match.username, displayName:match.displayName||match.username, role:match.role};
+      sessionStorage.setItem('apm_session', JSON.stringify(currentUser));
+      // Re-apply header UI and permission state
+      const perms = getPerms();
+      const roleColor = ROLE_COLORS[match.role] || ROLE_COLORS.apm;
+      const pill = document.getElementById('role-pill');
+      if(pill){ pill.textContent=perms.label; pill.style.background=roleColor.bg; pill.style.color=roleColor.text; }
+      const sub = document.getElementById('header-sub');
+      if(sub) sub.textContent = perms.label;
+      const btnUsers = document.getElementById('btn-manage-users');
+      const btnDB    = document.getElementById('btn-db-setup');
+      if(btnUsers) btnUsers.style.display = perms.canManageUsers ? 'inline-flex' : 'none';
+      if(btnDB)    btnDB.style.display    = perms.canDBSetup    ? 'inline-flex' : 'none';
+      document.querySelectorAll('.nav-tab').forEach(tab=>{
+        tab.style.display = perms.tabs.includes(tab.dataset.tab) ? '' : 'none';
+      });
+      applyWritePermissions();
+    }
+  }catch(e){ /* Network error — trust cached session for this visit */ }
 }
 
 function logout(){
@@ -1366,6 +1431,7 @@ function resetRentalModal(){
 }
 
 function editProject(id){
+  if(!canWrite('projects')){ alert('You do not have permission to edit projects.'); return; }
   const p=projects.find(x=>x.id===id);
   if(!p)return;
   document.getElementById('project-modal-title').textContent='Edit Project';
@@ -1382,6 +1448,7 @@ function editProject(id){
 }
 
 async function saveProject(){
+  if(!getPerms().canEdit){ alert('You do not have permission to create or edit projects.'); return; }
   const name=val('p-name');if(!name)return alert('Project name required.');
   const editId=document.getElementById('p-id').value;
   const data={name,client:val('p-client'),number:val('p-number'),start_date:val('p-start'),end_date:val('p-end'),status:val('p-status'),notes:val('p-notes')};
@@ -1399,6 +1466,7 @@ async function saveProject(){
 }
 
 async function saveRFI(){
+  if(!getPerms().canEdit){ alert('You do not have permission to create or edit RFIs.'); return; }
   const num=val('rfi-num'),subject=val('rfi-subject');if(!num||!subject)return alert('RFI # and subject required.');
   const data={num,project:val('rfi-project'),subject,submitted:val('rfi-submitted'),due:val('rfi-due'),status:val('rfi-status'),priority:val('rfi-priority'),description:val('rfi-desc')};
   if(sb){ const res=await sb.from('rfis').insert(data).select(); if(res.error){ alert('Failed to save RFI: '+res.error.message); return; } if(res.data?.[0]) rfis.push({...res.data[0],desc:res.data[0].description}); }
@@ -1408,6 +1476,7 @@ async function saveRFI(){
 }
 
 async function saveSubmittal(){
+  if(!getPerms().canEdit){ alert('You do not have permission to create or edit submittals.'); return; }
   const num=val('sub-num'),desc=val('sub-desc');if(!num||!desc)return alert('Submittal # and description required.');
   const data={num,project:val('sub-project'),description:desc,spec:val('sub-spec'),submitted_date:val('sub-date'),status:val('sub-status'),bic:val('sub-bic')};
   if(sb){ const res=await sb.from('submittals').insert(data).select(); if(res.error){ alert('Failed to save submittal: '+res.error.message); return; } if(res.data?.[0]) submittals.push({...res.data[0],desc:res.data[0].description,date:res.data[0].submitted_date}); }
@@ -1417,6 +1486,7 @@ async function saveSubmittal(){
 }
 
 async function saveRental(){
+  if(!getPerms().canEdit){ alert('You do not have permission to create or edit rental records.'); return; }
   const name=val('ren-name');if(!name)return alert('Equipment name required.');
   const data={name,project:val('ren-project'),vendor:val('ren-vendor'),onsite_date:val('ren-onsite'),release_date:val('ren-offsite'),status:val('ren-status')};
   if(sb){ const res=await sb.from('rental').insert(data).select(); if(res.error){ alert('Failed to save rental: '+res.error.message); return; } if(res.data?.[0]) rental.push({...res.data[0],onsite:res.data[0].onsite_date,offsite:res.data[0].release_date}); }
@@ -1426,6 +1496,7 @@ async function saveRental(){
 }
 
 async function deleteItem(store,id){
+  if(!getPerms().canDelete){ alert('You do not have permission to delete records.'); return; }
   const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental'};
   if(store==='projects')projects=projects.filter(x=>x.id!==id);
   else if(store==='rfis')rfis=rfis.filter(x=>x.id!==id);
