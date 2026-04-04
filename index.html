@@ -9,6 +9,8 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <style>
 /* ── styles.css ───────────────────────────────────────────
    All application styles
@@ -151,6 +153,110 @@ textarea{resize:vertical;min-height:72px}
 .todo-urgency-high{color:var(--red);font-weight:600}
 .todo-urgency-med{color:var(--amber);font-weight:600}
 .todo-empty{padding:20px 16px;text-align:center;font-size:12px;color:var(--text-muted)}
+.todo-item.snoozed{opacity:.45}
+.todo-item.snoozed .todo-item-title{color:var(--text-muted)}
+.snooze-wrap{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.snooze-select{padding:3px 5px;font-size:11px;border:1px solid var(--border);border-radius:5px;font-family:'DM Sans',sans-serif;color:var(--text-mid);background:var(--white);cursor:pointer}
+.btn-snooze{background:transparent;border:1px solid var(--border);color:var(--amber);padding:4px 9px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background .12s}
+.btn-snooze:hover{background:var(--amber-light)}
+.btn-snooze.active{background:var(--amber-light);border-color:var(--amber);font-weight:600}
+
+/* FLATPICKR — Michels brand theme */
+.flatpickr-input{cursor:pointer!important}
+.flatpickr-input.active,.flatpickr-input:focus{border-color:var(--michels-red)!important;outline:none}
+/* Calendar popup */
+.flatpickr-calendar{
+  font-family:'DM Sans',sans-serif!important;
+  border:1px solid var(--border)!important;
+  border-radius:12px!important;
+  box-shadow:0 12px 40px rgba(0,0,0,.14)!important;
+  overflow:hidden;
+  padding:0!important;
+  width:280px!important;
+}
+/* Month header */
+.flatpickr-months{
+  background:var(--michels-black)!important;
+  border-radius:0!important;
+  padding:4px 0!important;
+}
+.flatpickr-month{height:40px!important}
+.flatpickr-current-month{
+  font-size:13px!important;
+  font-weight:600!important;
+  color:#fff!important;
+  padding-top:8px!important;
+}
+.flatpickr-current-month input.cur-year{color:#fff!important;font-weight:600!important}
+.flatpickr-current-month .flatpickr-monthDropdown-months{
+  color:#fff!important;
+  background:transparent!important;
+  font-weight:600!important;
+  font-size:13px!important;
+  -webkit-appearance:none;
+  appearance:none;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months:hover{background:rgba(255,255,255,.1)!important}
+/* Prev/next arrows */
+.flatpickr-prev-month,.flatpickr-next-month{
+  padding:8px 10px!important;
+  color:#fff!important;
+  fill:#fff!important;
+}
+.flatpickr-prev-month:hover svg,.flatpickr-next-month:hover svg{fill:var(--michels-red)!important}
+/* Weekday header */
+.flatpickr-weekdays{background:#f4f3f3!important;padding:4px 0!important}
+.flatpickr-weekday{
+  color:var(--text-muted)!important;
+  font-size:10.5px!important;
+  font-weight:700!important;
+  letter-spacing:.4px!important;
+  text-transform:uppercase!important;
+}
+/* Day grid */
+.flatpickr-days{border:none!important}
+.dayContainer{padding:6px!important;gap:2px!important}
+.flatpickr-day{
+  border-radius:7px!important;
+  height:34px!important;
+  line-height:34px!important;
+  font-size:13px!important;
+  color:var(--text)!important;
+  font-family:'DM Sans',sans-serif!important;
+  border:none!important;
+  max-width:34px!important;
+}
+.flatpickr-day:hover,.flatpickr-day.prevMonthDay:hover,.flatpickr-day.nextMonthDay:hover{
+  background:var(--michels-red-light)!important;
+  color:var(--michels-red)!important;
+  border:none!important;
+}
+.flatpickr-day.selected,.flatpickr-day.selected:hover,.flatpickr-day.startRange,.flatpickr-day.endRange{
+  background:var(--michels-red)!important;
+  border-color:var(--michels-red)!important;
+  color:#fff!important;
+  font-weight:600!important;
+}
+.flatpickr-day.today{
+  border:1.5px solid var(--michels-red)!important;
+  color:var(--michels-red)!important;
+  font-weight:600!important;
+}
+.flatpickr-day.today:hover{
+  background:var(--michels-red-light)!important;
+}
+.flatpickr-day.today.selected{
+  color:#fff!important;
+  border-color:var(--michels-red)!important;
+}
+.flatpickr-day.prevMonthDay,.flatpickr-day.nextMonthDay{color:#bbb!important}
+/* Date input field — add calendar icon via padding */
+.flatpickr-input{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;
+  background-position:right 10px center!important;
+  padding-right:32px!important;
+}
 
 /* FOCUS STATES */
 button:focus-visible,
@@ -294,6 +400,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
           <input type="number" id="reminder-days" min="1" max="60" value="7" onchange="saveDays();renderTodos()">
           <label>days since submission</label>
           <button class="btn-sm" onclick="clearDoneTodos()" style="margin-left:6px">Clear done</button>
+          <button class="btn-sm" onclick="clearSnoozes()" title="Remove all active snoozes">Clear snoozes</button>
         </div>
       </div>
       <div class="todo-list" id="todo-list"></div>
@@ -424,8 +531,9 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 
 <div class="modal-overlay" id="rfi-modal">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title">New RFI</span><button class="modal-close" onclick="closeModal('rfi-modal')">×</button></div>
+    <div class="modal-header"><span class="modal-title" id="rfi-modal-title">New RFI</span><button class="modal-close" onclick="closeModal('rfi-modal')">×</button></div>
     <div class="modal-body">
+      <input type="hidden" id="rfi-edit-id" value="">
       <div class="form-row">
         <div><label>RFI #</label><input type="text" id="rfi-num" placeholder="e.g. RFI-001"></div>
         <div><label>Project</label><select id="rfi-project"><option value="">Select project</option></select></div>
@@ -451,15 +559,16 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('rfi-modal')">Cancel</button>
-      <button class="btn-add" onclick="saveRFI()">Save RFI</button>
+      <button class="btn-add" id="rfi-save-btn" onclick="saveRFI()">Save RFI</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="submittal-modal">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title">New Submittal</span><button class="modal-close" onclick="closeModal('submittal-modal')">×</button></div>
+    <div class="modal-header"><span class="modal-title" id="sub-modal-title">New Submittal</span><button class="modal-close" onclick="closeModal('submittal-modal')">×</button></div>
     <div class="modal-body">
+      <input type="hidden" id="sub-edit-id" value="">
       <div class="form-row">
         <div><label>Submittal #</label><input type="text" id="sub-num" placeholder="e.g. SUB-001"></div>
         <div><label>Project</label><select id="sub-project"><option value="">Select project</option></select></div>
@@ -484,15 +593,16 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('submittal-modal')">Cancel</button>
-      <button class="btn-add" onclick="saveSubmittal()">Save Submittal</button>
+      <button class="btn-add" id="sub-save-btn" onclick="saveSubmittal()">Save Submittal</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="rental-modal">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title">New Rental Equipment</span><button class="modal-close" onclick="closeModal('rental-modal')">×</button></div>
+    <div class="modal-header"><span class="modal-title" id="ren-modal-title">New Rental Equipment</span><button class="modal-close" onclick="closeModal('rental-modal')">×</button></div>
     <div class="modal-body">
+      <input type="hidden" id="ren-edit-id" value="">
       <div class="form-row">
         <div><label>Equipment</label><input type="text" id="ren-name" placeholder="e.g. 60-Ton Crane"></div>
         <div><label>Project</label><select id="ren-project"><option value="">Select project</option></select></div>
@@ -512,7 +622,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('rental-modal')">Cancel</button>
-      <button class="btn-add" onclick="saveRental()">Save Rental</button>
+      <button class="btn-add" id="ren-save-btn" onclick="saveRental()">Save Rental</button>
     </div>
   </div>
 </div>
@@ -526,6 +636,9 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="modal-body">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--text-mid);line-height:1.6">
         Paste your Supabase credentials below. Find them at <strong>supabase.com → Settings → API</strong>.<br>These are stored locally and only used to connect to your own database.
+      </div>
+      <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:11.5px;color:#78350f;line-height:1.6">
+        <strong>Security requirement:</strong> You must enable <strong>Row Level Security (RLS)</strong> on all Supabase tables (<code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">projects</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">rfis</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">submittals</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">rental</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">users</code>) and configure appropriate policies. Without RLS, anyone with the anon key can read or write all data directly. The app's role checks are client-side only and cannot substitute for server-side enforcement.
       </div>
       <div class="form-row-full"><label>Project URL</label><input type="text" id="sb-url" placeholder="https://xxxx.supabase.co"></div>
       <div class="form-row-full"><label>Anon / Public Key</label><textarea id="sb-key" style="min-height:80px;font-family:'DM Mono',monospace;font-size:11px" placeholder="eyJhbGci..."></textarea></div>
@@ -573,6 +686,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 
 <!-- ── config.js ── -->
 <script>
+// ── SUPABASE AUTO-CONNECT ──────────────────────────────────
+// Paste your credentials here once. The app will connect automatically
+// on every visit without needing the DB Setup modal.
+// Use ONLY the anon/public key — never the service_role key.
+// Find these at: supabase.com → your project → Settings → API
+const SUPABASE_URL      = '';   // e.g. 'https://abcdefgh.supabase.co'
+const SUPABASE_ANON_KEY = '';   // e.g. 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+
 // Role permissions, colors, and shared constants
 
 const ROLE_PERMISSIONS = {
@@ -663,6 +784,7 @@ let sb = null;
 let currentUser = null;
 let cachedUsers = [];
 let doneTodos = [];
+let snoozedTodos = {}; // key → ISO date string (snooze-until)
 let reminderDays = 7;
 let dataLoaded = false;
 let loadToken = 0;
@@ -720,6 +842,40 @@ function closeModal(id){
   el.classList.remove('open');
 }
 
+// ── FLATPICKR DATE HELPERS ───────────────────────────────
+// Set a date value on an element — uses Flatpickr API if initialized,
+// falls back to raw .value for non-date fields (hidden inputs, etc.)
+function setDateVal(id, value=''){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(el._flatpickr) el._flatpickr.setDate(value || '', false);
+  else el.value = value || '';
+}
+
+// Clear a list of field IDs — Flatpickr-aware for date inputs
+function clearFields(ids){
+  ids.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(el._flatpickr) el._flatpickr.clear();
+    else el.value = '';
+  });
+}
+
+// Initialize Flatpickr on every date input in the document.
+// Safe to call multiple times — skips already-initialized inputs.
+function initDatePickers(){
+  document.querySelectorAll('input[type="date"]').forEach(el=>{
+    if(el._flatpickr) return;
+    flatpickr(el, {
+      dateFormat: 'Y-m-d',       // keeps stored value as YYYY-MM-DD
+      allowInput: true,           // user can also type manually
+      disableMobile: false,       // on mobile, use native picker (better UX)
+      monthSelectorType: 'static',
+    });
+  });
+}
+
 // ── RENDER ALL ───────────────────────────────────────────
 function renderAll(){
   renderProjects();
@@ -754,10 +910,15 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
 
 // ── SUPABASE CONFIG ───────────────────────────────────────
 function loadSBConfig(){
-  const url = localStorage.getItem('apm_sb_url');
-  const key = localStorage.getItem('apm_sb_key');
+  // Hardcoded constants (config.js) take priority over localStorage.
+  // This lets GitHub-hosted deployments connect automatically without any manual setup.
+  const url = (SUPABASE_URL      && SUPABASE_URL.trim())      || localStorage.getItem('apm_sb_url') || '';
+  const key = (SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.trim()) || localStorage.getItem('apm_sb_key') || '';
   if(url && key){
     try{ sb = supabase.createClient(url.trim(), key.trim()); }catch(e){ sb=null; }
+    // Keep localStorage in sync so verifyCurrentUser and other checks work offline too
+    if(url) localStorage.setItem('apm_sb_url', url);
+    if(key) localStorage.setItem('apm_sb_key', key);
   }
   const urlEl=document.getElementById('sb-url');
   const keyEl=document.getElementById('sb-key');
@@ -1200,10 +1361,18 @@ function applyWritePermissions(){
     btn.style.display = p.canDelete ? '' : 'none';
   });
 
-  // Edit buttons on project cards
-  const editButtons = document.querySelectorAll('.btn-sm[onclick*="editProject"]');
-  editButtons.forEach(btn=>{
+  // Edit buttons — project cards and log table rows
+  document.querySelectorAll('.btn-sm[onclick*="editProject"]').forEach(btn=>{
     btn.style.display = canWrite('projects') ? '' : 'none';
+  });
+  document.querySelectorAll('.btn-sm[onclick*="editRFI"]').forEach(btn=>{
+    btn.style.display = canWrite('rfi') ? '' : 'none';
+  });
+  document.querySelectorAll('.btn-sm[onclick*="editSubmittal"]').forEach(btn=>{
+    btn.style.display = canWrite('submittal') ? '' : 'none';
+  });
+  document.querySelectorAll('.btn-sm[onclick*="editRental"]').forEach(btn=>{
+    btn.style.display = canWrite('rental') ? '' : 'none';
   });
 
   // Export buttons — always show if canExport
@@ -1268,7 +1437,7 @@ function renderRFI(){
       <td>${fmt(r.due)}</td>
       <td>${badge(r.status)}</td>
       <td>${prio(r.priority)}</td>
-      <td><button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
+      <td style="white-space:nowrap"><button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
     </tr>
   `).join('');
 }
@@ -1285,7 +1454,7 @@ function renderSubmittals(){
       <td>${fmt(s.date)}</td>
       <td>${badge(s.status)}</td>
       <td class="truncate">${s.bic}</td>
-      <td><button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
+      <td style="white-space:nowrap"><button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
     </tr>
   `).join('');
 }
@@ -1301,7 +1470,7 @@ function renderRental(){
       <td>${fmt(r.onsite)}</td>
       <td>${fmt(r.offsite)}</td>
       <td>${badge(r.status)}</td>
-      <td><button class="btn-sm btn-danger" onclick="deleteItem('rental',${r.id})">Delete</button></td>
+      <td style="white-space:nowrap"><button class="btn-sm" onclick="editRental(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rental',${r.id})">Delete</button></td>
     </tr>
   `).join('');
 }
@@ -1323,6 +1492,7 @@ function populateProjectSelects(){
 function loadTodoState(){
   try{
     doneTodos = JSON.parse(localStorage.getItem('apm_done_todos')||'[]');
+    snoozedTodos = JSON.parse(localStorage.getItem('apm_snoozed_todos')||'{}');
     reminderDays = parseInt(localStorage.getItem('apm_reminder_days')||'7');
     const inp = document.getElementById('reminder-days');
     if(inp) inp.value = reminderDays;
@@ -1345,6 +1515,34 @@ function clearDoneTodos(){
   doneTodos=[];
   localStorage.setItem('apm_done_todos','[]');
   renderTodos();
+}
+
+function clearSnoozes(){
+  snoozedTodos={};
+  localStorage.setItem('apm_snoozed_todos','{}');
+  renderTodos();
+}
+
+function snoozeItem(key, days){
+  const until = new Date();
+  until.setDate(until.getDate() + days);
+  snoozedTodos[key] = until.toISOString().slice(0,10); // YYYY-MM-DD
+  localStorage.setItem('apm_snoozed_todos', JSON.stringify(snoozedTodos));
+  renderTodos();
+}
+
+function isSnoozed(key){
+  const until = snoozedTodos[key];
+  if(!until) return false;
+  const today = new Date().toISOString().slice(0,10);
+  return until > today;
+}
+
+function snoozeUntilLabel(key){
+  const until = snoozedTodos[key];
+  if(!until) return '';
+  const d = new Date(until+'T00:00:00');
+  return 'Snoozed until ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
 }
 
 function daysSince(dateStr){
@@ -1374,7 +1572,8 @@ function renderTodos(){
   });
 
   items.sort((a,b)=>b.days-a.days);
-  const pending = items.filter(i=>!doneTodos.includes(i.key));
+  // Pending = not done AND not snoozed
+  const pending = items.filter(i=>!doneTodos.includes(i.key) && !isSnoozed(i.key));
   countEl.textContent = pending.length;
   countEl.style.display = pending.length ? 'inline-flex' : 'none';
 
@@ -1384,9 +1583,11 @@ function renderTodos(){
   }
   list.innerHTML = items.map(item=>{
     const done = doneTodos.includes(item.key);
+    const snoozed = isSnoozed(item.key);
     const urgency = item.days >= threshold*3 ? 'todo-urgency-high' : item.days >= threshold*2 ? 'todo-urgency-med' : '';
     const daysLabel = `${item.days} days since submission`;
-    return `<div class="todo-item${done?' done':''}">
+    const snoozeLabel = snoozed ? snoozeUntilLabel(item.key) : '';
+    return `<div class="todo-item${done?' done':''}${snoozed?' snoozed':''}">
       <div class="todo-check${done?' checked':''}" onclick="toggleTodo('${item.key}')"></div>
       <div>
         <div class="todo-item-title">${item.type} ${item.num} — ${item.subject}</div>
@@ -1394,7 +1595,18 @@ function renderTodos(){
           <span class="status ${statusColors[item.status]||'badge-gray'}">${item.status}</span>
           <span style="font-size:11px;color:var(--text-muted)">${item.project}</span>
           <span class="todo-item-age ${urgency}">${daysLabel}</span>
+          ${snoozeLabel ? `<span style="font-size:11px;color:var(--amber);font-family:'DM Mono',monospace">⏸ ${snoozeLabel}</span>` : ''}
         </div>
+      </div>
+      <div class="snooze-wrap">
+        <select class="snooze-select" id="snooze-sel-${item.key}">
+          <option value="1">1 day</option>
+          <option value="2">2 days</option>
+          <option value="3">3 days</option>
+        </select>
+        <button class="btn-snooze${snoozed?' active':''}" onclick="snoozeItem('${item.key}', parseInt(document.getElementById('snooze-sel-${item.key}').value))" title="${snoozed?snoozeLabel:'Snooze this item'}">
+          ${snoozed ? '⏸ Snoozed' : '⏸ Snooze'}
+        </button>
       </div>
     </div>`;
   }).join('');
@@ -1407,27 +1619,33 @@ function renderTodos(){
 
 // ── MODAL RESET FUNCTIONS ─────────────────────────────────
 function resetProjectModal(){
-  ['p-id','p-name','p-client','p-number','p-start','p-end','p-notes'].forEach(id=>document.getElementById(id).value='');
+  clearFields(['p-id','p-name','p-client','p-number','p-start','p-end','p-notes']);
   document.getElementById('p-status').value='Pre-Construction';
   document.getElementById('project-modal-title').textContent='New Project';
   document.getElementById('project-save-btn').textContent='Save Project';
 }
 function resetRFIModal(){
-  ['rfi-num','rfi-subject','rfi-submitted','rfi-due','rfi-desc'].forEach(id=>document.getElementById(id).value='');
+  clearFields(['rfi-edit-id','rfi-num','rfi-subject','rfi-submitted','rfi-due','rfi-desc']);
   document.getElementById('rfi-project').value='';
   document.getElementById('rfi-status').value='Open';
   document.getElementById('rfi-priority').value='Low';
+  document.getElementById('rfi-modal-title').textContent='New RFI';
+  document.getElementById('rfi-save-btn').textContent='Save RFI';
 }
 function resetSubmittalModal(){
-  ['sub-num','sub-desc','sub-spec','sub-date'].forEach(id=>document.getElementById(id).value='');
+  clearFields(['sub-edit-id','sub-num','sub-desc','sub-spec','sub-date']);
   document.getElementById('sub-project').value='';
   document.getElementById('sub-status').value='Pending';
   document.getElementById('sub-bic').value='Contractor';
+  document.getElementById('sub-modal-title').textContent='New Submittal';
+  document.getElementById('sub-save-btn').textContent='Save Submittal';
 }
 function resetRentalModal(){
-  ['ren-name','ren-vendor','ren-onsite','ren-offsite'].forEach(id=>document.getElementById(id).value='');
+  clearFields(['ren-edit-id','ren-name','ren-vendor','ren-onsite','ren-offsite']);
   document.getElementById('ren-project').value='';
   document.getElementById('ren-status').value='Ordered';
+  document.getElementById('ren-modal-title').textContent='New Rental Equipment';
+  document.getElementById('ren-save-btn').textContent='Save Rental';
 }
 
 function editProject(id){
@@ -1440,11 +1658,62 @@ function editProject(id){
   document.getElementById('p-name').value=p.name;
   document.getElementById('p-client').value=p.client||'';
   document.getElementById('p-number').value=p.number||'';
-  document.getElementById('p-start').value=p.start||'';
-  document.getElementById('p-end').value=p.end||'';
+  setDateVal('p-start', p.start||'');
+  setDateVal('p-end', p.end||'');
   document.getElementById('p-status').value=p.status||'In Progress';
   document.getElementById('p-notes').value=p.notes||'';
   openModal('project-modal', true); // noReset=true — preserve pre-filled edit values
+}
+
+function editRFI(id){
+  if(!canWrite('rfi')){ alert('You do not have permission to edit RFIs.'); return; }
+  const r=rfis.find(x=>x.id===id);
+  if(!r)return;
+  document.getElementById('rfi-modal-title').textContent='Edit RFI';
+  document.getElementById('rfi-save-btn').textContent='Update RFI';
+  document.getElementById('rfi-edit-id').value=id;
+  document.getElementById('rfi-num').value=r.num||'';
+  document.getElementById('rfi-subject').value=r.subject||'';
+  document.getElementById('rfi-project').value=r.project||'';
+  setDateVal('rfi-submitted', r.submitted||'');
+  setDateVal('rfi-due', r.due||'');
+  document.getElementById('rfi-status').value=r.status||'Open';
+  document.getElementById('rfi-priority').value=r.priority||'Low';
+  document.getElementById('rfi-desc').value=r.desc||r.description||'';
+  openModal('rfi-modal', true);
+}
+
+function editSubmittal(id){
+  if(!canWrite('submittal')){ alert('You do not have permission to edit submittals.'); return; }
+  const s=submittals.find(x=>x.id===id);
+  if(!s)return;
+  document.getElementById('sub-modal-title').textContent='Edit Submittal';
+  document.getElementById('sub-save-btn').textContent='Update Submittal';
+  document.getElementById('sub-edit-id').value=id;
+  document.getElementById('sub-num').value=s.num||'';
+  document.getElementById('sub-desc').value=s.desc||s.description||'';
+  document.getElementById('sub-project').value=s.project||'';
+  document.getElementById('sub-spec').value=s.spec||'';
+  setDateVal('sub-date', s.date||s.submitted_date||'');
+  document.getElementById('sub-status').value=s.status||'Pending';
+  document.getElementById('sub-bic').value=s.bic||'Contractor';
+  openModal('submittal-modal', true);
+}
+
+function editRental(id){
+  if(!canWrite('rental')){ alert('You do not have permission to edit rental records.'); return; }
+  const r=rental.find(x=>x.id===id);
+  if(!r)return;
+  document.getElementById('ren-modal-title').textContent='Edit Rental Equipment';
+  document.getElementById('ren-save-btn').textContent='Update Rental';
+  document.getElementById('ren-edit-id').value=id;
+  document.getElementById('ren-name').value=r.name||'';
+  document.getElementById('ren-project').value=r.project||'';
+  document.getElementById('ren-vendor').value=r.vendor||'';
+  setDateVal('ren-onsite', r.onsite||r.onsite_date||'');
+  setDateVal('ren-offsite', r.offsite||r.release_date||'');
+  document.getElementById('ren-status').value=r.status||'Ordered';
+  openModal('rental-modal', true);
 }
 
 async function saveProject(){
@@ -1468,9 +1737,16 @@ async function saveProject(){
 async function saveRFI(){
   if(!getPerms().canEdit){ alert('You do not have permission to create or edit RFIs.'); return; }
   const num=val('rfi-num'),subject=val('rfi-subject');if(!num||!subject)return alert('RFI # and subject required.');
+  const editId=document.getElementById('rfi-edit-id').value;
   const data={num,project:val('rfi-project'),subject,submitted:val('rfi-submitted'),due:val('rfi-due'),status:val('rfi-status'),priority:val('rfi-priority'),description:val('rfi-desc')};
-  if(sb){ const res=await sb.from('rfis').insert(data).select(); if(res.error){ alert('Failed to save RFI: '+res.error.message); return; } if(res.data?.[0]) rfis.push({...res.data[0],desc:res.data[0].description}); }
-  else rfis.push({id:nextId++,...data,desc:data.description});
+  if(editId){
+    const id=parseInt(editId);
+    const idx=rfis.findIndex(x=>x.id===id);
+    if(idx>-1){ rfis[idx]={...rfis[idx],...data,desc:data.description}; await sbUpdate('rfis',id,data); }
+  } else {
+    if(sb){ const res=await sb.from('rfis').insert(data).select(); if(res.error){ alert('Failed to save RFI: '+res.error.message); return; } if(res.data?.[0]) rfis.push({...res.data[0],desc:res.data[0].description}); }
+    else rfis.push({id:nextId++,...data,desc:data.description});
+  }
   resetRFIModal();
   closeModal('rfi-modal');saveLocal();renderAll();
 }
@@ -1478,9 +1754,16 @@ async function saveRFI(){
 async function saveSubmittal(){
   if(!getPerms().canEdit){ alert('You do not have permission to create or edit submittals.'); return; }
   const num=val('sub-num'),desc=val('sub-desc');if(!num||!desc)return alert('Submittal # and description required.');
+  const editId=document.getElementById('sub-edit-id').value;
   const data={num,project:val('sub-project'),description:desc,spec:val('sub-spec'),submitted_date:val('sub-date'),status:val('sub-status'),bic:val('sub-bic')};
-  if(sb){ const res=await sb.from('submittals').insert(data).select(); if(res.error){ alert('Failed to save submittal: '+res.error.message); return; } if(res.data?.[0]) submittals.push({...res.data[0],desc:res.data[0].description,date:res.data[0].submitted_date}); }
-  else submittals.push({id:nextId++,...data,desc,date:data.submitted_date});
+  if(editId){
+    const id=parseInt(editId);
+    const idx=submittals.findIndex(x=>x.id===id);
+    if(idx>-1){ submittals[idx]={...submittals[idx],...data,desc,date:data.submitted_date}; await sbUpdate('submittals',id,data); }
+  } else {
+    if(sb){ const res=await sb.from('submittals').insert(data).select(); if(res.error){ alert('Failed to save submittal: '+res.error.message); return; } if(res.data?.[0]) submittals.push({...res.data[0],desc:res.data[0].description,date:res.data[0].submitted_date}); }
+    else submittals.push({id:nextId++,...data,desc,date:data.submitted_date});
+  }
   resetSubmittalModal();
   closeModal('submittal-modal');saveLocal();renderAll();
 }
@@ -1488,9 +1771,16 @@ async function saveSubmittal(){
 async function saveRental(){
   if(!getPerms().canEdit){ alert('You do not have permission to create or edit rental records.'); return; }
   const name=val('ren-name');if(!name)return alert('Equipment name required.');
+  const editId=document.getElementById('ren-edit-id').value;
   const data={name,project:val('ren-project'),vendor:val('ren-vendor'),onsite_date:val('ren-onsite'),release_date:val('ren-offsite'),status:val('ren-status')};
-  if(sb){ const res=await sb.from('rental').insert(data).select(); if(res.error){ alert('Failed to save rental: '+res.error.message); return; } if(res.data?.[0]) rental.push({...res.data[0],onsite:res.data[0].onsite_date,offsite:res.data[0].release_date}); }
-  else rental.push({id:nextId++,...data,onsite:data.onsite_date,offsite:data.release_date});
+  if(editId){
+    const id=parseInt(editId);
+    const idx=rental.findIndex(x=>x.id===id);
+    if(idx>-1){ rental[idx]={...rental[idx],...data,onsite:data.onsite_date,offsite:data.release_date}; await sbUpdate('rental',id,data); }
+  } else {
+    if(sb){ const res=await sb.from('rental').insert(data).select(); if(res.error){ alert('Failed to save rental: '+res.error.message); return; } if(res.data?.[0]) rental.push({...res.data[0],onsite:res.data[0].onsite_date,offsite:res.data[0].release_date}); }
+    else rental.push({id:nextId++,...data,onsite:data.onsite_date,offsite:data.release_date});
+  }
   resetRentalModal();
   closeModal('rental-modal');saveLocal();renderAll();
 }
@@ -2197,6 +2487,7 @@ async function exportToPDF(type){
 <!-- ── Initialization ── -->
 <script>
 // Run after all modules are loaded.
+initDatePickers(); // replace native date inputs with Flatpickr
 loadTodoState();
 initDefaultAdmin().then(()=>{
   if(!checkSession()){
