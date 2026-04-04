@@ -5,153 +5,171 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>APM Project Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --michels-red:#c8102e;--michels-red-dark:#a00d24;--michels-red-light:#fdeaed;
-    --michels-black:#1a1a1a;--michels-dark:#2a2a2a;
-    --accent:#c8102e;--accent-light:#fdeaed;
-    --amber:#d97706;--amber-light:#fef3c7;
-    --green:#15803d;--green-light:#dcfce7;
-    --red:#c8102e;--red-light:#fdeaed;
-    --blue-light:#eff6ff;
-    --text:#1a1a1a;--text-mid:#474747;--text-muted:#888888;
-    --border:#e2e0e0;--surface:#f9f8f8;--white:#ffffff;
-  }
-  body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);min-height:100vh}
-  .dashboard{display:grid;grid-template-rows:auto auto 1fr;min-height:100vh}
+/* ── styles.css ───────────────────────────────────────────
+   All application styles
+*/
 
-  .header{background:var(--michels-black);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--michels-red)}
-  .header-left{display:flex;align-items:center;gap:16px}
-  .logo-img{display:block;flex-shrink:0}
-  .header-divider{width:1px;height:36px;background:rgba(255,255,255,0.15)}
-  .header-title{color:#fff;font-size:15px;font-weight:600;letter-spacing:-0.3px}
-  .header-sub{color:#aaaaaa;font-size:11px;margin-top:2px}
-  .header-date{color:#aaaaaa;font-size:12px;font-family:'DM Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --michels-red:#c8102e;--michels-red-dark:#a00d24;--michels-red-light:#fdeaed;
+  --michels-black:#1a1a1a;--michels-dark:#2a2a2a;
+  --accent:#c8102e;--accent-light:#fdeaed;
+  --amber:#d97706;--amber-light:#fef3c7;
+  --green:#15803d;--green-light:#dcfce7;
+  --red:#c8102e;--red-light:#fdeaed;
+  --blue-light:#eff6ff;
+  --text:#1a1a1a;--text-mid:#474747;--text-muted:#888888;
+  --border:#e2e0e0;--surface:#f9f8f8;--white:#ffffff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);min-height:100vh}
+.dashboard{display:grid;grid-template-rows:auto auto 1fr;min-height:100vh}
 
-  .nav{background:var(--michels-dark);padding:0 24px;display:flex;gap:2px;border-bottom:1px solid rgba(255,255,255,0.07)}
-  .nav-tab{padding:10px 16px;font-size:13px;font-weight:500;color:#aaaaaa;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
-  .nav-tab:hover{color:#ffffff}
-  .nav-tab.active{color:#fff;border-bottom-color:var(--michels-red)}
+.header{background:var(--michels-black);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--michels-red)}
+.header-left{display:flex;align-items:center;gap:16px;min-width:0}
+.logo-img{display:block;flex-shrink:0}
+.header-divider{width:1px;height:36px;background:rgba(255,255,255,0.15)}
+.header-title{color:#fff;font-size:15px;font-weight:600;letter-spacing:-0.3px}
+.header-sub{color:#aaaaaa;font-size:11px;margin-top:2px}
+.header-date{color:#aaaaaa;font-size:12px;font-family:'DM Mono',monospace}
 
-  .main{padding:20px 24px;display:none}
-  .main.active{display:block}
+.nav{background:var(--michels-dark);padding:0 24px;display:flex;gap:2px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.nav-tab{padding:10px 16px;font-size:13px;font-weight:500;color:#aaaaaa;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
+.nav-tab:hover{color:#ffffff}
+.nav-tab.active{color:#fff;border-bottom-color:var(--michels-red)}
 
-  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .section-title{font-size:15px;font-weight:600;color:var(--text)}
-  .btn-add{background:var(--michels-red);color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
-  .btn-add:hover{background:var(--michels-red-dark)}
-  .btn-sm{background:transparent;border:1px solid var(--border);color:var(--text-mid);padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
-  .btn-sm:hover{background:var(--surface)}
-  .btn-danger{border-color:#fca5a5;color:var(--red)}
-  .btn-danger:hover{background:#fee2e2}
+.main{padding:20px 24px;display:none}
+.main.active{display:block}
 
-  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-  .stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-  .stat-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-  .stat-value{font-size:26px;font-weight:600;color:var(--text);line-height:1}
-  .stat-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
-  .stat-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500}
-  .badge-green{background:var(--green-light);color:var(--green)}
-  .badge-amber{background:var(--amber-light);color:var(--amber)}
-  .badge-red{background:var(--red-light);color:var(--red)}
-  .badge-blue{background:#eef2f7;color:#374151}
-  .badge-gray{background:#f1f5f9;color:var(--text-mid)}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:15px;font-weight:600;color:var(--text)}
+.btn-add{background:var(--michels-red);color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.btn-add:hover{background:var(--michels-red-dark)}
+.btn-sm{background:transparent;border:1px solid var(--border);color:var(--text-mid);padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-sm:hover{background:var(--surface)}
+.btn-danger{border-color:#fca5a5;color:var(--red)}
+.btn-danger:hover{background:#fee2e2}
 
-  .table-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
-  table{width:100%;border-collapse:collapse;table-layout:fixed}
-  thead tr{background:var(--surface)}
-  th{padding:10px 14px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;text-align:left;border-bottom:1px solid var(--border)}
-  td{padding:10px 14px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle}
-  tr:last-child td{border-bottom:none}
-  tr:hover td{background:#f8fafc}
-  .truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.stat-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.stat-value{font-size:26px;font-weight:600;color:var(--text);line-height:1}
+.stat-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
+.stat-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-blue{background:#eef2f7;color:#374151}
+.badge-gray{background:#f1f5f9;color:var(--text-mid)}
 
-  .progress-bar-bg{background:#e2e8f0;border-radius:4px;height:6px;width:100%;min-width:60px}
-  .progress-bar-fill{height:6px;border-radius:4px;background:var(--michels-red);transition:width .3s}
+.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow-x:auto;overflow-y:hidden;margin-bottom:20px}
+table{width:100%;min-width:900px;border-collapse:collapse;table-layout:fixed}
+thead tr{background:var(--surface)}
+th{padding:10px 14px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:10px 14px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8fafc}
+.truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-  .status{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
-  .priority{font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px}
+.progress-bar-bg{background:#e2e8f0;border-radius:4px;height:6px;width:100%;min-width:60px}
+.progress-bar-fill{height:6px;border-radius:4px;background:var(--michels-red);transition:width .3s}
 
-  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
-  .modal-overlay.open{display:flex}
-  .modal{background:var(--white);border-radius:12px;width:min(520px,92vw);max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-  .modal-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-  .modal-title{font-size:15px;font-weight:600}
-  .modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);line-height:1;padding:2px 6px}
-  .modal-body{padding:20px}
-  .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
-  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-  .form-row-full{margin-bottom:12px}
-  label{display:block;font-size:11px;font-weight:600;color:var(--text-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
-  input[type=text],input[type=date],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);outline:none;transition:border-color .15s}
-  input:focus,select:focus,textarea:focus{border-color:var(--michels-red)}
-  textarea{resize:vertical;min-height:72px}
+.status{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.priority{font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px}
 
-  .project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
-  .project-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;transition:box-shadow .15s}
-  .project-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
-  .project-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-  .project-name{font-size:14px;font-weight:600;color:var(--text)}
-  .project-actions{display:flex;gap:6px;margin-top:12px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:12px;width:min(520px,92vw);max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:15px;font-weight:600}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);line-height:1;padding:2px 6px}
+.modal-body{padding:20px}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-row-full{margin-bottom:12px}
+label{display:block;font-size:11px;font-weight:600;color:var(--text-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+input[type=text],input[type=password],input[type=date],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--michels-red)}
+textarea{resize:vertical;min-height:72px}
 
-  .empty{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px}
-  .empty-icon{font-size:28px;margin-bottom:8px}
+.project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
+.project-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;transition:box-shadow .15s}
+.project-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.project-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;min-width:0}
+.project-name{font-size:14px;font-weight:600;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis}
+.project-actions{display:flex;gap:6px;margin-top:12px}
 
+.empty{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px}
+.empty-icon{font-size:28px;margin-bottom:8px}
 
+/* LOGIN SCREEN */
+.login-overlay{position:fixed;inset:0;background:var(--michels-black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;padding:24px}
+.login-box{background:var(--white);border-radius:14px;width:min(420px,100%);overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.login-header{background:var(--michels-black);padding:28px 32px 24px;text-align:center;border-bottom:3px solid var(--michels-red);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.login-body{padding:28px 32px}
+.login-footer{padding:16px 32px 24px;text-align:center}
+.login-error{background:var(--red-light);color:var(--red);font-size:12px;padding:8px 12px;border-radius:6px;margin-bottom:14px;display:none;border:1px solid #fca5a5}
+.login-input-wrap{margin-bottom:14px}
+.login-input-wrap label{font-size:11px;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block}
+.login-input-wrap input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color .15s}
+.login-input-wrap input:focus{border-color:var(--michels-red)}
+.btn-login{width:100%;padding:11px;background:var(--michels-red);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-login:hover{background:var(--michels-red-dark)}
+.login-tagline{color:#888;font-size:12px;margin-top:12px}
+.login-user-list{margin-top:8px;font-size:11px;color:var(--text-muted);text-align:center}
 
+/* USER MANAGEMENT */
+.user-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border-radius:20px;padding:4px 10px;font-size:12px;color:#ddd;cursor:pointer;border:1px solid rgba(255,255,255,0.15);transition:background .15s}
+.user-badge:hover{background:rgba(255,255,255,0.18)}
+.user-avatar{width:22px;height:22px;border-radius:50%;background:var(--michels-red);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
 
-  /* LOGIN SCREEN */
-  .login-overlay{position:fixed;inset:0;background:var(--michels-black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;padding:24px}
-  .login-box{background:var(--white);border-radius:14px;width:min(420px,100%);overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
-  .login-header{background:var(--michels-black);padding:28px 32px 24px;text-align:center;border-bottom:3px solid var(--michels-red);display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .login-body{padding:28px 32px}
-  .login-footer{padding:16px 32px 24px;text-align:center}
-  .login-error{background:var(--red-light);color:var(--red);font-size:12px;padding:8px 12px;border-radius:6px;margin-bottom:14px;display:none;border:1px solid #fca5a5}
-  .login-input-wrap{margin-bottom:14px}
-  .login-input-wrap label{font-size:11px;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block}
-  .login-input-wrap input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color .15s}
-  .login-input-wrap input:focus{border-color:var(--michels-red)}
-  .btn-login{width:100%;padding:11px;background:var(--michels-red);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
-  .btn-login:hover{background:var(--michels-red-dark)}
-  .login-tagline{color:#888;font-size:12px;margin-top:12px}
-  .login-user-list{margin-top:8px;font-size:11px;color:var(--text-muted);text-align:center}
+/* TODO SECTION */
+.todo-section{background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:24px;overflow:hidden}
+.todo-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+.todo-header-left{display:flex;align-items:center;gap:10px;min-width:0}
+.todo-title{font-size:13px;font-weight:600;color:var(--text)}
+.todo-badge{background:var(--red-light);color:var(--red);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.todo-controls{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)}
+.todo-controls label{font-size:11px;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin:0}
+.todo-controls input[type=number]{width:52px;padding:4px 6px;font-size:12px;margin:0}
+.todo-list{padding:0}
+.todo-item{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);transition:background .12s}
+.todo-item:last-child{border-bottom:none}
+.todo-item:hover{background:var(--surface)}
+.todo-item.done{opacity:.5}
+.todo-item.done .todo-item-title{text-decoration:line-through;color:var(--text-muted)}
+.todo-check{width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s}
+.todo-check.checked{background:var(--green);border-color:var(--green)}
+.todo-check.checked::after{content:'✓';color:#fff;font-size:11px;font-weight:600}
+.todo-item-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.todo-item-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.todo-item-age{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
+.todo-urgency-high{color:var(--red);font-weight:600}
+.todo-urgency-med{color:var(--amber);font-weight:600}
+.todo-empty{padding:20px 16px;text-align:center;font-size:12px;color:var(--text-muted)}
 
-  /* USER MANAGEMENT */
-  .user-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border-radius:20px;padding:4px 10px;font-size:12px;color:#ddd;cursor:pointer;border:1px solid rgba(255,255,255,0.15);transition:background .15s}
-  .user-badge:hover{background:rgba(255,255,255,0.18)}
-  .user-avatar{width:22px;height:22px;border-radius:50%;background:var(--michels-red);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+/* FOCUS STATES */
+button:focus-visible,
+.nav-tab:focus-visible,
+.user-badge:focus-visible,
+.todo-check:focus-visible,
+.modal-close:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 
-  /* TODO SECTION */
-  .todo-section{background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:24px;overflow:hidden}
-  .todo-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
-  .todo-header-left{display:flex;align-items:center;gap:10px}
-  .todo-title{font-size:13px;font-weight:600;color:var(--text)}
-  .todo-badge{background:var(--red-light);color:var(--red);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
-  .todo-controls{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)}
-  .todo-controls label{font-size:11px;color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:400;margin:0}
-  .todo-controls input[type=number]{width:52px;padding:4px 6px;font-size:12px;margin:0}
-  .todo-list{padding:0}
-  .todo-item{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);transition:background .12s}
-  .todo-item:last-child{border-bottom:none}
-  .todo-item:hover{background:var(--surface)}
-  .todo-item.done{opacity:.5}
-  .todo-item.done .todo-item-title{text-decoration:line-through;color:var(--text-muted)}
-  .todo-check{width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s}
-  .todo-check.checked{background:var(--green);border-color:var(--green)}
-  .todo-check.checked::after{content:'✓';color:#fff;font-size:11px;font-weight:600}
-  .todo-item-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
-  .todo-item-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .todo-item-age{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
-  .todo-urgency-high{color:var(--red);font-weight:600}
-  .todo-urgency-med{color:var(--amber);font-weight:600}
-  .todo-empty{padding:20px 16px;text-align:center;font-size:12px;color:var(--text-muted)}
-
+/* RESPONSIVE — 768px and below */
+@media(max-width:768px){
+  .header,.section-header,.todo-header{flex-direction:column;align-items:stretch;gap:12px}
+  .stat-row,.form-row,.project-grid{grid-template-columns:1fr}
+  .nav{overflow-x:auto;padding:0 12px}
+  .main{padding:16px 12px}
+}
 </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -223,10 +241,17 @@
       <div class="header-divider"></div>
       <div>
         <div class="header-title">Project Dashboard</div>
-        <div class="header-sub">Associate Project Manager</div>
+        <div class="header-sub" id="header-sub">APM Dashboard</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px"><div class="header-date" id="header-date"></div><span id="current-user-badge" class="user-badge" onclick="openModal('user-modal')" style="display:none"><span class="user-avatar" id="user-avatar-initials">?</span><span id="current-user-name">User</span></span><button class="btn-sm" onclick="openModal('supabase-modal')" style="font-size:11px;color:#aaa;border-color:rgba(255,255,255,0.2);padding:4px 10px">⚙ DB Setup</button><button class="btn-sm" onclick="logout()" style="font-size:11px;color:#f87171;border-color:rgba(248,113,113,0.3);padding:4px 10px">Sign Out</button></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="header-date" id="header-date"></div>
+      <span id="role-pill" style="display:none;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 9px;border-radius:20px;font-family:'DM Mono',monospace"></span>
+      <span id="current-user-badge" class="user-badge" style="display:none"><span class="user-avatar" id="user-avatar-initials">?</span><span id="current-user-name">User</span></span>
+      <button id="btn-manage-users" class="btn-sm" onclick="openModal('user-modal')" style="display:none;font-size:11px;color:#aaa;border-color:rgba(255,255,255,0.2);padding:4px 10px">&#128101; Users</button>
+      <button id="btn-db-setup" class="btn-sm" onclick="openModal('supabase-modal')" style="display:none;font-size:11px;color:#aaa;border-color:rgba(255,255,255,0.2);padding:4px 10px">&#9881; DB Setup</button>
+      <button class="btn-sm" onclick="logout()" style="font-size:11px;color:#f87171;border-color:rgba(248,113,113,0.3);padding:4px 10px">Sign Out</button>
+    </div>
   </div>
 
   <div class="nav">
@@ -239,7 +264,6 @@
   <!-- ACTIVE PROJECTS -->
   <div class="main active" id="tab-projects">
     <div class="stat-row" id="project-stats"></div>
-    
 
     <!-- REPORT SECTION -->
     <div class="todo-section" style="margin-bottom:16px">
@@ -448,7 +472,7 @@
       <div class="form-row">
         <div><label>Status</label>
           <select id="sub-status">
-            <option>Pending</option><option>Under Review</option><option>Approved</option><option>Approved as Noted</option><option>Revise & Resubmit</option><option>Rejected</option>
+            <option>Pending</option><option>Under Review</option><option>Approved</option><option>Approved as Noted</option><option>Revise &amp; Resubmit</option><option>Rejected</option>
           </select>
         </div>
         <div><label>Ball in Court</label>
@@ -465,21 +489,270 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="rental-modal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">New Rental Equipment</span><button class="modal-close" onclick="closeModal('rental-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div><label>Equipment</label><input type="text" id="ren-name" placeholder="e.g. 60-Ton Crane"></div>
+        <div><label>Project</label><select id="ren-project"><option value="">Select project</option></select></div>
+      </div>
+      <div class="form-row-full">
+        <div><label>Vendor / Rental Co.</label><input type="text" id="ren-vendor" placeholder="e.g. United Rentals"></div>
+      </div>
+      <div class="form-row">
+        <div><label>On Site Date</label><input type="date" id="ren-onsite"></div>
+        <div><label>Release Date</label><input type="date" id="ren-offsite"></div>
+      </div>
+      <div class="form-row-full"><label>Status</label>
+        <select id="ren-status">
+          <option>Ordered</option><option>On Site</option><option>Release</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('rental-modal')">Cancel</button>
+      <button class="btn-add" onclick="saveRental()">Save Rental</button>
+    </div>
+  </div>
+</div>
 
+<div class="modal-overlay" id="supabase-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Supabase Database Setup</span>
+      <button class="modal-close" onclick="closeModal('supabase-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--text-mid);line-height:1.6">
+        Paste your Supabase credentials below. Find them at <strong>supabase.com → Settings → API</strong>.<br>These are stored locally and only used to connect to your own database.
+      </div>
+      <div class="form-row-full"><label>Project URL</label><input type="text" id="sb-url" placeholder="https://xxxx.supabase.co"></div>
+      <div class="form-row-full"><label>Anon / Public Key</label><textarea id="sb-key" style="min-height:80px;font-family:'DM Mono',monospace;font-size:11px" placeholder="eyJhbGci..."></textarea></div>
+      <div id="sb-status" style="font-size:12px;margin-top:8px;min-height:18px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('supabase-modal')">Cancel</button>
+      <button class="btn-add" onclick="saveSupabaseConfig()">Save &amp; Connect</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="user-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="user-modal-title">Manage Users</span>
+      <button class="modal-close" onclick="closeModal('user-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="user-list" style="margin-bottom:16px"></div>
+      <div style="border-top:1px solid var(--border);padding-top:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--text-mid);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">Add New User</div>
+        <div class="form-row">
+          <div><label>Username</label><input type="text" id="new-username" placeholder="e.g. jsmith"></div>
+          <div><label>Display Name</label><input type="text" id="new-displayname" placeholder="e.g. John Smith"></div>
+        </div>
+        <div class="form-row-full"><label>Password</label><input type="password" id="new-password" placeholder="Set a password"></div>
+        <div class="form-row-full"><label>Role</label>
+          <select id="new-role">
+            <option value="superadmin">Super Admin (full system access)</option>
+            <option value="regional">Regional Manager (admin + user mgmt)</option>
+            <option value="pm">Project Manager (edit + delete)</option>
+            <option value="apm" selected>APM (edit, no delete)</option>
+          </select>
+        </div>
+        <div id="user-add-error" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none"></div>
+        <button class="btn-add" onclick="addUser()" style="width:100%;justify-content:center">Add User</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('user-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── config.js ── -->
 <script>
+// Role permissions, colors, and shared constants
 
-const MICHELS_LOGO_B64 = "data:image/png;base64,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";
-const today = new Date();
-document.getElementById('header-date').textContent = today.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+const ROLE_PERMISSIONS = {
+  apm: {
+    label: 'Associate PM',
+    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    readonlyTabs: [],
+    canEdit: true,
+    canDelete: false,
+    canExport: true,
+    canManageUsers: false,
+    canDBSetup: false,
+  },
+  pm: {
+    label: 'Project Manager',
+    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    readonlyTabs: [],
+    canEdit: true,
+    canDelete: true,
+    canExport: true,
+    canManageUsers: false,
+    canDBSetup: false,
+  },
+  regional: {
+    label: 'Regional Manager',
+    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    readonlyTabs: [],
+    canEdit: true,
+    canDelete: true,
+    canExport: true,
+    canManageUsers: true,
+    canDBSetup: true,
+  },
+  // Legacy 'admin' maps to regional for backward compat
+  admin: {
+    label: 'Regional Manager',
+    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    readonlyTabs: [],
+    canEdit: true,
+    canDelete: true,
+    canExport: true,
+    canManageUsers: true,
+    canDBSetup: true,
+  },
+  superadmin: {
+    label: 'Super Admin',
+    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    readonlyTabs: [],
+    canEdit: true,
+    canDelete: true,
+    canExport: true,
+    canManageUsers: true,
+    canDBSetup: true,
+  },
+};
 
+// Role color accents shown in header badge
+const ROLE_COLORS = {
+  apm:        { bg: '#1e3a5f', text: '#93c5fd' },
+  pm:         { bg: '#14532d', text: '#86efac' },
+  regional:   { bg: '#78350f', text: '#fcd34d' },
+  admin:      { bg: '#78350f', text: '#fcd34d' },
+  superadmin: { bg: '#3b0764', text: '#d8b4fe' },
+};
+
+const statusColors = {
+  'In Progress':'badge-blue','Pre-Construction':'badge-gray','On Hold':'badge-amber','Closeout':'badge-green','Complete':'badge-green',
+  'Open':'badge-red','Under Review':'badge-amber','Answered':'badge-green','Closed':'badge-gray',
+  'Pending':'badge-gray','Approved':'badge-green','Approved as Noted':'badge-green','Revise & Resubmit':'badge-amber','Rejected':'badge-red',
+  'Ordered':'badge-amber','On Site':'badge-blue','Release':'badge-green'
+};
+const priorityColors = {'High':'badge-red','Medium':'badge-amber','Low':'badge-blue'};
+</script>
+
+<!-- ── app.js ── -->
+<script>
+// Global state variables, utility functions, modal helpers,
+// badge/format helpers, renderAll, tab & modal event listeners,
+// and initialization bootstrap
+
+// ── GLOBAL STATE ─────────────────────────────────────────
 let projects = [];
 let rfis = [];
 let submittals = [];
 let rental = [];
 let nextId = 1;
+let sb = null;
+let currentUser = null;
+let cachedUsers = [];
+let doneTodos = [];
+let reminderDays = 7;
+let dataLoaded = false;
+let loadToken = 0;
+
+// ── HEADER DATE ──────────────────────────────────────────
+const today = new Date();
+document.getElementById('header-date').textContent = today.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// ── UTILITY FUNCTIONS ────────────────────────────────────
+function badge(text,cls){return`<span class="status ${cls||statusColors[text]||'badge-gray'}">${text}</span>`}
+function prio(text){return`<span class="priority ${priorityColors[text]||'badge-gray'}">${text}</span>`}
+function fmt(d){if(!d)return'—';const p=d.split('-');return`${p[1]}/${p[2]}/${p[0]}`}
+function val(id){return document.getElementById(id).value.trim()}
+
+function calcPct(start, end){
+  if(!start||!end) return 0;
+  const s=new Date(start).getTime();
+  const e=new Date(end).getTime();
+  const n=Date.now();
+  if(n<=s) return 0;
+  if(n>=e) return 100;
+  return Math.round((n-s)/(e-s)*100);
+}
+
+// ── MODAL HELPERS ────────────────────────────────────────
+// project-modal excluded: creating a project doesn't require preloaded relational data
+const DATA_DEPENDENT_MODALS = ['rfi-modal','submittal-modal','rental-modal'];
+
+// resetModal clears a modal back to its default "new" state.
+// Pass noReset=true from editProject() to preserve pre-filled edit values.
+function resetModal(id){
+  if(id==='project-modal')     resetProjectModal();
+  else if(id==='rfi-modal')    resetRFIModal();
+  else if(id==='submittal-modal') resetSubmittalModal();
+  else if(id==='rental-modal') resetRentalModal();
+}
+
+function openModal(id, noReset=false){
+  if(DATA_DEPENDENT_MODALS.includes(id) && !dataLoaded){
+    alert('Data is still loading. Please try again in a moment.'); return;
+  }
+  if(id==='user-modal'){
+    if(!getPerms().canManageUsers){ alert('You do not have permission to manage users.'); return; }
+    renderUserList();
+  }
+  if(!noReset) resetModal(id);
+  populateProjectSelects();
+  const el=document.getElementById(id);
+  if(!el){ console.warn('openModal: no element found for id "'+id+'"'); return; }
+  el.classList.add('open');
+}
+function closeModal(id){
+  const el=document.getElementById(id);
+  if(!el){ console.warn('closeModal: no element found for id "'+id+'"'); return; }
+  el.classList.remove('open');
+}
+
+// ── RENDER ALL ───────────────────────────────────────────
+function renderAll(){
+  renderProjects();
+  renderReportPreview();
+  renderRFI();
+  renderSubmittals();
+  renderRental();
+  renderTodos();
+  populateProjectSelects();
+  applyWritePermissions();
+}
+
+// ── TAB NAVIGATION EVENT LISTENERS ──────────────────────
+document.querySelectorAll('.nav-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ── MODAL OVERLAY CLICK-TO-CLOSE ────────────────────────
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')});
+});
+</script>
+
+<!-- ── data.js ── -->
+<script>
+// Supabase setup, config persistence, and data load/save layer
 
 // ── SUPABASE CONFIG ───────────────────────────────────────
-let sb = null;
 function loadSBConfig(){
   const url = localStorage.getItem('apm_sb_url');
   const key = localStorage.getItem('apm_sb_key');
@@ -491,7 +764,8 @@ function loadSBConfig(){
   if(urlEl && url) urlEl.value=url;
   if(keyEl && key) keyEl.value=key;
 }
-function saveSupabaseConfig(){
+
+async function saveSupabaseConfig(){
   const url=document.getElementById('sb-url').value.trim();
   const key=document.getElementById('sb-key').value.trim();
   if(!url||!key){ setSBStatus('Please fill in both fields.','var(--red)'); return; }
@@ -499,8 +773,15 @@ function saveSupabaseConfig(){
   localStorage.setItem('apm_sb_key', key);
   try{ sb = supabase.createClient(url, key); }catch(e){ setSBStatus('Invalid credentials: '+e.message,'var(--red)'); return; }
   setSBStatus('Connected! Loading data...','var(--green)');
-  setTimeout(()=>{ closeModal('supabase-modal'); loadData(); },800);
+  try{
+    await loadData();
+    if(!dataLoaded){ setSBStatus('Connection succeeded but data failed to load. Check your table permissions.','var(--red)'); return; }
+    closeModal('supabase-modal');
+  }catch(e){
+    setSBStatus('Error loading data: '+e.message,'var(--red)');
+  }
 }
+
 function setSBStatus(msg,color){
   const el=document.getElementById('sb-status');
   if(el){ el.textContent=msg; el.style.color=color||'var(--text-muted)'; }
@@ -517,9 +798,17 @@ function saveLocal(){
   }catch(e){}
 }
 
-function saveData(){ saveLocal(); }
+function saveData(){
+  saveLocal();
+  if(!sb) return;
+  // Supabase writes happen in individual save functions
+}
 
 async function loadData(){
+  // Reset state at the top of every load — prevents stale "ready" state during reconnect
+  dataLoaded = false;
+  const token = ++loadToken;
+
   if(!sb){
     // fallback to localStorage
     try{
@@ -529,7 +818,9 @@ async function loadData(){
       rental     = JSON.parse(localStorage.getItem('apm_rental')     || '[]');
       doneTodos  = JSON.parse(localStorage.getItem('apm_done_todos') || '[]');
     }catch(e){}
-    renderAll(); return;
+    // Only commit if this is still the latest load request
+    if(token !== loadToken) return;
+    dataLoaded = true; renderAll(); return;
   }
   try{
     const [p,r,s,rn] = await Promise.all([
@@ -538,39 +829,35 @@ async function loadData(){
       sb.from('submittals').select('*').order('id'),
       sb.from('rental').select('*').order('id'),
     ]);
+    // Discard results if a newer load has started
+    if(token !== loadToken) return;
     projects   = (p.data||[]).map(x=>({...x, start:x.start_date, end:x.end_date}));
-    rfis       = (r.data||[]).map(x=>({...x, submitted:x.submitted, due:x.due, desc:x.description}));
+    rfis       = (r.data||[]).map(x=>({...x, desc:x.description}));
     submittals = (s.data||[]).map(x=>({...x, date:x.submitted_date, desc:x.description}));
     rental     = (rn.data||[]).map(x=>({...x, onsite:x.onsite_date, offsite:x.release_date}));
-    // load doneTodos from localStorage (lightweight, no table needed)
     doneTodos  = JSON.parse(localStorage.getItem('apm_done_todos') || '[]');
     saveLocal();
-  }catch(e){ console.error('Supabase load error',e); }
-  renderAll();
-}
-
-async function saveData(){
-  saveLocal();
-  if(!sb) return;
-  // Supabase writes happen in individual save functions below
+  }catch(e){ console.error('Supabase load error',e); return; }
+  if(token !== loadToken) return;
+  dataLoaded = true; renderAll();
 }
 
 // ── SUPABASE WRITE HELPERS ────────────────────────────────
 async function sbInsert(table, row){ if(sb) await sb.from(table).insert(row); }
 async function sbUpdate(table, id, row){ if(sb) await sb.from(table).update(row).eq('id',id); }
 async function sbDelete(table, id){ if(sb) await sb.from(table).delete().eq('id',id); }
+</script>
 
+<!-- ── auth.js ── -->
+<script>
+// Password hashing, user loading/saving, login, session, logout
 
-// ── AUTH SYSTEM ────────────────────────────────────────────
 async function hashPassword(password){
   const msgBuffer = new TextEncoder().encode(password + 'michels_apm_salt');
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
 }
-
-let currentUser = null;
-let cachedUsers = [];
 
 // Load users from Supabase, fall back to localStorage
 async function loadUsers(){
@@ -627,7 +914,7 @@ async function initDefaultAdmin(){
   const users = await loadUsers();
   if(!users.length){
     const hash = await hashPassword('Michels2024!');
-    const admin = {username:'admin',displayName:'Administrator',role:'admin',hash};
+    const admin = {username:'admin',displayName:'Administrator',role:'superadmin',hash};
     await saveUserToDB(admin);
   }
 }
@@ -682,6 +969,11 @@ function checkSession(){
 function showDashboard(){
   document.getElementById('login-overlay').style.display='none';
   document.getElementById('main-dashboard').style.display='';
+  const perms = getPerms();
+  const role = currentUser?.role || 'apm';
+  const roleColor = ROLE_COLORS[role] || ROLE_COLORS.apm;
+
+  // ── User badge ──────────────────────────────────────────
   const badge = document.getElementById('current-user-badge');
   const nameEl = document.getElementById('current-user-name');
   const initEl = document.getElementById('user-avatar-initials');
@@ -690,8 +982,40 @@ function showDashboard(){
     const parts = (currentUser.displayName||currentUser.username).split(' ');
     initEl.textContent = parts.map(p=>p[0]).join('').toUpperCase().substring(0,2);
     badge.style.display='inline-flex';
-    if(currentUser.role!=='admin') badge.onclick=null;
   }
+
+  // ── Role pill ───────────────────────────────────────────
+  const pill = document.getElementById('role-pill');
+  if(pill){
+    pill.textContent = perms.label;
+    pill.style.background = roleColor.bg;
+    pill.style.color = roleColor.text;
+    pill.style.display = 'inline-block';
+  }
+
+  // ── Header subtitle ─────────────────────────────────────
+  const sub = document.getElementById('header-sub');
+  if(sub) sub.textContent = perms.label;
+
+  // ── Show/hide header buttons by permission ───────────────
+  const btnUsers = document.getElementById('btn-manage-users');
+  const btnDB    = document.getElementById('btn-db-setup');
+  if(btnUsers) btnUsers.style.display = perms.canManageUsers ? 'inline-flex' : 'none';
+  if(btnDB)    btnDB.style.display    = perms.canDBSetup    ? 'inline-flex' : 'none';
+
+  // ── Nav tab visibility ───────────────────────────────────
+  document.querySelectorAll('.nav-tab').forEach(tab=>{
+    const tabKey = tab.dataset.tab;
+    const allowed = perms.tabs.includes(tabKey);
+    tab.style.display = allowed ? '' : 'none';
+  });
+  // If the currently active tab got hidden, switch to first allowed tab
+  const activeTab = document.querySelector('.nav-tab.active');
+  if(activeTab && activeTab.style.display==='none'){
+    const firstAllowed = document.querySelector('.nav-tab:not([style*="display: none"])');
+    if(firstAllowed) firstAllowed.click();
+  }
+
   loadSBConfig();
   loadData();
 }
@@ -707,22 +1031,38 @@ function logout(){
   document.getElementById('login-error').style.display='none';
   document.getElementById('current-user-badge').style.display='none';
 }
+</script>
 
-// ── USER MANAGEMENT ────────────────────────────────────────
+<!-- ── users.js ── -->
+<script>
+// User management: render list, add, remove
+
 async function renderUserList(){
   const users = await loadUsers();
   const el = document.getElementById('user-list');
   if(!el) return;
   if(!users.length){ el.innerHTML='<div style="color:var(--text-muted);font-size:12px">No users yet.</div>'; return; }
+  const roleLabels = {superadmin:'Super Admin',regional:'Regional Mgr',admin:'Regional Mgr',pm:'Project Manager',apm:'APM',user:'User'};
+  const rolePillStyle = {
+    superadmin:'background:#3b0764;color:#d8b4fe',
+    regional:'background:#78350f;color:#fcd34d',
+    admin:'background:#78350f;color:#fcd34d',
+    pm:'background:#14532d;color:#86efac',
+    apm:'background:#1e3a5f;color:#93c5fd',
+    user:'background:#374151;color:#d1d5db',
+  };
   el.innerHTML = users.map(u=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--michels-red);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--michels-red);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">
           ${(u.displayName||u.username).split(' ').map(p=>p[0]).join('').toUpperCase().substring(0,2)}
         </div>
         <div>
-          <div style="font-size:13px;font-weight:500">${u.displayName||u.username}</div>
-          <div style="font-size:11px;color:var(--text-muted)">@${u.username} &middot; ${u.role}</div>
+          <div style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px">
+            ${u.displayName||u.username}
+            <span style="font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace;${rolePillStyle[u.role]||rolePillStyle.user}">${roleLabels[u.role]||u.role}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">@${u.username}</div>
         </div>
       </div>
       ${u.username==='admin'?'<span style="font-size:11px;color:var(--text-muted)">Protected</span>':`<button class="btn-sm btn-danger" onclick="removeUser('${u.username}')">Remove</button>`}
@@ -759,124 +1099,63 @@ async function removeUser(username){
   await deleteUserFromDB(username);
   renderUserList();
 }
+</script>
 
-const _origOpenModal = openModal;
-function openModal(id){
-  if(id==='user-modal'){
-    if(currentUser?.role!=='admin'){ alert('Only admins can manage users.'); return; }
-    renderUserList();
-  }
-  _origOpenModal(id);
+<!-- ── permissions.js ── -->
+<script>
+// Role-based permission helpers and UI enforcement
+
+function getPerms(){ return ROLE_PERMISSIONS[currentUser?.role] || ROLE_PERMISSIONS.apm; }
+
+// Returns true if current user can perform a write action on a given tab
+function canWrite(tab){
+  const p = getPerms();
+  return p.canEdit && !p.readonlyTabs.includes(tab);
 }
 
-localStorage.removeItem('apm_users');
-initDefaultAdmin().then(()=>{
-  if(!checkSession()){
-    document.getElementById('login-overlay').style.display='flex';
-  }
-});
+// Apply write/delete permissions after each render.
+// Hides "+ New" and "Delete" buttons for roles without canEdit/canDelete.
+// Centralised here so every renderAll() call enforces it automatically.
+function applyWritePermissions(){
+  const p = getPerms();
 
-
-// --- TODO REMINDER LOGIC ---
-let doneTodos = [];
-let reminderDays = 7;
-function loadTodoState(){
-  try{
-    doneTodos = JSON.parse(localStorage.getItem('apm_done_todos')||'[]');
-    reminderDays = parseInt(localStorage.getItem('apm_reminder_days')||'7');
-    const inp = document.getElementById('reminder-days');
-    if(inp) inp.value = reminderDays;
-  }catch(e){}
-}
-function saveDays(){
-  reminderDays = parseInt(document.getElementById('reminder-days').value)||7;
-  localStorage.setItem('apm_reminder_days', String(reminderDays));
-}
-function toggleTodo(key){
-  if(doneTodos.includes(key)) doneTodos=doneTodos.filter(k=>k!==key);
-  else doneTodos.push(key);
-  localStorage.setItem('apm_done_todos', JSON.stringify(doneTodos));
-  renderTodos();
-}
-function clearDoneTodos(){
-  doneTodos=[];
-  localStorage.setItem('apm_done_todos','[]');
-  renderTodos();
-}
-function daysSince(dateStr){
-  if(!dateStr) return null;
-  const d=new Date(dateStr+'T00:00:00');
-  return Math.floor((Date.now()-d.getTime())/(1000*60*60*24));
-}
-function renderTodos(){
-  const list = document.getElementById('todo-list');
-  const countEl = document.getElementById('todo-count');
-  if(!list) return;
-  const threshold = reminderDays;
-  const items = [];
-
-  rfis.forEach(r=>{
-    if(['Answered','Closed'].includes(r.status)) return;
-    const days = daysSince(r.submitted);
-    if(days===null||days<threshold) return;
-    items.push({key:`rfi-${r.id}`,type:'RFI',num:r.num,subject:r.subject,project:r.project,status:r.status,days});
-  });
-  submittals.forEach(s=>{
-    if(['Approved','Approved as Noted','Rejected'].includes(s.status)) return;
-    const days = daysSince(s.date);
-    if(days===null||days<threshold) return;
-    items.push({key:`sub-${s.id}`,type:'Submittal',num:s.num,subject:s.desc,project:s.project,status:s.status,days});
+  // Add/new buttons — keyed by their onclick string fragment
+  const addButtons = document.querySelectorAll('.btn-add[onclick*="openModal("]');
+  addButtons.forEach(btn=>{
+    // Determine which tab this button belongs to by walking up to .main
+    const tab = btn.closest('.main');
+    const tabKey = tab ? tab.id.replace('tab-','') : null;
+    const allow = tabKey ? canWrite(tabKey) : p.canEdit;
+    btn.style.display = allow ? '' : 'none';
   });
 
-  items.sort((a,b)=>b.days-a.days);
-  const pending = items.filter(i=>!doneTodos.includes(i.key));
-  countEl.textContent = pending.length;
-  countEl.style.display = pending.length ? 'inline-flex' : 'none';
+  // Delete buttons
+  const delButtons = document.querySelectorAll('.btn-danger[onclick*="deleteItem"]');
+  delButtons.forEach(btn=>{
+    btn.style.display = p.canDelete ? '' : 'none';
+  });
 
-  if(!items.length){
-    list.innerHTML=`<div class="todo-empty">No follow-ups needed — all open RFIs and submittals are within the ${threshold}-day window.</div>`;
-    return;
-  }
-  list.innerHTML = items.map(item=>{
-    const done = doneTodos.includes(item.key);
-    const urgency = item.days >= threshold*3 ? 'todo-urgency-high' : item.days >= threshold*2 ? 'todo-urgency-med' : '';
-    const daysLabel = `${item.days} days since submission`;
-    return `<div class="todo-item${done?' done':''}">
-      <div class="todo-check${done?' checked':''}" onclick="toggleTodo('${item.key}')"></div>
-      <div>
-        <div class="todo-item-title">${item.type} ${item.num} — ${item.subject}</div>
-        <div class="todo-item-meta">
-          <span class="status ${statusColors[item.status]||'badge-gray'}">${item.status}</span>
-          <span style="font-size:11px;color:var(--text-muted)">${item.project}</span>
-          <span class="todo-item-age ${urgency}">${daysLabel}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  // Edit buttons on project cards
+  const editButtons = document.querySelectorAll('.btn-sm[onclick*="editProject"]');
+  editButtons.forEach(btn=>{
+    btn.style.display = canWrite('projects') ? '' : 'none';
+  });
+
+  // Export buttons — always show if canExport
+  const exportBtns = document.querySelectorAll('.btn-sm[onclick*="exportTo"]');
+  exportBtns.forEach(btn=>{ btn.style.display = p.canExport ? '' : 'none'; });
+
+  // PDF summary button
+  const pdfBtn = document.querySelector('.btn-add[onclick*="generateSummaryPDF"]');
+  if(pdfBtn) pdfBtn.style.display = p.canExport ? '' : 'none';
 }
-loadTodoState();
+</script>
 
-const statusColors={
-  'In Progress':'badge-blue','Pre-Construction':'badge-gray','On Hold':'badge-amber','Closeout':'badge-green',
-  'Open':'badge-red','Under Review':'badge-amber','Answered':'badge-green','Closed':'badge-gray',
-  'Pending':'badge-gray','Approved':'badge-green','Approved as Noted':'badge-green','Revise & Resubmit':'badge-amber','Rejected':'badge-red',
-  'Ordered':'badge-amber','On Site':'badge-blue','Release':'badge-green'
-};
-const priorityColors={'High':'badge-red','Medium':'badge-amber','Low':'badge-blue'};
+<!-- ── render.js ── -->
+<script>
+// Render functions for projects, RFIs, submittals, rental,
+// and project select dropdowns
 
-function badge(text,cls){return`<span class="status ${cls||statusColors[text]||'badge-gray'}">${text}</span>`}
-function prio(text){return`<span class="priority ${priorityColors[text]||'badge-gray'}">${text}</span>`}
-function fmt(d){if(!d)return'—';const p=d.split('-');return`${p[1]}/${p[2]}/${p[0]}`}
-
-function calcPct(start, end){
-  if(!start||!end) return 0;
-  const s=new Date(start).getTime();
-  const e=new Date(end).getTime();
-  const n=Date.now();
-  if(n<=s) return 0;
-  if(n>=e) return 100;
-  return Math.round((n-s)/(e-s)*100);
-}
 function renderProjects(){
   const g=document.getElementById('project-grid');
   const s=document.getElementById('project-stats');
@@ -946,18 +1225,6 @@ function renderSubmittals(){
   `).join('');
 }
 
-
-
-function populateProjectSelects(){
-  const ids=['rfi-project','sub-project','ren-project'];
-  ids.forEach(id=>{
-    const el=document.getElementById(id);
-    const cur=el.value;
-    el.innerHTML='<option value="">Select project</option>'+projects.map(p=>`<option value="${p.name}"${p.name===cur?' selected':''}>${p.name}</option>`).join('');
-  });
-}
-
-
 function renderRental(){
   const body=document.getElementById('rental-body');
   if(!rental.length){body.innerHTML=`<tr><td colspan="8" class="empty">No rental equipment logged yet.</td></tr>`;return}
@@ -974,319 +1241,205 @@ function renderRental(){
   `).join('');
 }
 
+function populateProjectSelects(){
+  const ids=['rfi-project','sub-project','ren-project'];
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    const cur=el.value;
+    el.innerHTML='<option value="">Select project</option>'+projects.map(p=>`<option value="${p.name}"${p.name===cur?' selected':''}>${p.name}</option>`).join('');
+  });
+}
+</script>
+
+<!-- ── todos.js ── -->
+<script>
+// Follow-up reminder / todo logic
+
+function loadTodoState(){
+  try{
+    doneTodos = JSON.parse(localStorage.getItem('apm_done_todos')||'[]');
+    reminderDays = parseInt(localStorage.getItem('apm_reminder_days')||'7');
+    const inp = document.getElementById('reminder-days');
+    if(inp) inp.value = reminderDays;
+  }catch(e){}
+}
+
+function saveDays(){
+  reminderDays = parseInt(document.getElementById('reminder-days').value)||7;
+  localStorage.setItem('apm_reminder_days', String(reminderDays));
+}
+
+function toggleTodo(key){
+  if(doneTodos.includes(key)) doneTodos=doneTodos.filter(k=>k!==key);
+  else doneTodos.push(key);
+  localStorage.setItem('apm_done_todos', JSON.stringify(doneTodos));
+  renderTodos();
+}
+
+function clearDoneTodos(){
+  doneTodos=[];
+  localStorage.setItem('apm_done_todos','[]');
+  renderTodos();
+}
+
+function daysSince(dateStr){
+  if(!dateStr) return null;
+  const d=new Date(dateStr+'T00:00:00');
+  return Math.floor((Date.now()-d.getTime())/(1000*60*60*24));
+}
+
+function renderTodos(){
+  const list = document.getElementById('todo-list');
+  const countEl = document.getElementById('todo-count');
+  if(!list) return;
+  const threshold = reminderDays;
+  const items = [];
+
+  rfis.forEach(r=>{
+    if(['Answered','Closed'].includes(r.status)) return;
+    const days = daysSince(r.submitted);
+    if(days===null||days<threshold) return;
+    items.push({key:`rfi-${r.id}`,type:'RFI',num:r.num,subject:r.subject,project:r.project,status:r.status,days});
+  });
+  submittals.forEach(s=>{
+    if(['Approved','Approved as Noted','Rejected'].includes(s.status)) return;
+    const days = daysSince(s.date);
+    if(days===null||days<threshold) return;
+    items.push({key:`sub-${s.id}`,type:'Submittal',num:s.num,subject:s.desc,project:s.project,status:s.status,days});
+  });
+
+  items.sort((a,b)=>b.days-a.days);
+  const pending = items.filter(i=>!doneTodos.includes(i.key));
+  countEl.textContent = pending.length;
+  countEl.style.display = pending.length ? 'inline-flex' : 'none';
+
+  if(!items.length){
+    list.innerHTML=`<div class="todo-empty">No follow-ups needed — all open RFIs and submittals are within the ${threshold}-day window.</div>`;
+    return;
+  }
+  list.innerHTML = items.map(item=>{
+    const done = doneTodos.includes(item.key);
+    const urgency = item.days >= threshold*3 ? 'todo-urgency-high' : item.days >= threshold*2 ? 'todo-urgency-med' : '';
+    const daysLabel = `${item.days} days since submission`;
+    return `<div class="todo-item${done?' done':''}">
+      <div class="todo-check${done?' checked':''}" onclick="toggleTodo('${item.key}')"></div>
+      <div>
+        <div class="todo-item-title">${item.type} ${item.num} — ${item.subject}</div>
+        <div class="todo-item-meta">
+          <span class="status ${statusColors[item.status]||'badge-gray'}">${item.status}</span>
+          <span style="font-size:11px;color:var(--text-muted)">${item.project}</span>
+          <span class="todo-item-age ${urgency}">${daysLabel}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+</script>
+
+<!-- ── crud.js ── -->
+<script>
+// Create, read, update, delete operations for all data types
+
+// ── MODAL RESET FUNCTIONS ─────────────────────────────────
+function resetProjectModal(){
+  ['p-id','p-name','p-client','p-number','p-start','p-end','p-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-status').value='Pre-Construction';
+  document.getElementById('project-modal-title').textContent='New Project';
+  document.getElementById('project-save-btn').textContent='Save Project';
+}
+function resetRFIModal(){
+  ['rfi-num','rfi-subject','rfi-submitted','rfi-due','rfi-desc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('rfi-project').value='';
+  document.getElementById('rfi-status').value='Open';
+  document.getElementById('rfi-priority').value='Low';
+}
+function resetSubmittalModal(){
+  ['sub-num','sub-desc','sub-spec','sub-date'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sub-project').value='';
+  document.getElementById('sub-status').value='Pending';
+  document.getElementById('sub-bic').value='Contractor';
+}
+function resetRentalModal(){
+  ['ren-name','ren-vendor','ren-onsite','ren-offsite'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ren-project').value='';
+  document.getElementById('ren-status').value='Ordered';
+}
+
+function editProject(id){
+  const p=projects.find(x=>x.id===id);
+  if(!p)return;
+  document.getElementById('project-modal-title').textContent='Edit Project';
+  document.getElementById('project-save-btn').textContent='Update Project';
+  document.getElementById('p-id').value=id;
+  document.getElementById('p-name').value=p.name;
+  document.getElementById('p-client').value=p.client||'';
+  document.getElementById('p-number').value=p.number||'';
+  document.getElementById('p-start').value=p.start||'';
+  document.getElementById('p-end').value=p.end||'';
+  document.getElementById('p-status').value=p.status||'In Progress';
+  document.getElementById('p-notes').value=p.notes||'';
+  openModal('project-modal', true); // noReset=true — preserve pre-filled edit values
+}
+
+async function saveProject(){
+  const name=val('p-name');if(!name)return alert('Project name required.');
+  const editId=document.getElementById('p-id').value;
+  const data={name,client:val('p-client'),number:val('p-number'),start_date:val('p-start'),end_date:val('p-end'),status:val('p-status'),notes:val('p-notes')};
+  if(editId){
+    const id=parseInt(editId);
+    const idx=projects.findIndex(x=>x.id===id);
+    if(idx>-1){ projects[idx]={...projects[idx],...data,start:data.start_date,end:data.end_date}; await sbUpdate('projects',id,data); }
+  } else {
+    const row={...data};
+    if(sb){ const res=await sb.from('projects').insert(row).select(); if(res.error){ alert('Failed to save project: '+res.error.message); return; } if(res.data?.[0]) projects.push({...res.data[0],start:res.data[0].start_date,end:res.data[0].end_date}); }
+    else { projects.push({id:nextId++,...data,start:data.start_date,end:data.end_date}); }
+  }
+  resetProjectModal();
+  closeModal('project-modal');saveLocal();renderAll();
+}
+
+async function saveRFI(){
+  const num=val('rfi-num'),subject=val('rfi-subject');if(!num||!subject)return alert('RFI # and subject required.');
+  const data={num,project:val('rfi-project'),subject,submitted:val('rfi-submitted'),due:val('rfi-due'),status:val('rfi-status'),priority:val('rfi-priority'),description:val('rfi-desc')};
+  if(sb){ const res=await sb.from('rfis').insert(data).select(); if(res.error){ alert('Failed to save RFI: '+res.error.message); return; } if(res.data?.[0]) rfis.push({...res.data[0],desc:res.data[0].description}); }
+  else rfis.push({id:nextId++,...data,desc:data.description});
+  resetRFIModal();
+  closeModal('rfi-modal');saveLocal();renderAll();
+}
+
+async function saveSubmittal(){
+  const num=val('sub-num'),desc=val('sub-desc');if(!num||!desc)return alert('Submittal # and description required.');
+  const data={num,project:val('sub-project'),description:desc,spec:val('sub-spec'),submitted_date:val('sub-date'),status:val('sub-status'),bic:val('sub-bic')};
+  if(sb){ const res=await sb.from('submittals').insert(data).select(); if(res.error){ alert('Failed to save submittal: '+res.error.message); return; } if(res.data?.[0]) submittals.push({...res.data[0],desc:res.data[0].description,date:res.data[0].submitted_date}); }
+  else submittals.push({id:nextId++,...data,desc,date:data.submitted_date});
+  resetSubmittalModal();
+  closeModal('submittal-modal');saveLocal();renderAll();
+}
+
 async function saveRental(){
   const name=val('ren-name');if(!name)return alert('Equipment name required.');
   const data={name,project:val('ren-project'),vendor:val('ren-vendor'),onsite_date:val('ren-onsite'),release_date:val('ren-offsite'),status:val('ren-status')};
-  if(sb){ const res=await sb.from('rental').insert(data).select(); if(res.data?.[0]) rental.push({...res.data[0],onsite:res.data[0].onsite_date,offsite:res.data[0].release_date}); }
+  if(sb){ const res=await sb.from('rental').insert(data).select(); if(res.error){ alert('Failed to save rental: '+res.error.message); return; } if(res.data?.[0]) rental.push({...res.data[0],onsite:res.data[0].onsite_date,offsite:res.data[0].release_date}); }
   else rental.push({id:nextId++,...data,onsite:data.onsite_date,offsite:data.release_date});
-  ['ren-name','ren-vendor','ren-onsite','ren-offsite'].forEach(id=>document.getElementById(id).value='');
+  resetRentalModal();
   closeModal('rental-modal');saveLocal();renderAll();
 }
 
-
-
-
-
-
-
-
-
-
-// ── DRAFT GENERATOR ────────────────────────────────────────
-
-
-
-// ── EXCEL EXPORT ───────────────────────────────────────────
-function exportToExcel(type){
-  if(typeof XLSX === 'undefined'){ alert('Excel library not loaded yet. Please try again in a moment.'); return; }
-
-  let data = [];
-  let filename = '';
-
-  if(type === 'rfi'){
-    filename = 'RFI_Log.xlsx';
-    data = rfis.map(r=>({
-      'RFI #':        r.num||'',
-      'Subject':      r.subject||'',
-      'Project':      r.project||'',
-      'Date Submitted': r.submitted||'',
-      'Response Due': r.due||'',
-      'Status':       r.status||'',
-      'Priority':     r.priority||'',
-      'Description':  r.desc||r.description||''
-    }));
-  } else if(type === 'submittal'){
-    filename = 'Submittal_Log.xlsx';
-    data = submittals.map(s=>({
-      'Submittal #':   s.num||'',
-      'Description':   s.desc||s.description||'',
-      'Project':       s.project||'',
-      'Spec Section':  s.spec||'',
-      'Date Submitted':s.date||s.submitted_date||'',
-      'Status':        s.status||'',
-      'Ball in Court': s.bic||''
-    }));
-  } else if(type === 'rental'){
-    filename = 'Rental_Equipment.xlsx';
-    data = rental.map(r=>({
-      'Equipment':    r.name||'',
-      'Project':      r.project||'',
-      'Vendor':       r.vendor||'',
-      'On Site Date': r.onsite||r.onsite_date||'',
-      'Release Date': r.offsite||r.release_date||'',
-      'Status':       r.status||''
-    }));
-  }
-
-  if(!data.length){ alert('No data to export yet.'); return; }
-
-  const ws = XLSX.utils.json_to_sheet(data);
-
-  // Style column widths
-  const colWidths = Object.keys(data[0]).map(k=>({ wch: Math.max(k.length, 15) }));
-  ws['!cols'] = colWidths;
-
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, type==='rfi'?'RFI Log':type==='submittal'?'Submittal Log':'Rental Equipment');
-
-  // Add metadata sheet
-  const meta = XLSX.utils.aoa_to_sheet([
-    ['Michels Power Inc. — APM Dashboard Export'],
-    ['Generated:', new Date().toLocaleString()],
-    ['Total Records:', data.length]
-  ]);
-  XLSX.utils.book_append_sheet(wb, meta, 'Info');
-
-  XLSX.writeFile(wb, filename);
+async function deleteItem(store,id){
+  const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental'};
+  if(store==='projects')projects=projects.filter(x=>x.id!==id);
+  else if(store==='rfis')rfis=rfis.filter(x=>x.id!==id);
+  else if(store==='submittals')submittals=submittals.filter(x=>x.id!==id);
+  else if(store==='rental')rental=rental.filter(x=>x.id!==id);
+  if(tableMap[store]) await sbDelete(tableMap[store],id);
+  saveLocal();renderAll();
 }
+</script>
 
-// ── PDF EXPORT ─────────────────────────────────────────────
-async function exportToPDF(type){
-  if(typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined'){
-    alert('PDF library not loaded yet. Please try again in a moment.'); return;
-  }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-  const pw = 297; const ph = 210;
-  const red = [200,16,46]; const black = [26,26,26]; const white = [255,255,255];
-  const lightGray = [249,248,248]; const midGray = [226,224,224]; const darkGray = [80,80,80];
+<!-- ── reports.js ── -->
+<script>
+// Project health scoring, report preview, and PDF summary generation
 
-  let title='', filename='', columns=[], rows=[], stats=[];
-
-  if(type==='rfi'){
-    title='RFI Log'; filename='RFI_Log.pdf';
-    columns=['RFI #','Subject','Project','Submitted','Due','Status','Priority'];
-    rows=rfis.map(r=>[r.num||'',r.subject||'',r.project||'',r.submitted||'',r.due||'',r.status||'',r.priority||'']);
-    const open=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
-    const high=rfis.filter(r=>r.priority==='High').length;
-    stats=[
-      {label:'Total RFIs', value:rfis.length},
-      {label:'Open', value:open},
-      {label:'Answered', value:rfis.filter(r=>r.status==='Answered').length},
-      {label:'High Priority', value:high}
-    ];
-  } else if(type==='submittal'){
-    title='Submittal Log'; filename='Submittal_Log.pdf';
-    columns=['Sub #','Description','Project','Spec Section','Submitted','Status','Ball in Court'];
-    rows=submittals.map(s=>[s.num||'',s.desc||s.description||'',s.project||'',s.spec||'',s.date||s.submitted_date||'',s.status||'',s.bic||'']);
-    stats=[
-      {label:'Total Submittals', value:submittals.length},
-      {label:'Pending', value:submittals.filter(s=>['Pending','Under Review'].includes(s.status)).length},
-      {label:'Approved', value:submittals.filter(s=>s.status==='Approved'||s.status==='Approved as Noted').length},
-      {label:'Revise & Resubmit', value:submittals.filter(s=>s.status==='Revise & Resubmit').length}
-    ];
-  } else if(type==='rental'){
-    title='Rental Equipment'; filename='Rental_Equipment.pdf';
-    columns=['Equipment','Project','Vendor','On Site Date','Release Date','Status'];
-    rows=rental.map(r=>[r.name||'',r.project||'',r.vendor||'',r.onsite||r.onsite_date||'',r.offsite||r.release_date||'',r.status||'']);
-    stats=[
-      {label:'Total Equipment', value:rental.length},
-      {label:'Ordered', value:rental.filter(r=>r.status==='Ordered').length},
-      {label:'On Site', value:rental.filter(r=>r.status==='On Site').length},
-      {label:'Released', value:rental.filter(r=>r.status==='Release').length}
-    ];
-  }
-
-  if(!rows.length){ alert('No data to export yet.'); return; }
-
-  // ── HEADER BAR ──────────────────────────────────────────
-  // Black background
-  doc.setFillColor(...black);
-  doc.rect(0, 0, pw, 28, 'F');
-  // Red accent stripe
-  doc.setFillColor(...red);
-  doc.rect(0, 26, pw, 2.5, 'F');
-  // Left red block for logo
-  doc.setFillColor(...red);
-  doc.rect(0, 0, 2, 28, 'F');
-
-  // Draw MICHELS logo - no ® no POWER INC, centered and visually clean
-  await document.fonts.ready;
-  const logoCanvas = document.createElement('canvas');
-  logoCanvas.width = 1200; logoCanvas.height = 158;
-  const lctx = logoCanvas.getContext('2d');
-  lctx.imageSmoothingEnabled = true;
-  lctx.imageSmoothingQuality = 'high';
-
-  // Gradient
-  const grad = lctx.createLinearGradient(0, 0, 0, 158);
-  grad.addColorStop(0,    '#a00d1e');
-  grad.addColorStop(0.45, '#c8102e');
-  grad.addColorStop(1,    '#e8324a');
-
-  // MICHELS only - large, bold, centered
-  lctx.font = "400 140px 'Alfa Slab One', 'Rockwell', serif";
-  lctx.letterSpacing = '10px';
-  lctx.textAlign = 'center';
-  lctx.fillStyle = grad;
-  lctx.fillText('MICHELS', 600, 131);
-
-  const logoData = logoCanvas.toDataURL('image/png', 1.0);
-  doc.addImage(logoData, 'PNG', 7, 4, 58, 17);
-
-  // Thin red underline accent below logo
-  doc.setDrawColor(...red);
-  doc.setLineWidth(0.8);
-  doc.line(7, 24, 65, 24);
-
-  // Vertical divider
-  doc.setDrawColor(100,100,100);
-  doc.setLineWidth(0.3);
-  doc.line(70, 4, 70, 24);
-
-  // Report title
-  doc.setTextColor(...white);
-  doc.setFontSize(16);
-  doc.setFont('helvetica','bold');
-  doc.text(title, pw/2, 13, {align:'center'});
-
-  // Subtitle
-  doc.setFontSize(8);
-  doc.setFont('helvetica','normal');
-  doc.setTextColor(180,180,180);
-  doc.text('Michels Power Inc.  —  APM Dashboard', pw/2, 20, {align:'center'});
-
-  // Date top right
-  doc.setTextColor(180,180,180);
-  doc.setFontSize(7.5);
-  doc.text('Generated: ' + new Date().toLocaleString(), pw-10, 10, {align:'right'});
-  doc.text('Records: ' + rows.length, pw-10, 17, {align:'right'});
-
-  // ── SUMMARY STATS BAR ───────────────────────────────────
-  const statsY = 32;
-  const boxW = (pw - 20) / stats.length;
-  stats.forEach((s, i) => {
-    const x = 10 + i * boxW;
-    // Card background
-    doc.setFillColor(245, 244, 244);
-    doc.roundedRect(x, statsY, boxW-3, 18, 2, 2, 'F');
-    // Red top accent
-    doc.setFillColor(...red);
-    doc.rect(x, statsY, boxW-3, 1.5, 'F');
-    // Value
-    doc.setTextColor(...black);
-    doc.setFontSize(18);
-    doc.setFont('helvetica','bold');
-    doc.text(String(s.value), x + (boxW-3)/2, statsY+11, {align:'center'});
-    // Label
-    doc.setFontSize(7);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(...darkGray);
-    doc.text(s.label.toUpperCase(), x + (boxW-3)/2, statsY+16, {align:'center'});
-  });
-
-  // ── TABLE ───────────────────────────────────────────────
-  doc.autoTable({
-    head: [columns],
-    body: rows,
-    startY: statsY + 22,
-    theme: 'plain',
-    headStyles: {
-      fillColor: black,
-      textColor: white,
-      fontStyle: 'bold',
-      fontSize: 8.5,
-      cellPadding: {top:4, bottom:4, left:4, right:4}
-    },
-    bodyStyles: {
-      fontSize: 8,
-      textColor: [40,40,40],
-      cellPadding: {top:3.5, bottom:3.5, left:4, right:4}
-    },
-    alternateRowStyles: { fillColor: [249,248,248] },
-    styles: {
-      lineColor: [220,218,218],
-      lineWidth: 0.25,
-      overflow: 'ellipsize'
-    },
-    columnStyles: { 0: {fontStyle:'bold'} },
-    margin: {left:10, right:10},
-    didDrawPage: (data)=>{
-      // Thin red line at top of each continuation page
-      if(data.pageNumber > 1){
-        doc.setFillColor(...black);
-        doc.rect(0, 0, pw, 8, 'F');
-        doc.setFillColor(...red);
-        doc.rect(0, 8, pw, 1.5, 'F');
-        doc.setTextColor(...white);
-        doc.setFontSize(8);
-        doc.setFont('helvetica','bold');
-        doc.text(`${title}  —  Michels Power Inc.`, 14, 5.5);
-        doc.setTextColor(180,180,180);
-        doc.setFont('helvetica','normal');
-        doc.text(`Page ${data.pageNumber}`, pw-10, 5.5, {align:'right'});
-      }
-      // ── FOOTER ──────────────────────────────────────────
-      const footY = ph - 8;
-      doc.setDrawColor(...red);
-      doc.setLineWidth(0.5);
-      doc.line(10, footY - 2, pw-10, footY - 2);
-      doc.setFontSize(7);
-      doc.setTextColor(...darkGray);
-      doc.setFont('helvetica','normal');
-      doc.text('Michels Power Inc.  |  APM Dashboard', 10, footY+1);
-      doc.text(`Page ${data.pageNumber}  |  ${new Date().toLocaleDateString()}`, pw/2, footY+1, {align:'center'});
-      doc.text('CONFIDENTIAL — Internal Use Only', pw-10, footY+1, {align:'right'});
-    }
-  });
-
-  // ── SIGNATURE BLOCK ─────────────────────────────────────
-  const finalY = doc.lastAutoTable.finalY + 10;
-  // Only add if it fits on current page
-  if(finalY < ph - 35){
-    doc.setDrawColor(...midGray);
-    doc.setLineWidth(0.3);
-
-    const preparedBy = currentUser ? (currentUser.displayName || currentUser.username) : 'Unknown';
-    const lineY = finalY + 10;
-    const sigX = 10;
-    const sigLineW = 80;
-
-    // Signature line
-    doc.setDrawColor(...darkGray);
-    doc.setLineWidth(0.4);
-    doc.line(sigX, lineY, sigX + sigLineW, lineY);
-    // Name pre-filled
-    doc.setFontSize(8.5);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(...black);
-    doc.text(preparedBy, sigX, lineY - 2);
-    // Label
-    doc.setFontSize(7.5);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(...black);
-    doc.text('Prepared By', sigX, lineY + 5);
-    // Date line - auto-filled with today's date
-    doc.setFontSize(7.5);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(...darkGray);
-    doc.text('Date: ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}), sigX, lineY + 9);
-  }
-
-  doc.save(filename);
-}
-
-// ── PROJECT SUMMARY REPORT ────────────────────────────────
 function projectHealth(p){
   const pct = calcPct(p.start_date||p.start, p.end_date||p.end);
   const highR = rfis.filter(r=>r.project===p.name&&r.priority==='High'&&!['Answered','Closed'].includes(r.status)).length;
@@ -1694,171 +1847,295 @@ async function generateSummaryPDF(){
 
   doc.save('Michels_Project_Summary_Report.pdf');
 }
-
-
-function renderAll(){renderProjects();renderReportPreview();renderRFI();renderSubmittals();renderRental();renderTodos();populateProjectSelects()}
-
-function openModal(id){populateProjectSelects();document.getElementById(id).classList.add('open')}
-function closeModal(id){document.getElementById(id).classList.remove('open')}
-function val(id){return document.getElementById(id).value.trim()}
-
-function editProject(id){
-  const p=projects.find(x=>x.id===id);
-  if(!p)return;
-  document.getElementById('project-modal-title').textContent='Edit Project';
-  document.getElementById('project-save-btn').textContent='Update Project';
-  document.getElementById('p-id').value=id;
-  document.getElementById('p-name').value=p.name;
-  document.getElementById('p-client').value=p.client||'';
-  document.getElementById('p-number').value=p.number||'';
-  document.getElementById('p-start').value=p.start||'';
-  document.getElementById('p-end').value=p.end||'';
-  document.getElementById('p-status').value=p.status||'In Progress';
-  document.getElementById('p-notes').value=p.notes||'';
-  openModal('project-modal');
-}
-async function saveProject(){
-  const name=val('p-name');if(!name)return alert('Project name required.');
-  const editId=document.getElementById('p-id').value;
-  const data={name,client:val('p-client'),number:val('p-number'),start_date:val('p-start'),end_date:val('p-end'),status:val('p-status'),notes:val('p-notes')};
-  if(editId){
-    const id=parseInt(editId);
-    const idx=projects.findIndex(x=>x.id===id);
-    if(idx>-1){ projects[idx]={...projects[idx],...data,start:data.start_date,end:data.end_date}; await sbUpdate('projects',id,data); }
-  } else {
-    const row={...data};
-    if(sb){ const res=await sb.from('projects').insert(row).select(); if(res.data?.[0]) projects.push({...res.data[0],start:res.data[0].start_date,end:res.data[0].end_date}); }
-    else { projects.push({id:nextId++,...data,start:data.start_date,end:data.end_date}); }
-  }
-  ['p-id','p-name','p-client','p-number','p-start','p-end','p-notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('project-modal-title').textContent='New Project';
-  document.getElementById('project-save-btn').textContent='Save Project';
-  closeModal('project-modal');saveLocal();renderAll();
-}
-async function saveRFI(){
-  const num=val('rfi-num'),subject=val('rfi-subject');if(!num||!subject)return alert('RFI # and subject required.');
-  const data={num,project:val('rfi-project'),subject,submitted:val('rfi-submitted'),due:val('rfi-due'),status:val('rfi-status'),priority:val('rfi-priority'),description:val('rfi-desc')};
-  if(sb){ const res=await sb.from('rfis').insert(data).select(); if(res.data?.[0]) rfis.push({...res.data[0],desc:res.data[0].description}); }
-  else rfis.push({id:nextId++,...data,desc:data.description});
-  ['rfi-num','rfi-subject','rfi-submitted','rfi-due','rfi-desc'].forEach(id=>document.getElementById(id).value='');
-  closeModal('rfi-modal');saveLocal();renderAll();
-}
-async function saveSubmittal(){
-  const num=val('sub-num'),desc=val('sub-desc');if(!num||!desc)return alert('Submittal # and description required.');
-  const data={num,project:val('sub-project'),description:desc,spec:val('sub-spec'),submitted_date:val('sub-date'),status:val('sub-status'),bic:val('sub-bic')};
-  if(sb){ const res=await sb.from('submittals').insert(data).select(); if(res.data?.[0]) submittals.push({...res.data[0],desc:res.data[0].description,date:res.data[0].submitted_date}); }
-  else submittals.push({id:nextId++,...data,desc,date:data.submitted_date});
-  ['sub-num','sub-desc','sub-spec','sub-date'].forEach(id=>document.getElementById(id).value='');
-  closeModal('submittal-modal');saveLocal();renderAll();
-}
-
-async function deleteItem(store,id){
-  const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental'};
-  if(store==='projects')projects=projects.filter(x=>x.id!==id);
-  else if(store==='rfis')rfis=rfis.filter(x=>x.id!==id);
-  else if(store==='submittals')submittals=submittals.filter(x=>x.id!==id);
-  else if(store==='rental')rental=rental.filter(x=>x.id!==id);
-  if(tableMap[store]) await sbDelete(tableMap[store],id);
-  saveLocal();renderAll();
-}
-
-document.querySelectorAll('.nav-tab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
-  });
-});
-
-document.querySelectorAll('.modal-overlay').forEach(o=>{
-  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')});
-});
-
-renderAll();
 </script>
 
-<div class="modal-overlay" id="rental-modal">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title">New Rental Equipment</span><button class="modal-close" onclick="closeModal('rental-modal')">×</button></div>
-    <div class="modal-body">
-      <div class="form-row">
-        <div><label>Equipment</label><input type="text" id="ren-name" placeholder="e.g. 60-Ton Crane"></div>
-        <div><label>Project</label><select id="ren-project"><option value="">Select project</option></select></div>
-      </div>
-      <div class="form-row-full">
-        <div><label>Vendor / Rental Co.</label><input type="text" id="ren-vendor" placeholder="e.g. United Rentals"></div>
-      </div>
-      <div class="form-row">
-        <div><label>On Site Date</label><input type="date" id="ren-onsite"></div>
-        <div><label>Release Date</label><input type="date" id="ren-offsite"></div>
-      </div>
-      <div class="form-row-full"><label>Status</label>
-        <select id="ren-status">
-          <option>Ordered</option><option>On Site</option><option>Release</option>
-        </select>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-sm" onclick="closeModal('rental-modal')">Cancel</button>
-      <button class="btn-add" onclick="saveRental()">Save Rental</button>
-    </div>
-  </div>
-</div>
+<!-- ── exports.js ── -->
+<script>
+// Excel and PDF export for RFI, Submittal, and Rental logs
 
+// ── EXCEL EXPORT ─────────────────────────────────────────
+function exportToExcel(type){
+  if(typeof XLSX === 'undefined'){ alert('Excel library not loaded yet. Please try again in a moment.'); return; }
 
+  let data = [];
+  let filename = '';
 
-<div class="modal-overlay" id="supabase-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">Supabase Database Setup</span>
-      <button class="modal-close" onclick="closeModal('supabase-modal')">×</button>
-    </div>
-    <div class="modal-body">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--text-mid);line-height:1.6">
-        Paste your Supabase credentials below. Find them at <strong>supabase.com → Settings → API</strong>.<br>These are stored locally and only used to connect to your own database.
-      </div>
-      <div class="form-row-full"><label>Project URL</label><input type="text" id="sb-url" placeholder="https://xxxx.supabase.co"></div>
-      <div class="form-row-full"><label>Anon / Public Key</label><textarea id="sb-key" style="min-height:80px;font-family:'DM Mono',monospace;font-size:11px" placeholder="eyJhbGci..."></textarea></div>
-      <div id="sb-status" style="font-size:12px;margin-top:8px;min-height:18px"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-sm" onclick="closeModal('supabase-modal')">Cancel</button>
-      <button class="btn-add" onclick="saveSupabaseConfig()">Save &amp; Connect</button>
-    </div>
-  </div>
-</div>
+  if(type === 'rfi'){
+    filename = 'RFI_Log.xlsx';
+    data = rfis.map(r=>({
+      'RFI #':        r.num||'',
+      'Subject':      r.subject||'',
+      'Project':      r.project||'',
+      'Date Submitted': r.submitted||'',
+      'Response Due': r.due||'',
+      'Status':       r.status||'',
+      'Priority':     r.priority||'',
+      'Description':  r.desc||r.description||''
+    }));
+  } else if(type === 'submittal'){
+    filename = 'Submittal_Log.xlsx';
+    data = submittals.map(s=>({
+      'Submittal #':   s.num||'',
+      'Description':   s.desc||s.description||'',
+      'Project':       s.project||'',
+      'Spec Section':  s.spec||'',
+      'Date Submitted':s.date||s.submitted_date||'',
+      'Status':        s.status||'',
+      'Ball in Court': s.bic||''
+    }));
+  } else if(type === 'rental'){
+    filename = 'Rental_Equipment.xlsx';
+    data = rental.map(r=>({
+      'Equipment':    r.name||'',
+      'Project':      r.project||'',
+      'Vendor':       r.vendor||'',
+      'On Site Date': r.onsite||r.onsite_date||'',
+      'Release Date': r.offsite||r.release_date||'',
+      'Status':       r.status||''
+    }));
+  }
 
-<div class="modal-overlay" id="user-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title" id="user-modal-title">Manage Users</span>
-      <button class="modal-close" onclick="closeModal('user-modal')">×</button>
-    </div>
-    <div class="modal-body">
-      <div id="user-list" style="margin-bottom:16px"></div>
-      <div style="border-top:1px solid var(--border);padding-top:14px">
-        <div style="font-size:12px;font-weight:600;color:var(--text-mid);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">Add New User</div>
-        <div class="form-row">
-          <div><label>Username</label><input type="text" id="new-username" placeholder="e.g. jsmith"></div>
-          <div><label>Display Name</label><input type="text" id="new-displayname" placeholder="e.g. John Smith"></div>
-        </div>
-        <div class="form-row-full"><label>Password</label><input type="password" id="new-password" placeholder="Set a password"></div>
-        <div class="form-row-full"><label>Role</label>
-          <select id="new-role">
-            <option value="admin">Admin (can manage users)</option>
-            <option value="user">User (view &amp; edit data only)</option>
-          </select>
-        </div>
-        <div id="user-add-error" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none"></div>
-        <button class="btn-add" onclick="addUser()" style="width:100%;justify-content:center">Add User</button>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-sm" onclick="closeModal('user-modal')">Close</button>
-    </div>
-  </div>
-</div>
+  if(!data.length){ alert('No data to export yet.'); return; }
+
+  const ws = XLSX.utils.json_to_sheet(data);
+
+  // Style column widths
+  const colWidths = Object.keys(data[0]).map(k=>({ wch: Math.max(k.length, 15) }));
+  ws['!cols'] = colWidths;
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, type==='rfi'?'RFI Log':type==='submittal'?'Submittal Log':'Rental Equipment');
+
+  // Add metadata sheet
+  const meta = XLSX.utils.aoa_to_sheet([
+    ['Michels Power Inc. — APM Dashboard Export'],
+    ['Generated:', new Date().toLocaleString()],
+    ['Total Records:', data.length]
+  ]);
+  XLSX.utils.book_append_sheet(wb, meta, 'Info');
+
+  XLSX.writeFile(wb, filename);
+}
+
+// ── PDF EXPORT ────────────────────────────────────────────
+async function exportToPDF(type){
+  if(typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined'){
+    alert('PDF library not loaded yet. Please try again in a moment.'); return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const pw = 297; const ph = 210;
+  const red = [200,16,46]; const black = [26,26,26]; const white = [255,255,255];
+  const lightGray = [249,248,248]; const midGray = [226,224,224]; const darkGray = [80,80,80];
+
+  let title='', filename='', columns=[], rows=[], stats=[];
+
+  if(type==='rfi'){
+    title='RFI Log'; filename='RFI_Log.pdf';
+    columns=['RFI #','Subject','Project','Submitted','Due','Status','Priority'];
+    rows=rfis.map(r=>[r.num||'',r.subject||'',r.project||'',r.submitted||'',r.due||'',r.status||'',r.priority||'']);
+    const open=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
+    const high=rfis.filter(r=>r.priority==='High').length;
+    stats=[
+      {label:'Total RFIs', value:rfis.length},
+      {label:'Open', value:open},
+      {label:'Answered', value:rfis.filter(r=>r.status==='Answered').length},
+      {label:'High Priority', value:high}
+    ];
+  } else if(type==='submittal'){
+    title='Submittal Log'; filename='Submittal_Log.pdf';
+    columns=['Sub #','Description','Project','Spec Section','Submitted','Status','Ball in Court'];
+    rows=submittals.map(s=>[s.num||'',s.desc||s.description||'',s.project||'',s.spec||'',s.date||s.submitted_date||'',s.status||'',s.bic||'']);
+    stats=[
+      {label:'Total Submittals', value:submittals.length},
+      {label:'Pending', value:submittals.filter(s=>['Pending','Under Review'].includes(s.status)).length},
+      {label:'Approved', value:submittals.filter(s=>s.status==='Approved'||s.status==='Approved as Noted').length},
+      {label:'Revise & Resubmit', value:submittals.filter(s=>s.status==='Revise & Resubmit').length}
+    ];
+  } else if(type==='rental'){
+    title='Rental Equipment'; filename='Rental_Equipment.pdf';
+    columns=['Equipment','Project','Vendor','On Site Date','Release Date','Status'];
+    rows=rental.map(r=>[r.name||'',r.project||'',r.vendor||'',r.onsite||r.onsite_date||'',r.offsite||r.release_date||'',r.status||'']);
+    stats=[
+      {label:'Total Equipment', value:rental.length},
+      {label:'Ordered', value:rental.filter(r=>r.status==='Ordered').length},
+      {label:'On Site', value:rental.filter(r=>r.status==='On Site').length},
+      {label:'Released', value:rental.filter(r=>r.status==='Release').length}
+    ];
+  }
+
+  if(!rows.length){ alert('No data to export yet.'); return; }
+
+  // ── HEADER BAR ──────────────────────────────────────────
+  doc.setFillColor(...black);
+  doc.rect(0, 0, pw, 28, 'F');
+  doc.setFillColor(...red);
+  doc.rect(0, 26, pw, 2.5, 'F');
+  doc.setFillColor(...red);
+  doc.rect(0, 0, 2, 28, 'F');
+
+  // Draw MICHELS logo
+  await document.fonts.ready;
+  const logoCanvas = document.createElement('canvas');
+  logoCanvas.width = 1200; logoCanvas.height = 158;
+  const lctx = logoCanvas.getContext('2d');
+  lctx.imageSmoothingEnabled = true;
+  lctx.imageSmoothingQuality = 'high';
+
+  const grad = lctx.createLinearGradient(0, 0, 0, 158);
+  grad.addColorStop(0,    '#a00d1e');
+  grad.addColorStop(0.45, '#c8102e');
+  grad.addColorStop(1,    '#e8324a');
+
+  lctx.font = "400 140px 'Alfa Slab One', 'Rockwell', serif";
+  lctx.letterSpacing = '10px';
+  lctx.textAlign = 'center';
+  lctx.fillStyle = grad;
+  lctx.fillText('MICHELS', 600, 131);
+
+  const logoData = logoCanvas.toDataURL('image/png', 1.0);
+  doc.addImage(logoData, 'PNG', 7, 4, 58, 17);
+
+  doc.setDrawColor(...red);
+  doc.setLineWidth(0.8);
+  doc.line(7, 24, 65, 24);
+
+  doc.setDrawColor(100,100,100);
+  doc.setLineWidth(0.3);
+  doc.line(70, 4, 70, 24);
+
+  doc.setTextColor(...white);
+  doc.setFontSize(16);
+  doc.setFont('helvetica','bold');
+  doc.text(title, pw/2, 13, {align:'center'});
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(180,180,180);
+  doc.text('Michels Power Inc.  —  APM Dashboard', pw/2, 20, {align:'center'});
+
+  doc.setTextColor(180,180,180);
+  doc.setFontSize(7.5);
+  doc.text('Generated: ' + new Date().toLocaleString(), pw-10, 10, {align:'right'});
+  doc.text('Records: ' + rows.length, pw-10, 17, {align:'right'});
+
+  // ── SUMMARY STATS BAR ─────────────────────────────────
+  const statsY = 32;
+  const boxW = (pw - 20) / stats.length;
+  stats.forEach((s, i) => {
+    const x = 10 + i * boxW;
+    doc.setFillColor(245, 244, 244);
+    doc.roundedRect(x, statsY, boxW-3, 18, 2, 2, 'F');
+    doc.setFillColor(...red);
+    doc.rect(x, statsY, boxW-3, 1.5, 'F');
+    doc.setTextColor(...black);
+    doc.setFontSize(18);
+    doc.setFont('helvetica','bold');
+    doc.text(String(s.value), x + (boxW-3)/2, statsY+11, {align:'center'});
+    doc.setFontSize(7);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(...darkGray);
+    doc.text(s.label.toUpperCase(), x + (boxW-3)/2, statsY+16, {align:'center'});
+  });
+
+  // ── TABLE ──────────────────────────────────────────────
+  doc.autoTable({
+    head: [columns],
+    body: rows,
+    startY: statsY + 22,
+    theme: 'plain',
+    headStyles: {
+      fillColor: black,
+      textColor: white,
+      fontStyle: 'bold',
+      fontSize: 8.5,
+      cellPadding: {top:4, bottom:4, left:4, right:4}
+    },
+    bodyStyles: {
+      fontSize: 8,
+      textColor: [40,40,40],
+      cellPadding: {top:3.5, bottom:3.5, left:4, right:4}
+    },
+    alternateRowStyles: { fillColor: [249,248,248] },
+    styles: {
+      lineColor: [220,218,218],
+      lineWidth: 0.25,
+      overflow: 'ellipsize'
+    },
+    columnStyles: { 0: {fontStyle:'bold'} },
+    margin: {left:10, right:10},
+    didDrawPage: (data)=>{
+      if(data.pageNumber > 1){
+        doc.setFillColor(...black);
+        doc.rect(0, 0, pw, 8, 'F');
+        doc.setFillColor(...red);
+        doc.rect(0, 8, pw, 1.5, 'F');
+        doc.setTextColor(...white);
+        doc.setFontSize(8);
+        doc.setFont('helvetica','bold');
+        doc.text(`${title}  —  Michels Power Inc.`, 14, 5.5);
+        doc.setTextColor(180,180,180);
+        doc.setFont('helvetica','normal');
+        doc.text(`Page ${data.pageNumber}`, pw-10, 5.5, {align:'right'});
+      }
+      const footY = ph - 8;
+      doc.setDrawColor(...red);
+      doc.setLineWidth(0.5);
+      doc.line(10, footY - 2, pw-10, footY - 2);
+      doc.setFontSize(7);
+      doc.setTextColor(...darkGray);
+      doc.setFont('helvetica','normal');
+      doc.text('Michels Power Inc.  |  APM Dashboard', 10, footY+1);
+      doc.text(`Page ${data.pageNumber}  |  ${new Date().toLocaleDateString()}`, pw/2, footY+1, {align:'center'});
+      doc.text('CONFIDENTIAL — Internal Use Only', pw-10, footY+1, {align:'right'});
+    }
+  });
+
+  // ── SIGNATURE BLOCK ──────────────────────────────────
+  const finalY = doc.lastAutoTable.finalY + 10;
+  if(finalY < ph - 35){
+    doc.setDrawColor(...midGray);
+    doc.setLineWidth(0.3);
+
+    const preparedBy = currentUser ? (currentUser.displayName || currentUser.username) : 'Unknown';
+    const lineY = finalY + 10;
+    const sigX = 10;
+    const sigLineW = 80;
+
+    doc.setDrawColor(...darkGray);
+    doc.setLineWidth(0.4);
+    doc.line(sigX, lineY, sigX + sigLineW, lineY);
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(...black);
+    doc.text(preparedBy, sigX, lineY - 2);
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(...black);
+    doc.text('Prepared By', sigX, lineY + 5);
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(...darkGray);
+    doc.text('Date: ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}), sigX, lineY + 9);
+  }
+
+  doc.save(filename);
+}
+</script>
+
+<!-- ── Initialization ── -->
+<script>
+// Run after all modules are loaded.
+loadTodoState();
+initDefaultAdmin().then(()=>{
+  if(!checkSession()){
+    document.getElementById('login-overlay').style.display='flex';
+    renderAll();
+  }
+  // If checkSession() showed the dashboard it calls loadData(),
+  // which calls renderAll() once data is ready — no early render needed.
+});
+</script>
 
 </body>
 </html>
