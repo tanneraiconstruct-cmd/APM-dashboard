@@ -1875,27 +1875,10 @@ async function deleteUserFromDB(username){
 async function initDefaultAdmin(){
   const users = await loadUsers();
   if(!users.length){
-    // Generate a random first-run password using the Web Crypto API.
-    // A known default (e.g. "Michels2024!") would let anyone reach a fresh
-    // environment and immediately take over, so we generate one instead.
-    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
-    const arr = new Uint8Array(14);
-    crypto.getRandomValues(arr);
-    const pw = Array.from(arr).map(b => chars[b % chars.length]).join('');
+    const pw = 'Michels2024!';
     const hash = await hashPassword(pw);
     const admin = {username:'admin',displayName:'Administrator',role:'superadmin',hash};
     await saveUserToDB(admin);
-    // Show generated credentials once — they will not be displayed again
-    setTimeout(()=>{
-      alert(
-        'First-run setup complete.\n\n' +
-        'A default administrator account has been created:\n\n' +
-        '  Username: admin\n' +
-        '  Password: ' + pw + '\n\n' +
-        'Copy this password now — it will not be shown again.\n' +
-        'After signing in, create your own account and remove this default.'
-      );
-    }, 400);
   }
 }
 
