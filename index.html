@@ -383,6 +383,37 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .chart-pill-total{margin-left:auto;font-size:11px;color:var(--text-muted);font-weight:600;font-family:'DM Mono',monospace;align-self:center;padding-left:4px}
 .chart-bar{display:flex;height:7px;border-radius:4px;overflow:hidden;background:var(--surface);border:1px solid var(--border)}
 .chart-seg{height:100%;min-width:3px;transition:width .4s}
+
+/* EXPANDABLE ROW DETAILS */
+.data-row{cursor:pointer}
+.data-row.expanded>td{background:#fef7f8!important;border-bottom:none!important}
+.data-row.expanded>td:first-child{box-shadow:inset 3px 0 0 var(--michels-red)}
+.expand-icon{display:inline-flex;align-items:center;width:14px;height:14px;margin-right:6px;flex-shrink:0;color:var(--text-muted);transition:transform .18s;vertical-align:middle;opacity:.4}
+.data-row.expanded .expand-icon{transform:rotate(90deg);color:var(--michels-red);opacity:1}
+.detail-row>td{padding:0!important;background:var(--surface)!important;border-bottom:1px solid var(--border)!important}
+.detail-panel{padding:16px 20px 16px 22px;border-left:3px solid var(--michels-red)}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px 20px;margin-bottom:14px}
+.detail-field-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.detail-field-value{font-size:13px;color:var(--text);font-weight:500;word-break:break-word;line-height:1.4}
+.detail-desc-block{font-size:12.5px;color:var(--text-mid);line-height:1.55;padding:10px 12px;background:var(--white);border-radius:6px;border:1px solid var(--border);margin-bottom:12px;white-space:pre-wrap}
+.detail-actions{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.quick-status-select{font-size:12px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);cursor:pointer;outline:none;transition:border-color .15s}
+.quick-status-select:focus{border-color:var(--michels-red)}
+/* DATE CHIPS */
+.date-chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-family:'DM Mono',monospace;padding:3px 8px;border-radius:5px;font-weight:500;white-space:nowrap;letter-spacing:.2px}
+.date-normal{background:var(--surface);color:var(--text-mid);border:1px solid var(--border)}
+.date-overdue{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5}
+.date-soon{background:var(--amber-light);color:var(--amber);border:1px solid #fcd34d}
+/* STACKED CELL CONTENT */
+.cell-primary{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cell-secondary{font-size:11px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* HOVER ACTIONS */
+.row-actions{display:flex;gap:4px;justify-content:flex-end;opacity:0;transition:opacity .12s}
+.data-row:hover .row-actions,.data-row.expanded .row-actions{opacity:1}
+.btn-icon{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:5px;background:var(--white);cursor:pointer;color:var(--text-mid);transition:background .1s,color .1s;flex-shrink:0;font-size:14px;line-height:1;padding:0;font-family:inherit}
+.btn-icon:hover{background:var(--surface);color:var(--text)}
+.btn-icon-danger{border-color:#fca5a5;color:var(--red)!important}
+.btn-icon-danger:hover{background:#fee2e2!important}
 </style>
 </head>
 <body>
@@ -519,7 +550,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 </svg>
       <div class="header-divider"></div>
       <div>
-        <div class="header-title">Project Dashboard</div>
+        <div class="header-title">Dashboard</div>
         <div class="header-sub" id="header-sub">APM Dashboard</div>
       </div>
     </div>
@@ -657,13 +688,12 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <table>
         <thead><tr>
           <th style="width:70px">RFI #</th>
-          <th style="width:22%">Subject</th>
-          <th style="width:16%">Project</th>
-          <th style="width:13%">Submitted</th>
-          <th style="width:13%">Due</th>
-          <th style="width:12%">Status</th>
-          <th style="width:10%">Priority</th>
-          <th style="width:80px">Actions</th>
+          <th>Subject / Project</th>
+          <th style="width:120px">Submitted</th>
+          <th style="width:120px">Due</th>
+          <th style="width:130px">Status</th>
+          <th style="width:100px">Priority</th>
+          <th style="width:70px"></th>
         </tr></thead>
         <tbody id="rfi-body"></tbody>
       </table>
@@ -705,13 +735,12 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <table>
         <thead><tr>
           <th style="width:80px">Sub #</th>
-          <th style="width:22%">Description</th>
-          <th style="width:16%">Project</th>
-          <th style="width:13%">Spec Sec</th>
-          <th style="width:13%">Submitted</th>
-          <th style="width:12%">Status</th>
-          <th style="width:10%">Ball in Court</th>
-          <th style="width:80px">Actions</th>
+          <th>Description / Project</th>
+          <th style="width:13%">Spec Section</th>
+          <th style="width:120px">Submitted</th>
+          <th style="width:130px">Status</th>
+          <th style="width:120px">Ball in Court</th>
+          <th style="width:70px"></th>
         </tr></thead>
         <tbody id="submittal-body"></tbody>
       </table>
@@ -752,13 +781,12 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th style="width:20%">Equipment</th>
+          <th>Equipment / Vendor</th>
           <th style="width:16%">Project</th>
-          <th style="width:14%">Vendor</th>
-          <th style="width:11%">On Site</th>
-          <th style="width:14%">Release Date</th>
-          <th style="width:14%">Status</th>
-          <th style="width:80px">Actions</th>
+          <th style="width:120px">On Site</th>
+          <th style="width:130px">Release Date</th>
+          <th style="width:130px">Status</th>
+          <th style="width:70px"></th>
         </tr></thead>
         <tbody id="rental-body"></tbody>
       </table>
@@ -1276,6 +1304,51 @@ function renderAll(){
   applyWritePermissions();
 }
 
+// ── DATE CHIP HELPER ─────────────────────────────────────
+function dateChip(dateStr, isDue){
+  if(!dateStr) return '<span style="color:var(--text-muted);font-size:12px">—</span>';
+  const d = new Date(dateStr+'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.ceil((d-today)/(1000*60*60*24));
+  let cls='date-normal', prefix='';
+  if(isDue){
+    if(diff<0){cls='date-overdue';prefix='⚠ ';}
+    else if(diff<=3){cls='date-soon';}
+  }
+  return `<span class="date-chip ${cls}">${prefix}${fmt(dateStr)}</span>`;
+}
+
+// ── EXPANDABLE ROW DETAIL ────────────────────────────────
+function toggleDetail(type,id){
+  const row=document.getElementById(`${type}-row-${id}`);
+  const detail=document.getElementById(`${type}-detail-${id}`);
+  if(!row||!detail) return;
+  const opening=!row.classList.contains('expanded');
+  document.querySelectorAll(`[id^="${type}-row-"]`).forEach(r=>r.classList.remove('expanded'));
+  document.querySelectorAll(`[id^="${type}-detail-"]`).forEach(r=>r.style.display='none');
+  if(opening){
+    row.classList.add('expanded');
+    detail.style.display='';
+  }
+}
+
+// ── QUICK STATUS CHANGE ──────────────────────────────────
+async function quickStatusChange(type,id,newStatus){
+  if(!newStatus) return;
+  if(!getPerms().canEdit){ alert('You do not have permission to edit records.'); return; }
+  const tableMap={rfi:'rfis',submittal:'submittals',rental:'rental'};
+  const arr=type==='rfi'?rfis:type==='submittal'?submittals:rental;
+  const item=arr.find(x=>x.id===id);
+  if(!item) return;
+  const oldStatus=item.status;
+  item.status=newStatus;
+  const res=await sbUpdate(tableMap[type],id,{status:newStatus});
+  if(res.error){ item.status=oldStatus; alert('Failed to update status: '+res.error.message); return; }
+  saveLocal();
+  renderAll();
+  showToast('Status updated to '+newStatus);
+}
+
 // ── CHART STRIPS ─────────────────────────────────────────
 function chartStripHTML(segments, total, extra){
   if(!total) return '';
@@ -1643,6 +1716,7 @@ function goToDashboard(){
   document.getElementById('landing-page').style.display='none';
   document.getElementById('main-dashboard').style.display='';
   document.querySelector('.nav').style.display='';
+  document.querySelector('.header-title').textContent='Dashboard';
   // Ensure controls section is inactive, activate first allowed tab
   document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
   const firstTab = document.querySelector('.nav-tab:not([style*="display: none"])');
@@ -1652,12 +1726,14 @@ function goToProjectControls(){
   document.getElementById('landing-page').style.display='none';
   document.getElementById('main-dashboard').style.display='';
   document.querySelector('.nav').style.display='none';
+  document.querySelector('.header-title').textContent='Project Controls';
   document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
   document.getElementById('tab-controls').classList.add('active');
 }
 function goToLanding(){
   document.getElementById('main-dashboard').style.display='none';
   document.getElementById('landing-page').style.display='';
+  document.querySelector('.header-title').textContent='Dashboard';
 }
 function showDashboard(){
   document.getElementById('login-overlay').style.display='none';
@@ -2032,7 +2108,6 @@ function renderRFI(){
   const txt=(document.getElementById('rfi-filter-text')?.value||'').toLowerCase();
   const proj=document.getElementById('rfi-filter-project')?.value||'';
   const stat=document.getElementById('rfi-filter-status')?.value||'';
-  // Archive always updates first — even if active table has no rows
   renderRFIArchive();
   const activeRfis=rfis.filter(r=>!['Answered','Closed'].includes(r.status));
   let rows=activeRfis.filter(r=>{
@@ -2041,20 +2116,57 @@ function renderRFI(){
     if(txt && !(r.num||'').toLowerCase().includes(txt) && !(r.subject||'').toLowerCase().includes(txt)) return false;
     return true;
   });
-  if(!activeRfis.length){body.innerHTML=`<tr><td colspan="8" class="empty">No open RFIs. Answered and closed RFIs are in the Archive below.</td></tr>`;return}
-  if(!rows.length){body.innerHTML=`<tr><td colspan="8" class="empty">No RFIs match the current filters.</td></tr>`;return}
-  body.innerHTML=rows.map(r=>`
-    <tr>
-      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${h(r.num)}</td>
-      <td class="truncate">${h(r.subject)}</td>
-      <td class="truncate">${h(r.project)}</td>
-      <td>${fmt(r.submitted)}</td>
-      <td>${fmt(r.due)}</td>
+  if(!activeRfis.length){body.innerHTML=`<tr><td colspan="7" class="empty"><div class="empty-icon">📋</div>No open RFIs — add one to get started, or check the Archive below.</td></tr>`;return}
+  if(!rows.length){body.innerHTML=`<tr><td colspan="7" class="empty">No RFIs match the current filters.</td></tr>`;return}
+  body.innerHTML=rows.map(r=>{
+    const desc=h(r.desc||r.description||'');
+    return `
+    <tr id="rfi-row-${r.id}" class="data-row" onclick="toggleDetail('rfi',${r.id})">
+      <td style="font-family:'DM Mono',monospace;font-size:12px;white-space:nowrap">
+        <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>${h(r.num)}
+      </td>
+      <td class="truncate">
+        <div class="cell-primary">${h(r.subject)}</div>
+        <div class="cell-secondary">${h(r.project)}</div>
+      </td>
+      <td>${dateChip(r.submitted,false)}</td>
+      <td>${dateChip(r.due,true)}</td>
       <td>${badge(r.status)}</td>
       <td>${prio(r.priority)}</td>
-      <td style="white-space:nowrap"><button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
+      <td onclick="event.stopPropagation()">
+        <div class="row-actions">
+          <button class="btn-icon" onclick="editRFI(${r.id})" title="Edit">✎</button>
+          <button class="btn-icon btn-icon-danger" onclick="deleteItem('rfis',${r.id})" title="Delete">✕</button>
+        </div>
+      </td>
     </tr>
-  `).join('');
+    <tr id="rfi-detail-${r.id}" class="detail-row" style="display:none">
+      <td colspan="7">
+        <div class="detail-panel">
+          <div class="detail-grid">
+            <div><div class="detail-field-label">RFI Number</div><div class="detail-field-value" style="font-family:'DM Mono',monospace">${h(r.num)}</div></div>
+            <div><div class="detail-field-label">Project</div><div class="detail-field-value">${h(r.project)||'—'}</div></div>
+            <div><div class="detail-field-label">Date Submitted</div><div class="detail-field-value">${fmt(r.submitted)||'—'}</div></div>
+            <div><div class="detail-field-label">Response Due</div><div class="detail-field-value">${dateChip(r.due,true)}</div></div>
+            <div><div class="detail-field-label">Priority</div><div class="detail-field-value">${prio(r.priority)}</div></div>
+            <div><div class="detail-field-label">Status</div><div class="detail-field-value">${badge(r.status)}</div></div>
+          </div>
+          ${desc?`<div class="detail-field-label" style="margin-bottom:6px">Description / Question</div><div class="detail-desc-block">${desc}</div>`:''}
+          <div class="detail-actions">
+            <select class="quick-status-select" onchange="quickStatusChange('rfi',${r.id},this.value)" onclick="event.stopPropagation()">
+              <option value="">Change status…</option>
+              <option value="Open"${r.status==='Open'?' selected':''}>Open</option>
+              <option value="Under Review"${r.status==='Under Review'?' selected':''}>Under Review</option>
+              <option value="Answered"${r.status==='Answered'?' selected':''}>Answered</option>
+              <option value="Closed"${r.status==='Closed'?' selected':''}>Closed</option>
+            </select>
+            <button class="btn-sm" onclick="event.stopPropagation();editRFI(${r.id})">Edit</button>
+            <button class="btn-sm btn-danger" onclick="event.stopPropagation();deleteItem('rfis',${r.id})">Delete</button>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 }
 function clearRFIFilters(){
   ['rfi-filter-text','rfi-filter-project','rfi-filter-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
@@ -2066,7 +2178,6 @@ function renderSubmittals(){
   const txt=(document.getElementById('sub-filter-text')?.value||'').toLowerCase();
   const proj=document.getElementById('sub-filter-project')?.value||'';
   const stat=document.getElementById('sub-filter-status')?.value||'';
-  // Archive always updates first — even if active table has no rows
   renderSubmittalArchive();
   const activeSubs=submittals.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status));
   let rows=activeSubs.filter(s=>{
@@ -2075,20 +2186,57 @@ function renderSubmittals(){
     if(txt && !(s.num||'').toLowerCase().includes(txt) && !(s.desc||'').toLowerCase().includes(txt)) return false;
     return true;
   });
-  if(!activeSubs.length){body.innerHTML=`<tr><td colspan="8" class="empty">No pending submittals. Approved and rejected submittals are in the Archive below.</td></tr>`;return}
-  if(!rows.length){body.innerHTML=`<tr><td colspan="8" class="empty">No submittals match the current filters.</td></tr>`;return}
-  body.innerHTML=rows.map(s=>`
-    <tr>
-      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${h(s.num)}</td>
-      <td class="truncate">${h(s.desc)}</td>
-      <td class="truncate">${h(s.project)}</td>
-      <td class="truncate">${h(s.spec)}</td>
-      <td>${fmt(s.date)}</td>
+  if(!activeSubs.length){body.innerHTML=`<tr><td colspan="7" class="empty"><div class="empty-icon">📁</div>No pending submittals — add one to get started, or check the Archive below.</td></tr>`;return}
+  if(!rows.length){body.innerHTML=`<tr><td colspan="7" class="empty">No submittals match the current filters.</td></tr>`;return}
+  body.innerHTML=rows.map(s=>{
+    return `
+    <tr id="submittal-row-${s.id}" class="data-row" onclick="toggleDetail('submittal',${s.id})">
+      <td style="font-family:'DM Mono',monospace;font-size:12px;white-space:nowrap">
+        <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>${h(s.num)}
+      </td>
+      <td class="truncate">
+        <div class="cell-primary">${h(s.desc)}</div>
+        <div class="cell-secondary">${h(s.project)}</div>
+      </td>
+      <td class="truncate" style="font-size:12px;color:var(--text-mid)">${h(s.spec)||'—'}</td>
+      <td>${dateChip(s.date,false)}</td>
       <td>${badge(s.status)}</td>
-      <td class="truncate">${h(s.bic)}</td>
-      <td style="white-space:nowrap"><button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
+      <td class="truncate" style="font-size:12px">${h(s.bic)||'—'}</td>
+      <td onclick="event.stopPropagation()">
+        <div class="row-actions">
+          <button class="btn-icon" onclick="editSubmittal(${s.id})" title="Edit">✎</button>
+          <button class="btn-icon btn-icon-danger" onclick="deleteItem('submittals',${s.id})" title="Delete">✕</button>
+        </div>
+      </td>
     </tr>
-  `).join('');
+    <tr id="submittal-detail-${s.id}" class="detail-row" style="display:none">
+      <td colspan="7">
+        <div class="detail-panel">
+          <div class="detail-grid">
+            <div><div class="detail-field-label">Submittal #</div><div class="detail-field-value" style="font-family:'DM Mono',monospace">${h(s.num)}</div></div>
+            <div><div class="detail-field-label">Project</div><div class="detail-field-value">${h(s.project)||'—'}</div></div>
+            <div><div class="detail-field-label">Spec Section</div><div class="detail-field-value">${h(s.spec)||'—'}</div></div>
+            <div><div class="detail-field-label">Date Submitted</div><div class="detail-field-value">${fmt(s.date)||'—'}</div></div>
+            <div><div class="detail-field-label">Ball in Court</div><div class="detail-field-value">${h(s.bic)||'—'}</div></div>
+            <div><div class="detail-field-label">Status</div><div class="detail-field-value">${badge(s.status)}</div></div>
+          </div>
+          <div class="detail-actions">
+            <select class="quick-status-select" onchange="quickStatusChange('submittal',${s.id},this.value)" onclick="event.stopPropagation()">
+              <option value="">Change status…</option>
+              <option value="Pending"${s.status==='Pending'?' selected':''}>Pending</option>
+              <option value="Under Review"${s.status==='Under Review'?' selected':''}>Under Review</option>
+              <option value="Approved"${s.status==='Approved'?' selected':''}>Approved</option>
+              <option value="Approved as Noted"${s.status==='Approved as Noted'?' selected':''}>Approved as Noted</option>
+              <option value="Revise &amp; Resubmit"${s.status==='Revise & Resubmit'?' selected':''}>Revise &amp; Resubmit</option>
+              <option value="Rejected"${s.status==='Rejected'?' selected':''}>Rejected</option>
+            </select>
+            <button class="btn-sm" onclick="event.stopPropagation();editSubmittal(${s.id})">Edit</button>
+            <button class="btn-sm btn-danger" onclick="event.stopPropagation();deleteItem('submittals',${s.id})">Delete</button>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 }
 function clearSubFilters(){
   ['sub-filter-text','sub-filter-project','sub-filter-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
@@ -2100,7 +2248,6 @@ function renderRental(){
   const txt=(document.getElementById('ren-filter-text')?.value||'').toLowerCase();
   const proj=document.getElementById('ren-filter-project')?.value||'';
   const stat=document.getElementById('ren-filter-status')?.value||'';
-  // Archive always updates first — even if active table has no rows
   renderRentalArchive();
   const activeRental=rental.filter(r=>!['Release','Released'].includes(r.status));
   let rows=activeRental.filter(r=>{
@@ -2109,19 +2256,52 @@ function renderRental(){
     if(txt && !(r.name||'').toLowerCase().includes(txt) && !(r.vendor||'').toLowerCase().includes(txt)) return false;
     return true;
   });
-  if(!activeRental.length){body.innerHTML=`<tr><td colspan="8" class="empty">No active rental equipment. Released equipment is in the Archive below.</td></tr>`;return}
-  if(!rows.length){body.innerHTML=`<tr><td colspan="8" class="empty">No equipment matches the current filters.</td></tr>`;return}
-  body.innerHTML=rows.map(r=>`
-    <tr>
-      <td class="truncate">${h(r.name)}</td>
-      <td class="truncate">${h(r.project)}</td>
-      <td class="truncate">${h(r.vendor)}</td>
-      <td>${fmt(r.onsite)}</td>
-      <td>${fmt(r.offsite)}</td>
+  if(!activeRental.length){body.innerHTML=`<tr><td colspan="6" class="empty"><div class="empty-icon">🚧</div>No active rental equipment. Released equipment is in the Archive below.</td></tr>`;return}
+  if(!rows.length){body.innerHTML=`<tr><td colspan="6" class="empty">No equipment matches the current filters.</td></tr>`;return}
+  body.innerHTML=rows.map(r=>{
+    return `
+    <tr id="rental-row-${r.id}" class="data-row" onclick="toggleDetail('rental',${r.id})">
+      <td class="truncate">
+        <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        <div class="cell-primary" style="display:inline-block;vertical-align:middle;max-width:calc(100% - 22px)">${h(r.name)}</div>
+        <div class="cell-secondary" style="padding-left:20px">${h(r.vendor)||'—'}</div>
+      </td>
+      <td class="truncate" style="font-size:12px">${h(r.project)||'—'}</td>
+      <td>${dateChip(r.onsite,false)}</td>
+      <td>${dateChip(r.offsite,true)}</td>
       <td>${badge(r.status)}</td>
-      <td style="white-space:nowrap"><button class="btn-sm" onclick="editRental(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rental',${r.id})">Delete</button></td>
+      <td onclick="event.stopPropagation()">
+        <div class="row-actions">
+          <button class="btn-icon" onclick="editRental(${r.id})" title="Edit">✎</button>
+          <button class="btn-icon btn-icon-danger" onclick="deleteItem('rental',${r.id})" title="Delete">✕</button>
+        </div>
+      </td>
     </tr>
-  `).join('');
+    <tr id="rental-detail-${r.id}" class="detail-row" style="display:none">
+      <td colspan="6">
+        <div class="detail-panel">
+          <div class="detail-grid">
+            <div><div class="detail-field-label">Equipment</div><div class="detail-field-value">${h(r.name)}</div></div>
+            <div><div class="detail-field-label">Project</div><div class="detail-field-value">${h(r.project)||'—'}</div></div>
+            <div><div class="detail-field-label">Vendor</div><div class="detail-field-value">${h(r.vendor)||'—'}</div></div>
+            <div><div class="detail-field-label">On Site Date</div><div class="detail-field-value">${fmt(r.onsite)||'—'}</div></div>
+            <div><div class="detail-field-label">Release Date</div><div class="detail-field-value">${dateChip(r.offsite,true)}</div></div>
+            <div><div class="detail-field-label">Status</div><div class="detail-field-value">${badge(r.status)}</div></div>
+          </div>
+          <div class="detail-actions">
+            <select class="quick-status-select" onchange="quickStatusChange('rental',${r.id},this.value)" onclick="event.stopPropagation()">
+              <option value="">Change status…</option>
+              <option value="Ordered"${r.status==='Ordered'?' selected':''}>Ordered</option>
+              <option value="On Site"${r.status==='On Site'?' selected':''}>On Site</option>
+              <option value="Release"${r.status==='Release'?' selected':''}>Released</option>
+            </select>
+            <button class="btn-sm" onclick="event.stopPropagation();editRental(${r.id})">Edit</button>
+            <button class="btn-sm btn-danger" onclick="event.stopPropagation();deleteItem('rental',${r.id})">Delete</button>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 }
 function clearRentalFilters(){
   ['ren-filter-text','ren-filter-project','ren-filter-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
