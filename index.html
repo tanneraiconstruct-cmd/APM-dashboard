@@ -123,6 +123,7 @@ tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 var(--michels-red)}
 label{display:block;font-size:11px;font-weight:600;color:var(--text-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
 input[type=text],input[type=password],input[type=date],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);outline:none;transition:border-color .15s}
 input:focus,select:focus,textarea:focus{border-color:var(--michels-red)}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
 textarea{resize:vertical;min-height:72px}
 
 .project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
@@ -226,6 +227,7 @@ textarea{resize:vertical;min-height:72px}
 .filter-bar::before{content:'';display:block;width:3px;height:20px;background:var(--michels-red);border-radius:2px;flex-shrink:0;margin-right:4px}
 .filter-input{padding:6px 10px;font-size:12px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
 .filter-input:focus{border-color:var(--michels-red);background:var(--white)}
+select.filter-input{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;padding-right:28px}
 .filter-clear{background:none;border:none;font-size:11px;color:var(--text-muted);cursor:pointer;padding:4px 6px;border-radius:4px;font-family:'DM Sans',sans-serif}
 .filter-clear:hover{color:var(--red);background:var(--red-light)}
 /* LOADING */
@@ -397,8 +399,13 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .detail-field-value{font-size:13px;color:var(--text);font-weight:500;word-break:break-word;line-height:1.4}
 .detail-desc-block{font-size:12.5px;color:var(--text-mid);line-height:1.55;padding:10px 12px;background:var(--white);border-radius:6px;border:1px solid var(--border);margin-bottom:12px;white-space:pre-wrap}
 .detail-actions{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap}
-.quick-status-select{font-size:12px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);cursor:pointer;outline:none;transition:border-color .15s}
-.quick-status-select:focus{border-color:var(--michels-red)}
+/* STATUS PILL SWITCHER */
+.status-switcher{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-right:4px}
+.status-switcher-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;flex-shrink:0}
+.status-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap;line-height:1}
+.status-btn:hover:not(.status-btn-current){background:var(--white);color:var(--text);border-color:#bbb;transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.status-btn-current{cursor:default;transform:none!important;box-shadow:none!important}
+.status-btn-pip{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 /* DATE CHIPS */
 .date-chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-family:'DM Mono',monospace;padding:3px 8px;border-radius:5px;font-weight:500;white-space:nowrap;letter-spacing:.2px}
 .date-normal{background:var(--surface);color:var(--text-mid);border:1px solid var(--border)}
@@ -482,7 +489,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         </svg>
         <div style="width:1px;height:36px;background:rgba(255,255,255,.15)"></div>
         <div>
-          <div style="color:#fff;font-size:14px;font-weight:600;letter-spacing:-.2px">APM Dashboard</div>
+          <div style="color:#fff;font-size:14px;font-weight:600;letter-spacing:-.2px">Dashboard</div>
           <div style="color:#aaa;font-size:11px;margin-top:2px" id="landing-role-label"></div>
         </div>
       </div>
@@ -550,7 +557,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 </svg>
       <div class="header-divider"></div>
       <div>
-        <div class="header-title">Dashboard</div>
+        <div class="header-title">Project Dashboard</div>
         <div class="header-sub" id="header-sub">APM Dashboard</div>
       </div>
     </div>
@@ -1349,6 +1356,23 @@ async function quickStatusChange(type,id,newStatus){
   showToast('Status updated to '+newStatus);
 }
 
+// ── STATUS PILL SWITCHER ─────────────────────────────────
+function statusSwitcherHTML(type, id, currentStatus, options){
+  const btns = options.map(o=>{
+    const isCurrent = o.value===currentStatus;
+    const style = isCurrent
+      ? `background:${o.bg};color:${o.color};border-color:${o.color}`
+      : '';
+    const onclick = isCurrent
+      ? ''
+      : `onclick="event.stopPropagation();quickStatusChange('${type}',${id},'${o.value.replace(/'/g,"\\'")}')"`;
+    return `<button class="status-btn${isCurrent?' status-btn-current':''}" style="${style}" ${onclick}>
+      <span class="status-btn-pip" style="background:${o.color}"></span>${o.label}
+    </button>`;
+  }).join('');
+  return `<div class="status-switcher"><span class="status-switcher-label">Status</span>${btns}</div>`;
+}
+
 // ── CHART STRIPS ─────────────────────────────────────────
 function chartStripHTML(segments, total, extra){
   if(!total) return '';
@@ -1716,7 +1740,7 @@ function goToDashboard(){
   document.getElementById('landing-page').style.display='none';
   document.getElementById('main-dashboard').style.display='';
   document.querySelector('.nav').style.display='';
-  document.querySelector('.header-title').textContent='Dashboard';
+  document.querySelector('.header-title').textContent='Project Dashboard';
   // Ensure controls section is inactive, activate first allowed tab
   document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
   const firstTab = document.querySelector('.nav-tab:not([style*="display: none"])');
@@ -2065,9 +2089,6 @@ function renderProjects(){
       <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${calcPct(p.start,p.end,p.status)}%;background:${cardAccent}"></div></div>
       ${teamLines.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">${teamLines.map(t=>`<span style="font-size:11px;color:var(--text-mid);background:var(--surface);border:1px solid var(--border);padding:2px 7px;border-radius:10px">${t}</span>`).join('')}</div>`:''}
       ${p.notes?`<div style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5">${h(p.notes)}</div>`:''}
-      <div class="project-actions">
-        <button class="btn-sm btn-danger" onclick="deleteItem('projects',${p.id})">Delete</button>
-      </div>
     </div>
   `}).join('');
 }
@@ -2153,13 +2174,12 @@ function renderRFI(){
           </div>
           ${desc?`<div class="detail-field-label" style="margin-bottom:6px">Description / Question</div><div class="detail-desc-block">${desc}</div>`:''}
           <div class="detail-actions">
-            <select class="quick-status-select" onchange="quickStatusChange('rfi',${r.id},this.value)" onclick="event.stopPropagation()">
-              <option value="">Change status…</option>
-              <option value="Open"${r.status==='Open'?' selected':''}>Open</option>
-              <option value="Under Review"${r.status==='Under Review'?' selected':''}>Under Review</option>
-              <option value="Answered"${r.status==='Answered'?' selected':''}>Answered</option>
-              <option value="Closed"${r.status==='Closed'?' selected':''}>Closed</option>
-            </select>
+            ${statusSwitcherHTML('rfi',r.id,r.status,[
+              {value:'Open',         label:'Open',         color:'#c8102e', bg:'#fdeaed'},
+              {value:'Under Review', label:'Under Review', color:'#d97706', bg:'#fef3c7'},
+              {value:'Answered',     label:'Answered',     color:'#15803d', bg:'#dcfce7'},
+              {value:'Closed',       label:'Closed',       color:'#64748b', bg:'#f1f5f9'},
+            ])}
             <button class="btn-sm" onclick="event.stopPropagation();editRFI(${r.id})">Edit</button>
             <button class="btn-sm btn-danger" onclick="event.stopPropagation();deleteItem('rfis',${r.id})">Delete</button>
           </div>
@@ -2221,15 +2241,14 @@ function renderSubmittals(){
             <div><div class="detail-field-label">Status</div><div class="detail-field-value">${badge(s.status)}</div></div>
           </div>
           <div class="detail-actions">
-            <select class="quick-status-select" onchange="quickStatusChange('submittal',${s.id},this.value)" onclick="event.stopPropagation()">
-              <option value="">Change status…</option>
-              <option value="Pending"${s.status==='Pending'?' selected':''}>Pending</option>
-              <option value="Under Review"${s.status==='Under Review'?' selected':''}>Under Review</option>
-              <option value="Approved"${s.status==='Approved'?' selected':''}>Approved</option>
-              <option value="Approved as Noted"${s.status==='Approved as Noted'?' selected':''}>Approved as Noted</option>
-              <option value="Revise &amp; Resubmit"${s.status==='Revise & Resubmit'?' selected':''}>Revise &amp; Resubmit</option>
-              <option value="Rejected"${s.status==='Rejected'?' selected':''}>Rejected</option>
-            </select>
+            ${statusSwitcherHTML('submittal',s.id,s.status,[
+              {value:'Pending',           label:'Pending',           color:'#d97706', bg:'#fef3c7'},
+              {value:'Under Review',      label:'Under Review',      color:'#2563eb', bg:'#eff6ff'},
+              {value:'Approved',          label:'Approved',          color:'#15803d', bg:'#dcfce7'},
+              {value:'Approved as Noted', label:'Approved as Noted', color:'#059669', bg:'#d1fae5'},
+              {value:'Revise & Resubmit', label:'Revise & Resubmit', color:'#c8102e', bg:'#fdeaed'},
+              {value:'Rejected',          label:'Rejected',          color:'#64748b', bg:'#f1f5f9'},
+            ])}
             <button class="btn-sm" onclick="event.stopPropagation();editSubmittal(${s.id})">Edit</button>
             <button class="btn-sm btn-danger" onclick="event.stopPropagation();deleteItem('submittals',${s.id})">Delete</button>
           </div>
@@ -2289,12 +2308,11 @@ function renderRental(){
             <div><div class="detail-field-label">Status</div><div class="detail-field-value">${badge(r.status)}</div></div>
           </div>
           <div class="detail-actions">
-            <select class="quick-status-select" onchange="quickStatusChange('rental',${r.id},this.value)" onclick="event.stopPropagation()">
-              <option value="">Change status…</option>
-              <option value="Ordered"${r.status==='Ordered'?' selected':''}>Ordered</option>
-              <option value="On Site"${r.status==='On Site'?' selected':''}>On Site</option>
-              <option value="Release"${r.status==='Release'?' selected':''}>Released</option>
-            </select>
+            ${statusSwitcherHTML('rental',r.id,r.status,[
+              {value:'Ordered',  label:'Ordered',  color:'#d97706', bg:'#fef3c7'},
+              {value:'On Site',  label:'On Site',  color:'#15803d', bg:'#dcfce7'},
+              {value:'Release',  label:'Released',  color:'#64748b', bg:'#f1f5f9'},
+            ])}
             <button class="btn-sm" onclick="event.stopPropagation();editRental(${r.id})">Edit</button>
             <button class="btn-sm btn-danger" onclick="event.stopPropagation();deleteItem('rental',${r.id})">Delete</button>
           </div>
