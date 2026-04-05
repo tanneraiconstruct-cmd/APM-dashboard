@@ -171,7 +171,7 @@ textarea{resize:vertical;min-height:72px}
 .todo-check{width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s}
 .todo-check.checked{background:var(--green);border-color:var(--green)}
 .todo-check.checked::after{content:'✓';color:#fff;font-size:11px;font-weight:600}
-.todo-item-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.todo-item-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .todo-item-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .todo-item-age{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
 .todo-urgency-high{color:var(--red);font-weight:600}
@@ -182,7 +182,7 @@ textarea{resize:vertical;min-height:72px}
 .btn-snooze:hover{background:var(--amber-light);border-color:var(--amber)}
 .btn-snooze svg{width:12px;height:12px;opacity:.7;transition:transform .15s}
 .snooze-wrap.open .btn-snooze svg.caret{transform:rotate(180deg)}
-.snooze-dd{display:none;position:absolute;right:0;top:calc(100% + 5px);background:var(--white);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:150px;z-index:300;overflow:visible}
+.snooze-dd{display:none;position:fixed;background:var(--white);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.15);min-width:160px;z-index:9999;overflow:visible}
 .snooze-wrap.open .snooze-dd{display:block}
 .snooze-dd-item:first-child{border-radius:8px 8px 0 0}
 .snooze-custom-wrap{border-radius:0 0 8px 8px}
@@ -342,6 +342,9 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
   .nav{overflow-x:auto;padding:0 12px}
   .main{padding:16px 12px}
 }
+/* MODAL SECTION TITLES */
+.modal-section-title{font-size:11px;font-weight:700;color:var(--michels-red);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border);padding-bottom:6px;margin:16px 0 12px}
+.modal-section-title:first-child{margin-top:0}
 </style>
 </head>
 <body>
@@ -419,7 +422,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <div class="header-date" id="header-date"></div>
-      <span id="current-user-badge" class="user-badge" style="display:none"><span class="user-avatar" id="user-avatar-initials">?</span><span id="current-user-name">User</span></span>
+      <span id="current-user-badge" class="user-badge" style="display:none" onclick="toggleSettings()" title="Settings"><span class="user-avatar" id="user-avatar-initials">?</span><span id="current-user-name">User</span></span>
       <!-- Settings dropdown -->
       <div class="settings-wrap" id="settings-wrap">
         <button class="btn-settings" onclick="toggleSettings()" id="btn-settings" aria-haspopup="true" aria-expanded="false">
@@ -427,6 +430,10 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
           Settings
         </button>
         <div class="settings-dropdown" id="settings-dropdown">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px 6px;border-bottom:1px solid var(--border)">
+            <span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Settings</span>
+            <button onclick="closeSettings()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:18px;line-height:1;padding:0 2px;font-family:sans-serif" title="Close">&times;</button>
+          </div>
           <button id="settings-manage-users" class="settings-item" onclick="closeSettings();openModal('user-modal')" style="display:none">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Manage Users
@@ -446,10 +453,35 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
   </div>
 
   <div class="nav">
+    <div class="nav-tab" data-tab="controls">Project Controls</div>
     <div class="nav-tab active" data-tab="projects">Active Projects</div>
     <div class="nav-tab" data-tab="rfi">RFI Log</div>
     <div class="nav-tab" data-tab="submittal">Submittal Log</div>
     <div class="nav-tab" data-tab="rental">Rental Equipment</div>
+  </div>
+
+  <!-- PROJECT CONTROLS -->
+  <div class="main" id="tab-controls">
+    <div class="section-header">
+      <div class="section-title">Project Controls</div>
+      <button class="btn-add" onclick="openModal('controls-modal')">+ New Job</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th style="width:70px">Job #</th>
+          <th style="width:20%">Job Name</th>
+          <th style="width:13%">Client</th>
+          <th style="width:11%">Contract Type</th>
+          <th style="width:9%">Value</th>
+          <th style="width:9%">Status</th>
+          <th style="width:10%">PM</th>
+          <th style="width:10%">APM</th>
+          <th style="width:80px">Actions</th>
+        </tr></thead>
+        <tbody id="controls-body"></tbody>
+      </table>
+    </div>
   </div>
 
   <!-- ACTIVE PROJECTS -->
@@ -484,7 +516,9 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
           <label>Remind after</label>
           <input type="number" id="reminder-days" min="1" max="60" value="7" onchange="saveDays();renderTodos()">
           <label>days since submission</label>
-          <button class="btn-sm" onclick="dissolve()" style="margin-left:6px" title="Permanently remove checked items from this list">Dissolve</button>
+          <button class="btn-sm" onclick="checkAllTodos()" title="Check all visible items">Check all</button>
+          <button class="btn-sm" onclick="uncheckAllTodos()" title="Uncheck all items">Uncheck all</button>
+          <button class="btn-sm" onclick="dissolve()" style="margin-left:2px" title="Close checked records and permanently remove from this list">Dissolve</button>
           <span id="snoozed-count" style="display:none;background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px"></span>
           <button class="btn-sm" onclick="clearSnoozes()" title="Remove all active snoozes">Clear snoozes</button>
         </div>
@@ -494,7 +528,6 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 
     <div class="section-header">
       <div class="section-title">Active Projects</div>
-      <button class="btn-add" onclick="openModal('project-modal')">+ New Project</button>
     </div>
     <div class="project-grid" id="project-grid"></div>
   </div>
@@ -642,35 +675,68 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 
 
 <!-- MODALS -->
-<div class="modal-overlay" id="project-modal">
-  <div class="modal">
+<div class="modal-overlay" id="controls-modal">
+  <div class="modal" style="width:min(620px,94vw)">
     <div class="modal-header">
-      <span class="modal-title" id="project-modal-title">New Project</span>
-      <button class="modal-close" onclick="closeModal('project-modal')">×</button>
+      <span class="modal-title" id="controls-modal-title">New Job</span>
+      <button class="modal-close" onclick="closeModal('controls-modal')">×</button>
     </div>
     <div class="modal-body">
-      <input type="hidden" id="p-id" value="">
-      <div class="form-row-full"><label>Project Name</label><input type="text" id="p-name" placeholder="e.g. Riverside Medical Expansion"></div>
+      <input type="hidden" id="ctrl-id" value="">
+
+      <div class="modal-section-title">Job Information</div>
+      <div class="form-row-full"><label>Job Name</label><input type="text" id="ctrl-name" placeholder="e.g. Riverside Substation Upgrade"></div>
       <div class="form-row">
-        <div><label>Client</label><input type="text" id="p-client" placeholder="Client name"></div>
-        <div><label>Project Number</label><input type="text" id="p-number" placeholder="e.g. 2024-001"></div>
+        <div><label>Job Number</label><input type="text" id="ctrl-number" placeholder="e.g. 2024-001"></div>
+        <div><label>Client</label><input type="text" id="ctrl-client" placeholder="Client or owner name"></div>
       </div>
       <div class="form-row">
-        <div><label>Start Date</label><input type="date" id="p-start"></div>
-        <div><label>End Date</label><input type="date" id="p-end"></div>
+        <div><label>Contract Type</label>
+          <select id="ctrl-contract-type">
+            <option value="">— Select —</option>
+            <option>Lump Sum</option><option>T&amp;M</option><option>Unit Price</option><option>Cost Plus</option>
+          </select>
+        </div>
+        <div><label>Contract Value ($)</label><input type="number" id="ctrl-value" placeholder="e.g. 1500000" min="0"></div>
+      </div>
+      <div class="form-row-full"><label>Address / Location</label><input type="text" id="ctrl-address" placeholder="Street, City, State"></div>
+
+      <div class="modal-section-title">Schedule</div>
+      <div class="form-row">
+        <div><label>Start Date</label><input type="date" id="ctrl-start"></div>
+        <div><label>End Date</label><input type="date" id="ctrl-end"></div>
       </div>
       <div class="form-row-full">
         <div><label>Status</label>
-          <select id="p-status">
+          <select id="ctrl-status">
             <option>Pre-Construction</option><option>In Progress</option><option>On Hold</option><option>Closeout</option><option>Complete</option>
           </select>
         </div>
       </div>
-      <div class="form-row-full"><label>Notes</label><textarea id="p-notes" placeholder="Brief description or notes..."></textarea></div>
+
+      <div class="modal-section-title">Owner / GC Contact</div>
+      <div class="form-row-full"><label>Contact Name</label><input type="text" id="ctrl-owner-name" placeholder="e.g. Jane Smith"></div>
+      <div class="form-row">
+        <div><label>Phone</label><input type="text" id="ctrl-owner-phone" placeholder="e.g. (555) 123-4567"></div>
+        <div><label>Email</label><input type="text" id="ctrl-owner-email" placeholder="e.g. jane@example.com"></div>
+      </div>
+
+      <div class="modal-section-title">Project Team</div>
+      <div class="form-row">
+        <div><label>Project Manager</label><select id="ctrl-pm"><option value="">— Unassigned —</option></select></div>
+        <div><label>APM</label><select id="ctrl-apm"><option value="">— Unassigned —</option></select></div>
+      </div>
+      <div class="form-row">
+        <div><label>Superintendent</label><select id="ctrl-super"><option value="">— Unassigned —</option></select></div>
+        <div><label>Foreman</label><select id="ctrl-foreman"><option value="">— Unassigned —</option></select></div>
+      </div>
+
+      <div class="modal-section-title">Notes</div>
+      <div class="form-row-full"><textarea id="ctrl-notes" placeholder="Additional notes or job description..."></textarea></div>
     </div>
     <div class="modal-footer">
-      <button class="btn-sm" onclick="closeModal('project-modal')">Cancel</button>
-      <button class="btn-add" id="project-save-btn" onclick="saveProject()">Save Project</button>
+      <button class="btn-sm" onclick="closeModal('controls-modal')">Cancel</button>
+      <button class="btn-add" id="controls-save-btn" onclick="saveJobControls()">Save Job</button>
     </div>
   </div>
 </div>
@@ -855,7 +921,7 @@ const ROLE_PERMISSIONS = {
   },
   pm: {
     label: 'Project Manager',
-    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -865,7 +931,7 @@ const ROLE_PERMISSIONS = {
   },
   regional: {
     label: 'Regional Manager',
-    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -876,7 +942,7 @@ const ROLE_PERMISSIONS = {
   // Legacy 'admin' maps to regional for backward compat
   admin: {
     label: 'Regional Manager',
-    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -886,7 +952,7 @@ const ROLE_PERMISSIONS = {
   },
   superadmin: {
     label: 'Super Admin',
-    tabs: ['projects', 'rfi', 'submittal', 'rental'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -909,7 +975,7 @@ const statusColors = {
   'In Progress':'badge-blue','Pre-Construction':'badge-gray','On Hold':'badge-amber','Closeout':'badge-green','Complete':'badge-green',
   'Open':'badge-red','Under Review':'badge-amber','Answered':'badge-green','Closed':'badge-gray',
   'Pending':'badge-gray','Approved':'badge-green','Approved as Noted':'badge-green','Revise & Resubmit':'badge-amber','Rejected':'badge-red',
-  'Ordered':'badge-amber','On Site':'badge-blue','Release':'badge-green','Released':'badge-green'
+  'Ordered':'badge-amber','On Site':'badge-blue','Released':'badge-green'
 };
 const priorityColors = {'High':'badge-red','Medium':'badge-amber','Low':'badge-blue'};
 </script>
@@ -943,8 +1009,8 @@ document.getElementById('header-date').innerHTML =
   `<div style="font-size:10px;color:#666;font-family:'DM Mono',monospace;letter-spacing:.3px">${today.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>`;
 
 // ── UTILITY FUNCTIONS ────────────────────────────────────
-function badge(text,cls){return`<span class="status ${cls||statusColors[text]||'badge-gray'}">${text}</span>`}
-function prio(text){return`<span class="priority ${priorityColors[text]||'badge-gray'}">${text}</span>`}
+function badge(text,cls){return`<span class="status ${cls||statusColors[text]||'badge-gray'}">${h(text)}</span>`}
+function prio(text){return`<span class="priority ${priorityColors[text]||'badge-gray'}">${h(text)}</span>`}
 function fmt(d){if(!d)return'—';const p=d.split('-');return`${p[1]}/${p[2]}/${p[0]}`}
 function val(id){return document.getElementById(id).value.trim()}
 // h() — HTML-escape user-supplied strings before inserting into innerHTML
@@ -962,13 +1028,13 @@ function calcPct(start, end, status=''){
 }
 
 // ── MODAL HELPERS ────────────────────────────────────────
-// project-modal excluded: creating a project doesn't require preloaded relational data
-const DATA_DEPENDENT_MODALS = ['rfi-modal','submittal-modal','rental-modal'];
+// controls-modal requires cachedUsers to be loaded for team selects
+const DATA_DEPENDENT_MODALS = ['controls-modal','rfi-modal','submittal-modal','rental-modal'];
 
 // resetModal clears a modal back to its default "new" state.
-// Pass noReset=true from editProject() to preserve pre-filled edit values.
+// Pass noReset=true from editJobControls() to preserve pre-filled edit values.
 function resetModal(id){
-  if(id==='project-modal')     resetProjectModal();
+  if(id==='controls-modal')    resetControlsModal();
   else if(id==='rfi-modal')    resetRFIModal();
   else if(id==='submittal-modal') resetSubmittalModal();
   else if(id==='rental-modal') resetRentalModal();
@@ -982,6 +1048,7 @@ function openModal(id, noReset=false){
     if(!getPerms().canManageUsers){ alert('You do not have permission to manage users.'); return; }
     renderUserList();
   }
+  if(id==='controls-modal') populateTeamSelects();
   if(!noReset) resetModal(id);
   populateProjectSelects();
   const el=document.getElementById(id);
@@ -1024,6 +1091,13 @@ document.addEventListener('click', e=>{
   if(wrap && !wrap.contains(e.target)) closeSettings();
   // Close any open snooze menus if clicking outside them
   if(!e.target.closest('.snooze-wrap')) closeAllSnoozeMenus();
+});
+// Escape key closes modals, settings dropdown, and snooze menus
+document.addEventListener('keydown', e=>{
+  if(e.key !== 'Escape') return;
+  closeSettings();
+  closeAllSnoozeMenus();
+  document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
 });
 
 // ── FLATPICKR DATE HELPERS ───────────────────────────────
@@ -1085,6 +1159,7 @@ function setLoadingState(){
 
 // ── RENDER ALL ───────────────────────────────────────────
 function renderAll(){
+  renderProjectControls();
   renderProjects();
   renderReportPreview();
   renderRFI();
@@ -1575,9 +1650,9 @@ function applyWritePermissions(){
     btn.style.display = p.canDelete ? '' : 'none';
   });
 
-  // Edit buttons — project cards and log table rows
-  document.querySelectorAll('.btn-sm[onclick*="editProject"]').forEach(btn=>{
-    btn.style.display = canWrite('projects') ? '' : 'none';
+  // Edit buttons — project controls table and log table rows
+  document.querySelectorAll('.btn-sm[onclick*="editJobControls"]').forEach(btn=>{
+    btn.style.display = canWrite('controls') ? '' : 'none';
   });
   document.querySelectorAll('.btn-sm[onclick*="editRFI"]').forEach(btn=>{
     btn.style.display = canWrite('rfi') ? '' : 'none';
@@ -1649,8 +1724,22 @@ function renderProjects(){
       </div>
     </div>
   `;
-  if(!projects.length){g.innerHTML='<div class="empty"><div class="empty-icon">📁</div>No projects yet. Click "+ New Project" to get started.</div>';return}
-  g.innerHTML=projects.map(p=>`
+  // Filter: APMs only see jobs they are assigned to
+  const visibleProjects = (currentUser?.role === 'apm')
+    ? projects.filter(p => p.assigned_apm === currentUser.username)
+    : projects;
+  if(!visibleProjects.length){
+    g.innerHTML='<div class="empty"><div class="empty-icon">📁</div>'+(currentUser?.role==='apm'?'No jobs are currently assigned to you.':\'No jobs yet. Use the Project Controls tab to add one.\')+'</div>';
+    return;
+  }
+  g.innerHTML=visibleProjects.map(p=>{
+    const teamLines=[
+      p.assigned_pm      && `PM: ${h(getUserDisplay(p.assigned_pm))}`,
+      p.assigned_apm     && `APM: ${h(getUserDisplay(p.assigned_apm))}`,
+      p.assigned_super   && `Super: ${h(getUserDisplay(p.assigned_super))}`,
+      p.assigned_foreman && `Foreman: ${h(getUserDisplay(p.assigned_foreman))}`,
+    ].filter(Boolean);
+    return `
     <div class="project-card">
       <div class="project-card-header">
         <div>
@@ -1663,12 +1752,43 @@ function renderProjects(){
       <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">${fmt(p.start)} → ${fmt(p.end)}</div>
       <div style="font-size:11px;color:var(--text-mid);margin-bottom:4px;display:flex;justify-content:space-between"><span>Progress</span><span>${calcPct(p.start,p.end,p.status)}%</span></div>
       <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${calcPct(p.start,p.end,p.status)}%"></div></div>
+      ${teamLines.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">${teamLines.map(t=>`<span style="font-size:11px;color:var(--text-mid);background:var(--surface);border:1px solid var(--border);padding:2px 7px;border-radius:10px">${t}</span>`).join('')}</div>`:''}
       ${p.notes?`<div style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5">${h(p.notes)}</div>`:''}
       <div class="project-actions">
-        <button class="btn-sm" onclick="editProject(${p.id})">Edit</button>
         <button class="btn-sm btn-danger" onclick="deleteItem('projects',${p.id})">Delete</button>
       </div>
     </div>
+  `}).join('');
+}
+
+function getUserDisplay(username){
+  if(!username) return null;
+  const u = cachedUsers.find(u=>u.username===username);
+  return u ? (u.displayName||u.username) : username;
+}
+
+function renderProjectControls(){
+  const body=document.getElementById('controls-body');
+  if(!body) return;
+  if(!projects.length){
+    body.innerHTML='<tr><td colspan="9" class="empty">No jobs yet. Click &ldquo;+ New Job&rdquo; to get started.</td></tr>';
+    return;
+  }
+  body.innerHTML=projects.map(p=>`
+    <tr>
+      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${h(p.number)||'&mdash;'}</td>
+      <td class="truncate">${h(p.name)}</td>
+      <td class="truncate">${h(p.client)||'&mdash;'}</td>
+      <td class="truncate">${h(p.contract_type)||'&mdash;'}</td>
+      <td>${p.contract_value?'$'+Number(p.contract_value).toLocaleString():'&mdash;'}</td>
+      <td>${badge(p.status)}</td>
+      <td class="truncate">${h(getUserDisplay(p.assigned_pm))||'&mdash;'}</td>
+      <td class="truncate">${h(getUserDisplay(p.assigned_apm))||'&mdash;'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn-sm" onclick="editJobControls(${p.id})">Edit</button>
+        <button class="btn-sm btn-danger" onclick="deleteItem('projects',${p.id})">Delete</button>
+      </td>
+    </tr>
   `).join('');
 }
 
@@ -1777,25 +1897,9 @@ function toggleArchive(type){
   const section = document.getElementById(type+'-archive-section');
   if(!section) return;
   section.classList.toggle('open');
-  try{
-    const states = JSON.parse(localStorage.getItem('apm_archive_states')||'{}');
-    states[type] = section.classList.contains('open');
-    localStorage.setItem('apm_archive_states', JSON.stringify(states));
-  }catch(e){}
 }
 
-function restoreArchiveStates(){
-  try{
-    const states = JSON.parse(localStorage.getItem('apm_archive_states')||'{}');
-    ['rfi','submittal','rental'].forEach(type=>{
-      const section = document.getElementById(type+'-archive-section');
-      if(section && states[type]) section.classList.add('open');
-      else if(section) section.classList.remove('open');
-    });
-  }catch(e){}
-}
-
-function archiveGroupHTML(items, rowFn, colCount){
+function archiveGroupHTML(items, rowFn, headers){
   if(!items.length) return `<div class="archive-proj-group"><div class="empty" style="padding:20px">No archived records.</div></div>`;
   const groups = {};
   items.forEach(item=>{
@@ -1803,6 +1907,9 @@ function archiveGroupHTML(items, rowFn, colCount){
     if(!groups[key]) groups[key]=[];
     groups[key].push(item);
   });
+  const thead = headers
+    ? `<thead><tr>${headers.map(col=>typeof col==='object'?`<th style="${col.style||''}">${col.label}</th>`:`<th>${col}</th>`).join('')}</tr></thead>`
+    : '';
   return Object.entries(groups).map(([projName, groupItems])=>`
     <div class="archive-proj-group">
       <div class="archive-proj-label">
@@ -1811,6 +1918,7 @@ function archiveGroupHTML(items, rowFn, colCount){
       </div>
       <div class="table-wrap">
         <table>
+          ${thead}
           <tbody>${groupItems.map(rowFn).join('')}</tbody>
         </table>
       </div>
@@ -1837,7 +1945,15 @@ function renderRFIArchive(){
       <td>${badge(r.status)}</td>
       <td>${prio(r.priority)}</td>
       <td style="white-space:nowrap;width:120px"><button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
-    </tr>`, 7);
+    </tr>`, [
+    {label:'RFI #',    style:'width:70px'},
+    {label:'Subject',  style:'width:22%'},
+    {label:'Submitted',style:'width:13%'},
+    {label:'Due',      style:'width:13%'},
+    {label:'Status',   style:'width:12%'},
+    {label:'Priority', style:'width:10%'},
+    {label:'Actions',  style:'width:120px'},
+  ]);
 }
 
 function renderSubmittalArchive(){
@@ -1860,7 +1976,15 @@ function renderSubmittalArchive(){
       <td>${badge(s.status)}</td>
       <td class="truncate">${h(s.bic)}</td>
       <td style="white-space:nowrap;width:120px"><button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
-    </tr>`, 7);
+    </tr>`, [
+    {label:'Sub #',        style:'width:80px'},
+    {label:'Description',  style:'width:22%'},
+    {label:'Spec Section', style:'width:13%'},
+    {label:'Submitted',    style:'width:13%'},
+    {label:'Status',       style:'width:12%'},
+    {label:'Ball in Court',style:'width:10%'},
+    {label:'Actions',      style:'width:120px'},
+  ]);
 }
 
 function renderRentalArchive(){
@@ -1882,7 +2006,14 @@ function renderRentalArchive(){
       <td>${fmt(r.offsite)}</td>
       <td>${badge(r.status)}</td>
       <td style="white-space:nowrap;width:120px"><button class="btn-sm" onclick="editRental(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rental',${r.id})">Delete</button></td>
-    </tr>`, 6);
+    </tr>`, [
+    {label:'Equipment',    style:'width:20%'},
+    {label:'Vendor',       style:'width:14%'},
+    {label:'On Site',      style:'width:11%'},
+    {label:'Release Date', style:'width:14%'},
+    {label:'Status',       style:'width:14%'},
+    {label:'Actions',      style:'width:120px'},
+  ]);
 }
 
 function populateProjectSelects(){
@@ -1936,13 +2067,83 @@ function toggleTodo(key){
   renderTodos();
 }
 
-function dissolve(){
-  // Move all checked items into dissolved (permanently hidden), then clear done list
+function checkAllTodos(){
+  const threshold = reminderDays;
+  rfis.forEach(r=>{
+    if(['Answered','Closed'].includes(r.status)) return;
+    const days = daysSince(r.submitted);
+    if(days===null||days<threshold) return;
+    const key = `rfi-${r.id}`;
+    if(!dissolvedTodos.includes(key)&&!isSnoozed(key)&&!doneTodos.includes(key)) doneTodos.push(key);
+  });
+  submittals.forEach(s=>{
+    if(['Approved','Approved as Noted','Rejected'].includes(s.status)) return;
+    const days = daysSince(s.date);
+    if(days===null||days<threshold) return;
+    const key = `sub-${s.id}`;
+    if(!dissolvedTodos.includes(key)&&!isSnoozed(key)&&!doneTodos.includes(key)) doneTodos.push(key);
+  });
+  localStorage.setItem('apm_done_todos', JSON.stringify(doneTodos));
+  renderTodos();
+}
+
+function uncheckAllTodos(){
+  doneTodos=[];
+  localStorage.setItem('apm_done_todos','[]');
+  renderTodos();
+}
+
+async function dissolve(){
+  if(!doneTodos.length){ showToast('No checked items to dissolve.'); return; }
+
+  // Auto-close each checked record to its terminal status
+  const updates = [];
+  doneTodos.forEach(k=>{
+    const rfiMatch = k.match(/^rfi-(\d+)$/);
+    const subMatch = k.match(/^sub-(\d+)$/);
+    const renMatch = k.match(/^ren-(\d+)$/);
+    if(rfiMatch){
+      const id = parseInt(rfiMatch[1]);
+      const idx = rfis.findIndex(r=>r.id===id);
+      if(idx!==-1) updates.push({type:'rfi', id, idx, status:'Answered'});
+    } else if(subMatch){
+      const id = parseInt(subMatch[1]);
+      const idx = submittals.findIndex(s=>s.id===id);
+      if(idx!==-1) updates.push({type:'sub', id, idx, status:'Approved'});
+    } else if(renMatch){
+      const id = parseInt(renMatch[1]);
+      const idx = rental.findIndex(r=>r.id===id);
+      if(idx!==-1) updates.push({type:'ren', id, idx, status:'Released'});
+    }
+  });
+
+  if(!updates.length){ showToast('Checked items already dissolved or not found.'); return; }
+  const lines = updates.map(u=>u.type==='rfi'?`• RFI → Answered`:u.type==='sub'?`• Submittal → Approved`:`• Rental → Released`);
+  if(!confirm(`Close and dissolve ${updates.length} item${updates.length!==1?'s':''}?\n\n${lines.join('\n')}\n\nThis cannot be undone.`)) return;
+
+  // Apply updates (optimistic local + remote)
+  await Promise.all(updates.map(async u=>{
+    if(u.type==='rfi'){
+      rfis[u.idx].status = u.status;
+      await sbUpdate('rfis', u.id, {status: u.status});
+    } else if(u.type==='sub'){
+      submittals[u.idx].status = u.status;
+      await sbUpdate('submittals', u.id, {status: u.status});
+    } else if(u.type==='ren'){
+      rental[u.idx].status = u.status;
+      await sbUpdate('rental', u.id, {status: u.status});
+    }
+  }));
+
+  // Move checked into dissolved and clear done list
   doneTodos.forEach(k=>{ if(!dissolvedTodos.includes(k)) dissolvedTodos.push(k); });
   doneTodos=[];
   localStorage.setItem('apm_done_todos','[]');
   localStorage.setItem('apm_dissolved_todos', JSON.stringify(dissolvedTodos));
-  renderTodos();
+
+  const n = updates.length;
+  showToast(`${n} item${n!==1?'s':''} closed and dissolved.`);
+  renderAll();
 }
 
 function clearSnoozes(){
@@ -1977,11 +2178,33 @@ function openSnoozeMenu(key, e){
   if(!wrap) return;
   const isOpen = wrap.classList.contains('open');
   closeAllSnoozeMenus();
-  if(!isOpen) wrap.classList.add('open');
+  if(!isOpen){
+    wrap.classList.add('open');
+    // Position the fixed dropdown flush with the button's bottom-right edge
+    const dd = document.getElementById('snooze-dd-'+key);
+    if(dd){
+      const btn = wrap.querySelector('.btn-snooze');
+      const rect = btn.getBoundingClientRect();
+      dd.style.top  = (rect.bottom + 5) + 'px';
+      // Align to right edge of button; clamp so it doesn't go off-screen left
+      const rightEdge = window.innerWidth - rect.right;
+      dd.style.right = Math.max(8, rightEdge) + 'px';
+      dd.style.left  = '';
+      // If dropdown would go below viewport, flip it above the button
+      const ddH = dd.offsetHeight || 160;
+      if(rect.bottom + 5 + ddH > window.innerHeight){
+        dd.style.top    = Math.max(8, rect.top - ddH - 5) + 'px';
+      }
+    }
+  }
 }
 
 function closeAllSnoozeMenus(){
-  document.querySelectorAll('.snooze-wrap.open').forEach(el=>el.classList.remove('open'));
+  document.querySelectorAll('.snooze-wrap.open').forEach(el=>{
+    el.classList.remove('open');
+    const dd = el.querySelector('.snooze-dd');
+    if(dd){ dd.style.top=''; dd.style.right=''; dd.style.left=''; }
+  });
 }
 
 function showSnoozeCustom(key){
@@ -2079,6 +2302,8 @@ function renderTodos(){
             <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',1)">1 day</button>
             <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',2)">2 days</button>
             <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',3)">3 days</button>
+            <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',7)">1 week</button>
+            <button class="snooze-dd-item" onclick="snoozeItem('${safeKey}',14)">2 weeks</button>
             <div class="snooze-dd-divider"></div>
             <button class="snooze-dd-item" onclick="showSnoozeCustom('${safeKey}')">Custom date…</button>
             <div class="snooze-custom-wrap" id="snooze-custom-${item.key}" style="display:none">
@@ -2111,11 +2336,16 @@ function renderTodos(){
 // Create, read, update, delete operations for all data types
 
 // ── MODAL RESET FUNCTIONS ─────────────────────────────────
-function resetProjectModal(){
-  clearFields(['p-id','p-name','p-client','p-number','p-start','p-end','p-notes']);
-  document.getElementById('p-status').value='Pre-Construction';
-  document.getElementById('project-modal-title').textContent='New Project';
-  document.getElementById('project-save-btn').textContent='Save Project';
+function resetControlsModal(){
+  clearFields(['ctrl-id','ctrl-name','ctrl-number','ctrl-client','ctrl-value','ctrl-address',
+               'ctrl-start','ctrl-end','ctrl-owner-name','ctrl-owner-phone','ctrl-owner-email','ctrl-notes']);
+  document.getElementById('ctrl-contract-type').value='';
+  document.getElementById('ctrl-status').value='Pre-Construction';
+  ['ctrl-pm','ctrl-apm','ctrl-super','ctrl-foreman'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('controls-modal-title').textContent='New Job';
+  document.getElementById('controls-save-btn').textContent='Save Job';
 }
 function resetRFIModal(){
   clearFields(['rfi-edit-id','rfi-num','rfi-subject','rfi-submitted','rfi-due','rfi-desc']);
@@ -2141,21 +2371,32 @@ function resetRentalModal(){
   document.getElementById('ren-save-btn').textContent='Save Rental';
 }
 
-function editProject(id){
-  if(!canWrite('projects')){ alert('You do not have permission to edit projects.'); return; }
+function editJobControls(id){
+  if(!canWrite('controls')){ alert('You do not have permission to edit jobs.'); return; }
   const p=projects.find(x=>x.id===id);
   if(!p)return;
-  document.getElementById('project-modal-title').textContent='Edit Project';
-  document.getElementById('project-save-btn').textContent='Update Project';
-  document.getElementById('p-id').value=id;
-  document.getElementById('p-name').value=p.name;
-  document.getElementById('p-client').value=p.client||'';
-  document.getElementById('p-number').value=p.number||'';
-  setDateVal('p-start', p.start||'');
-  setDateVal('p-end', p.end||'');
-  document.getElementById('p-status').value=p.status||'In Progress';
-  document.getElementById('p-notes').value=p.notes||'';
-  openModal('project-modal', true); // noReset=true — preserve pre-filled edit values
+  document.getElementById('controls-modal-title').textContent='Edit Job';
+  document.getElementById('controls-save-btn').textContent='Update Job';
+  document.getElementById('ctrl-id').value=id;
+  document.getElementById('ctrl-name').value=p.name||'';
+  document.getElementById('ctrl-number').value=p.number||'';
+  document.getElementById('ctrl-client').value=p.client||'';
+  document.getElementById('ctrl-contract-type').value=p.contract_type||'';
+  document.getElementById('ctrl-value').value=p.contract_value||'';
+  document.getElementById('ctrl-address').value=p.address||'';
+  setDateVal('ctrl-start', p.start||p.start_date||'');
+  setDateVal('ctrl-end', p.end||p.end_date||'');
+  document.getElementById('ctrl-status').value=p.status||'Pre-Construction';
+  document.getElementById('ctrl-owner-name').value=p.owner_name||'';
+  document.getElementById('ctrl-owner-phone').value=p.owner_phone||'';
+  document.getElementById('ctrl-owner-email').value=p.owner_email||'';
+  document.getElementById('ctrl-notes').value=p.notes||'';
+  populateTeamSelects();
+  document.getElementById('ctrl-pm').value=p.assigned_pm||'';
+  document.getElementById('ctrl-apm').value=p.assigned_apm||'';
+  document.getElementById('ctrl-super').value=p.assigned_super||'';
+  document.getElementById('ctrl-foreman').value=p.assigned_foreman||'';
+  openModal('controls-modal', true);
 }
 
 function editRFI(id){
@@ -2209,27 +2450,57 @@ function editRental(id){
   openModal('rental-modal', true);
 }
 
-async function saveProject(){
-  if(!getPerms().canEdit){ alert('You do not have permission to create or edit projects.'); return; }
-  const name=val('p-name');if(!name)return alert('Project name required.');
-  const editId=document.getElementById('p-id').value;
-  const data={name,client:val('p-client'),number:val('p-number'),start_date:val('p-start'),end_date:val('p-end'),status:val('p-status'),notes:val('p-notes')};
+function populateTeamSelects(){
+  const users = cachedUsers;
+  ['ctrl-pm','ctrl-apm','ctrl-super','ctrl-foreman'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    const cur=el.value;
+    el.innerHTML='<option value="">— Unassigned —</option>'+
+      users.map(u=>`<option value="${h(u.username)}"${u.username===cur?' selected':''}}>${h(u.displayName||u.username)}</option>`).join('');
+    if(cur) el.value=cur;
+  });
+}
+
+async function saveJobControls(){
+  if(!canWrite('controls')){ alert('You do not have permission to create or edit jobs.'); return; }
+  const name=val('ctrl-name');if(!name)return alert('Job name required.');
+  const editId=document.getElementById('ctrl-id').value;
+  const rawVal=document.getElementById('ctrl-value').value.trim();
+  const data={
+    name,
+    client:val('ctrl-client'),
+    number:val('ctrl-number'),
+    contract_type:val('ctrl-contract-type'),
+    contract_value:rawVal?parseFloat(rawVal):null,
+    address:val('ctrl-address'),
+    start_date:val('ctrl-start'),
+    end_date:val('ctrl-end'),
+    status:val('ctrl-status'),
+    owner_name:val('ctrl-owner-name'),
+    owner_phone:val('ctrl-owner-phone'),
+    owner_email:val('ctrl-owner-email'),
+    assigned_pm:val('ctrl-pm'),
+    assigned_apm:val('ctrl-apm'),
+    assigned_super:val('ctrl-super'),
+    assigned_foreman:val('ctrl-foreman'),
+    notes:val('ctrl-notes'),
+  };
   if(editId){
     const id=parseInt(editId);
     const idx=projects.findIndex(x=>x.id===id);
     if(idx>-1){
       const res=await sbUpdate('projects',id,data);
-      if(res.error){ alert('Failed to update project: '+res.error.message); return; }
+      if(res.error){ alert('Failed to update job: '+res.error.message); return; }
       projects[idx]={...projects[idx],...data,start:data.start_date,end:data.end_date};
     }
   } else {
-    const row={...data};
-    if(sb){ const res=await sb.from('projects').insert(row).select(); if(res.error){ alert('Failed to save project: '+res.error.message); return; } if(res.data?.[0]) projects.push({...res.data[0],start:res.data[0].start_date,end:res.data[0].end_date}); }
+    if(sb){ const res=await sb.from('projects').insert(data).select(); if(res.error){ alert('Failed to save job: '+res.error.message); return; } if(res.data?.[0]) projects.push({...res.data[0],start:res.data[0].start_date,end:res.data[0].end_date}); }
     else { projects.push({id:nextId++,...data,start:data.start_date,end:data.end_date}); }
   }
-  resetProjectModal();
-  closeModal('project-modal');saveLocal();renderAll();
-  showToast(editId ? 'Project updated.' : 'Project saved.');
+  resetControlsModal();
+  closeModal('controls-modal');saveLocal();renderAll();
+  showToast(editId ? 'Job updated.' : 'Job saved.');
 }
 
 async function saveRFI(){
@@ -2342,7 +2613,10 @@ function renderReportPreview(){
   const filtered = cur ? projects.filter(p=>p.id==cur) : projects;
   if(badge){ badge.textContent=filtered.length; badge.style.display=filtered.length?'inline-flex':'none'; }
   if(!filtered.length){
-    preview.innerHTML='<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:16px">No projects to preview.</div>';
+    const msg = projects.length
+      ? 'No project matches the selected filter.'
+      : 'No projects yet. Click "+ New Project" to get started.';
+    preview.innerHTML=`<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:24px 16px">${msg}</div>`;
     return;
   }
   preview.innerHTML = filtered.map(p=>{
