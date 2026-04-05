@@ -100,8 +100,8 @@ td{padding:11px 14px;font-size:13px;color:var(--text);border-bottom:1px solid va
 tr:last-child td{border-bottom:none}
 tbody tr:nth-child(even) td{background:#fafafa}
 tbody tr{transition:background .1s}
-tbody tr:hover td{background:#fdf0f2!important}
-tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 var(--michels-red)}
+tbody tr:not(.spec-section-row):hover td{background:#fdf0f2!important}
+tbody tr:not(.spec-section-row):hover td:first-child{box-shadow:inset 3px 0 0 var(--michels-red)}
 .truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .progress-bar-bg{background:#e2e8f0;border-radius:4px;height:6px;width:100%;min-width:60px}
@@ -403,7 +403,6 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .landing-nav-card-desc{font-size:12px;color:var(--text-muted);line-height:1.6}
 .landing-section-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
 .landing-notif-list{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.landing-notif-item{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)}
 .landing-notif-item:last-child{border-bottom:none}
 .landing-notif-dot{width:8px;height:8px;border-radius:50%;background:var(--michels-red);margin-top:4px;flex-shrink:0}
 .landing-notif-dot.green{background:var(--green)}
@@ -419,6 +418,25 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .activity-custom-range{display:none;gap:6px;align-items:center;margin-bottom:10px}
 .activity-custom-range.visible{display:flex}
 .activity-custom-range input[type=date]{font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:6px;background:var(--white);color:var(--text);font-family:'DM Mono',monospace;width:130px}
+/* NOTIFICATION BELL PANEL */
+.notif-panel{display:none;position:fixed;top:0;right:0;width:360px;max-height:520px;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.18);z-index:9998;flex-direction:column;overflow:hidden}
+.notif-panel.open{display:flex}
+.notif-panel-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--michels-black)}
+.notif-panel-title{font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px}
+.notif-panel-close{background:none;border:none;cursor:pointer;color:#aaa;font-size:18px;line-height:1;padding:0 2px;font-family:sans-serif;transition:color .12s}
+.notif-panel-close:hover{color:#fff}
+.notif-panel-filters{display:flex;gap:5px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface)}
+.notif-panel-filter-btn{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;transition:background .12s,color .12s,border-color .12s;letter-spacing:.2px;font-family:'DM Mono',monospace}
+.notif-panel-filter-btn:hover{border-color:var(--michels-red);color:var(--michels-red)}
+.notif-panel-filter-btn.active{background:var(--michels-red);border-color:var(--michels-red);color:#fff}
+.notif-panel-body{overflow-y:auto;flex:1}
+.notif-panel-footer{padding:8px 12px;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface);display:flex;justify-content:flex-end}
+.notif-new-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;background:var(--michels-red);color:#fff;padding:1px 6px;border-radius:20px;margin-left:7px;vertical-align:middle;flex-shrink:0}
+.notif-check-btn{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--border);border-radius:5px;background:var(--white);cursor:pointer;color:var(--green);transition:background .1s,border-color .1s;flex-shrink:0;padding:0;font-size:13px;line-height:1;font-family:inherit}
+.notif-check-btn:hover{background:var(--green-light);border-color:var(--green)}
+.btn-dissolve-notif{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;transition:background .12s,color .12s,border-color .12s;font-family:'DM Sans',sans-serif;display:none}
+.btn-dissolve-notif:hover{background:#fee2e2;border-color:#fca5a5;color:var(--red)}
+.landing-notif-item{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border)}
 
 /* CHART STRIPS */
 .chart-strip{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:13px 16px 11px;margin-bottom:14px}
@@ -544,18 +562,35 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <div id="landing-user-info" style="display:none;align-items:center;gap:8px">
-          <div style="text-align:right">
-            <div style="font-size:12px;font-weight:600;color:#fff" id="landing-display-name-header"></div>
-            <div style="font-size:10px;color:#888;font-family:'DM Mono',monospace" id="landing-username-header"></div>
+        <div class="settings-wrap" id="landing-settings-wrap">
+          <span id="landing-user-badge" class="user-badge" style="display:none" onclick="toggleSettings()" title="Settings">
+            <span class="user-avatar" id="landing-avatar-initials">?</span>
+            <span id="landing-display-name-header">User</span>
+          </span>
+          <div class="settings-dropdown" id="landing-settings-dropdown">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px 6px;border-bottom:1px solid var(--border)">
+              <span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Settings</span>
+              <button onclick="closeSettings()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:18px;line-height:1;padding:0 2px;font-family:sans-serif" title="Close">&times;</button>
+            </div>
+            <button id="lp-settings-manage-users" class="settings-item" onclick="closeSettings();openModal('user-modal')" style="display:none">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Manage Users
+            </button>
+            <button id="lp-settings-db-setup" class="settings-item" onclick="closeSettings();openModal('supabase-modal')" style="display:none">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              DB Setup
+            </button>
+            <div class="settings-divider" id="lp-settings-divider" style="display:none"></div>
+            <button class="settings-item danger" onclick="closeSettings();logout()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign Out
+            </button>
           </div>
-          <div class="user-avatar" id="landing-avatar-initials" style="width:28px;height:28px;font-size:11px">?</div>
         </div>
-        <button class="landing-notif-bell" id="landing-bell-btn" title="Notifications">
+        <button class="landing-notif-bell" id="landing-bell-btn" title="Notifications" onclick="toggleNotifPanel(this)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="notif-dot" id="landing-bell-dot"></span>
         </button>
-        <button class="btn-sm" onclick="logout()" style="border-color:rgba(255,255,255,.2);color:#aaa;font-size:11px">Sign Out</button>
       </div>
     </div>
     <div class="landing-body">
@@ -584,9 +619,9 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
           </div>
         </div>
         <div class="landing-right">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="display:flex;align-items:center;margin-bottom:12px">
             <div class="landing-section-label" style="margin-bottom:0">Recent Activity</div>
-            <span id="landing-notif-badge" style="display:none;background:var(--michels-red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace">0</span>
+            <span id="landing-notif-badge" style="display:none;background:var(--michels-red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace;margin-left:8px">0</span>
           </div>
           <div class="activity-filter-bar" id="activity-filter-bar">
             <button class="activity-filter-btn active" onclick="setActivityFilter('7d')" data-filter="7d">7 Days</button>
@@ -595,6 +630,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
             <button class="activity-filter-btn" onclick="setActivityFilter('ytd')" data-filter="ytd">YTD</button>
             <button class="activity-filter-btn" onclick="setActivityFilter('all')" data-filter="all">All Time</button>
             <button class="activity-filter-btn" onclick="setActivityFilter('custom')" data-filter="custom">Custom</button>
+            <button id="btn-dissolve-notif" onclick="dissolveNewActivity()" title="Mark all as read" style="margin-left:auto;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;font-family:'DM Mono',monospace;transition:background .12s,color .12s,border-color .12s;letter-spacing:.2px">Check All</button>
           </div>
           <div class="activity-custom-range" id="activity-custom-range">
             <input type="date" id="activity-from" title="From date">
@@ -639,7 +675,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <div class="header-date" id="header-date"></div>
-      <button class="header-notif-bell" id="header-bell-btn" title="Notifications" style="display:none">
+      <button class="header-notif-bell" id="header-bell-btn" title="Notifications" style="display:none" onclick="toggleNotifPanel(this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-dot" id="header-bell-dot"></span>
       </button>
@@ -809,7 +845,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
           <span class="archive-title-text">Archive</span>
           <span class="archive-count" id="rfi-archive-count">0</span>
         </div>
-        <span class="archive-hint">Answered &amp; closed RFIs</span>
+        <span class="archive-hint">Closed RFIs</span>
       </button>
       <div class="archive-body" id="rfi-archive-body"></div>
     </div>
@@ -1049,7 +1085,10 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         </select>
         <div id="rfi-spec-new-wrap" class="spec-new-wrap" style="display:none">
           <div class="form-row" style="margin-bottom:0">
-            <div><label>CSI Number</label><input type="text" id="rfi-spec-csi" placeholder="e.g. 03 30 00" maxlength="12"></div>
+            <div>
+              <label style="display:flex;align-items:center;gap:6px">CSI Number<span id="rfi-spec-csi-auto-badge" style="display:none;font-size:9px;font-weight:700;background:var(--green-light);color:var(--green);padding:1px 6px;border-radius:10px;letter-spacing:.3px;text-transform:uppercase">Auto</span></label>
+              <input type="text" id="rfi-spec-csi" placeholder="e.g. 03 30 00" maxlength="12" oninput="csiNumManualOverride()">
+            </div>
             <div><label>Description</label><input type="text" id="rfi-spec-desc-input" placeholder="e.g. Cast-in-Place Concrete"></div>
           </div>
         </div>
@@ -1070,14 +1109,26 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <input type="hidden" id="sub-edit-id" value="">
       <div class="form-row">
         <div><label>Submittal #</label><input type="text" id="sub-num" placeholder="e.g. SUB-001"></div>
-        <div><label>Project</label><select id="sub-project"><option value="">Select project</option></select></div>
+        <div><label>Project</label><select id="sub-project" onchange="autoFillSubSpec()"><option value="">Select project</option></select></div>
       </div>
       <div class="form-row-full"><label>Description</label><input type="text" id="sub-desc" placeholder="e.g. Structural Steel Shop Drawings"></div>
-      <div class="form-row">
-        <div><label>Spec Section</label><input type="text" id="sub-spec" placeholder="e.g. 05 12 00"></div>
-        <div><label>Date Submitted</label><input type="date" id="sub-date"></div>
+      <div class="form-row-full">
+        <label>Spec Section</label>
+        <select id="sub-spec-select" onchange="subSpecChange()">
+          <option value="">— None —</option>
+        </select>
+        <div id="sub-spec-new-wrap" class="spec-new-wrap" style="display:none">
+          <div class="form-row" style="margin-bottom:0">
+            <div>
+              <label style="display:flex;align-items:center;gap:6px">CSI Number<span id="sub-spec-csi-auto-badge" style="display:none;font-size:9px;font-weight:700;background:var(--green-light);color:var(--green);padding:1px 6px;border-radius:10px;letter-spacing:.3px;text-transform:uppercase">Auto</span></label>
+              <input type="text" id="sub-spec-csi" placeholder="e.g. 05 12 00" maxlength="12" oninput="subSpecCsiManualOverride()">
+            </div>
+            <div><label>Description</label><input type="text" id="sub-spec-desc-input" placeholder="e.g. Structural Steel"></div>
+          </div>
+        </div>
       </div>
-      <div class="form-row">
+      <div class="form-row" style="grid-template-columns:1fr 1fr 1fr">
+        <div><label>Date Submitted</label><input type="date" id="sub-date"></div>
         <div><label>Status</label>
           <select id="sub-status">
             <option>Pending</option><option>Under Review</option><option>Approved</option><option>Approved as Noted</option><option>Revise &amp; Resubmit</option><option>Rejected</option>
@@ -1350,32 +1401,42 @@ function closeModal(id){
 
 // ── SETTINGS DROPDOWN ────────────────────────────────────
 function toggleSettings(){
-  const dd = document.getElementById('settings-dropdown');
-  const btn = document.getElementById('btn-settings');
+  const isLanding = document.getElementById('landing-page').style.display !== 'none';
+  const ddId = isLanding ? 'landing-settings-dropdown' : 'settings-dropdown';
+  const dd = document.getElementById(ddId);
+  if(!dd) return;
   const isOpen = dd.classList.toggle('open');
-  btn.setAttribute('aria-expanded', isOpen);
+  const btn = document.getElementById('btn-settings');
+  if(btn) btn.setAttribute('aria-expanded', isOpen);
 }
 function closeSettings(){
-  const dd = document.getElementById('settings-dropdown');
+  ['settings-dropdown','landing-settings-dropdown'].forEach(id=>{
+    const dd = document.getElementById(id);
+    if(dd) dd.classList.remove('open');
+  });
   const btn = document.getElementById('btn-settings');
-  dd.classList.remove('open');
-  btn.setAttribute('aria-expanded','false');
+  if(btn) btn.setAttribute('aria-expanded','false');
 }
 // Show/hide settings menu items based on role permissions
 function applySettingsPermissions(perms){
   const p = perms || getPerms();
-  const itemUsers   = document.getElementById('settings-manage-users');
-  const itemDB      = document.getElementById('settings-db-setup');
-  const divider     = document.getElementById('settings-divider');
-  const showAdmin   = p.canManageUsers || p.canDBSetup;
-  if(itemUsers) itemUsers.style.display = p.canManageUsers ? '' : 'none';
-  if(itemDB)    itemDB.style.display    = p.canDBSetup    ? '' : 'none';
-  if(divider)   divider.style.display   = showAdmin       ? '' : 'none';
+  const showAdmin = p.canManageUsers || p.canDBSetup;
+  [['settings-manage-users','settings-db-setup','settings-divider'],
+   ['lp-settings-manage-users','lp-settings-db-setup','lp-settings-divider']].forEach(([uId,dId,divId])=>{
+    const itemUsers = document.getElementById(uId);
+    const itemDB    = document.getElementById(dId);
+    const divider   = document.getElementById(divId);
+    if(itemUsers) itemUsers.style.display = p.canManageUsers ? '' : 'none';
+    if(itemDB)    itemDB.style.display    = p.canDBSetup    ? '' : 'none';
+    if(divider)   divider.style.display   = showAdmin       ? '' : 'none';
+  });
 }
 // Close dropdowns when clicking outside
 document.addEventListener('click', e=>{
-  const wrap = document.getElementById('settings-wrap');
-  if(wrap && !wrap.contains(e.target)) closeSettings();
+  const wrap   = document.getElementById('settings-wrap');
+  const lpWrap = document.getElementById('landing-settings-wrap');
+  const inAnyWrap = (wrap && wrap.contains(e.target)) || (lpWrap && lpWrap.contains(e.target));
+  if(!inAnyWrap) closeSettings();
   if(!e.target.closest('.snooze-wrap')) closeAllSnoozeMenus();
   if(!e.target.closest('.filter-dd')) document.querySelectorAll('.filter-dd.open').forEach(dd=>dd.classList.remove('open'));
 });
@@ -1937,12 +1998,10 @@ function showDashboard(){
     const displayName = currentUser.displayName||currentUser.username;
     const parts = displayName.split(' ');
     const initials = parts.map(p=>p[0]).join('').toUpperCase().substring(0,2);
-    const lpInfo = document.getElementById('landing-user-info');
-    if(lpInfo) lpInfo.style.display='flex';
+    const lpBadge = document.getElementById('landing-user-badge');
+    if(lpBadge) lpBadge.style.display='inline-flex';
     const lpName = document.getElementById('landing-display-name-header');
     if(lpName) lpName.textContent = displayName;
-    const lpUser = document.getElementById('landing-username-header');
-    if(lpUser) lpUser.textContent = '@'+currentUser.username;
     const lpInit = document.getElementById('landing-avatar-initials');
     if(lpInit) lpInit.textContent = initials;
     const lpRole = document.getElementById('landing-role-label');
@@ -2315,7 +2374,7 @@ function renderRFI(){
   const proj=getFDValue('fd-rfi-project');
   const stat=getFDValue('fd-rfi-status');
   renderRFIArchive();
-  const activeRfis=rfis.filter(r=>!['Answered','Closed'].includes(r.status));
+  const activeRfis=rfis.filter(r=>r.status!=='Closed');
   let rows=activeRfis.filter(r=>{
     if(proj && r.project!==proj) return false;
     if(stat && r.status!==stat) return false;
@@ -2408,8 +2467,19 @@ function renderSubmittals(){
   });
   if(!activeSubs.length){body.innerHTML=`<tr><td colspan="7" class="empty"><div class="empty-icon">📁</div>No pending submittals — add one to get started, or check the Archive below.</td></tr>`;return}
   if(!rows.length){body.innerHTML=`<tr><td colspan="7" class="empty">No submittals match the current filters.</td></tr>`;return}
-  body.innerHTML=rows.map(s=>{
-    return `
+  // Group by spec section — named sections alphabetically, unclassified last
+  const groups={};
+  rows.forEach(s=>{ const k=s.spec||''; if(!groups[k]) groups[k]=[]; groups[k].push(s); });
+  const sortedKeys=Object.keys(groups).sort((a,b)=>{ if(!a&&!b)return 0; if(!a)return 1; if(!b)return -1; return a.localeCompare(b); });
+  const showHeaders=sortedKeys.length>1||(sortedKeys.length===1&&sortedKeys[0]!=='');
+  let html='';
+  sortedKeys.forEach(key=>{
+    if(showHeaders){
+      const label=key||'Unclassified';
+      html+=`<tr class="spec-section-row"><td colspan="7"><span class="spec-section-badge">${h(label)}</span></td></tr>`;
+    }
+    groups[key].forEach(s=>{
+      html+=`
     <tr id="submittal-row-${s.id}" class="data-row" onclick="toggleDetail('submittal',${s.id})">
       <td style="font-family:'DM Mono',monospace;font-size:12px;white-space:nowrap">
         <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>${h(s.num)}
@@ -2435,7 +2505,7 @@ function renderSubmittals(){
           <div class="detail-grid">
             <div><div class="detail-field-label">Submittal #</div><div class="detail-field-value" style="font-family:'DM Mono',monospace">${h(s.num)}</div></div>
             <div><div class="detail-field-label">Project</div><div class="detail-field-value">${h(s.project)||'—'}</div></div>
-            <div><div class="detail-field-label">Spec Section</div><div class="detail-field-value">${h(s.spec)||'—'}</div></div>
+            ${s.spec?`<div><div class="detail-field-label">Spec Section</div><div class="detail-field-value">${h(s.spec)}</div></div>`:''}
             <div><div class="detail-field-label">Date Submitted</div><div class="detail-field-value">${fmt(s.date)||'—'}</div></div>
             <div><div class="detail-field-label">Ball in Court</div><div class="detail-field-value">${h(s.bic)||'—'}</div></div>
             <div><div class="detail-field-label">Status</div><div class="detail-field-value">${badge(s.status)}</div></div>
@@ -2455,7 +2525,9 @@ function renderSubmittals(){
         </div>
       </td>
     </tr>`;
-  }).join('');
+    });
+  });
+  body.innerHTML=html;
 }
 function clearSubFilters(){
   const t=document.getElementById('sub-filter-text');if(t)t.value='';
@@ -2562,11 +2634,11 @@ function archiveGroupHTML(items, rowFn, headers){
 
 function renderRFIArchive(){
   const proj = getFDValue('fd-rfi-project');
-  const archived = rfis.filter(r=>['Answered','Closed'].includes(r.status) && (!proj||r.project===proj));
+  const archived = rfis.filter(r=>r.status==='Closed' && (!proj||r.project===proj));
   const countEl = document.getElementById('rfi-archive-count');
   if(countEl) countEl.textContent = archived.length;
   const hintEl = document.querySelector('#rfi-archive-section .archive-hint');
-  if(hintEl) hintEl.textContent = proj ? `Answered & closed — ${proj}` : 'Answered & closed RFIs';
+  if(hintEl) hintEl.textContent = proj ? `Closed — ${proj}` : 'Closed RFIs';
   const body = document.getElementById('rfi-archive-body');
   if(!body) return;
   if(!archived.length){
@@ -3065,12 +3137,103 @@ function autoFillRFISpec(preserveVal){
   if(wrap) wrap.style.display = 'none';
 }
 
-// Shows/hides the "create new" sub-form
+// Returns the next auto CSI number based on how many spec sections exist for the project
+function getNextSpecSectionNum(projectName){
+  if(!projectName) return '001';
+  const count = getProjectSpecSections(projectName).length;
+  return String(count + 1).padStart(3, '0');
+}
+
+// Shows/hides the "create new" sub-form and auto-fills the CSI number
 function rfiSpecChange(){
   const sel = document.getElementById('rfi-spec-select');
   const wrap = document.getElementById('rfi-spec-new-wrap');
   if(!wrap) return;
-  wrap.style.display = sel && sel.value === '__new__' ? 'block' : 'none';
+  const isNew = sel && sel.value === '__new__';
+  wrap.style.display = isNew ? 'block' : 'none';
+  if(isNew){
+    const csiEl = document.getElementById('rfi-spec-csi');
+    const badge = document.getElementById('rfi-spec-csi-auto-badge');
+    const proj = document.getElementById('rfi-project').value;
+    const wasAuto = badge && badge.style.display !== 'none';
+    if(csiEl && (!csiEl.value || wasAuto)){
+      csiEl.value = getNextSpecSectionNum(proj);
+      if(badge) badge.style.display = 'inline-flex';
+    }
+  }
+}
+
+// Called when user types in CSI field — removes "Auto" badge to signal manual override
+function csiNumManualOverride(){
+  const badge = document.getElementById('rfi-spec-csi-auto-badge');
+  if(badge) badge.style.display = 'none';
+}
+
+// ── SUBMITTAL SPEC SECTION HELPERS ───────────────────────
+function getSubProjectSpecSections(projectName){
+  if(!projectName) return [];
+  const seen = new Set();
+  submittals.filter(s => s.project === projectName && s.spec)
+            .forEach(s => seen.add(s.spec));
+  return [...seen].sort();
+}
+
+function autoFillSubSpec(preserveVal){
+  const proj = document.getElementById('sub-project').value;
+  const sel = document.getElementById('sub-spec-select');
+  const wrap = document.getElementById('sub-spec-new-wrap');
+  if(!sel) return;
+  const keepVal = preserveVal || '';
+  const sections = getSubProjectSpecSections(proj);
+  let opts = `<option value="">— None —</option>`;
+  sections.forEach(s => {
+    opts += `<option value="${h(s)}"${s===keepVal?' selected':''}>${h(s)}</option>`;
+  });
+  opts += `<option value="__new__">＋ Create new spec section…</option>`;
+  sel.innerHTML = opts;
+  if(keepVal && keepVal !== '__new__') sel.value = keepVal;
+  if(wrap) wrap.style.display = 'none';
+}
+
+function getNextSubSpecNum(projectName){
+  if(!projectName) return '001';
+  const count = getSubProjectSpecSections(projectName).length;
+  return String(count + 1).padStart(3, '0');
+}
+
+function subSpecChange(){
+  const sel = document.getElementById('sub-spec-select');
+  const wrap = document.getElementById('sub-spec-new-wrap');
+  if(!wrap) return;
+  const isNew = sel && sel.value === '__new__';
+  wrap.style.display = isNew ? 'block' : 'none';
+  if(isNew){
+    const csiEl = document.getElementById('sub-spec-csi');
+    const badge = document.getElementById('sub-spec-csi-auto-badge');
+    const proj = document.getElementById('sub-project').value;
+    const wasAuto = badge && badge.style.display !== 'none';
+    if(csiEl && (!csiEl.value || wasAuto)){
+      csiEl.value = getNextSubSpecNum(proj);
+      if(badge) badge.style.display = 'inline-flex';
+    }
+  }
+}
+
+function subSpecCsiManualOverride(){
+  const badge = document.getElementById('sub-spec-csi-auto-badge');
+  if(badge) badge.style.display = 'none';
+}
+
+function getSubSpecFromModal(){
+  const sel = document.getElementById('sub-spec-select');
+  if(!sel) return '';
+  if(sel.value === '__new__'){
+    const csi = (document.getElementById('sub-spec-csi')?.value||'').trim();
+    const desc = (document.getElementById('sub-spec-desc-input')?.value||'').trim();
+    if(csi && desc) return `${csi} — ${desc}`;
+    return csi || desc || '';
+  }
+  return sel.value || '';
 }
 
 // Reads spec section value from modal — composes from create-new inputs if needed
@@ -3103,16 +3266,29 @@ function resetRFIModal(){
   if(specWrap) specWrap.style.display = 'none';
   const csiEl = document.getElementById('rfi-spec-csi');
   if(csiEl) csiEl.value = '';
+  const csiBadge = document.getElementById('rfi-spec-csi-auto-badge');
+  if(csiBadge) csiBadge.style.display = 'none';
   const specDescEl = document.getElementById('rfi-spec-desc-input');
   if(specDescEl) specDescEl.value = '';
 }
 function resetSubmittalModal(){
-  clearFields(['sub-edit-id','sub-num','sub-desc','sub-spec','sub-date']);
+  clearFields(['sub-edit-id','sub-num','sub-desc','sub-date']);
   document.getElementById('sub-project').value='';
   document.getElementById('sub-status').value='Pending';
   document.getElementById('sub-bic').value='Contractor';
   document.getElementById('sub-modal-title').textContent='New Submittal';
   document.getElementById('sub-save-btn').textContent='Save Submittal';
+  // Reset spec section
+  const specSel = document.getElementById('sub-spec-select');
+  if(specSel) specSel.innerHTML = '<option value="">— None —</option>';
+  const specWrap = document.getElementById('sub-spec-new-wrap');
+  if(specWrap) specWrap.style.display = 'none';
+  const csiEl = document.getElementById('sub-spec-csi');
+  if(csiEl) csiEl.value = '';
+  const csiBadge = document.getElementById('sub-spec-csi-auto-badge');
+  if(csiBadge) csiBadge.style.display = 'none';
+  const specDescEl = document.getElementById('sub-spec-desc-input');
+  if(specDescEl) specDescEl.value = '';
 }
 function resetRentalModal(){
   clearFields(['ren-edit-id','ren-name','ren-vendor','ren-onsite','ren-offsite']);
@@ -3196,10 +3372,21 @@ function editSubmittal(id){
   document.getElementById('sub-num').value=s.num||'';
   document.getElementById('sub-desc').value=s.desc||s.description||'';
   document.getElementById('sub-project').value=s.project||'';
-  document.getElementById('sub-spec').value=s.spec||'';
   setDateVal('sub-date', s.date||s.submitted_date||'');
   document.getElementById('sub-status').value=s.status||'Pending';
   document.getElementById('sub-bic').value=s.bic||'Contractor';
+  // Populate spec section dropdown for this project, then restore saved value
+  autoFillSubSpec(s.spec||'');
+  const specSel = document.getElementById('sub-spec-select');
+  if(specSel && s.spec){
+    const exists = [...specSel.options].some(o => o.value === s.spec);
+    if(!exists){
+      const opt = document.createElement('option');
+      opt.value = s.spec; opt.textContent = s.spec;
+      specSel.insertBefore(opt, specSel.lastElementChild);
+    }
+    specSel.value = s.spec;
+  }
   openModal('submittal-modal', true);
 }
 
@@ -3302,7 +3489,7 @@ async function saveSubmittal(){
   if(!getPerms().canEdit){ alert('You do not have permission to create or edit submittals.'); return; }
   const num=val('sub-num'),desc=val('sub-desc');if(!num||!desc)return alert('Submittal # and description required.');
   const editId=document.getElementById('sub-edit-id').value;
-  const data={num,project:val('sub-project'),description:desc,spec:val('sub-spec'),submitted_date:val('sub-date'),status:val('sub-status'),bic:val('sub-bic')};
+  const data={num,project:val('sub-project'),description:desc,spec:getSubSpecFromModal(),submitted_date:val('sub-date'),status:val('sub-status'),bic:val('sub-bic')};
   if(editId){
     const id=parseInt(editId);
     const idx=submittals.findIndex(x=>x.id===id);
@@ -3740,16 +3927,16 @@ async function generateSummaryPDF(){
       doc.text('No RFIs logged for this project.',10,y); y+=10;
     } else {
       doc.autoTable({
-        head:[['RFI #','Subject','Submitted','Due','Status','Priority']],
-        body:projRFIs.map(r=>[r.num||'',r.subject||'',fmtD(r.submitted),fmtD(r.due),r.status||'',r.priority||'']),
+        head:[['RFI #','Subject','Spec Section','Submitted','Due','Status','Priority']],
+        body:projRFIs.map(r=>[r.num||'',r.subject||'',r.spec_section||'',fmtD(r.submitted),fmtD(r.due),r.status||'',r.priority||'']),
         startY:y, theme:'grid',
         headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
         bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
         alternateRowStyles:{fillColor:[249,248,248]},
         styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
-        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:24},3:{cellWidth:24},4:{cellWidth:28},5:{cellWidth:22}},
+        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:30},3:{cellWidth:22},4:{cellWidth:22},5:{cellWidth:28},6:{cellWidth:20}},
         margin:{left:10,right:10},
-        didParseCell:(data)=>cellColor(data,4,5,3),
+        didParseCell:(data)=>cellColor(data,5,6,4),
       });
       y=doc.lastAutoTable.finalY+8;
     }
@@ -3839,6 +4026,7 @@ function exportToExcel(type, btn){
       'RFI #':        r.num||'',
       'Subject':      r.subject||'',
       'Project':      r.project||'',
+      'Spec Section': r.spec_section||'',
       'Date Submitted': r.submitted||'',
       'Response Due': r.due||'',
       'Status':       r.status||'',
@@ -3945,11 +4133,11 @@ async function exportToPDF(type, btn){
 
   if(type==='rfi'){
     title='RFI Log'; filename='RFI_Log.pdf';
-    columns=['RFI #','Subject','Project','Submitted','Due','Status','Priority'];
-    rows=rfis.map(r=>[r.num||'',r.subject||'',r.project||'',fmtDate(r.submitted),fmtDate(r.due),r.status||'',r.priority||'']);
-    statusColIdx=5; priorityColIdx=6; dueDateColIdx=4;
-    // Landscape 277mm usable: fixed cols leave 151mm for Subject+Project (auto)
-    columnStyles={0:{fontStyle:'bold',cellWidth:22},3:{cellWidth:26},4:{cellWidth:26},5:{cellWidth:30},6:{cellWidth:22}};
+    columns=['RFI #','Subject','Project','Spec Section','Submitted','Due','Status','Priority'];
+    rows=rfis.map(r=>[r.num||'',r.subject||'',r.project||'',r.spec_section||'',fmtDate(r.submitted),fmtDate(r.due),r.status||'',r.priority||'']);
+    statusColIdx=6; priorityColIdx=7; dueDateColIdx=5;
+    // Landscape 277mm usable: fixed cols leave auto width for Subject+Project+SpecSection
+    columnStyles={0:{fontStyle:'bold',cellWidth:22},3:{cellWidth:34},4:{cellWidth:26},5:{cellWidth:26},6:{cellWidth:30},7:{cellWidth:22}};
     const open=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
     const high=rfis.filter(r=>r.priority==='High').length;
     stats=[
@@ -4194,8 +4382,10 @@ let activityLog = [];
 let currentActivityFilter = '7d';
 let activityCustomFrom = null;
 let activityCustomTo   = null;
+let seenActivityIds = new Set();
 
-const ACTIVITY_KEY = 'apm_activity';
+const ACTIVITY_KEY      = 'apm_activity';
+const ACTIVITY_SEEN_KEY = 'apm_activity_seen';
 const ACTIVITY_MAX = 500;
 const ACTIVITY_COLORS = {
   project:   'var(--michels-red)',
@@ -4206,7 +4396,19 @@ const ACTIVITY_COLORS = {
   delete:    '#ef4444',
 };
 
+function _loadSeenIds(){
+  try {
+    const raw = localStorage.getItem(ACTIVITY_SEEN_KEY);
+    seenActivityIds = new Set(raw ? JSON.parse(raw) : []);
+  } catch(e){ seenActivityIds = new Set(); }
+}
+
+function _saveSeenIds(){
+  localStorage.setItem(ACTIVITY_SEEN_KEY, JSON.stringify([...seenActivityIds]));
+}
+
 function loadActivity(){
+  _loadSeenIds();
   try {
     const raw = localStorage.getItem(ACTIVITY_KEY);
     activityLog = raw ? JSON.parse(raw) : [];
@@ -4218,6 +4420,23 @@ function loadActivity(){
 function _saveActivity(){
   if(activityLog.length > ACTIVITY_MAX) activityLog = activityLog.slice(0, ACTIVITY_MAX);
   localStorage.setItem(ACTIVITY_KEY, JSON.stringify(activityLog));
+}
+
+function markActivitySeen(id){
+  seenActivityIds.add(id);
+  _saveSeenIds();
+  renderActivity();
+  renderNotifPanel();
+  updateNotifDot();
+}
+
+function dissolveNewActivity(){
+  const visible = _getFilteredActivity();
+  visible.forEach(e => seenActivityIds.add(e.id));
+  _saveSeenIds();
+  renderActivity();
+  renderNotifPanel();
+  updateNotifDot();
 }
 
 function logActivity(type, action, label, detail){
@@ -4253,6 +4472,13 @@ function applyCustomActivityFilter(){
   renderActivity();
 }
 
+// Only new RFI/Submittal/Rental creations and status changes appear in the feed
+function _isNotifEntry(e){
+  if(e.type === 'status') return true;
+  if(e.action === 'created' && ['rfi','submittal','rental'].includes(e.type)) return true;
+  return false;
+}
+
 function _getFilteredActivity(){
   const now = new Date();
   const ago = days => { const d = new Date(now); d.setDate(d.getDate()-days); d.setHours(0,0,0,0); return d; };
@@ -4262,15 +4488,15 @@ function _getFilteredActivity(){
     case '14d': from = ago(14); break;
     case '30d': from = ago(30); break;
     case 'ytd': from = new Date(now.getFullYear(), 0, 1); break;
-    case 'all': return [...activityLog];
+    case 'all': return activityLog.filter(_isNotifEntry);
     case 'custom':
       from = activityCustomFrom ? new Date(activityCustomFrom + 'T00:00:00') : null;
       to   = activityCustomTo   ? new Date(activityCustomTo   + 'T23:59:59') : now;
-      if(!from) return [...activityLog];
+      if(!from) return activityLog.filter(_isNotifEntry);
       break;
-    default: return [...activityLog];
+    default: return activityLog.filter(_isNotifEntry);
   }
-  return activityLog.filter(e => { const t=new Date(e.ts); return t>=from && t<=to; });
+  return activityLog.filter(e => _isNotifEntry(e) && new Date(e.ts) >= from && new Date(e.ts) <= to);
 }
 
 function _timeAgo(date){
@@ -4292,28 +4518,143 @@ function renderActivity(){
     return;
   }
   list.innerHTML = entries.map(e => {
+    const isNew = !seenActivityIds.has(e.id);
     const color = ACTIVITY_COLORS[e.type] || 'var(--text-muted)';
     const ago = _timeAgo(new Date(e.ts));
     const detailHtml = e.detail ? ` <span style="color:var(--text-muted);font-weight:400">— ${h(e.detail)}</span>` : '';
-    return `<div class="landing-notif-item">
-      <div class="landing-notif-dot" style="background:${color};margin-top:5px"></div>
-      <div class="landing-notif-body">
-        <div class="landing-notif-text">${h(e.label)}${detailHtml}</div>
+    const newBadge = isNew ? `<span class="notif-new-badge">new</span>` : '';
+    const safeId = String(e.id).replace(/'/g,"\\'");
+    const checkBtn = isNew
+      ? `<button class="notif-check-btn" onclick="markActivitySeen('${safeId}')" title="Mark as read">✓</button>`
+      : `<button class="notif-check-btn" style="opacity:.3;cursor:default" title="Already read" disabled>✓</button>`;
+    const rowBg = isNew ? 'background:#fff8f8;' : '';
+    return `<div class="landing-notif-item" style="${rowBg}">
+      <div class="landing-notif-dot" style="background:${color};margin-top:5px;flex-shrink:0"></div>
+      <div class="landing-notif-body" style="flex:1;min-width:0">
+        <div class="landing-notif-text" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">${h(e.label)}${detailHtml}${newBadge}</div>
         <div class="landing-notif-meta">${h(e.action)} · ${h(e.user)} · ${ago}</div>
       </div>
+      ${checkBtn}
     </div>`;
   }).join('');
 }
 
+// ── NOTIFICATION BELL PANEL ──────────────────────────────
+let notifPanelFilter = '7d';
+
+function toggleNotifPanel(bellEl){
+  const panel = document.getElementById('notif-panel');
+  if(!panel) return;
+  const isOpen = panel.classList.contains('open');
+  if(isOpen){ panel.classList.remove('open'); return; }
+  // Position below the bell that was clicked
+  const rect = bellEl.getBoundingClientRect();
+  panel.style.top  = (rect.bottom + 8) + 'px';
+  panel.style.right = Math.max(8, window.innerWidth - rect.right) + 'px';
+  panel.style.left = '';
+  panel.classList.add('open');
+  renderNotifPanel();
+}
+
+function closeNotifPanel(){
+  const panel = document.getElementById('notif-panel');
+  if(panel) panel.classList.remove('open');
+}
+
+function setNotifPanelFilter(f){
+  notifPanelFilter = f;
+  document.querySelectorAll('.notif-panel-filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.pf === f);
+  });
+  renderNotifPanel();
+}
+
+function _getPanelEntries(){
+  const now = new Date();
+  const ago = days => { const d = new Date(now); d.setDate(d.getDate()-days); d.setHours(0,0,0,0); return d; };
+  let from;
+  switch(notifPanelFilter){
+    case '7d':  from = ago(7);  break;
+    case '14d': from = ago(14); break;
+    case '30d': from = ago(30); break;
+    case 'ytd': from = new Date(now.getFullYear(), 0, 1); break;
+    default:    return activityLog.filter(_isNotifEntry);
+  }
+  return activityLog.filter(e => _isNotifEntry(e) && new Date(e.ts) >= from && new Date(e.ts) <= now);
+}
+
+function renderNotifPanel(){
+  const body = document.getElementById('notif-panel-body');
+  const badge = document.getElementById('notif-panel-badge');
+  if(!body) return;
+  const entries = _getPanelEntries();
+  const unseenCount = entries.filter(e => !seenActivityIds.has(e.id)).length;
+  if(badge){ badge.textContent = unseenCount; badge.style.display = unseenCount ? '' : 'none'; }
+  if(!entries.length){
+    const pLabel = {'7d':'7 days','14d':'2 weeks','30d':'30 days','ytd':'this year','all':'all time'}[notifPanelFilter]||'this period';
+    body.innerHTML = `<div class="landing-notif-empty">No notifications in ${pLabel}.</div>`;
+    return;
+  }
+  body.innerHTML = entries.map(e => {
+    const isNew = !seenActivityIds.has(e.id);
+    const color = ACTIVITY_COLORS[e.type] || 'var(--text-muted)';
+    const ago = _timeAgo(new Date(e.ts));
+    const detailHtml = e.detail ? ` <span style="color:var(--text-muted);font-weight:400">— ${h(e.detail)}</span>` : '';
+    const newBadge = isNew ? `<span class="notif-new-badge">new</span>` : '';
+    const safeId = String(e.id).replace(/'/g,"\\'");
+    const checkBtn = isNew
+      ? `<button class="notif-check-btn" onclick="markActivitySeenPanel('${safeId}')" title="Mark as read">✓</button>`
+      : `<button class="notif-check-btn" style="opacity:.3;cursor:default" disabled title="Read">✓</button>`;
+    const rowBg = isNew ? 'background:#fff8f8;' : '';
+    return `<div class="landing-notif-item" style="${rowBg}">
+      <div class="landing-notif-dot" style="background:${color};margin-top:5px;flex-shrink:0"></div>
+      <div class="landing-notif-body" style="flex:1;min-width:0">
+        <div class="landing-notif-text" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">${h(e.label)}${detailHtml}${newBadge}</div>
+        <div class="landing-notif-meta">${h(e.action)} · ${h(e.user)} · ${ago}</div>
+      </div>
+      ${checkBtn}
+    </div>`;
+  }).join('');
+}
+
+function markActivitySeenPanel(id){
+  seenActivityIds.add(id);
+  _saveSeenIds();
+  renderNotifPanel();
+  renderActivity();
+  updateNotifDot();
+}
+
+function dissolveNotifPanel(){
+  _getPanelEntries().forEach(e => seenActivityIds.add(e.id));
+  _saveSeenIds();
+  renderNotifPanel();
+  renderActivity();
+  updateNotifDot();
+}
+
+// Close panel on outside click
+document.addEventListener('click', e => {
+  const panel = document.getElementById('notif-panel');
+  if(!panel || !panel.classList.contains('open')) return;
+  if(panel.contains(e.target)) return;
+  if(e.target.id === 'landing-bell-btn' || e.target.id === 'header-bell-btn') return;
+  if(e.target.closest('#landing-bell-btn') || e.target.closest('#header-bell-btn')) return;
+  panel.classList.remove('open');
+});
+
 function updateNotifDot(){
-  const has = activityLog.some(e => (Date.now()-new Date(e.ts).getTime()) < 86400000);
+  const unseen = activityLog.filter(e => _isNotifEntry(e) && !seenActivityIds.has(e.id));
+  const has = unseen.length > 0;
   ['landing-bell-dot','header-bell-dot'].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.style.display = has ? '' : 'none';
   });
-  const cnt = activityLog.filter(e => (Date.now()-new Date(e.ts).getTime()) < 86400000).length;
   const badge = document.getElementById('landing-notif-badge');
-  if(badge){ badge.textContent = cnt; badge.style.display = cnt > 0 ? '' : 'none'; }
+  if(badge){ badge.textContent = unseen.length; badge.style.display = has ? '' : 'none'; }
+  // Keep panel badge in sync if open
+  const panel = document.getElementById('notif-panel');
+  if(panel && panel.classList.contains('open')) renderNotifPanel();
 }
 </script>
 
@@ -4332,6 +4673,29 @@ initDefaultAdmin().then(()=>{
   // which calls renderAll() once data is ready — no early render needed.
 });
 </script>
+
+<!-- Notification Bell Panel -->
+<div id="notif-panel" class="notif-panel">
+  <div class="notif-panel-header">
+    <div class="notif-panel-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Notifications
+      <span id="notif-panel-badge" style="display:none;background:var(--michels-red);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;font-family:'DM Mono',monospace">0</span>
+    </div>
+    <button class="notif-panel-close" onclick="closeNotifPanel()" title="Close">&times;</button>
+  </div>
+  <div class="notif-panel-filters">
+    <button class="notif-panel-filter-btn active" onclick="setNotifPanelFilter('7d')" data-pf="7d">7 Days</button>
+    <button class="notif-panel-filter-btn" onclick="setNotifPanelFilter('14d')" data-pf="14d">2 Weeks</button>
+    <button class="notif-panel-filter-btn" onclick="setNotifPanelFilter('30d')" data-pf="30d">Month</button>
+    <button class="notif-panel-filter-btn" onclick="setNotifPanelFilter('ytd')" data-pf="ytd">YTD</button>
+    <button class="notif-panel-filter-btn" onclick="setNotifPanelFilter('all')" data-pf="all">All Time</button>
+  </div>
+  <div class="notif-panel-body" id="notif-panel-body"></div>
+  <div class="notif-panel-footer">
+    <button onclick="dissolveNotifPanel()" style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;font-family:'DM Mono',monospace;transition:background .12s,color .12s,border-color .12s;letter-spacing:.2px">Check All</button>
+  </div>
+</div>
 
 <!-- Toast notification -->
 <div id="toast" class="toast"><div class="toast-bar"></div><span id="toast-msg"></span></div>
