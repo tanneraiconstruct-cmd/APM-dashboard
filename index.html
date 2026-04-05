@@ -1729,7 +1729,7 @@ function renderProjects(){
     ? projects.filter(p => p.assigned_apm === currentUser.username)
     : projects;
   if(!visibleProjects.length){
-    g.innerHTML='<div class="empty"><div class="empty-icon">📁</div>'+(currentUser?.role==='apm'?'No jobs are currently assigned to you.':\'No jobs yet. Use the Project Controls tab to add one.\')+'</div>';
+    g.innerHTML='<div class="empty"><div class="empty-icon">📁</div>'+(currentUser?.role==='apm'?'No jobs are currently assigned to you.':'No jobs yet. Use the Project Controls tab to add one.')+'</div>';
     return;
   }
   g.innerHTML=visibleProjects.map(p=>{
@@ -2457,7 +2457,7 @@ function populateTeamSelects(){
     if(!el) return;
     const cur=el.value;
     el.innerHTML='<option value="">— Unassigned —</option>'+
-      users.map(u=>`<option value="${h(u.username)}"${u.username===cur?' selected':''}}>${h(u.displayName||u.username)}</option>`).join('');
+      users.map(u=>`<option value="${h(u.username)}"${u.username===cur?' selected':''}>${h(u.displayName||u.username)}</option>`).join('');
     if(cur) el.value=cur;
   });
 }
