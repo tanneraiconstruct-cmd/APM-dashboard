@@ -207,7 +207,13 @@ textarea{resize:vertical;min-height:72px}
 .archive-hint{font-size:11px;color:var(--text-muted)}
 .archive-body{display:none}
 .archive-section.open .archive-body{display:block}
-.archive-body .table-wrap{border:none;border-radius:0;border-top:1px solid var(--border);margin-bottom:0}
+/* Archive project groups */
+.archive-proj-group{border-top:1px solid var(--border)}
+.archive-proj-group:first-child{border-top:none}
+.archive-proj-label{display:flex;align-items:center;gap:8px;padding:7px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+.archive-proj-name{font-size:11px;font-weight:700;color:var(--michels-red);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace}
+.archive-proj-count{background:#e2e0e0;color:var(--text-muted);font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;font-family:'DM Mono',monospace}
+.archive-proj-group .table-wrap{border:none;border-radius:0;margin:0}
 /* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--michels-black);color:#fff;padding:11px 16px;border-radius:8px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);max-width:320px}
 .toast.show{opacity:1;transform:translateY(0)}
@@ -536,23 +542,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         </div>
         <span class="archive-hint">Answered &amp; closed RFIs</span>
       </button>
-      <div class="archive-body" id="rfi-archive-body">
-        <div class="table-wrap">
-          <table>
-            <thead><tr>
-              <th style="width:70px">RFI #</th>
-              <th style="width:22%">Subject</th>
-              <th style="width:16%">Project</th>
-              <th style="width:13%">Submitted</th>
-              <th style="width:13%">Due</th>
-              <th style="width:12%">Status</th>
-              <th style="width:10%">Priority</th>
-              <th style="width:80px">Actions</th>
-            </tr></thead>
-            <tbody id="rfi-archive-tbody"></tbody>
-          </table>
-        </div>
-      </div>
+      <div class="archive-body" id="rfi-archive-body"></div>
     </div>
   </div>
 
@@ -599,23 +589,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         </div>
         <span class="archive-hint">Approved &amp; rejected submittals</span>
       </button>
-      <div class="archive-body" id="submittal-archive-body">
-        <div class="table-wrap">
-          <table>
-            <thead><tr>
-              <th style="width:80px">Sub #</th>
-              <th style="width:22%">Description</th>
-              <th style="width:16%">Project</th>
-              <th style="width:13%">Spec Sec</th>
-              <th style="width:13%">Submitted</th>
-              <th style="width:12%">Status</th>
-              <th style="width:10%">Ball in Court</th>
-              <th style="width:80px">Actions</th>
-            </tr></thead>
-            <tbody id="submittal-archive-tbody"></tbody>
-          </table>
-        </div>
-      </div>
+      <div class="archive-body" id="submittal-archive-body"></div>
     </div>
   </div>
 
@@ -661,22 +635,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         </div>
         <span class="archive-hint">Released equipment</span>
       </button>
-      <div class="archive-body" id="rental-archive-body">
-        <div class="table-wrap">
-          <table>
-            <thead><tr>
-              <th style="width:20%">Equipment</th>
-              <th style="width:16%">Project</th>
-              <th style="width:14%">Vendor</th>
-              <th style="width:11%">On Site</th>
-              <th style="width:14%">Release Date</th>
-              <th style="width:14%">Status</th>
-              <th style="width:80px">Actions</th>
-            </tr></thead>
-            <tbody id="rental-archive-tbody"></tbody>
-          </table>
-        </div>
-      </div>
+      <div class="archive-body" id="rental-archive-body"></div>
     </div>
   </div>
 </div>
@@ -1134,7 +1093,6 @@ function renderAll(){
   renderTodos();
   populateProjectSelects();
   applyWritePermissions();
-  restoreArchiveStates();
 }
 
 // ── TAB NAVIGATION EVENT LISTENERS ──────────────────────
@@ -1144,6 +1102,9 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
     document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+    // Auto-open the archive for this tab whenever the tab is activated
+    const archiveSection = document.getElementById(tab.dataset.tab+'-archive-section');
+    if(archiveSection) archiveSection.classList.add('open');
   });
 });
 
@@ -1834,25 +1795,49 @@ function restoreArchiveStates(){
   }catch(e){}
 }
 
+function archiveGroupHTML(items, rowFn, colCount){
+  if(!items.length) return `<div class="archive-proj-group"><div class="empty" style="padding:20px">No archived records.</div></div>`;
+  const groups = {};
+  items.forEach(item=>{
+    const key = item.project || 'No Project';
+    if(!groups[key]) groups[key]=[];
+    groups[key].push(item);
+  });
+  return Object.entries(groups).map(([projName, groupItems])=>`
+    <div class="archive-proj-group">
+      <div class="archive-proj-label">
+        <span class="archive-proj-name">${h(projName)}</span>
+        <span class="archive-proj-count">${groupItems.length}</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tbody>${groupItems.map(rowFn).join('')}</tbody>
+        </table>
+      </div>
+    </div>`).join('');
+}
+
 function renderRFIArchive(){
   const proj = document.getElementById('rfi-filter-project')?.value||'';
   const archived = rfis.filter(r=>['Answered','Closed'].includes(r.status) && (!proj||r.project===proj));
   const countEl = document.getElementById('rfi-archive-count');
   if(countEl) countEl.textContent = archived.length;
-  const tbody = document.getElementById('rfi-archive-tbody');
-  if(!tbody) return;
-  if(!archived.length){ tbody.innerHTML=`<tr><td colspan="8" class="empty">No archived RFIs${proj?' for this project':''}.</td></tr>`; return; }
-  tbody.innerHTML = archived.map(r=>`
+  const body = document.getElementById('rfi-archive-body');
+  if(!body) return;
+  if(!archived.length){
+    body.innerHTML=`<div style="padding:20px;text-align:center;font-size:13px;color:var(--text-muted)">No archived RFIs${proj?' for this project':''}.</div>`;
+    return;
+  }
+  body.innerHTML = archiveGroupHTML(archived, r=>`
     <tr>
-      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${h(r.num)}</td>
+      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px;width:70px">${h(r.num)}</td>
       <td class="truncate">${h(r.subject)}</td>
-      <td class="truncate">${h(r.project)}</td>
       <td>${fmt(r.submitted)}</td>
       <td>${fmt(r.due)}</td>
       <td>${badge(r.status)}</td>
       <td>${prio(r.priority)}</td>
-      <td style="white-space:nowrap"><button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
-    </tr>`).join('');
+      <td style="white-space:nowrap;width:120px"><button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
+    </tr>`, 7);
 }
 
 function renderSubmittalArchive(){
@@ -1860,20 +1845,22 @@ function renderSubmittalArchive(){
   const archived = submittals.filter(s=>['Approved','Approved as Noted','Rejected'].includes(s.status) && (!proj||s.project===proj));
   const countEl = document.getElementById('submittal-archive-count');
   if(countEl) countEl.textContent = archived.length;
-  const tbody = document.getElementById('submittal-archive-tbody');
-  if(!tbody) return;
-  if(!archived.length){ tbody.innerHTML=`<tr><td colspan="8" class="empty">No archived submittals${proj?' for this project':''}.</td></tr>`; return; }
-  tbody.innerHTML = archived.map(s=>`
+  const body = document.getElementById('submittal-archive-body');
+  if(!body) return;
+  if(!archived.length){
+    body.innerHTML=`<div style="padding:20px;text-align:center;font-size:13px;color:var(--text-muted)">No archived submittals${proj?' for this project':''}.</div>`;
+    return;
+  }
+  body.innerHTML = archiveGroupHTML(archived, s=>`
     <tr>
-      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${h(s.num)}</td>
+      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px;width:80px">${h(s.num)}</td>
       <td class="truncate">${h(s.desc)}</td>
-      <td class="truncate">${h(s.project)}</td>
       <td class="truncate">${h(s.spec)}</td>
       <td>${fmt(s.date)}</td>
       <td>${badge(s.status)}</td>
       <td class="truncate">${h(s.bic)}</td>
-      <td style="white-space:nowrap"><button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
-    </tr>`).join('');
+      <td style="white-space:nowrap;width:120px"><button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
+    </tr>`, 7);
 }
 
 function renderRentalArchive(){
@@ -1881,19 +1868,21 @@ function renderRentalArchive(){
   const archived = rental.filter(r=>['Release','Released'].includes(r.status) && (!proj||r.project===proj));
   const countEl = document.getElementById('rental-archive-count');
   if(countEl) countEl.textContent = archived.length;
-  const tbody = document.getElementById('rental-archive-tbody');
-  if(!tbody) return;
-  if(!archived.length){ tbody.innerHTML=`<tr><td colspan="7" class="empty">No archived equipment${proj?' for this project':''}.</td></tr>`; return; }
-  tbody.innerHTML = archived.map(r=>`
+  const body = document.getElementById('rental-archive-body');
+  if(!body) return;
+  if(!archived.length){
+    body.innerHTML=`<div style="padding:20px;text-align:center;font-size:13px;color:var(--text-muted)">No archived equipment${proj?' for this project':''}.</div>`;
+    return;
+  }
+  body.innerHTML = archiveGroupHTML(archived, r=>`
     <tr>
       <td class="truncate">${h(r.name)}</td>
-      <td class="truncate">${h(r.project)}</td>
       <td class="truncate">${h(r.vendor)}</td>
       <td>${fmt(r.onsite)}</td>
       <td>${fmt(r.offsite)}</td>
       <td>${badge(r.status)}</td>
-      <td style="white-space:nowrap"><button class="btn-sm" onclick="editRental(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rental',${r.id})">Delete</button></td>
-    </tr>`).join('');
+      <td style="white-space:nowrap;width:120px"><button class="btn-sm" onclick="editRental(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rental',${r.id})">Delete</button></td>
+    </tr>`, 6);
 }
 
 function populateProjectSelects(){
