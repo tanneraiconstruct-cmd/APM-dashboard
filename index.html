@@ -345,6 +345,40 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 /* MODAL SECTION TITLES */
 .modal-section-title{font-size:11px;font-weight:700;color:var(--michels-red);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border);padding-bottom:6px;margin:16px 0 12px}
 .modal-section-title:first-child{margin-top:0}
+
+/* LANDING PAGE */
+.landing-wrap{position:fixed;inset:0;background:var(--surface);display:flex;flex-direction:column;z-index:998;overflow-y:auto}
+.landing-header{background:var(--michels-black);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--michels-red);flex-shrink:0}
+.landing-body{flex:1;padding:44px 32px;max-width:1040px;width:100%;margin:0 auto}
+.landing-nav-cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:36px}
+.landing-nav-card{background:var(--white);border:2px solid var(--border);border-radius:14px;padding:28px 24px;cursor:pointer;transition:box-shadow .18s,border-color .18s,transform .15s;text-align:left;font-family:'DM Sans',sans-serif;outline:none}
+.landing-nav-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.1);border-color:var(--michels-red);transform:translateY(-2px)}
+.landing-nav-card-icon{width:42px;height:42px;border-radius:10px;background:var(--michels-red-light);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.landing-nav-card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:5px}
+.landing-nav-card-desc{font-size:12px;color:var(--text-muted);line-height:1.6}
+.landing-section-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
+.landing-notif-list{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.landing-notif-item{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.landing-notif-item:last-child{border-bottom:none}
+.landing-notif-dot{width:8px;height:8px;border-radius:50%;background:var(--michels-red);margin-top:4px;flex-shrink:0}
+.landing-notif-dot.green{background:var(--green)}
+.landing-notif-dot.amber{background:var(--amber)}
+.landing-notif-body{flex:1;min-width:0}
+.landing-notif-text{font-size:13px;color:var(--text);font-weight:500;margin-bottom:2px}
+.landing-notif-meta{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
+.landing-notif-empty{padding:32px;text-align:center;color:var(--text-muted);font-size:13px}
+
+/* CHART STRIPS */
+.chart-strip{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:13px 16px 11px;margin-bottom:14px}
+.chart-pills{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.chart-pill{display:flex;align-items:center;gap:5px}
+.chart-pip{display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.chart-pill-label{font-size:11px;color:var(--text-mid);font-weight:500}
+.chart-pill-count{font-size:11px;font-weight:700;padding:1px 7px;border-radius:10px;font-family:'DM Mono',monospace;letter-spacing:.2px}
+.chart-pill-divider{width:1px;height:18px;background:var(--border);flex-shrink:0}
+.chart-pill-total{margin-left:auto;font-size:11px;color:var(--text-muted);font-weight:600;font-family:'DM Mono',monospace;align-self:center;padding-left:4px}
+.chart-bar{display:flex;height:7px;border-radius:4px;overflow:hidden;background:var(--surface);border:1px solid var(--border)}
+.chart-seg{height:100%;min-width:3px;transition:width .4s}
 </style>
 </head>
 <body>
@@ -390,6 +424,71 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="login-footer">
       <div class="login-tagline">Michels Power Inc. — Internal Use Only</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- LANDING PAGE -->
+<div id="landing-page" style="display:none">
+  <div class="landing-wrap">
+    <div class="landing-header">
+      <div style="display:flex;align-items:center;gap:16px">
+        <svg viewBox="0 0 260 60" xmlns="http://www.w3.org/2000/svg" style="height:44px;width:200px">
+          <defs>
+            <linearGradient id="lg-lp" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#a00d1e"/><stop offset="45%" stop-color="#c8102e"/><stop offset="100%" stop-color="#e8324a"/>
+            </linearGradient>
+            <style>.lp-m{font-family:"Alfa Slab One","Rockwell",serif;font-size:42px;fill:url(#lg-lp);letter-spacing:3px;text-anchor:middle}.lp-s{font-family:"DM Sans",sans-serif;font-weight:700;font-size:13px;fill:#fff;letter-spacing:1.5px;text-anchor:middle}.lp-r{font-family:"Alfa Slab One","Rockwell",serif;font-size:11px;fill:url(#lg-lp)}</style>
+          </defs>
+          <text x="130" y="40" class="lp-m">MICHELS</text>
+          <text x="252" y="12" class="lp-r">&#174;</text>
+          <text x="130" y="57" class="lp-s">POWER, INC.</text>
+        </svg>
+        <div style="width:1px;height:36px;background:rgba(255,255,255,.15)"></div>
+        <div>
+          <div style="color:#fff;font-size:14px;font-weight:600;letter-spacing:-.2px">APM Dashboard</div>
+          <div style="color:#aaa;font-size:11px;margin-top:2px" id="landing-role-label"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="landing-user-info" style="display:none;align-items:center;gap:8px">
+          <div style="text-align:right">
+            <div style="font-size:12px;font-weight:600;color:#fff" id="landing-display-name-header"></div>
+            <div style="font-size:10px;color:#888;font-family:'DM Mono',monospace" id="landing-username-header"></div>
+          </div>
+          <div class="user-avatar" id="landing-avatar-initials" style="width:28px;height:28px;font-size:11px">?</div>
+        </div>
+        <button class="btn-sm" onclick="logout()" style="border-color:rgba(255,255,255,.2);color:#aaa;font-size:11px">Sign Out</button>
+      </div>
+    </div>
+    <div class="landing-body">
+      <div style="margin-bottom:32px">
+        <div style="font-size:24px;font-weight:700;color:var(--text);margin-bottom:4px">Good <span id="landing-greeting">day</span>, <span id="landing-first-name">there</span>.</div>
+        <div style="font-size:13px;color:var(--text-muted)" id="landing-date-line"></div>
+      </div>
+
+      <div class="landing-nav-cards">
+        <button class="landing-nav-card" onclick="goToDashboard()">
+          <div class="landing-nav-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--michels-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </div>
+          <div class="landing-nav-card-title">Project Dashboard</div>
+          <div class="landing-nav-card-desc">View active projects, RFI log, submittal log, rental equipment, and follow-up reminders.</div>
+        </button>
+        <button class="landing-nav-card" id="landing-controls-card" onclick="goToProjectControls()" style="display:none">
+          <div class="landing-nav-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--michels-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <div class="landing-nav-card-title">Project Controls</div>
+          <div class="landing-nav-card-desc">Set up and manage jobs — contract details, team assignment, owner contacts, and project schedule.</div>
+        </button>
+      </div>
+
+      <div class="landing-section-label">Recent Activity</div>
+      <div class="landing-notif-list" id="landing-notif-list">
+        <div class="landing-notif-empty">Activity feed coming soon — changes to projects, RFIs, and submittals will appear here.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -542,6 +641,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <button class="btn-add" onclick="openModal('rfi-modal')">+ New RFI</button>
       </div>
     </div>
+    <div id="rfi-chart"></div>
     <div class="filter-bar">
       <input class="filter-input" id="rfi-filter-text" placeholder="Search # or subject…" oninput="renderRFI()" style="width:210px">
       <select class="filter-input" id="rfi-filter-project" onchange="renderRFI()"><option value="">All Projects</option></select>
@@ -589,6 +689,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <button class="btn-add" onclick="openModal('submittal-modal')">+ New Submittal</button>
       </div>
     </div>
+    <div id="sub-chart"></div>
     <div class="filter-bar">
       <input class="filter-input" id="sub-filter-text" placeholder="Search # or description…" oninput="renderSubmittals()" style="width:210px">
       <select class="filter-input" id="sub-filter-project" onchange="renderSubmittals()"><option value="">All Projects</option></select>
@@ -636,6 +737,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <button class="btn-add" onclick="openModal('rental-modal')">+ New Rental</button>
       </div>
     </div>
+    <div id="rental-chart"></div>
     <div class="filter-bar">
       <input class="filter-input" id="ren-filter-text" placeholder="Search equipment or vendor…" oninput="renderRental()" style="width:210px">
       <select class="filter-input" id="ren-filter-project" onchange="renderRental()"><option value="">All Projects</option></select>
@@ -1166,8 +1268,88 @@ function renderAll(){
   renderSubmittals();
   renderRental();
   renderTodos();
+  renderChartStrips();
   populateProjectSelects();
   applyWritePermissions();
+}
+
+// ── CHART STRIPS ─────────────────────────────────────────
+function chartStripHTML(segments, total, extra){
+  if(!total) return '';
+  const pills = segments.map(s=>`
+    <div class="chart-pill">
+      <span class="chart-pip" style="background:${s.color}"></span>
+      <span class="chart-pill-label">${s.label}</span>
+      <span class="chart-pill-count" style="background:${s.bg};color:${s.color}">${s.count}</span>
+    </div>`).join('');
+  const extraPill = extra ? `
+    <div class="chart-pill-divider"></div>
+    <div class="chart-pill">
+      <span class="chart-pip" style="background:${extra.color}"></span>
+      <span class="chart-pill-label">${extra.label}</span>
+      <span class="chart-pill-count" style="background:${extra.bg};color:${extra.color}">${extra.count}</span>
+    </div>` : '';
+  const totalPill = `<span class="chart-pill-total">${total} total</span>`;
+  const bar = segments.map(s=>{
+    const pct = (s.count / total * 100).toFixed(2);
+    if(parseFloat(pct) < 0.5) return '';
+    return `<div class="chart-seg" style="width:${pct}%;background:${s.color}" title="${s.label}: ${s.count} (${parseFloat(pct).toFixed(0)}%)"></div>`;
+  }).join('');
+  return `<div class="chart-strip">
+    <div class="chart-pills">${pills}${extraPill}${totalPill}</div>
+    <div class="chart-bar">${bar||`<div class="chart-seg" style="width:100%;background:var(--border)"></div>`}</div>
+  </div>`;
+}
+
+function renderChartStrips(){
+  // ── RFI chart ────────────────────────────────────────
+  const rfiEl = document.getElementById('rfi-chart');
+  if(rfiEl){
+    const total = rfis.length;
+    if(!total){ rfiEl.innerHTML=''; }
+    else{
+      const segs = [
+        {label:'Open',         color:'#c8102e', bg:'#fdeaed', count: rfis.filter(r=>r.status==='Open').length},
+        {label:'Under Review', color:'#d97706', bg:'#fef3c7', count: rfis.filter(r=>r.status==='Under Review').length},
+        {label:'Answered',     color:'#15803d', bg:'#dcfce7', count: rfis.filter(r=>r.status==='Answered').length},
+        {label:'Closed',       color:'#64748b', bg:'#f1f5f9', count: rfis.filter(r=>r.status==='Closed').length},
+      ];
+      const high = rfis.filter(r=>r.priority==='High').length;
+      const extra = high ? {label:'High Priority', color:'#c8102e', bg:'#fdeaed', count: high} : null;
+      rfiEl.innerHTML = chartStripHTML(segs, total, extra);
+    }
+  }
+  // ── Submittal chart ───────────────────────────────────
+  const subEl = document.getElementById('sub-chart');
+  if(subEl){
+    const total = submittals.length;
+    if(!total){ subEl.innerHTML=''; }
+    else{
+      const segs = [
+        {label:'Pending',            color:'#d97706', bg:'#fef3c7', count: submittals.filter(s=>s.status==='Pending').length},
+        {label:'Under Review',       color:'#2563eb', bg:'#eff6ff', count: submittals.filter(s=>s.status==='Under Review').length},
+        {label:'Approved',           color:'#15803d', bg:'#dcfce7', count: submittals.filter(s=>s.status==='Approved').length},
+        {label:'Approved as Noted',  color:'#059669', bg:'#d1fae5', count: submittals.filter(s=>s.status==='Approved as Noted').length},
+        {label:'Revise & Resubmit',  color:'#c8102e', bg:'#fdeaed', count: submittals.filter(s=>s.status==='Revise & Resubmit').length},
+        {label:'Rejected',           color:'#64748b', bg:'#f1f5f9', count: submittals.filter(s=>s.status==='Rejected').length},
+      ];
+      subEl.innerHTML = chartStripHTML(segs, total, null);
+    }
+  }
+  // ── Rental chart ──────────────────────────────────────
+  const renEl = document.getElementById('rental-chart');
+  if(renEl){
+    const total = rental.length;
+    if(!total){ renEl.innerHTML=''; }
+    else{
+      const segs = [
+        {label:'Ordered',  color:'#d97706', bg:'#fef3c7', count: rental.filter(r=>r.status==='Ordered').length},
+        {label:'On Site',  color:'#15803d', bg:'#dcfce7', count: rental.filter(r=>r.status==='On Site').length},
+        {label:'Released', color:'#64748b', bg:'#f1f5f9', count: rental.filter(r=>['Release','Released'].includes(r.status)).length},
+      ];
+      renEl.innerHTML = chartStripHTML(segs, total, null);
+    }
+  }
 }
 
 // ── TAB NAVIGATION EVENT LISTENERS ──────────────────────
@@ -1454,9 +1636,22 @@ function checkSession(){
   return false;
 }
 
+function goToDashboard(){
+  document.getElementById('landing-page').style.display='none';
+  document.getElementById('main-dashboard').style.display='';
+}
+function goToProjectControls(){
+  document.getElementById('landing-page').style.display='none';
+  document.getElementById('main-dashboard').style.display='';
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
+  const ctrlTab=document.querySelector('.nav-tab[data-tab="controls"]');
+  if(ctrlTab){ ctrlTab.classList.add('active'); document.getElementById('tab-controls').classList.add('active'); }
+}
 function showDashboard(){
   document.getElementById('login-overlay').style.display='none';
-  document.getElementById('main-dashboard').style.display='';
+  document.getElementById('main-dashboard').style.display='none';
+  document.getElementById('landing-page').style.display='';
   const perms = getPerms();
 
   // ── User badge ──────────────────────────────────────────
@@ -1473,6 +1668,33 @@ function showDashboard(){
   // ── Header subtitle ─────────────────────────────────────
   const sub = document.getElementById('header-sub');
   if(sub) sub.textContent = perms.label;
+
+  // ── Landing page user info ───────────────────────────────
+  if(currentUser){
+    const displayName = currentUser.displayName||currentUser.username;
+    const parts = displayName.split(' ');
+    const initials = parts.map(p=>p[0]).join('').toUpperCase().substring(0,2);
+    const lpInfo = document.getElementById('landing-user-info');
+    if(lpInfo) lpInfo.style.display='flex';
+    const lpName = document.getElementById('landing-display-name-header');
+    if(lpName) lpName.textContent = displayName;
+    const lpUser = document.getElementById('landing-username-header');
+    if(lpUser) lpUser.textContent = '@'+currentUser.username;
+    const lpInit = document.getElementById('landing-avatar-initials');
+    if(lpInit) lpInit.textContent = initials;
+    const lpRole = document.getElementById('landing-role-label');
+    if(lpRole) lpRole.textContent = perms.label;
+    const h = new Date().getHours();
+    const greetEl = document.getElementById('landing-greeting');
+    if(greetEl) greetEl.textContent = h<12?'morning':h<17?'afternoon':'evening';
+    const fnEl = document.getElementById('landing-first-name');
+    if(fnEl) fnEl.textContent = parts[0];
+    const dlEl = document.getElementById('landing-date-line');
+    if(dlEl) dlEl.textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  }
+  // Show Project Controls card only for roles with access
+  const ctrlCard = document.getElementById('landing-controls-card');
+  if(ctrlCard) ctrlCard.style.display = perms.tabs.includes('controls') ? '' : 'none';
 
   // ── Show/hide settings menu items by permission ─────────
   applySettingsPermissions(perms);
