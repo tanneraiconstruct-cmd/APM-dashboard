@@ -123,7 +123,8 @@ tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 var(--michels-red)}
 label{display:block;font-size:11px;font-weight:600;color:var(--text-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
 input[type=text],input[type=password],input[type=date],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);outline:none;transition:border-color .15s}
 input:focus,select:focus,textarea:focus{border-color:var(--michels-red)}
-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+select{appearance:none;-webkit-appearance:none;background-color:var(--surface);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23c8102e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:32px;cursor:pointer;font-weight:500;transition:border-color .15s,box-shadow .15s,background .15s}
+select:focus{background-color:var(--white);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
 textarea{resize:vertical;min-height:72px}
 
 .project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
@@ -223,13 +224,34 @@ textarea{resize:vertical;min-height:72px}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast-bar{width:3px;min-height:18px;background:var(--michels-red);border-radius:2px;flex-shrink:0;align-self:stretch}
 /* TABLE FILTER BAR */
-.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:9px 12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.filter-bar::before{content:'';display:block;width:3px;height:20px;background:var(--michels-red);border-radius:2px;flex-shrink:0;margin-right:4px}
-.filter-input{padding:6px 10px;font-size:12px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
-.filter-input:focus{border-color:var(--michels-red);background:var(--white)}
-select.filter-input{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;padding-right:28px}
-.filter-clear{background:none;border:none;font-size:11px;color:var(--text-muted);cursor:pointer;padding:4px 6px;border-radius:4px;font-family:'DM Sans',sans-serif}
-.filter-clear:hover{color:var(--red);background:var(--red-light)}
+.filter-bar{display:flex;align-items:center;gap:6px;margin-bottom:12px;flex-wrap:wrap;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:7px 14px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.filter-bar-label{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;flex-shrink:0;user-select:none}
+.filter-bar-sep{width:1px;height:18px;background:var(--border);flex-shrink:0;margin:0 4px}
+.filter-input{height:32px;padding:0 12px;font-size:12.5px;border:1.5px solid var(--border);border-radius:20px;font-family:'DM Sans',sans-serif;color:var(--text);font-weight:500;background:var(--surface);outline:none;transition:border-color .15s,background .15s,box-shadow .15s;box-sizing:border-box}
+.filter-input:focus{border-color:var(--michels-red);background:var(--white);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
+.filter-input:hover:not(:focus){border-color:#bbb;background:var(--white)}
+select.filter-input{appearance:none;-webkit-appearance:none;background-color:var(--surface);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding:0 30px 0 14px;cursor:pointer}
+select.filter-input.filter-active{border-color:var(--michels-red)!important;background-color:#fff5f6!important;color:var(--michels-red)!important;font-weight:600;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23c8102e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")!important}
+input.filter-input{width:200px}
+.filter-clear{display:inline-flex;align-items:center;gap:4px;margin-left:auto;background:none;border:1px solid transparent;font-size:11.5px;font-weight:500;color:var(--text-muted);cursor:pointer;padding:5px 10px;border-radius:20px;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.filter-clear:hover{color:var(--michels-red);background:var(--red-light);border-color:rgba(200,16,46,.2)}
+/* CUSTOM FILTER DROPDOWN */
+.filter-dd{position:relative;flex-shrink:0}
+.filter-dd-btn{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 13px 0 14px;border:1.5px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text);font-size:12.5px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;white-space:nowrap;outline:none;line-height:1}
+.filter-dd-btn:hover{border-color:#bbb;background:var(--white)}
+.filter-dd.open .filter-dd-btn{border-color:#bbb;background:var(--white);box-shadow:0 0 0 3px rgba(0,0,0,.04)}
+.filter-dd.active .filter-dd-btn{border-color:var(--michels-red);background:#fff5f6;color:var(--michels-red);font-weight:600}
+.filter-dd-btn .dd-chevron{flex-shrink:0;color:var(--text-muted);transition:transform .18s;opacity:.65}
+.filter-dd.open .filter-dd-btn .dd-chevron{transform:rotate(180deg)}
+.filter-dd.active .filter-dd-btn .dd-chevron{color:var(--michels-red);opacity:1}
+.filter-dd-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;min-width:175px;max-height:280px;overflow-y:auto;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.13);z-index:500;padding:5px}
+.filter-dd.open .filter-dd-menu{display:block}
+.filter-dd-opt{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:6px;font-size:12.5px;font-weight:500;color:var(--text);cursor:pointer;transition:background .1s;white-space:nowrap;user-select:none;line-height:1.3}
+.filter-dd-opt:hover{background:var(--surface)}
+.filter-dd-opt.selected{background:#fff5f6;color:var(--michels-red);font-weight:600}
+.filter-dd-opt.opt-all{color:var(--text-muted);font-size:12px;font-weight:400;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:4px}
+.filter-dd-opt.opt-all:hover{color:var(--text);background:none}
+.filter-dd-opt-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 /* LOADING */
 .loading-cell{text-align:center!important;padding:32px 20px!important;color:var(--text-muted)!important;font-size:13px!important}
 
@@ -244,7 +266,7 @@ select.filter-input{appearance:none;-webkit-appearance:none;background-image:url
   box-shadow:0 12px 40px rgba(0,0,0,.14)!important;
   overflow:hidden;
   padding:0!important;
-  width:280px!important;
+  width:307px!important;
   z-index:99999!important;
 }
 /* Month header */
@@ -260,7 +282,13 @@ select.filter-input{appearance:none;-webkit-appearance:none;background-image:url
   color:#fff!important;
   padding-top:8px!important;
 }
-.flatpickr-current-month input.cur-year{color:#fff!important;font-weight:600!important}
+.flatpickr-current-month input.cur-year{
+  color:#fff!important;font-weight:600!important;
+  /* neutralise global input rule bleed */
+  width:54px!important;padding:0 2px!important;border:none!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+.flatpickr-current-month input.cur-year:focus{border-color:transparent!important;box-shadow:none!important}
 .flatpickr-current-month .flatpickr-monthDropdown-months{
   color:#fff!important;
   background:transparent!important;
@@ -268,8 +296,12 @@ select.filter-input{appearance:none;-webkit-appearance:none;background-image:url
   font-size:13px!important;
   -webkit-appearance:none;
   appearance:none;
+  /* neutralise global select rule bleed */
+  width:auto!important;padding:0 4px!important;border:none!important;
+  border-radius:0!important;box-shadow:none!important;
 }
 .flatpickr-current-month .flatpickr-monthDropdown-months:hover{background:rgba(255,255,255,.1)!important}
+.flatpickr-current-month .flatpickr-monthDropdown-months:focus{border-color:transparent!important;box-shadow:none!important}
 /* Prev/next arrows */
 .flatpickr-prev-month,.flatpickr-next-month{
   padding:8px 10px!important;
@@ -288,16 +320,16 @@ select.filter-input{appearance:none;-webkit-appearance:none;background-image:url
 }
 /* Day grid */
 .flatpickr-days{border:none!important}
-.dayContainer{padding:6px!important;gap:2px!important}
+.dayContainer{padding:6px!important}
 .flatpickr-day{
   border-radius:7px!important;
-  height:34px!important;
-  line-height:34px!important;
+  height:36px!important;
+  line-height:36px!important;
   font-size:13px!important;
   color:var(--text)!important;
   font-family:'DM Sans',sans-serif!important;
   border:none!important;
-  max-width:34px!important;
+  max-width:39px!important;
 }
 .flatpickr-day:hover,.flatpickr-day.prevMonthDay:hover,.flatpickr-day.nextMonthDay:hover{
   background:var(--michels-red-light)!important;
@@ -355,8 +387,15 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 /* LANDING PAGE */
 .landing-wrap{position:fixed;inset:0;background:var(--surface);display:flex;flex-direction:column;z-index:998;overflow-y:auto}
 .landing-header{background:var(--michels-black);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--michels-red);flex-shrink:0}
-.landing-body{flex:1;padding:44px 32px;max-width:1040px;width:100%;margin:0 auto}
-.landing-nav-cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:36px}
+.landing-body{flex:1;padding:44px 32px;max-width:1100px;width:100%;margin:0 auto}
+.landing-content{display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start}
+.landing-nav-cards{display:flex;flex-direction:column;gap:14px}
+.landing-right{min-width:0}
+.landing-notif-bell{position:relative;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#aaa;transition:background .15s,border-color .15s;flex-shrink:0}
+.landing-notif-bell:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.3);color:#fff}
+.notif-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--michels-red);border:2px solid var(--michels-black);display:none}
+.header-notif-bell{position:relative;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#aaa;transition:background .15s,border-color .15s;flex-shrink:0}
+.header-notif-bell:hover{background:rgba(255,255,255,.18);color:#fff}
 .landing-nav-card{background:var(--white);border:2px solid var(--border);border-radius:14px;padding:28px 24px;cursor:pointer;transition:box-shadow .18s,border-color .18s,transform .15s;text-align:left;font-family:'DM Sans',sans-serif;outline:none}
 .landing-nav-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.1);border-color:var(--michels-red);transform:translateY(-2px)}
 .landing-nav-card-icon{width:42px;height:42px;border-radius:10px;background:var(--michels-red-light);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
@@ -373,6 +412,13 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .landing-notif-text{font-size:13px;color:var(--text);font-weight:500;margin-bottom:2px}
 .landing-notif-meta{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
 .landing-notif-empty{padding:32px;text-align:center;color:var(--text-muted);font-size:13px}
+.activity-filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.activity-filter-btn{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;transition:background .12s,color .12s,border-color .12s;letter-spacing:.2px;font-family:'DM Mono',monospace}
+.activity-filter-btn:hover{border-color:var(--michels-red);color:var(--michels-red)}
+.activity-filter-btn.active{background:var(--michels-red);border-color:var(--michels-red);color:#fff}
+.activity-custom-range{display:none;gap:6px;align-items:center;margin-bottom:10px}
+.activity-custom-range.visible{display:flex}
+.activity-custom-range input[type=date]{font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:6px;background:var(--white);color:var(--text);font-family:'DM Mono',monospace;width:130px}
 
 /* CHART STRIPS */
 .chart-strip{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:13px 16px 11px;margin-bottom:14px}
@@ -399,6 +445,10 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .detail-field-value{font-size:13px;color:var(--text);font-weight:500;word-break:break-word;line-height:1.4}
 .detail-desc-block{font-size:12.5px;color:var(--text-mid);line-height:1.55;padding:10px 12px;background:var(--white);border-radius:6px;border:1px solid var(--border);margin-bottom:12px;white-space:pre-wrap}
 .detail-actions{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.spec-section-row>td{background:var(--surface);padding:6px 14px;border-bottom:1px solid var(--border)}
+.spec-section-badge{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10.5px;font-weight:700;color:var(--text-mid);background:#eef2f7;padding:3px 10px;border-radius:20px;letter-spacing:.3px;text-transform:uppercase}
+.spec-section-badge::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--michels-red);flex-shrink:0}
+.spec-new-wrap{margin-top:8px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
 /* STATUS PILL SWITCHER */
 .status-switcher{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-right:4px}
 .status-switcher-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;flex-shrink:0}
@@ -501,6 +551,10 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
           </div>
           <div class="user-avatar" id="landing-avatar-initials" style="width:28px;height:28px;font-size:11px">?</div>
         </div>
+        <button class="landing-notif-bell" id="landing-bell-btn" title="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot" id="landing-bell-dot"></span>
+        </button>
         <button class="btn-sm" onclick="logout()" style="border-color:rgba(255,255,255,.2);color:#aaa;font-size:11px">Sign Out</button>
       </div>
     </div>
@@ -510,26 +564,48 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <div style="font-size:13px;color:var(--text-muted)" id="landing-date-line"></div>
       </div>
 
-      <div class="landing-nav-cards">
-        <button class="landing-nav-card" onclick="goToDashboard()">
-          <div class="landing-nav-card-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--michels-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <div class="landing-content">
+        <div>
+          <div class="landing-nav-cards">
+            <button class="landing-nav-card" onclick="goToDashboard()">
+              <div class="landing-nav-card-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--michels-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              </div>
+              <div class="landing-nav-card-title">Project Dashboard</div>
+              <div class="landing-nav-card-desc">View active projects, RFI log, submittal log, rental equipment, and follow-up reminders.</div>
+            </button>
+            <button class="landing-nav-card" id="landing-controls-card" onclick="goToProjectControls()" style="display:none">
+              <div class="landing-nav-card-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--michels-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </div>
+              <div class="landing-nav-card-title">Project Controls</div>
+              <div class="landing-nav-card-desc">Set up and manage jobs — contract details, team assignment, owner contacts, and project schedule.</div>
+            </button>
           </div>
-          <div class="landing-nav-card-title">Project Dashboard</div>
-          <div class="landing-nav-card-desc">View active projects, RFI log, submittal log, rental equipment, and follow-up reminders.</div>
-        </button>
-        <button class="landing-nav-card" id="landing-controls-card" onclick="goToProjectControls()" style="display:none">
-          <div class="landing-nav-card-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--michels-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div class="landing-right">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div class="landing-section-label" style="margin-bottom:0">Recent Activity</div>
+            <span id="landing-notif-badge" style="display:none;background:var(--michels-red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace">0</span>
           </div>
-          <div class="landing-nav-card-title">Project Controls</div>
-          <div class="landing-nav-card-desc">Set up and manage jobs — contract details, team assignment, owner contacts, and project schedule.</div>
-        </button>
-      </div>
-
-      <div class="landing-section-label">Recent Activity</div>
-      <div class="landing-notif-list" id="landing-notif-list">
-        <div class="landing-notif-empty">Activity feed coming soon — changes to projects, RFIs, and submittals will appear here.</div>
+          <div class="activity-filter-bar" id="activity-filter-bar">
+            <button class="activity-filter-btn active" onclick="setActivityFilter('7d')" data-filter="7d">7 Days</button>
+            <button class="activity-filter-btn" onclick="setActivityFilter('14d')" data-filter="14d">2 Weeks</button>
+            <button class="activity-filter-btn" onclick="setActivityFilter('30d')" data-filter="30d">Month</button>
+            <button class="activity-filter-btn" onclick="setActivityFilter('ytd')" data-filter="ytd">YTD</button>
+            <button class="activity-filter-btn" onclick="setActivityFilter('all')" data-filter="all">All Time</button>
+            <button class="activity-filter-btn" onclick="setActivityFilter('custom')" data-filter="custom">Custom</button>
+          </div>
+          <div class="activity-custom-range" id="activity-custom-range">
+            <input type="date" id="activity-from" title="From date">
+            <span style="color:var(--text-muted);font-size:11px">to</span>
+            <input type="date" id="activity-to" title="To date">
+            <button class="btn-sm" onclick="applyCustomActivityFilter()">Apply</button>
+          </div>
+          <div class="landing-notif-list" id="landing-notif-list">
+            <div class="landing-notif-empty">No activity yet — changes to projects, RFIs, and submittals will appear here.</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -563,6 +639,10 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <div class="header-date" id="header-date"></div>
+      <button class="header-notif-bell" id="header-bell-btn" title="Notifications" style="display:none">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-dot" id="header-bell-dot"></span>
+      </button>
       <span id="current-user-badge" class="user-badge" style="display:none" onclick="toggleSettings()" title="Settings"><span class="user-avatar" id="user-avatar-initials">?</span><span id="current-user-name">User</span></span>
       <!-- Settings dropdown -->
       <div class="settings-wrap" id="settings-wrap">
@@ -677,19 +757,35 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="section-header">
       <div class="section-title">RFI Log</div>
       <div style="display:flex;gap:8px">
-        <button class="btn-sm" onclick="exportToExcel('rfi')">&#8595; Excel</button>
-        <button class="btn-sm" onclick="exportToPDF('rfi')">&#8595; PDF</button>
+        <button class="btn-sm" onclick="exportToExcel('rfi',this)">&#8595; Excel</button>
+        <button class="btn-sm" onclick="exportToPDF('rfi',this)">&#8595; PDF</button>
         <button class="btn-add" onclick="openModal('rfi-modal')">+ New RFI</button>
       </div>
     </div>
     <div id="rfi-chart"></div>
     <div class="filter-bar">
-      <input class="filter-input" id="rfi-filter-text" placeholder="Search # or subject…" oninput="renderRFI()" style="width:210px">
-      <select class="filter-input" id="rfi-filter-project" onchange="renderRFI()"><option value="">All Projects</option></select>
-      <select class="filter-input" id="rfi-filter-status" onchange="renderRFI()">
-        <option value="">All Statuses</option><option>Open</option><option>Under Review</option>
-      </select>
-      <button class="filter-clear" onclick="clearRFIFilters()">Clear filters</button>
+      <span class="filter-bar-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filter</span>
+      <div class="filter-bar-sep"></div>
+      <input class="filter-input" id="rfi-filter-text" placeholder="Search # or subject…" oninput="renderRFI()">
+      <div class="filter-dd" id="fd-rfi-project" data-fd-val="" data-default-label="All Projects" data-render="renderRFI">
+        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-rfi-project')">
+          <span class="filter-dd-val">All Projects</span>
+          <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-dd-menu"><div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-rfi-project','','All Projects')">All Projects</div></div>
+      </div>
+      <div class="filter-dd" id="fd-rfi-status" data-fd-val="" data-default-label="All Statuses" data-render="renderRFI">
+        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-rfi-status')">
+          <span class="filter-dd-val">All Statuses</span>
+          <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-dd-menu">
+          <div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-rfi-status','','All Statuses')">All Statuses</div>
+          <div class="filter-dd-opt" data-val="Open" onclick="selectFDOption('fd-rfi-status','Open','Open')"><span class="filter-dd-opt-dot" style="background:#c8102e"></span>Open</div>
+          <div class="filter-dd-opt" data-val="Under Review" onclick="selectFDOption('fd-rfi-status','Under Review','Under Review')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Under Review</div>
+        </div>
+      </div>
+      <button class="filter-clear" onclick="clearRFIFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
     </div>
     <div class="table-wrap">
       <table>
@@ -724,19 +820,36 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="section-header">
       <div class="section-title">Submittal Log</div>
       <div style="display:flex;gap:8px">
-        <button class="btn-sm" onclick="exportToExcel('submittal')">&#8595; Excel</button>
-        <button class="btn-sm" onclick="exportToPDF('submittal')">&#8595; PDF</button>
+        <button class="btn-sm" onclick="exportToExcel('submittal',this)">&#8595; Excel</button>
+        <button class="btn-sm" onclick="exportToPDF('submittal',this)">&#8595; PDF</button>
         <button class="btn-add" onclick="openModal('submittal-modal')">+ New Submittal</button>
       </div>
     </div>
     <div id="sub-chart"></div>
     <div class="filter-bar">
-      <input class="filter-input" id="sub-filter-text" placeholder="Search # or description…" oninput="renderSubmittals()" style="width:210px">
-      <select class="filter-input" id="sub-filter-project" onchange="renderSubmittals()"><option value="">All Projects</option></select>
-      <select class="filter-input" id="sub-filter-status" onchange="renderSubmittals()">
-        <option value="">All Statuses</option><option>Pending</option><option>Under Review</option><option>Revise &amp; Resubmit</option>
-      </select>
-      <button class="filter-clear" onclick="clearSubFilters()">Clear filters</button>
+      <span class="filter-bar-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filter</span>
+      <div class="filter-bar-sep"></div>
+      <input class="filter-input" id="sub-filter-text" placeholder="Search # or description…" oninput="renderSubmittals()">
+      <div class="filter-dd" id="fd-sub-project" data-fd-val="" data-default-label="All Projects" data-render="renderSubmittals">
+        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-sub-project')">
+          <span class="filter-dd-val">All Projects</span>
+          <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-dd-menu"><div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-sub-project','','All Projects')">All Projects</div></div>
+      </div>
+      <div class="filter-dd" id="fd-sub-status" data-fd-val="" data-default-label="All Statuses" data-render="renderSubmittals">
+        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-sub-status')">
+          <span class="filter-dd-val">All Statuses</span>
+          <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-dd-menu">
+          <div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-sub-status','','All Statuses')">All Statuses</div>
+          <div class="filter-dd-opt" data-val="Pending" onclick="selectFDOption('fd-sub-status','Pending','Pending')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Pending</div>
+          <div class="filter-dd-opt" data-val="Under Review" onclick="selectFDOption('fd-sub-status','Under Review','Under Review')"><span class="filter-dd-opt-dot" style="background:#2563eb"></span>Under Review</div>
+          <div class="filter-dd-opt" data-val="Revise &amp; Resubmit" onclick="selectFDOption('fd-sub-status','Revise &amp; Resubmit','Revise &amp; Resubmit')"><span class="filter-dd-opt-dot" style="background:#c8102e"></span>Revise &amp; Resubmit</div>
+        </div>
+      </div>
+      <button class="filter-clear" onclick="clearSubFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
     </div>
     <div class="table-wrap">
       <table>
@@ -771,19 +884,35 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="section-header">
       <div class="section-title">Rental Equipment</div>
       <div style="display:flex;gap:8px">
-        <button class="btn-sm" onclick="exportToExcel('rental')">&#8595; Excel</button>
-        <button class="btn-sm" onclick="exportToPDF('rental')">&#8595; PDF</button>
+        <button class="btn-sm" onclick="exportToExcel('rental',this)">&#8595; Excel</button>
+        <button class="btn-sm" onclick="exportToPDF('rental',this)">&#8595; PDF</button>
         <button class="btn-add" onclick="openModal('rental-modal')">+ New Rental</button>
       </div>
     </div>
     <div id="rental-chart"></div>
     <div class="filter-bar">
-      <input class="filter-input" id="ren-filter-text" placeholder="Search equipment or vendor…" oninput="renderRental()" style="width:210px">
-      <select class="filter-input" id="ren-filter-project" onchange="renderRental()"><option value="">All Projects</option></select>
-      <select class="filter-input" id="ren-filter-status" onchange="renderRental()">
-        <option value="">All Statuses</option><option>Ordered</option><option>On Site</option>
-      </select>
-      <button class="filter-clear" onclick="clearRentalFilters()">Clear filters</button>
+      <span class="filter-bar-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filter</span>
+      <div class="filter-bar-sep"></div>
+      <input class="filter-input" id="ren-filter-text" placeholder="Search equipment or vendor…" oninput="renderRental()">
+      <div class="filter-dd" id="fd-ren-project" data-fd-val="" data-default-label="All Projects" data-render="renderRental">
+        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-ren-project')">
+          <span class="filter-dd-val">All Projects</span>
+          <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-dd-menu"><div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-ren-project','','All Projects')">All Projects</div></div>
+      </div>
+      <div class="filter-dd" id="fd-ren-status" data-fd-val="" data-default-label="All Statuses" data-render="renderRental">
+        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-ren-status')">
+          <span class="filter-dd-val">All Statuses</span>
+          <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-dd-menu">
+          <div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-ren-status','','All Statuses')">All Statuses</div>
+          <div class="filter-dd-opt" data-val="Ordered" onclick="selectFDOption('fd-ren-status','Ordered','Ordered')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Ordered</div>
+          <div class="filter-dd-opt" data-val="On Site" onclick="selectFDOption('fd-ren-status','On Site','On Site')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>On Site</div>
+        </div>
+      </div>
+      <button class="filter-clear" onclick="clearRentalFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
     </div>
     <div class="table-wrap">
       <table>
@@ -887,8 +1016,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="modal-body">
       <input type="hidden" id="rfi-edit-id" value="">
       <div class="form-row">
-        <div><label>RFI #</label><input type="text" id="rfi-num" placeholder="e.g. RFI-001"></div>
-        <div><label>Project</label><select id="rfi-project"><option value="">Select project</option></select></div>
+        <div>
+          <label style="display:flex;align-items:center;gap:6px">
+            RFI #
+            <span id="rfi-num-auto-badge" style="display:none;font-size:9px;font-weight:700;background:var(--green-light);color:var(--green);padding:1px 6px;border-radius:10px;letter-spacing:.3px;text-transform:uppercase">Auto</span>
+          </label>
+          <input type="text" id="rfi-num" placeholder="Select a project first" oninput="rfiNumManualOverride()">
+        </div>
+        <div><label>Project</label><select id="rfi-project" onchange="autoFillRFINum();autoFillRFISpec()"><option value="">Select project</option></select></div>
       </div>
       <div class="form-row-full"><label>Subject</label><input type="text" id="rfi-subject" placeholder="Brief subject description"></div>
       <div class="form-row">
@@ -905,6 +1040,18 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
           <select id="rfi-priority">
             <option>Low</option><option>Medium</option><option>High</option>
           </select>
+        </div>
+      </div>
+      <div class="form-row-full">
+        <label>Spec Section</label>
+        <select id="rfi-spec-select" onchange="rfiSpecChange()">
+          <option value="">— None —</option>
+        </select>
+        <div id="rfi-spec-new-wrap" class="spec-new-wrap" style="display:none">
+          <div class="form-row" style="margin-bottom:0">
+            <div><label>CSI Number</label><input type="text" id="rfi-spec-csi" placeholder="e.g. 03 30 00" maxlength="12"></div>
+            <div><label>Description</label><input type="text" id="rfi-spec-desc-input" placeholder="e.g. Cast-in-Place Concrete"></div>
+          </div>
         </div>
       </div>
       <div class="form-row-full"><label>Description / Question</label><textarea id="rfi-desc" placeholder="Detailed question or description..."></textarea></div>
@@ -1229,8 +1376,8 @@ function applySettingsPermissions(perms){
 document.addEventListener('click', e=>{
   const wrap = document.getElementById('settings-wrap');
   if(wrap && !wrap.contains(e.target)) closeSettings();
-  // Close any open snooze menus if clicking outside them
   if(!e.target.closest('.snooze-wrap')) closeAllSnoozeMenus();
+  if(!e.target.closest('.filter-dd')) document.querySelectorAll('.filter-dd.open').forEach(dd=>dd.classList.remove('open'));
 });
 // Escape key closes modals, settings dropdown, and snooze menus
 document.addEventListener('keydown', e=>{
@@ -1289,9 +1436,9 @@ function showToast(msg){
 
 // ── LOADING STATE ─────────────────────────────────────────
 function setLoadingState(){
-  const row = `<tr><td colspan="9" class="loading-cell">Loading data…</td></tr>`;
+  const colspans = {'rfi-body':7,'submittal-body':7,'rental-body':6};
   ['rfi-body','submittal-body','rental-body'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.innerHTML=row;
+    const el=document.getElementById(id); if(el) el.innerHTML=`<tr><td colspan="${colspans[id]}" class="loading-cell">Loading data…</td></tr>`;
   });
   const g=document.getElementById('project-grid');
   if(g) g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text-muted);font-size:13px">Loading data…</div>';
@@ -1354,6 +1501,8 @@ async function quickStatusChange(type,id,newStatus){
   saveLocal();
   renderAll();
   showToast('Status updated to '+newStatus);
+  const _scLabel = item.subject||item.name||item.num||(type+' #'+id);
+  logActivity('status','status change',_scLabel,type.charAt(0).toUpperCase()+type.slice(1)+' → '+newStatus);
 }
 
 // ── STATUS PILL SWITCHER ─────────────────────────────────
@@ -1758,6 +1907,7 @@ function goToLanding(){
   document.getElementById('main-dashboard').style.display='none';
   document.getElementById('landing-page').style.display='';
   document.querySelector('.header-title').textContent='Dashboard';
+  renderActivity();
 }
 function showDashboard(){
   document.getElementById('login-overlay').style.display='none';
@@ -1774,6 +1924,8 @@ function showDashboard(){
     const parts = (currentUser.displayName||currentUser.username).split(' ');
     initEl.textContent = parts.map(p=>p[0]).join('').toUpperCase().substring(0,2);
     badge.style.display='inline-flex';
+    const hBell = document.getElementById('header-bell-btn');
+    if(hBell) hBell.style.display='flex';
   }
 
   // ── Header subtitle ─────────────────────────────────────
@@ -1825,6 +1977,7 @@ function showDashboard(){
 
   loadSBConfig();
   loadData();
+  renderActivity();
   verifyCurrentUser(); // async — corrects role if tampered or changed by an admin
 }
 
@@ -1877,6 +2030,8 @@ function logout(){
   document.getElementById('login-password').value='';
   document.getElementById('login-error').style.display='none';
   document.getElementById('current-user-badge').style.display='none';
+  const hBell = document.getElementById('header-bell-btn');
+  if(hBell) hBell.style.display='none';
 }
 </script>
 
@@ -2124,11 +2279,41 @@ function renderProjectControls(){
   `).join('');
 }
 
+// ── CUSTOM FILTER DROPDOWN HELPERS ──────────────────────
+function getFDValue(id){
+  return document.getElementById(id)?.dataset?.fdVal||'';
+}
+function toggleFD(id){
+  const el=document.getElementById(id);
+  if(!el) return;
+  const wasOpen=el.classList.contains('open');
+  document.querySelectorAll('.filter-dd.open').forEach(dd=>dd.classList.remove('open'));
+  if(!wasOpen) el.classList.add('open');
+}
+function selectFDOption(id,value,label){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.dataset.fdVal=value;
+  const span=el.querySelector('.filter-dd-val');
+  if(span) span.textContent=label||(el.dataset.defaultLabel||'All');
+  el.classList.toggle('active',!!value);
+  el.classList.remove('open');
+  el.querySelectorAll('.filter-dd-opt').forEach(o=>{
+    o.classList.toggle('selected',!!value&&o.dataset.val===value);
+  });
+  const fn=el.dataset.render;
+  if(fn&&window[fn]) window[fn]();
+}
+function clearFD(id){
+  const el=document.getElementById(id);
+  if(el) selectFDOption(id,'',el.dataset.defaultLabel||'All');
+}
+
 function renderRFI(){
   const body=document.getElementById('rfi-body');
   const txt=(document.getElementById('rfi-filter-text')?.value||'').toLowerCase();
-  const proj=document.getElementById('rfi-filter-project')?.value||'';
-  const stat=document.getElementById('rfi-filter-status')?.value||'';
+  const proj=getFDValue('fd-rfi-project');
+  const stat=getFDValue('fd-rfi-status');
   renderRFIArchive();
   const activeRfis=rfis.filter(r=>!['Answered','Closed'].includes(r.status));
   let rows=activeRfis.filter(r=>{
@@ -2139,9 +2324,20 @@ function renderRFI(){
   });
   if(!activeRfis.length){body.innerHTML=`<tr><td colspan="7" class="empty"><div class="empty-icon">📋</div>No open RFIs — add one to get started, or check the Archive below.</td></tr>`;return}
   if(!rows.length){body.innerHTML=`<tr><td colspan="7" class="empty">No RFIs match the current filters.</td></tr>`;return}
-  body.innerHTML=rows.map(r=>{
-    const desc=h(r.desc||r.description||'');
-    return `
+  // Group by spec_section — named sections alphabetically, unclassified last
+  const groups={};
+  rows.forEach(r=>{ const k=r.spec_section||''; if(!groups[k]) groups[k]=[]; groups[k].push(r); });
+  const sortedKeys=Object.keys(groups).sort((a,b)=>{ if(!a&&!b)return 0; if(!a)return 1; if(!b)return -1; return a.localeCompare(b); });
+  const showHeaders=sortedKeys.length>1||(sortedKeys.length===1&&sortedKeys[0]!=='');
+  let html='';
+  sortedKeys.forEach(key=>{
+    if(showHeaders){
+      const label=key||'Unclassified';
+      html+=`<tr class="spec-section-row"><td colspan="7"><span class="spec-section-badge">${h(label)}</span></td></tr>`;
+    }
+    groups[key].forEach(r=>{
+      const desc=h(r.desc||r.description||'');
+      html+=`
     <tr id="rfi-row-${r.id}" class="data-row" onclick="toggleDetail('rfi',${r.id})">
       <td style="font-family:'DM Mono',monospace;font-size:12px;white-space:nowrap">
         <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>${h(r.num)}
@@ -2167,6 +2363,7 @@ function renderRFI(){
           <div class="detail-grid">
             <div><div class="detail-field-label">RFI Number</div><div class="detail-field-value" style="font-family:'DM Mono',monospace">${h(r.num)}</div></div>
             <div><div class="detail-field-label">Project</div><div class="detail-field-value">${h(r.project)||'—'}</div></div>
+            ${r.spec_section?`<div><div class="detail-field-label">Spec Section</div><div class="detail-field-value">${h(r.spec_section)}</div></div>`:''}
             <div><div class="detail-field-label">Date Submitted</div><div class="detail-field-value">${fmt(r.submitted)||'—'}</div></div>
             <div><div class="detail-field-label">Response Due</div><div class="detail-field-value">${dateChip(r.due,true)}</div></div>
             <div><div class="detail-field-label">Priority</div><div class="detail-field-value">${prio(r.priority)}</div></div>
@@ -2186,18 +2383,21 @@ function renderRFI(){
         </div>
       </td>
     </tr>`;
-  }).join('');
+    });
+  });
+  body.innerHTML=html;
 }
 function clearRFIFilters(){
-  ['rfi-filter-text','rfi-filter-project','rfi-filter-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  const t=document.getElementById('rfi-filter-text');if(t)t.value='';
+  clearFD('fd-rfi-project');clearFD('fd-rfi-status');
   renderRFI();
 }
 
 function renderSubmittals(){
   const body=document.getElementById('submittal-body');
   const txt=(document.getElementById('sub-filter-text')?.value||'').toLowerCase();
-  const proj=document.getElementById('sub-filter-project')?.value||'';
-  const stat=document.getElementById('sub-filter-status')?.value||'';
+  const proj=getFDValue('fd-sub-project');
+  const stat=getFDValue('fd-sub-status');
   renderSubmittalArchive();
   const activeSubs=submittals.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status));
   let rows=activeSubs.filter(s=>{
@@ -2258,15 +2458,16 @@ function renderSubmittals(){
   }).join('');
 }
 function clearSubFilters(){
-  ['sub-filter-text','sub-filter-project','sub-filter-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  const t=document.getElementById('sub-filter-text');if(t)t.value='';
+  clearFD('fd-sub-project');clearFD('fd-sub-status');
   renderSubmittals();
 }
 
 function renderRental(){
   const body=document.getElementById('rental-body');
   const txt=(document.getElementById('ren-filter-text')?.value||'').toLowerCase();
-  const proj=document.getElementById('ren-filter-project')?.value||'';
-  const stat=document.getElementById('ren-filter-status')?.value||'';
+  const proj=getFDValue('fd-ren-project');
+  const stat=getFDValue('fd-ren-status');
   renderRentalArchive();
   const activeRental=rental.filter(r=>!['Release','Released'].includes(r.status));
   let rows=activeRental.filter(r=>{
@@ -2311,7 +2512,7 @@ function renderRental(){
             ${statusSwitcherHTML('rental',r.id,r.status,[
               {value:'Ordered',  label:'Ordered',  color:'#d97706', bg:'#fef3c7'},
               {value:'On Site',  label:'On Site',  color:'#15803d', bg:'#dcfce7'},
-              {value:'Release',  label:'Released',  color:'#64748b', bg:'#f1f5f9'},
+              {value:'Released', label:'Released',  color:'#64748b', bg:'#f1f5f9'},
             ])}
             <button class="btn-sm" onclick="event.stopPropagation();editRental(${r.id})">Edit</button>
             <button class="btn-sm btn-danger" onclick="event.stopPropagation();deleteItem('rental',${r.id})">Delete</button>
@@ -2322,7 +2523,8 @@ function renderRental(){
   }).join('');
 }
 function clearRentalFilters(){
-  ['ren-filter-text','ren-filter-project','ren-filter-status'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  const t=document.getElementById('ren-filter-text');if(t)t.value='';
+  clearFD('fd-ren-project');clearFD('fd-ren-status');
   renderRental();
 }
 
@@ -2359,10 +2561,12 @@ function archiveGroupHTML(items, rowFn, headers){
 }
 
 function renderRFIArchive(){
-  const proj = document.getElementById('rfi-filter-project')?.value||'';
+  const proj = getFDValue('fd-rfi-project');
   const archived = rfis.filter(r=>['Answered','Closed'].includes(r.status) && (!proj||r.project===proj));
   const countEl = document.getElementById('rfi-archive-count');
   if(countEl) countEl.textContent = archived.length;
+  const hintEl = document.querySelector('#rfi-archive-section .archive-hint');
+  if(hintEl) hintEl.textContent = proj ? `Answered & closed — ${proj}` : 'Answered & closed RFIs';
   const body = document.getElementById('rfi-archive-body');
   if(!body) return;
   if(!archived.length){
@@ -2372,7 +2576,10 @@ function renderRFIArchive(){
   body.innerHTML = archiveGroupHTML(archived, r=>`
     <tr>
       <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px;width:70px">${h(r.num)}</td>
-      <td class="truncate">${h(r.subject)}</td>
+      <td class="truncate">
+        <div>${h(r.subject)}</div>
+        ${r.spec_section?`<div style="font-size:11px;color:var(--text-muted);margin-top:2px">${h(r.spec_section)}</div>`:''}
+      </td>
       <td>${fmt(r.submitted)}</td>
       <td>${fmt(r.due)}</td>
       <td>${badge(r.status)}</td>
@@ -2390,10 +2597,12 @@ function renderRFIArchive(){
 }
 
 function renderSubmittalArchive(){
-  const proj = document.getElementById('sub-filter-project')?.value||'';
+  const proj = getFDValue('fd-sub-project');
   const archived = submittals.filter(s=>['Approved','Approved as Noted','Rejected'].includes(s.status) && (!proj||s.project===proj));
   const countEl = document.getElementById('submittal-archive-count');
   if(countEl) countEl.textContent = archived.length;
+  const hintEl = document.querySelector('#submittal-archive-section .archive-hint');
+  if(hintEl) hintEl.textContent = proj ? `Approved & rejected — ${proj}` : 'Approved & rejected submittals';
   const body = document.getElementById('submittal-archive-body');
   if(!body) return;
   if(!archived.length){
@@ -2421,10 +2630,12 @@ function renderSubmittalArchive(){
 }
 
 function renderRentalArchive(){
-  const proj = document.getElementById('ren-filter-project')?.value||'';
+  const proj = getFDValue('fd-ren-project');
   const archived = rental.filter(r=>['Release','Released'].includes(r.status) && (!proj||r.project===proj));
   const countEl = document.getElementById('rental-archive-count');
   if(countEl) countEl.textContent = archived.length;
+  const hintEl = document.querySelector('#rental-archive-section .archive-hint');
+  if(hintEl) hintEl.textContent = proj ? `Released equipment — ${proj}` : 'Released equipment';
   const body = document.getElementById('rental-archive-body');
   if(!body) return;
   if(!archived.length){
@@ -2460,14 +2671,22 @@ function populateProjectSelects(){
     // Restore selection by value after rebuilding options
     if(cur) el.value=cur;
   });
-  // Filter dropdowns in table tabs
-  const filterIds=['rfi-filter-project','sub-filter-project','ren-filter-project'];
-  filterIds.forEach(id=>{
+  // Filter custom dropdowns in table tabs
+  [
+    {id:'fd-rfi-project',defLabel:'All Projects'},
+    {id:'fd-sub-project',defLabel:'All Projects'},
+    {id:'fd-ren-project',defLabel:'All Projects'},
+  ].forEach(({id,defLabel})=>{
     const el=document.getElementById(id);
     if(!el) return;
-    const cur=el.value;
-    el.innerHTML='<option value="">All Projects</option>'+projects.map(p=>`<option value="${h(p.name)}"${p.name===cur?' selected':''}>${h(p.name)}</option>`).join('');
-    if(cur) el.value=cur;
+    const menu=el.querySelector('.filter-dd-menu');
+    if(!menu) return;
+    const cur=el.dataset.fdVal||'';
+    const esc=s=>s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    menu.innerHTML=`<div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('${id}','','${defLabel}')">${defLabel}</div>`+
+      projects.map(p=>`<div class="filter-dd-opt${cur===p.name?' selected':''}" data-val="${h(p.name)}" onclick="selectFDOption('${id}','${esc(p.name)}','${esc(p.name)}')">`+
+        `<span class="filter-dd-opt-dot" style="background:var(--michels-red)"></span>${h(p.name)}</div>`).join('');
+    if(cur&&!projects.find(p=>p.name===cur)) clearFD(id);
   });
 }
 </script>
@@ -2780,6 +2999,93 @@ function resetControlsModal(){
   document.getElementById('controls-modal-title').textContent='New Job';
   document.getElementById('controls-save-btn').textContent='Save Job';
 }
+// ── RFI AUTO-NUMBER ──────────────────────────────────────
+function getNextRFINum(projectName){
+  if(!projectName) return '';
+  // Collect all numeric suffixes from existing RFIs for this project
+  const nums = rfis
+    .filter(r => r.project === projectName)
+    .map(r => {
+      const m = String(r.num||'').match(/(\d+)$/);
+      return m ? parseInt(m[1], 10) : 0;
+    });
+  const next = nums.length ? Math.max(...nums) + 1 : 1;
+  return String(next).padStart(3, '0');
+}
+
+function autoFillRFINum(){
+  const proj = document.getElementById('rfi-project').value;
+  const numEl = document.getElementById('rfi-num');
+  const badge = document.getElementById('rfi-num-auto-badge');
+  if(!proj){
+    numEl.value = '';
+    numEl.placeholder = 'Select a project first';
+    if(badge) badge.style.display = 'none';
+    return;
+  }
+  // Only auto-fill if the field is empty or was previously auto-filled (badge visible)
+  const wasAuto = badge && badge.style.display !== 'none';
+  if(!numEl.value || wasAuto){
+    numEl.value = getNextRFINum(proj);
+    numEl.placeholder = '';
+    if(badge) badge.style.display = 'inline-flex';
+  }
+}
+
+// Called whenever the user types — removes the "Auto" badge to signal manual override
+function rfiNumManualOverride(){
+  const badge = document.getElementById('rfi-num-auto-badge');
+  if(badge) badge.style.display = 'none';
+}
+
+// Returns sorted unique spec sections already assigned to RFIs in a project
+function getProjectSpecSections(projectName){
+  if(!projectName) return [];
+  const seen = new Set();
+  rfis.filter(r => r.project === projectName && r.spec_section)
+      .forEach(r => seen.add(r.spec_section));
+  return [...seen].sort();
+}
+
+// Rebuilds the spec section dropdown for the currently selected project
+function autoFillRFISpec(preserveVal){
+  const proj = document.getElementById('rfi-project').value;
+  const sel = document.getElementById('rfi-spec-select');
+  const wrap = document.getElementById('rfi-spec-new-wrap');
+  if(!sel) return;
+  const keepVal = preserveVal || '';
+  const sections = getProjectSpecSections(proj);
+  let opts = `<option value="">— None —</option>`;
+  sections.forEach(s => {
+    opts += `<option value="${h(s)}"${s===keepVal?' selected':''}>${h(s)}</option>`;
+  });
+  opts += `<option value="__new__">＋ Create new spec section…</option>`;
+  sel.innerHTML = opts;
+  if(keepVal && keepVal !== '__new__') sel.value = keepVal;
+  if(wrap) wrap.style.display = 'none';
+}
+
+// Shows/hides the "create new" sub-form
+function rfiSpecChange(){
+  const sel = document.getElementById('rfi-spec-select');
+  const wrap = document.getElementById('rfi-spec-new-wrap');
+  if(!wrap) return;
+  wrap.style.display = sel && sel.value === '__new__' ? 'block' : 'none';
+}
+
+// Reads spec section value from modal — composes from create-new inputs if needed
+function getSpecSectionFromModal(){
+  const sel = document.getElementById('rfi-spec-select');
+  if(!sel) return '';
+  if(sel.value === '__new__'){
+    const csi = (document.getElementById('rfi-spec-csi')?.value||'').trim();
+    const desc = (document.getElementById('rfi-spec-desc-input')?.value||'').trim();
+    if(csi && desc) return `${csi} — ${desc}`;
+    return csi || desc || '';
+  }
+  return sel.value || '';
+}
+
 function resetRFIModal(){
   clearFields(['rfi-edit-id','rfi-num','rfi-subject','rfi-submitted','rfi-due','rfi-desc']);
   document.getElementById('rfi-project').value='';
@@ -2787,6 +3093,18 @@ function resetRFIModal(){
   document.getElementById('rfi-priority').value='Low';
   document.getElementById('rfi-modal-title').textContent='New RFI';
   document.getElementById('rfi-save-btn').textContent='Save RFI';
+  const badge = document.getElementById('rfi-num-auto-badge');
+  if(badge) badge.style.display = 'none';
+  document.getElementById('rfi-num').placeholder = 'Select a project first';
+  // Reset spec section
+  const specSel = document.getElementById('rfi-spec-select');
+  if(specSel) specSel.innerHTML = '<option value="">— None —</option>';
+  const specWrap = document.getElementById('rfi-spec-new-wrap');
+  if(specWrap) specWrap.style.display = 'none';
+  const csiEl = document.getElementById('rfi-spec-csi');
+  if(csiEl) csiEl.value = '';
+  const specDescEl = document.getElementById('rfi-spec-desc-input');
+  if(specDescEl) specDescEl.value = '';
 }
 function resetSubmittalModal(){
   clearFields(['sub-edit-id','sub-num','sub-desc','sub-spec','sub-date']);
@@ -2840,6 +3158,7 @@ function editRFI(id){
   document.getElementById('rfi-save-btn').textContent='Update RFI';
   document.getElementById('rfi-edit-id').value=id;
   document.getElementById('rfi-num').value=r.num||'';
+  document.getElementById('rfi-num').placeholder='';
   document.getElementById('rfi-subject').value=r.subject||'';
   document.getElementById('rfi-project').value=r.project||'';
   setDateVal('rfi-submitted', r.submitted||'');
@@ -2847,6 +3166,23 @@ function editRFI(id){
   document.getElementById('rfi-status').value=r.status||'Open';
   document.getElementById('rfi-priority').value=r.priority||'Low';
   document.getElementById('rfi-desc').value=r.desc||r.description||'';
+  // Editing an existing RFI — hide auto badge, number is the saved value
+  const badge = document.getElementById('rfi-num-auto-badge');
+  if(badge) badge.style.display = 'none';
+  // Populate spec section dropdown for this project, then restore saved value
+  autoFillRFISpec(r.spec_section||'');
+  const specSel = document.getElementById('rfi-spec-select');
+  if(specSel && r.spec_section){
+    // If the saved value isn't in the dropdown yet (e.g. created while on a different project), add it
+    const exists = [...specSel.options].some(o => o.value === r.spec_section);
+    if(!exists){
+      const opt = document.createElement('option');
+      opt.value = r.spec_section;
+      opt.textContent = r.spec_section;
+      specSel.insertBefore(opt, specSel.lastElementChild); // before "Create new…"
+    }
+    specSel.value = r.spec_section;
+  }
   openModal('rfi-modal', true);
 }
 
@@ -2931,16 +3267,18 @@ async function saveJobControls(){
     if(sb){ const res=await sb.from('projects').insert(data).select(); if(res.error){ alert('Failed to save job: '+res.error.message); return; } if(res.data?.[0]) projects.push({...res.data[0],start:res.data[0].start_date,end:res.data[0].end_date}); }
     else { projects.push({id:nextId++,...data,start:data.start_date,end:data.end_date}); }
   }
+  const _jobLabel = data.name || 'Unnamed Job';
   resetControlsModal();
   closeModal('controls-modal');saveLocal();renderAll();
   showToast(editId ? 'Job updated.' : 'Job saved.');
+  logActivity('project', editId ? 'updated' : 'created', _jobLabel, editId ? 'Job updated' : 'New job created');
 }
 
 async function saveRFI(){
   if(!getPerms().canEdit){ alert('You do not have permission to create or edit RFIs.'); return; }
   const num=val('rfi-num'),subject=val('rfi-subject');if(!num||!subject)return alert('RFI # and subject required.');
   const editId=document.getElementById('rfi-edit-id').value;
-  const data={num,project:val('rfi-project'),subject,submitted:val('rfi-submitted'),due:val('rfi-due'),status:val('rfi-status'),priority:val('rfi-priority'),description:val('rfi-desc')};
+  const data={num,project:val('rfi-project'),subject,submitted:val('rfi-submitted'),due:val('rfi-due'),status:val('rfi-status'),priority:val('rfi-priority'),description:val('rfi-desc'),spec_section:getSpecSectionFromModal()};
   if(editId){
     const id=parseInt(editId);
     const idx=rfis.findIndex(x=>x.id===id);
@@ -2953,9 +3291,11 @@ async function saveRFI(){
     if(sb){ const res=await sb.from('rfis').insert(data).select(); if(res.error){ alert('Failed to save RFI: '+res.error.message); return; } if(res.data?.[0]) rfis.push({...res.data[0],desc:res.data[0].description}); }
     else rfis.push({id:nextId++,...data,desc:data.description});
   }
+  const _rfiLabel = (data.num ? 'RFI #'+data.num+' — ' : '') + (data.subject || 'RFI');
   resetRFIModal();
   closeModal('rfi-modal');saveLocal();renderAll();
   showToast(editId ? 'RFI updated.' : 'RFI saved.');
+  logActivity('rfi', editId ? 'updated' : 'created', _rfiLabel, editId ? 'RFI updated' : 'New RFI created');
 }
 
 async function saveSubmittal(){
@@ -2975,9 +3315,11 @@ async function saveSubmittal(){
     if(sb){ const res=await sb.from('submittals').insert(data).select(); if(res.error){ alert('Failed to save submittal: '+res.error.message); return; } if(res.data?.[0]) submittals.push({...res.data[0],desc:res.data[0].description,date:res.data[0].submitted_date}); }
     else submittals.push({id:nextId++,...data,desc,date:data.submitted_date});
   }
+  const _subLabel = (data.num ? '#'+data.num+' — ' : '') + (data.description || 'Submittal');
   resetSubmittalModal();
   closeModal('submittal-modal');saveLocal();renderAll();
   showToast(editId ? 'Submittal updated.' : 'Submittal saved.');
+  logActivity('submittal', editId ? 'updated' : 'created', _subLabel, editId ? 'Submittal updated' : 'New submittal created');
 }
 
 async function saveRental(){
@@ -2997,15 +3339,20 @@ async function saveRental(){
     if(sb){ const res=await sb.from('rental').insert(data).select(); if(res.error){ alert('Failed to save rental: '+res.error.message); return; } if(res.data?.[0]) rental.push({...res.data[0],onsite:res.data[0].onsite_date,offsite:res.data[0].release_date}); }
     else rental.push({id:nextId++,...data,onsite:data.onsite_date,offsite:data.release_date});
   }
+  const _renLabel = data.name || 'Equipment';
   resetRentalModal();
   closeModal('rental-modal');saveLocal();renderAll();
   showToast(editId ? 'Rental updated.' : 'Rental saved.');
+  logActivity('rental', editId ? 'updated' : 'created', _renLabel, editId ? 'Rental updated' : 'New rental record created');
 }
 
 async function deleteItem(store,id){
   if(!getPerms().canDelete){ alert('You do not have permission to delete records.'); return; }
   if(!confirm('Delete this record? This cannot be undone.')) return;
   const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental'};
+  const _delArr=store==='projects'?projects:store==='rfis'?rfis:store==='submittals'?submittals:rental;
+  const _delItem=_delArr.find(x=>x.id===id);
+  const _delLabel=_delItem?(_delItem.name||_delItem.subject||_delItem.num||'Record'):'Record';
   if(tableMap[store]){
     const res=await sbDelete(tableMap[store],id);
     if(res.error){ alert('Failed to delete record: '+res.error.message); return; }
@@ -3016,6 +3363,7 @@ async function deleteItem(store,id){
   else if(store==='rental')rental=rental.filter(x=>x.id!==id);
   saveLocal();renderAll();
   showToast('Record deleted.');
+  logActivity('delete','deleted',_delLabel,store.charAt(0).toUpperCase()+store.slice(1)+' deleted');
 }
 </script>
 
@@ -3098,38 +3446,32 @@ async function generateSummaryPDF(){
   const todayStr=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const preparedBy=(typeof currentUser!=='undefined'&&currentUser)?(currentUser.displayName||currentUser.username):'APM';
 
-  // ── LOGO ──────────────────────────────────────────────────
-  const lScale=6; const lW=340*lScale; const lH=60*lScale;
-  const lc=document.createElement('canvas'); lc.width=lW; lc.height=lH;
+  // ── LOGO — MICHELS + POWER, INC. (matches dashboard SVG) ─
+  const lc=document.createElement('canvas'); lc.width=1300; lc.height=230;
   const lx=lc.getContext('2d');
   lx.imageSmoothingEnabled=true; lx.imageSmoothingQuality='high';
-  lx.fillStyle='#1a1a1a'; lx.fillRect(0,0,lW,lH);
-  const lg=lx.createLinearGradient(0,0,0,lH);
-  lg.addColorStop(0,'#c0102a'); lg.addColorStop(0.5,'#c8102e'); lg.addColorStop(1,'#a80e26');
-  const fs=44*lScale;
-  lx.font=`400 ${fs}px 'Alfa Slab One','Rockwell',serif`;
-  lx.letterSpacing=`${4*lScale}px`; lx.textAlign='left'; lx.textBaseline='middle';
-  lx.fillStyle=lg; lx.fillText('MICHELS',12*lScale,lH*0.52);
-  lx.font=`400 ${fs}px 'Alfa Slab One','Rockwell',serif`;
-  lx.letterSpacing=`${4*lScale}px`;
-  const mw=lx.measureText('MICHELS').width;
-  lx.font=`400 ${12*lScale}px 'Alfa Slab One',serif`;
-  lx.letterSpacing='0px'; lx.textBaseline='top';
-  lx.fillText('®',12*lScale+mw+lScale*1.5,lScale*2);
+  const lg=lx.createLinearGradient(0,0,0,160);
+  lg.addColorStop(0,'#a00d1e'); lg.addColorStop(0.45,'#c8102e'); lg.addColorStop(1,'#e8324a');
+  lx.font="400 128px 'Alfa Slab One','Rockwell',serif";
+  lx.letterSpacing='8px'; lx.textBaseline='alphabetic';
+  lx.fillStyle=lg; lx.fillText('MICHELS',10,130);
+  lx.font="700 46px 'DM Sans',Arial,sans-serif";
+  lx.letterSpacing='5px';
+  lx.fillStyle='#ffffff'; lx.fillText('POWER, INC.',14,190);
   const logoData=lc.toDataURL('image/png',1.0);
-  const logoW=58; const logoH=logoW*(lH/lW);
+  const logoW=70; const logoH=logoW*(230/1300);
 
   // ── REUSABLE HEADER/FOOTER ────────────────────────────────
   function drawHeader(title){
-    doc.setFillColor(...black); doc.rect(0,0,pw,28,'F');
-    doc.setFillColor(...red); doc.rect(0,26,pw,2.5,'F');
-    doc.setFillColor(...red); doc.rect(0,0,3,28,'F');
-    doc.addImage(logoData,'PNG',8,(28-logoH)/2,logoW,logoH);
-    doc.setDrawColor(100,100,100); doc.setLineWidth(0.3); doc.line(70,4,70,24);
+    doc.setFillColor(...black); doc.rect(0,0,pw,30,'F');
+    doc.setFillColor(...red); doc.rect(0,28,pw,2.5,'F');
+    doc.setFillColor(...red); doc.rect(0,0,3,30,'F');
+    doc.addImage(logoData,'PNG',7,(30-logoH)/2,logoW,logoH);
+    doc.setDrawColor(80,80,80); doc.setLineWidth(0.3); doc.line(82,5,82,25);
     doc.setTextColor(...white); doc.setFontSize(13); doc.setFont('helvetica','bold');
-    doc.text(title,pw/2,14,{align:'center'});
+    doc.text(title,89,14);
     doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(180,180,180);
-    doc.text('Michels Power Inc.  —  APM Dashboard',pw/2,21,{align:'center'});
+    doc.text('Michels Power Inc.  —  APM Dashboard',89,22);
     doc.setFontSize(7.5); doc.text(todayStr,pw-10,10,{align:'right'});
     doc.text('CONFIDENTIAL',pw-10,17,{align:'right'});
   }
@@ -3353,6 +3695,46 @@ async function generateSummaryPDF(){
 
     // RFI Table
     y=secTitle(`RFIs  (${openR.length} open / ${projRFIs.length} total)`,y);
+    // Cell color helpers — mirrors dashboard badge palette
+    const stPDF = {
+      'Open':              {bg:[253,234,237], fg:[180,16,30]},
+      'Under Review':      {bg:[254,243,200], fg:[161,98,7]},
+      'Answered':          {bg:[220,252,231], fg:[21,128,61]},
+      'Closed':            {bg:[241,245,249], fg:[71,85,105]},
+      'Pending':           {bg:[241,245,249], fg:[100,116,139]},
+      'Approved':          {bg:[220,252,231], fg:[21,128,61]},
+      'Approved as Noted': {bg:[209,250,229], fg:[5,150,105]},
+      'Revise & Resubmit': {bg:[253,234,237], fg:[180,16,30]},
+      'Rejected':          {bg:[253,234,237], fg:[180,16,30]},  // badge-red
+      'Ordered':           {bg:[254,243,200], fg:[161,98,7]},
+      'On Site':           {bg:[220,252,231], fg:[21,128,61]},
+      'Released':          {bg:[220,252,231], fg:[21,128,61]},  // badge-green
+      'High':              {bg:[253,234,237], fg:[180,16,30]},
+      'Medium':            {bg:[254,243,200], fg:[161,98,7]},
+      'Low':               {bg:[239,246,255], fg:[37,99,235]},
+    };
+    const cellColor = (data, statusCol, priorityCol=-1, dueDateCol=-1) => {
+      if(data.section !== 'body') return;
+      const col = data.column.index;
+      const v = String(data.cell.raw||'');
+      if((col===statusCol || col===priorityCol) && stPDF[v]){
+        data.cell.styles.fillColor = stPDF[v].bg;
+        data.cell.styles.textColor = stPDF[v].fg;
+        data.cell.styles.fontStyle  = 'bold';
+      }
+      if(col===dueDateCol && v && v!=='—'){
+        const parts=v.split('/');
+        if(parts.length===3){
+          const d=new Date(+parts[2],+parts[0]-1,+parts[1]);
+          if(!isNaN(d) && d.getTime()<new Date().setHours(0,0,0,0)){
+            data.cell.styles.fillColor=[253,234,237];
+            data.cell.styles.textColor=[180,16,30];
+            data.cell.styles.fontStyle='bold';
+          }
+        }
+      }
+    };
+
     if(!projRFIs.length){
       doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...midGray);
       doc.text('No RFIs logged for this project.',10,y); y+=10;
@@ -3364,9 +3746,10 @@ async function generateSummaryPDF(){
         headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
         bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
         alternateRowStyles:{fillColor:[249,248,248]},
-        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'ellipsize'},
-        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:20},3:{cellWidth:20},4:{cellWidth:24},5:{cellWidth:18}},
+        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
+        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:24},3:{cellWidth:24},4:{cellWidth:28},5:{cellWidth:22}},
         margin:{left:10,right:10},
+        didParseCell:(data)=>cellColor(data,4,5,3),
       });
       y=doc.lastAutoTable.finalY+8;
     }
@@ -3384,9 +3767,10 @@ async function generateSummaryPDF(){
         headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
         bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
         alternateRowStyles:{fillColor:[249,248,248]},
-        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'ellipsize'},
-        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:22},3:{cellWidth:20},4:{cellWidth:30},5:{cellWidth:24}},
+        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
+        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:28},3:{cellWidth:24},4:{cellWidth:34},5:{cellWidth:30}},
         margin:{left:10,right:10},
+        didParseCell:(data)=>cellColor(data,4),
       });
       y=doc.lastAutoTable.finalY+8;
     }
@@ -3401,9 +3785,10 @@ async function generateSummaryPDF(){
         headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
         bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
         alternateRowStyles:{fillColor:[249,248,248]},
-        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'ellipsize'},
-        columnStyles:{0:{fontStyle:'bold',cellWidth:45},1:{cellWidth:35},2:{cellWidth:24},3:{cellWidth:24},4:{cellWidth:22}},
+        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
+        columnStyles:{0:{fontStyle:'bold'},1:{cellWidth:'auto'},2:{cellWidth:28},3:{cellWidth:28},4:{cellWidth:24}},
         margin:{left:10,right:10},
+        didParseCell:(data)=>cellColor(data,4,-1,3),
       });
     }
     drawFooter(`${p.name}  |  Page ${pi+2}`);
@@ -3439,8 +3824,11 @@ async function generateSummaryPDF(){
 // Excel and PDF export for RFI, Submittal, and Rental logs
 
 // ── EXCEL EXPORT ─────────────────────────────────────────
-function exportToExcel(type){
+function exportToExcel(type, btn){
   if(typeof XLSX === 'undefined'){ alert('Excel library not loaded yet. Please try again in a moment.'); return; }
+
+  const origHTML = btn ? btn.innerHTML : null;
+  if(btn){ btn.disabled=true; btn.innerHTML='Generating…'; }
 
   let data = [];
   let filename = '';
@@ -3480,7 +3868,10 @@ function exportToExcel(type){
     }));
   }
 
-  if(!data.length){ alert('No data to export yet.'); return; }
+  if(!data.length){
+    if(btn){ btn.disabled=false; btn.innerHTML=origHTML; }
+    alert('No data to export yet.'); return;
+  }
 
   const ws = XLSX.utils.json_to_sheet(data);
 
@@ -3500,211 +3891,429 @@ function exportToExcel(type){
   XLSX.utils.book_append_sheet(wb, meta, 'Info');
 
   XLSX.writeFile(wb, filename);
+  if(btn){ btn.disabled=false; btn.innerHTML=origHTML; }
 }
 
 // ── PDF EXPORT ────────────────────────────────────────────
-async function exportToPDF(type){
+async function exportToPDF(type, btn){
   if(typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined'){
     alert('PDF library not loaded yet. Please try again in a moment.'); return;
   }
+  const origHTML = btn ? btn.innerHTML : null;
+  if(btn){ btn.disabled=true; btn.innerHTML='Generating…'; }
+
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
   const pw = 297; const ph = 210;
   const red = [200,16,46]; const black = [26,26,26]; const white = [255,255,255];
   const lightGray = [249,248,248]; const midGray = [226,224,224]; const darkGray = [80,80,80];
 
-  let title='', filename='', columns=[], rows=[], stats=[];
+  // Status / priority color map — mirrors dashboard badge palette exactly
+  const statusPDF = {
+    'Open':              {bg:[253,234,237], fg:[180,16,30]},
+    'Under Review':      {bg:[254,243,200], fg:[161,98,7]},
+    'Answered':          {bg:[220,252,231], fg:[21,128,61]},
+    'Closed':            {bg:[241,245,249], fg:[71,85,105]},
+    'Pending':           {bg:[241,245,249], fg:[100,116,139]},
+    'Approved':          {bg:[220,252,231], fg:[21,128,61]},
+    'Approved as Noted': {bg:[209,250,229], fg:[5,150,105]},
+    'Revise & Resubmit': {bg:[253,234,237], fg:[180,16,30]},
+    'Rejected':          {bg:[253,234,237], fg:[180,16,30]},  // badge-red
+    'Ordered':           {bg:[254,243,200], fg:[161,98,7]},
+    'On Site':           {bg:[220,252,231], fg:[21,128,61]},
+    'Released':          {bg:[220,252,231], fg:[21,128,61]},  // badge-green
+    'High':              {bg:[253,234,237], fg:[180,16,30]},
+    'Medium':            {bg:[254,243,200], fg:[161,98,7]},
+    'Low':               {bg:[239,246,255], fg:[37,99,235]},
+  };
+  const barColors = {
+    'Open':[200,16,46],'Under Review':[217,119,6],'Answered':[21,128,61],'Closed':[100,116,139],
+    'Pending':[100,116,139],'Approved':[21,128,61],'Approved as Noted':[5,150,105],
+    'Revise & Resubmit':[200,16,46],'Rejected':[200,16,46],   // red
+    'Ordered':[217,119,6],'On Site':[21,128,61],'Released':[21,128,61],  // green
+  };
+
+  // Format YYYY-MM-DD → MM/DD/YYYY for table display
+  const fmtDate = d => {
+    if(!d) return '—';
+    const p = d.split('-');
+    return p.length===3 ? `${p[1]}/${p[2]}/${p[0]}` : d;
+  };
+
+  let title='', filename='', columns=[], rows=[], stats=[], columnStyles={};
+  let statusColIdx=-1, priorityColIdx=-1, dueDateColIdx=-1;
 
   if(type==='rfi'){
     title='RFI Log'; filename='RFI_Log.pdf';
     columns=['RFI #','Subject','Project','Submitted','Due','Status','Priority'];
-    rows=rfis.map(r=>[r.num||'',r.subject||'',r.project||'',r.submitted||'',r.due||'',r.status||'',r.priority||'']);
+    rows=rfis.map(r=>[r.num||'',r.subject||'',r.project||'',fmtDate(r.submitted),fmtDate(r.due),r.status||'',r.priority||'']);
+    statusColIdx=5; priorityColIdx=6; dueDateColIdx=4;
+    // Landscape 277mm usable: fixed cols leave 151mm for Subject+Project (auto)
+    columnStyles={0:{fontStyle:'bold',cellWidth:22},3:{cellWidth:26},4:{cellWidth:26},5:{cellWidth:30},6:{cellWidth:22}};
     const open=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
     const high=rfis.filter(r=>r.priority==='High').length;
     stats=[
-      {label:'Total RFIs', value:rfis.length},
-      {label:'Open', value:open},
-      {label:'Answered', value:rfis.filter(r=>r.status==='Answered').length},
-      {label:'High Priority', value:high}
+      {label:'Total RFIs',   value:rfis.length,                                         color:black},
+      {label:'Open',         value:open,                                                 color:open>0?red:[21,128,61]},
+      {label:'Answered',     value:rfis.filter(r=>r.status==='Answered').length,         color:[21,128,61]},
+      {label:'High Priority',value:high,                                                 color:high>0?red:darkGray},
     ];
   } else if(type==='submittal'){
     title='Submittal Log'; filename='Submittal_Log.pdf';
     columns=['Sub #','Description','Project','Spec Section','Submitted','Status','Ball in Court'];
-    rows=submittals.map(s=>[s.num||'',s.desc||s.description||'',s.project||'',s.spec||'',s.date||s.submitted_date||'',s.status||'',s.bic||'']);
+    rows=submittals.map(s=>[s.num||'',s.desc||s.description||'',s.project||'',s.spec||'',fmtDate(s.date||s.submitted_date),s.status||'',s.bic||'']);
+    statusColIdx=5;
+    // 'Spec Section'=30, 'Submitted'=26, 'Status'=36 (fits 'Approved as Noted'), 'Ball in Court'=32
+    columnStyles={0:{fontStyle:'bold',cellWidth:22},3:{cellWidth:30},4:{cellWidth:26},5:{cellWidth:36},6:{cellWidth:32}};
+    const pending=submittals.filter(s=>['Pending','Under Review'].includes(s.status)).length;
+    const approved=submittals.filter(s=>s.status==='Approved'||s.status==='Approved as Noted').length;
+    const rnr=submittals.filter(s=>s.status==='Revise & Resubmit').length;
     stats=[
-      {label:'Total Submittals', value:submittals.length},
-      {label:'Pending', value:submittals.filter(s=>['Pending','Under Review'].includes(s.status)).length},
-      {label:'Approved', value:submittals.filter(s=>s.status==='Approved'||s.status==='Approved as Noted').length},
-      {label:'Revise & Resubmit', value:submittals.filter(s=>s.status==='Revise & Resubmit').length}
+      {label:'Total Submittals',  value:submittals.length, color:black},
+      {label:'Pending / Review',  value:pending,           color:pending>0?[161,98,7]:darkGray},
+      {label:'Approved',          value:approved,          color:approved>0?[21,128,61]:darkGray},
+      {label:'Revise & Resubmit', value:rnr,               color:rnr>0?red:darkGray},
     ];
   } else if(type==='rental'){
     title='Rental Equipment'; filename='Rental_Equipment.pdf';
     columns=['Equipment','Project','Vendor','On Site Date','Release Date','Status'];
-    rows=rental.map(r=>[r.name||'',r.project||'',r.vendor||'',r.onsite||r.onsite_date||'',r.offsite||r.release_date||'',r.status||'']);
+    rows=rental.map(r=>[r.name||'',r.project||'',r.vendor||'',fmtDate(r.onsite||r.onsite_date),fmtDate(r.offsite||r.release_date),r.status||'']);
+    statusColIdx=5; dueDateColIdx=4;
+    // 'On Site Date'=28, 'Release Date'=28, 'Status'=26; Equipment/Project/Vendor auto
+    columnStyles={0:{fontStyle:'bold'},3:{cellWidth:28},4:{cellWidth:28},5:{cellWidth:26}};
+    const ordered=rental.filter(r=>r.status==='Ordered').length;
+    const onsite=rental.filter(r=>r.status==='On Site').length;
+    const released=rental.filter(r=>['Release','Released'].includes(r.status)).length;
     stats=[
-      {label:'Total Equipment', value:rental.length},
-      {label:'Ordered', value:rental.filter(r=>r.status==='Ordered').length},
-      {label:'On Site', value:rental.filter(r=>r.status==='On Site').length},
-      {label:'Released', value:rental.filter(r=>r.status==='Release'||r.status==='Released').length}
+      {label:'Total Equipment', value:rental.length, color:black},
+      {label:'Ordered',         value:ordered,       color:ordered>0?[161,98,7]:darkGray},
+      {label:'On Site',         value:onsite,        color:onsite>0?[21,128,61]:darkGray},
+      {label:'Released',        value:released,      color:darkGray},
     ];
   }
 
-  if(!rows.length){ alert('No data to export yet.'); return; }
-
-  // ── HEADER BAR ──────────────────────────────────────────
-  doc.setFillColor(...black);
-  doc.rect(0, 0, pw, 28, 'F');
-  doc.setFillColor(...red);
-  doc.rect(0, 26, pw, 2.5, 'F');
-  doc.setFillColor(...red);
-  doc.rect(0, 0, 2, 28, 'F');
-
-  // Draw MICHELS logo
-  await document.fonts.ready;
-  const logoCanvas = document.createElement('canvas');
-  logoCanvas.width = 1200; logoCanvas.height = 158;
-  const lctx = logoCanvas.getContext('2d');
-  lctx.imageSmoothingEnabled = true;
-  lctx.imageSmoothingQuality = 'high';
-
-  const grad = lctx.createLinearGradient(0, 0, 0, 158);
-  grad.addColorStop(0,    '#a00d1e');
-  grad.addColorStop(0.45, '#c8102e');
-  grad.addColorStop(1,    '#e8324a');
-
-  lctx.font = "400 140px 'Alfa Slab One', 'Rockwell', serif";
-  lctx.letterSpacing = '10px';
-  lctx.textAlign = 'center';
-  lctx.fillStyle = grad;
-  lctx.fillText('MICHELS', 600, 131);
-
-  const logoData = logoCanvas.toDataURL('image/png', 1.0);
-  doc.addImage(logoData, 'PNG', 7, 4, 58, 17);
-
-  doc.setDrawColor(...red);
-  doc.setLineWidth(0.8);
-  doc.line(7, 24, 65, 24);
-
-  doc.setDrawColor(100,100,100);
-  doc.setLineWidth(0.3);
-  doc.line(70, 4, 70, 24);
-
-  doc.setTextColor(...white);
-  doc.setFontSize(16);
-  doc.setFont('helvetica','bold');
-  doc.text(title, pw/2, 13, {align:'center'});
-
-  doc.setFontSize(8);
-  doc.setFont('helvetica','normal');
-  doc.setTextColor(180,180,180);
-  doc.text('Michels Power Inc.  —  APM Dashboard', pw/2, 20, {align:'center'});
-
-  doc.setTextColor(180,180,180);
-  doc.setFontSize(7.5);
-  doc.text('Generated: ' + new Date().toLocaleString(), pw-10, 10, {align:'right'});
-  doc.text('Records: ' + rows.length, pw-10, 17, {align:'right'});
-
-  // ── SUMMARY STATS BAR ─────────────────────────────────
-  const statsY = 32;
-  const boxW = (pw - 20) / stats.length;
-  stats.forEach((s, i) => {
-    const x = 10 + i * boxW;
-    doc.setFillColor(245, 244, 244);
-    doc.roundedRect(x, statsY, boxW-3, 18, 2, 2, 'F');
-    doc.setFillColor(...red);
-    doc.rect(x, statsY, boxW-3, 1.5, 'F');
-    doc.setTextColor(...black);
-    doc.setFontSize(18);
-    doc.setFont('helvetica','bold');
-    doc.text(String(s.value), x + (boxW-3)/2, statsY+11, {align:'center'});
-    doc.setFontSize(7);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(...darkGray);
-    doc.text(s.label.toUpperCase(), x + (boxW-3)/2, statsY+16, {align:'center'});
-  });
-
-  // ── TABLE ──────────────────────────────────────────────
-  doc.autoTable({
-    head: [columns],
-    body: rows,
-    startY: statsY + 22,
-    theme: 'plain',
-    headStyles: {
-      fillColor: black,
-      textColor: white,
-      fontStyle: 'bold',
-      fontSize: 8.5,
-      cellPadding: {top:4, bottom:4, left:4, right:4}
-    },
-    bodyStyles: {
-      fontSize: 8,
-      textColor: [40,40,40],
-      cellPadding: {top:3.5, bottom:3.5, left:4, right:4}
-    },
-    alternateRowStyles: { fillColor: [249,248,248] },
-    styles: {
-      lineColor: [220,218,218],
-      lineWidth: 0.25,
-      overflow: 'ellipsize'
-    },
-    columnStyles: { 0: {fontStyle:'bold'} },
-    margin: {left:10, right:10},
-    didDrawPage: (data)=>{
-      if(data.pageNumber > 1){
-        doc.setFillColor(...black);
-        doc.rect(0, 0, pw, 8, 'F');
-        doc.setFillColor(...red);
-        doc.rect(0, 8, pw, 1.5, 'F');
-        doc.setTextColor(...white);
-        doc.setFontSize(8);
-        doc.setFont('helvetica','bold');
-        doc.text(`${title}  —  Michels Power Inc.`, 14, 5.5);
-        doc.setTextColor(180,180,180);
-        doc.setFont('helvetica','normal');
-        doc.text(`Page ${data.pageNumber}`, pw-10, 5.5, {align:'right'});
-      }
-      const footY = ph - 8;
-      doc.setDrawColor(...red);
-      doc.setLineWidth(0.5);
-      doc.line(10, footY - 2, pw-10, footY - 2);
-      doc.setFontSize(7);
-      doc.setTextColor(...darkGray);
-      doc.setFont('helvetica','normal');
-      doc.text('Michels Power Inc.  |  APM Dashboard', 10, footY+1);
-      doc.text(`Page ${data.pageNumber}  |  ${new Date().toLocaleDateString()}`, pw/2, footY+1, {align:'center'});
-      doc.text('CONFIDENTIAL — Internal Use Only', pw-10, footY+1, {align:'right'});
-    }
-  });
-
-  // ── SIGNATURE BLOCK ──────────────────────────────────
-  const finalY = doc.lastAutoTable.finalY + 10;
-  if(finalY < ph - 35){
-    doc.setDrawColor(...midGray);
-    doc.setLineWidth(0.3);
-
-    const preparedBy = currentUser ? (currentUser.displayName || currentUser.username) : 'Unknown';
-    const lineY = finalY + 10;
-    const sigX = 10;
-    const sigLineW = 80;
-
-    doc.setDrawColor(...darkGray);
-    doc.setLineWidth(0.4);
-    doc.line(sigX, lineY, sigX + sigLineW, lineY);
-    doc.setFontSize(8.5);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(...black);
-    doc.text(preparedBy, sigX, lineY - 2);
-    doc.setFontSize(7.5);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(...black);
-    doc.text('Prepared By', sigX, lineY + 5);
-    doc.setFontSize(7.5);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(...darkGray);
-    doc.text('Date: ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}), sigX, lineY + 9);
+  if(!rows.length){
+    if(btn){ btn.disabled=false; btn.innerHTML=origHTML; }
+    alert('No data to export yet.'); return;
   }
 
-  doc.save(filename);
+  try{
+    // ── HEADER — mirrors dashboard header ─────────────────
+    doc.setFillColor(...black);
+    doc.rect(0, 0, pw, 30, 'F');
+    doc.setFillColor(...red);
+    doc.rect(0, 28, pw, 2.5, 'F');
+    doc.setFillColor(...red);
+    doc.rect(0, 0, 3, 30, 'F');
+
+    // Logo: MICHELS + POWER, INC. (matching dashboard SVG)
+    await document.fonts.ready;
+    const lc = document.createElement('canvas');
+    lc.width = 1300; lc.height = 230;
+    const lx = lc.getContext('2d');
+    lx.imageSmoothingEnabled = true; lx.imageSmoothingQuality = 'high';
+    const lg = lx.createLinearGradient(0, 0, 0, 160);
+    lg.addColorStop(0,'#a00d1e'); lg.addColorStop(0.45,'#c8102e'); lg.addColorStop(1,'#e8324a');
+    lx.font = "400 128px 'Alfa Slab One','Rockwell',serif";
+    lx.letterSpacing = '8px'; lx.textBaseline = 'alphabetic';
+    lx.fillStyle = lg; lx.fillText('MICHELS', 10, 130);
+    lx.font = "700 46px 'DM Sans',Arial,sans-serif";
+    lx.letterSpacing = '5px';
+    lx.fillStyle = '#ffffff'; lx.fillText('POWER, INC.', 14, 190);
+    const logoData = lc.toDataURL('image/png', 1.0);
+    doc.addImage(logoData, 'PNG', 7, 3, 70, 23);
+
+    doc.setDrawColor(80,80,80); doc.setLineWidth(0.3);
+    doc.line(82, 5, 82, 25);
+
+    doc.setTextColor(...white);
+    doc.setFontSize(15); doc.setFont('helvetica','bold');
+    doc.text(title, 89, 14);
+    doc.setFontSize(8); doc.setFont('helvetica','normal');
+    doc.setTextColor(160,160,160);
+    doc.text('Michels Power Inc.  —  APM Dashboard', 89, 22);
+    doc.setFontSize(7.5);
+    doc.text('Generated: ' + new Date().toLocaleString(), pw-10, 11, {align:'right'});
+    doc.text('Records: ' + rows.length, pw-10, 19, {align:'right'});
+
+    // ── STAT CARDS — contextual color per metric ──────────
+    const statsY = 35;
+    const boxW = (pw - 20) / stats.length;
+    stats.forEach((s, i) => {
+      const x = 10 + i * boxW;
+      doc.setFillColor(245, 244, 244);
+      doc.roundedRect(x, statsY, boxW-3, 19, 2, 2, 'F');
+      doc.setFillColor(...(s.color||red));
+      doc.rect(x, statsY, boxW-3, 1.5, 'F');
+      doc.setTextColor(...(s.color||black));
+      doc.setFontSize(20); doc.setFont('helvetica','bold');
+      doc.text(String(s.value), x + (boxW-3)/2, statsY+13, {align:'center'});
+      doc.setFontSize(7); doc.setFont('helvetica','normal');
+      doc.setTextColor(...darkGray);
+      doc.text(s.label.toUpperCase(), x + (boxW-3)/2, statsY+18, {align:'center'});
+    });
+
+    // ── STATUS DISTRIBUTION BAR — mirrors chart strip ──────
+    const barY = statsY + 23;
+    const barW = pw - 20;
+    const statusGroups = {};
+    rows.forEach(r => {
+      const st = statusColIdx >= 0 ? (r[statusColIdx]||'Unknown') : 'Unknown';
+      statusGroups[st] = (statusGroups[st]||0) + 1;
+    });
+    const total = rows.length;
+    doc.setFillColor(226,224,224); doc.roundedRect(10, barY, barW, 4, 1, 1, 'F');
+    let barX = 10;
+    Object.entries(statusGroups).forEach(([st, cnt]) => {
+      const segW = Math.max((cnt/total)*barW, 0.5);
+      doc.setFillColor(...(barColors[st]||darkGray));
+      doc.roundedRect(barX, barY, segW, 4, 1, 1, 'F');
+      barX += segW;
+    });
+    // Legend row
+    let legX = 10; const legY = barY + 9;
+    Object.entries(statusGroups).forEach(([st, cnt]) => {
+      const sc = statusPDF[st];
+      const pillLabel = `${st}  ${cnt}`;
+      const pillW = doc.getTextWidth(pillLabel) * (7/doc.getFontSize()) + 12;
+      doc.setFillColor(...(sc ? sc.bg : [241,245,249]));
+      doc.roundedRect(legX, legY-3.5, pillW, 6, 1, 1, 'F');
+      doc.setFillColor(...(barColors[st]||darkGray));
+      doc.circle(legX+3.5, legY, 1.5, 'F');
+      doc.setFontSize(7); doc.setFont('helvetica','bold');
+      doc.setTextColor(...(sc ? sc.fg : darkGray));
+      doc.text(pillLabel, legX+7, legY+0.5);
+      legX += pillW + 4;
+    });
+
+    // ── TABLE ──────────────────────────────────────────────
+    const tableY = legY + 10;
+    const todayMs = new Date().setHours(0,0,0,0);
+
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+      startY: tableY,
+      theme: 'plain',
+      headStyles: {
+        fillColor: black,
+        textColor: white,
+        fontStyle: 'bold',
+        fontSize: 8.5,
+        cellPadding: {top:4, bottom:4, left:4, right:4},
+      },
+      bodyStyles: {
+        fontSize: 8,
+        textColor: [40,40,40],
+        cellPadding: {top:3.5, bottom:3.5, left:4, right:4},
+      },
+      alternateRowStyles: { fillColor: [249,248,248] },
+      styles: {
+        lineColor: [220,218,218],
+        lineWidth: 0.25,
+        overflow: 'linebreak',
+      },
+      columnStyles,
+      margin: {left:10, right:10},
+      didParseCell: (data) => {
+        if(data.section !== 'body') return;
+        const col = data.column.index;
+        const v = String(data.cell.raw||'');
+        // Status column
+        if(col === statusColIdx && statusPDF[v]){
+          data.cell.styles.fillColor = statusPDF[v].bg;
+          data.cell.styles.textColor = statusPDF[v].fg;
+          data.cell.styles.fontStyle  = 'bold';
+        }
+        // Priority column
+        if(col === priorityColIdx && statusPDF[v]){
+          data.cell.styles.fillColor = statusPDF[v].bg;
+          data.cell.styles.textColor = statusPDF[v].fg;
+          data.cell.styles.fontStyle  = 'bold';
+        }
+        // Due/release date — highlight overdue in red
+        if(col === dueDateColIdx && v && v !== '—'){
+          const parts = v.split('/');
+          if(parts.length === 3){
+            const d = new Date(+parts[2], +parts[0]-1, +parts[1]);
+            if(!isNaN(d) && d.getTime() < todayMs){
+              data.cell.styles.fillColor = [253,234,237];
+              data.cell.styles.textColor = [180,16,30];
+              data.cell.styles.fontStyle  = 'bold';
+            }
+          }
+        }
+      },
+      didDrawPage: (data) => {
+        if(data.pageNumber > 1){
+          doc.setFillColor(...black); doc.rect(0, 0, pw, 9, 'F');
+          doc.setFillColor(...red);   doc.rect(0, 9, pw, 1.5, 'F');
+          doc.setTextColor(...white); doc.setFontSize(8); doc.setFont('helvetica','bold');
+          doc.text(`${title}  —  Michels Power Inc.`, 14, 6.5);
+          doc.setTextColor(180,180,180); doc.setFont('helvetica','normal');
+          doc.text(`Page ${data.pageNumber}`, pw-10, 6.5, {align:'right'});
+        }
+        const footY = ph - 8;
+        doc.setDrawColor(...red); doc.setLineWidth(0.5);
+        doc.line(10, footY-2, pw-10, footY-2);
+        doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+        doc.text('Michels Power Inc.  |  APM Dashboard', 10, footY+1);
+        doc.text(`Page ${data.pageNumber}  |  ${new Date().toLocaleDateString()}`, pw/2, footY+1, {align:'center'});
+        doc.text('CONFIDENTIAL — Internal Use Only', pw-10, footY+1, {align:'right'});
+      },
+    });
+
+    // ── SIGNATURE BLOCK ──────────────────────────────────
+    const finalY = doc.lastAutoTable.finalY + 10;
+    if(finalY < ph - 30){
+      const preparedBy = currentUser ? (currentUser.displayName || currentUser.username) : 'Unknown';
+      const lineY = finalY + 10;
+      doc.setDrawColor(...darkGray); doc.setLineWidth(0.4);
+      doc.line(10, lineY, 90, lineY);
+      doc.setFillColor(...red); doc.rect(10, lineY, 80, 1, 'F');
+      doc.setFontSize(8.5); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+      doc.text(preparedBy, 10, lineY - 2);
+      doc.setFontSize(7.5); doc.setFont('helvetica','bold');
+      doc.text('Prepared By', 10, lineY + 5);
+      doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+      doc.text('Date: ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}), 10, lineY + 9);
+    }
+
+    doc.save(filename);
+  } finally {
+    if(btn){ btn.disabled=false; btn.innerHTML=origHTML; }
+  }
+}
+</script>
+
+<!-- ── activity.js ── -->
+<script>
+// Activity log: localStorage-backed feed on the landing page Recent Activity panel
+
+let activityLog = [];
+let currentActivityFilter = '7d';
+let activityCustomFrom = null;
+let activityCustomTo   = null;
+
+const ACTIVITY_KEY = 'apm_activity';
+const ACTIVITY_MAX = 500;
+const ACTIVITY_COLORS = {
+  project:   'var(--michels-red)',
+  rfi:       'var(--amber)',
+  submittal: '#3b82f6',
+  rental:    'var(--green)',
+  status:    '#8b5cf6',
+  delete:    '#ef4444',
+};
+
+function loadActivity(){
+  try {
+    const raw = localStorage.getItem(ACTIVITY_KEY);
+    activityLog = raw ? JSON.parse(raw) : [];
+  } catch(e){ activityLog = []; }
+  renderActivity();
+  updateNotifDot();
+}
+
+function _saveActivity(){
+  if(activityLog.length > ACTIVITY_MAX) activityLog = activityLog.slice(0, ACTIVITY_MAX);
+  localStorage.setItem(ACTIVITY_KEY, JSON.stringify(activityLog));
+}
+
+function logActivity(type, action, label, detail){
+  if(typeof label === 'undefined' || label === null) label = 'Unknown';
+  const entry = {
+    id: Date.now() + '_' + Math.random().toString(36).slice(2),
+    type,
+    action,
+    label: String(label),
+    detail: detail ? String(detail) : '',
+    user: currentUser ? (currentUser.displayName || currentUser.username) : 'Unknown',
+    ts: new Date().toISOString(),
+  };
+  activityLog.unshift(entry);
+  _saveActivity();
+  renderActivity();
+  updateNotifDot();
+}
+
+function setActivityFilter(f){
+  currentActivityFilter = f;
+  document.querySelectorAll('.activity-filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.filter === f);
+  });
+  const cr = document.getElementById('activity-custom-range');
+  if(cr) cr.classList.toggle('visible', f === 'custom');
+  if(f !== 'custom') renderActivity();
+}
+
+function applyCustomActivityFilter(){
+  activityCustomFrom = document.getElementById('activity-from')?.value || null;
+  activityCustomTo   = document.getElementById('activity-to')?.value   || null;
+  renderActivity();
+}
+
+function _getFilteredActivity(){
+  const now = new Date();
+  const ago = days => { const d = new Date(now); d.setDate(d.getDate()-days); d.setHours(0,0,0,0); return d; };
+  let from, to = now;
+  switch(currentActivityFilter){
+    case '7d':  from = ago(7);  break;
+    case '14d': from = ago(14); break;
+    case '30d': from = ago(30); break;
+    case 'ytd': from = new Date(now.getFullYear(), 0, 1); break;
+    case 'all': return [...activityLog];
+    case 'custom':
+      from = activityCustomFrom ? new Date(activityCustomFrom + 'T00:00:00') : null;
+      to   = activityCustomTo   ? new Date(activityCustomTo   + 'T23:59:59') : now;
+      if(!from) return [...activityLog];
+      break;
+    default: return [...activityLog];
+  }
+  return activityLog.filter(e => { const t=new Date(e.ts); return t>=from && t<=to; });
+}
+
+function _timeAgo(date){
+  const sec = Math.floor((Date.now() - date.getTime()) / 1000);
+  if(sec < 60)    return 'just now';
+  if(sec < 3600)  return Math.floor(sec/60)+'m ago';
+  if(sec < 86400) return Math.floor(sec/3600)+'h ago';
+  if(sec < 604800) return Math.floor(sec/86400)+'d ago';
+  return date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+function renderActivity(){
+  const list = document.getElementById('landing-notif-list');
+  if(!list) return;
+  const entries = _getFilteredActivity();
+  if(!entries.length){
+    const pLabel = {'7d':'7 days','14d':'2 weeks','30d':'30 days','ytd':'this year','all':'all time','custom':'this range'}[currentActivityFilter]||'this period';
+    list.innerHTML = `<div class="landing-notif-empty">No activity in ${pLabel}.</div>`;
+    return;
+  }
+  list.innerHTML = entries.map(e => {
+    const color = ACTIVITY_COLORS[e.type] || 'var(--text-muted)';
+    const ago = _timeAgo(new Date(e.ts));
+    const detailHtml = e.detail ? ` <span style="color:var(--text-muted);font-weight:400">— ${h(e.detail)}</span>` : '';
+    return `<div class="landing-notif-item">
+      <div class="landing-notif-dot" style="background:${color};margin-top:5px"></div>
+      <div class="landing-notif-body">
+        <div class="landing-notif-text">${h(e.label)}${detailHtml}</div>
+        <div class="landing-notif-meta">${h(e.action)} · ${h(e.user)} · ${ago}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateNotifDot(){
+  const has = activityLog.some(e => (Date.now()-new Date(e.ts).getTime()) < 86400000);
+  ['landing-bell-dot','header-bell-dot'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.style.display = has ? '' : 'none';
+  });
+  const cnt = activityLog.filter(e => (Date.now()-new Date(e.ts).getTime()) < 86400000).length;
+  const badge = document.getElementById('landing-notif-badge');
+  if(badge){ badge.textContent = cnt; badge.style.display = cnt > 0 ? '' : 'none'; }
 }
 </script>
 
@@ -3713,6 +4322,7 @@ async function exportToPDF(type){
 // Run after all modules are loaded.
 initDatePickers(); // replace native date inputs with Flatpickr
 loadTodoState();
+loadActivity();
 initDefaultAdmin().then(()=>{
   if(!checkSession()){
     document.getElementById('login-overlay').style.display='flex';
