@@ -94,11 +94,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 
 .table-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow-x:auto;overflow-y:hidden;margin-bottom:20px}
 table{width:100%;min-width:900px;border-collapse:collapse;table-layout:fixed}
-thead tr{background:var(--surface)}
-th{padding:10px 14px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;text-align:left;border-bottom:1px solid var(--border)}
-td{padding:10px 14px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle}
+thead tr{background:var(--michels-black)}
+th{padding:11px 14px;font-size:10.5px;font-weight:700;color:rgba(255,255,255,.82);text-transform:uppercase;letter-spacing:.65px;text-align:left;border-bottom:2px solid var(--michels-red)}
+td{padding:11px 14px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:#f8fafc}
+tbody tr:nth-child(even) td{background:#fafafa}
+tbody tr{transition:background .1s}
+tbody tr:hover td{background:#fdf0f2!important}
+tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 var(--michels-red)}
 .truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .progress-bar-bg{background:#e2e8f0;border-radius:4px;height:6px;width:100%;min-width:60px}
@@ -123,8 +126,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--michels-red)}
 textarea{resize:vertical;min-height:72px}
 
 .project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
-.project-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;transition:box-shadow .15s}
-.project-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.project-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;transition:box-shadow .18s,transform .15s;border-top-width:3px}
+.project-card:hover{box-shadow:0 6px 22px rgba(0,0,0,.1);transform:translateY(-2px)}
 .project-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;min-width:0}
 .project-name{font-size:14px;font-weight:600;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis}
 .project-actions{display:flex;gap:6px;margin-top:12px}
@@ -219,9 +222,10 @@ textarea{resize:vertical;min-height:72px}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast-bar{width:3px;min-height:18px;background:var(--michels-red);border-radius:2px;flex-shrink:0;align-self:stretch}
 /* TABLE FILTER BAR */
-.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.filter-input{padding:6px 10px;font-size:12px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);outline:none;transition:border-color .15s}
-.filter-input:focus{border-color:var(--michels-red)}
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:9px 12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.filter-bar::before{content:'';display:block;width:3px;height:20px;background:var(--michels-red);border-radius:2px;flex-shrink:0;margin-right:4px}
+.filter-input{padding:6px 10px;font-size:12px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
+.filter-input:focus{border-color:var(--michels-red);background:var(--white)}
 .filter-clear{background:none;border:none;font-size:11px;color:var(--text-muted);cursor:pointer;padding:4px 6px;border-radius:4px;font-family:'DM Sans',sans-serif}
 .filter-clear:hover{color:var(--red);background:var(--red-light)}
 /* LOADING */
@@ -496,7 +500,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 <div class="dashboard" id="main-dashboard" style="display:none">
   <div class="header">
     <div class="header-left">
-      <svg class="logo-img" viewBox="0 0 260 60" xmlns="http://www.w3.org/2000/svg" style="height:50px;width:240px">
+      <svg class="logo-img" viewBox="0 0 260 60" xmlns="http://www.w3.org/2000/svg" style="height:50px;width:240px;cursor:pointer" onclick="goToLanding()" title="Back to home">
   <defs>
     <linearGradient id="michels-grad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%"   stop-color="#a00d1e"/>
@@ -552,7 +556,6 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
   </div>
 
   <div class="nav">
-    <div class="nav-tab" data-tab="controls">Project Controls</div>
     <div class="nav-tab active" data-tab="projects">Active Projects</div>
     <div class="nav-tab" data-tab="rfi">RFI Log</div>
     <div class="nav-tab" data-tab="submittal">Submittal Log</div>
@@ -1639,14 +1642,22 @@ function checkSession(){
 function goToDashboard(){
   document.getElementById('landing-page').style.display='none';
   document.getElementById('main-dashboard').style.display='';
+  document.querySelector('.nav').style.display='';
+  // Ensure controls section is inactive, activate first allowed tab
+  document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
+  const firstTab = document.querySelector('.nav-tab:not([style*="display: none"])');
+  if(firstTab) firstTab.click();
 }
 function goToProjectControls(){
   document.getElementById('landing-page').style.display='none';
   document.getElementById('main-dashboard').style.display='';
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.nav').style.display='none';
   document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
-  const ctrlTab=document.querySelector('.nav-tab[data-tab="controls"]');
-  if(ctrlTab){ ctrlTab.classList.add('active'); document.getElementById('tab-controls').classList.add('active'); }
+  document.getElementById('tab-controls').classList.add('active');
+}
+function goToLanding(){
+  document.getElementById('main-dashboard').style.display='none';
+  document.getElementById('landing-page').style.display='';
 }
 function showDashboard(){
   document.getElementById('login-overlay').style.display='none';
@@ -1760,6 +1771,7 @@ function logout(){
   sessionStorage.removeItem('apm_session');
   localStorage.removeItem('apm_remember');
   document.getElementById('main-dashboard').style.display='none';
+  document.getElementById('landing-page').style.display='none';
   document.getElementById('login-overlay').style.display='flex';
   document.getElementById('login-username').value='';
   document.getElementById('login-password').value='';
@@ -1961,10 +1973,11 @@ function renderProjects(){
       p.assigned_super   && `Super: ${h(getUserDisplay(p.assigned_super))}`,
       p.assigned_foreman && `Foreman: ${h(getUserDisplay(p.assigned_foreman))}`,
     ].filter(Boolean);
+    const cardAccent = ['Complete','Closeout'].includes(p.status) ? 'var(--green)' : p.status==='On Hold' ? 'var(--amber)' : p.status==='In Progress' ? 'var(--michels-red)' : '#cbd5e1';
     return `
-    <div class="project-card">
+    <div class="project-card" style="border-top-color:${cardAccent}">
       <div class="project-card-header">
-        <div>
+        <div style="min-width:0">
           <div class="project-name">${h(p.name)}</div>
           <div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'DM Mono',monospace">${h(p.number)}</div>
         </div>
@@ -1972,8 +1985,8 @@ function renderProjects(){
       </div>
       <div style="font-size:12px;color:var(--text-mid);margin-bottom:8px">Client: <strong>${h(p.client)}</strong></div>
       <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">${fmt(p.start)} → ${fmt(p.end)}</div>
-      <div style="font-size:11px;color:var(--text-mid);margin-bottom:4px;display:flex;justify-content:space-between"><span>Progress</span><span>${calcPct(p.start,p.end,p.status)}%</span></div>
-      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${calcPct(p.start,p.end,p.status)}%"></div></div>
+      <div style="font-size:11px;color:var(--text-mid);margin-bottom:4px;display:flex;justify-content:space-between"><span>Progress</span><span style="font-weight:600;color:${cardAccent}">${calcPct(p.start,p.end,p.status)}%</span></div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${calcPct(p.start,p.end,p.status)}%;background:${cardAccent}"></div></div>
       ${teamLines.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">${teamLines.map(t=>`<span style="font-size:11px;color:var(--text-mid);background:var(--surface);border:1px solid var(--border);padding:2px 7px;border-radius:10px">${t}</span>`).join('')}</div>`:''}
       ${p.notes?`<div style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5">${h(p.notes)}</div>`:''}
       <div class="project-actions">
