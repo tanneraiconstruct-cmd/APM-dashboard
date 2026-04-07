@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
 <title>APM Project Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -1810,33 +1811,112 @@ async function sbDelete(table, id){
 <script>
 // Password hashing, user loading/saving, login, session, logout
 
-async function hashPassword(password){
-  const msgBuffer = new TextEncoder().encode(password + 'michels_apm_salt');
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+// ── PASSWORD HASHING ──────────────────────────────────────
+// v2 format: "v2:<hex-salt>:<hex-hash>" — PBKDF2-SHA256, 200k iterations, per-user salt
+// v1 format: 64-char hex — legacy SHA-256 with global salt (verified but auto-upgraded on login)
+
+async function _pbkdf2Hash(password, salt){
+  const keyMat = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']
+  );
+  const bits = await crypto.subtle.deriveBits(
+    {name:'PBKDF2', salt:new TextEncoder().encode(salt), iterations:200000, hash:'SHA-256'},
+    keyMat, 256
+  );
+  return Array.from(new Uint8Array(bits)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-// Load users from Supabase, fall back to localStorage
+async function hashPassword(password){
+  const saltBytes = crypto.getRandomValues(new Uint8Array(16));
+  const salt = Array.from(saltBytes).map(b=>b.toString(16).padStart(2,'0')).join('');
+  const hash = await _pbkdf2Hash(password, salt);
+  return `v2:${salt}:${hash}`;
+}
+
+async function verifyPassword(password, stored){
+  if(!stored) return false;
+  if(stored.startsWith('v2:')){
+    const parts = stored.split(':');
+    if(parts.length !== 3) return false;
+    const computed = await _pbkdf2Hash(password, parts[1]);
+    return computed === parts[2];
+  }
+  // Legacy v1 — SHA-256 with fixed salt (read-only path, auto-upgrades on login)
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password + 'michels_apm_salt'));
+  const hex = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  return hex === stored;
+}
+
+// ── LOGIN RATE LIMITING ───────────────────────────────────
+const _RL_KEY = 'apm_rl';
+const _RL_MAX = 5;
+const _RL_WINDOW = 15 * 60 * 1000; // 15 min lockout
+
+function _rlCheck(username){
+  try{
+    const d = JSON.parse(localStorage.getItem(_RL_KEY)||'{}');
+    const e = d[username];
+    if(e && e.until > Date.now()){
+      const m = Math.ceil((e.until - Date.now()) / 60000);
+      return {ok:false, msg:`Too many failed attempts. Try again in ${m} minute${m!==1?'s':''}.`};
+    }
+  }catch(e){}
+  return {ok:true};
+}
+function _rlFail(username){
+  try{
+    const d = JSON.parse(localStorage.getItem(_RL_KEY)||'{}');
+    const e = d[username] || {count:0};
+    e.count++;
+    if(e.count >= _RL_MAX){ e.until = Date.now() + _RL_WINDOW; e.count = 0; }
+    d[username] = e;
+    localStorage.setItem(_RL_KEY, JSON.stringify(d));
+  }catch(e){}
+}
+function _rlClear(username){
+  try{
+    const d = JSON.parse(localStorage.getItem(_RL_KEY)||'{}');
+    delete d[username];
+    localStorage.setItem(_RL_KEY, JSON.stringify(d));
+  }catch(e){}
+}
+
+// ── USER LOADING ─────────────────────────────────────────
+// loadUsers — hash intentionally excluded from client cache
 async function loadUsers(){
   if(sb){
     try{
-      const res = await sb.from('users').select('*').order('id');
+      const res = await sb.from('users').select('id,username,display_name,role').order('id');
       if(!res.error){
         cachedUsers = (res.data||[]).map(u=>({
           username: u.username,
           displayName: u.display_name||u.username,
           role: u.role||'user',
-          hash: u.hash,
           id: u.id
         }));
         localStorage.setItem('apm_users', JSON.stringify(cachedUsers));
         return cachedUsers;
       }
-    }catch(e){ console.error('loadUsers error',e); }
+    }catch(e){}
   }
   try{ cachedUsers = JSON.parse(localStorage.getItem('apm_users')||'[]'); }catch(e){ cachedUsers=[]; }
   return cachedUsers;
+}
+
+// Fetch a single user WITH hash — only used at login time, never persisted to localStorage
+async function _loadUserForAuth(username){
+  if(sb){
+    try{
+      const res = await sb.from('users').select('username,display_name,role,hash')
+        .eq('username', username).maybeSingle();
+      if(!res.error && res.data) return res.data;
+    }catch(e){}
+  }
+  // Offline fallback — hash may be stored locally in offline-only installs
+  try{
+    const users = JSON.parse(localStorage.getItem('apm_users')||'[]');
+    return users.find(u=>u.username.toLowerCase()===username.toLowerCase()) || null;
+  }catch(e){ return null; }
 }
 
 async function saveUserToDB(user){
@@ -1848,13 +1928,16 @@ async function saveUserToDB(user){
         role: user.role,
         hash: user.hash
       });
-      if(res.error){ console.error('saveUserToDB insert error',res.error); return false; }
-    }catch(e){ console.error('saveUserToDB error',e); return false; }
+      if(res.error){ return false; }
+    }catch(e){ return false; }
   }
-  // sync to localStorage
+  // Sync to localStorage — omit hash when Supabase is active (fetched on demand at login)
   let users = JSON.parse(localStorage.getItem('apm_users')||'[]');
   users = users.filter(u=>u.username!==user.username);
-  users.push(user);
+  const localRecord = sb
+    ? {username:user.username, displayName:user.displayName, role:user.role}
+    : {username:user.username, displayName:user.displayName, role:user.role, hash:user.hash};
+  users.push(localRecord);
   localStorage.setItem('apm_users', JSON.stringify(users));
   return true;
 }
@@ -1863,23 +1946,13 @@ async function deleteUserFromDB(username){
   if(sb){
     try{
       const res = await sb.from('users').delete().eq('username', username);
-      if(res.error){ console.error('deleteUserFromDB error',res.error); alert('Failed to delete user: '+res.error.message); return false; }
-    }catch(e){ console.error('deleteUserFromDB error',e); alert('Failed to delete user. Please try again.'); return false; }
+      if(res.error){ alert('Failed to delete user: '+res.error.message); return false; }
+    }catch(e){ alert('Failed to delete user. Please try again.'); return false; }
   }
   let users = JSON.parse(localStorage.getItem('apm_users')||'[]');
   users = users.filter(u=>u.username!==username);
   localStorage.setItem('apm_users', JSON.stringify(users));
   return true;
-}
-
-async function initDefaultAdmin(){
-  const users = await loadUsers();
-  if(!users.length){
-    const pw = 'Michels2024!';
-    const hash = await hashPassword(pw);
-    const admin = {username:'admin',displayName:'Administrator',role:'superadmin',hash};
-    await saveUserToDB(admin);
-  }
 }
 
 async function attemptLogin(){
@@ -1888,21 +1961,53 @@ async function attemptLogin(){
   const errEl = document.getElementById('login-error');
   errEl.style.display='none';
   if(!username||!password){ errEl.style.display='block'; errEl.textContent='Please enter your username and password.'; return; }
-  // Show loading state
+
+  // Rate limit check before any DB query
+  const rl = _rlCheck(username);
+  if(!rl.ok){ errEl.style.display='block'; errEl.textContent=rl.msg; return; }
+
   const btn = document.querySelector('.btn-login');
   btn.textContent='Signing in...'; btn.disabled=true;
-  const hash = await hashPassword(password);
-  const users = await loadUsers();
-  const user = users.find(u=>u.username.toLowerCase()===username && u.hash===hash);
+
+  const dbUser = await _loadUserForAuth(username);
+  const valid = dbUser && await verifyPassword(password, dbUser.hash);
+
   btn.textContent='Sign In'; btn.disabled=false;
-  if(!user){ errEl.style.display='block'; errEl.textContent='Incorrect username or password. Please try again.'; document.getElementById('login-password').value=''; return; }
-  currentUser = user;
-  const sessionData = JSON.stringify({username:user.username,displayName:user.displayName,role:user.role});
+
+  if(!valid){
+    _rlFail(username);
+    errEl.style.display='block';
+    errEl.textContent='Incorrect username or password.';
+    document.getElementById('login-password').value='';
+    return;
+  }
+
+  _rlClear(username);
+
+  // Auto-upgrade legacy v1 hash to v2 on successful login
+  if(dbUser.hash && !dbUser.hash.startsWith('v2:')){
+    const newHash = await hashPassword(password);
+    if(sb) sb.from('users').update({hash:newHash}).eq('username', username);
+    // Also update in localStorage for offline installs
+    try{
+      const ls = JSON.parse(localStorage.getItem('apm_users')||'[]');
+      const idx = ls.findIndex(u=>u.username===username);
+      if(idx>-1){ ls[idx].hash=newHash; localStorage.setItem('apm_users',JSON.stringify(ls)); }
+    }catch(e){}
+  }
+
+  const currentUserObj = {
+    username: dbUser.username,
+    displayName: dbUser.display_name || dbUser.displayName || dbUser.username,
+    role: dbUser.role || 'apm'
+  };
+  currentUser = currentUserObj;
+  const sessionData = JSON.stringify(currentUserObj);
   sessionStorage.setItem('apm_session', sessionData);
-  // Remember Me - store in localStorage with expiry
+
   const rememberMe = document.getElementById('remember-me')?.checked;
   if(rememberMe){
-    const expiry = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 days
+    const expiry = Date.now() + (30 * 24 * 60 * 60 * 1000);
     localStorage.setItem('apm_remember', JSON.stringify({session:sessionData, expiry}));
   } else {
     localStorage.removeItem('apm_remember');
@@ -2062,9 +2167,17 @@ async function verifyCurrentUser(){
 }
 
 function logout(){
-  currentUser=null;
+  currentUser = null;
+  clearTimeout(typeof _idleTimer !== 'undefined' ? _idleTimer : null);
+  // Clear all sensitive cached data on logout — prevents data exposure on shared machines
+  [
+    'apm_session','apm_remember','apm_users',
+    'apm_projects','apm_rfis','apm_submittals','apm_rental',
+    'apm_done_todos','apm_dissolved_todos','apm_snoozed_todos',
+    'apm_reminder_days','apm_activity','apm_activity_seen',
+    'apm_sb_url','apm_sb_key'
+  ].forEach(k => localStorage.removeItem(k));
   sessionStorage.removeItem('apm_session');
-  localStorage.removeItem('apm_remember');
   document.getElementById('main-dashboard').style.display='none';
   document.getElementById('landing-page').style.display='none';
   document.getElementById('login-overlay').style.display='flex';
@@ -2109,7 +2222,7 @@ async function renderUserList(){
           <div style="font-size:11px;color:var(--text-muted);margin-top:2px">@${h(u.username)}</div>
         </div>
       </div>
-      ${u.username==='admin'?'<span style="font-size:11px;color:var(--text-muted)">Protected</span>':`<button class="btn-sm btn-danger" onclick="removeUser('${h(u.username)}')">Remove</button>`}
+      ${currentUser&&u.username===currentUser.username?'<span style="font-size:11px;color:var(--text-muted)">You</span>':`<button class="btn-sm btn-danger" onclick="removeUser('${h(u.username)}')">Remove</button>`}
     </div>
   `).join('');
 }
@@ -2123,7 +2236,8 @@ async function addUser(){
   const addBtn = document.querySelector('#user-modal .btn-add');
   errEl.style.display='none';
   if(!username||!password){ errEl.style.display='block'; errEl.textContent='Username and password are required.'; return; }
-  if(password.length < 6){ errEl.style.display='block'; errEl.textContent='Password must be at least 6 characters.'; return; }
+  if(!/^[a-z0-9_-]+$/.test(username)){ errEl.style.display='block'; errEl.textContent='Username may only contain letters, numbers, underscores, and hyphens.'; return; }
+  if(password.length < 12){ errEl.style.display='block'; errEl.textContent='Password must be at least 12 characters.'; return; }
   // Always fetch fresh from Supabase to check duplicates
   const users = await loadUsers();
   if(users.find(u=>u.username.toLowerCase()===username)){
@@ -2141,7 +2255,9 @@ async function addUser(){
 }
 
 async function removeUser(username){
-  if(username==='admin') return;
+  if(currentUser && username === currentUser.username){
+    showToast('You cannot remove your own account.'); return;
+  }
   const ok = await deleteUserFromDB(username);
   if(ok !== false){ renderUserList(); showToast('User removed.'); }
 }
@@ -2715,6 +2831,14 @@ function renderRentalArchive(){
   ]);
 }
 
+// Safe project filter option click — reads value+label from data attributes,
+// never from inline JS strings (prevents stored XSS via project names).
+function selectFDOptionEl(ddId, el){
+  const value = el.dataset.val || '';
+  const label = el.dataset.label || value || (document.getElementById(ddId)?.dataset.defaultLabel || 'All Projects');
+  selectFDOption(ddId, value, label);
+}
+
 function populateProjectSelects(){
   // Form selects in modals
   const formIds=['rfi-project','sub-project','ren-project'];
@@ -2723,7 +2847,6 @@ function populateProjectSelects(){
     if(!el) return;
     const cur=el.value;
     el.innerHTML='<option value="">Select project</option>'+projects.map(p=>`<option value="${h(p.name)}"${p.name===cur?' selected':''}>${h(p.name)}</option>`).join('');
-    // Restore selection by value after rebuilding options
     if(cur) el.value=cur;
   });
   // Filter custom dropdowns in table tabs
@@ -2737,9 +2860,10 @@ function populateProjectSelects(){
     const menu=el.querySelector('.filter-dd-menu');
     if(!menu) return;
     const cur=el.dataset.fdVal||'';
-    const esc=s=>s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    menu.innerHTML=`<div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('${id}','','${defLabel}')">${defLabel}</div>`+
-      projects.map(p=>`<div class="filter-dd-opt${cur===p.name?' selected':''}" data-val="${h(p.name)}" onclick="selectFDOption('${id}','${esc(p.name)}','${esc(p.name)}')">`+
+    // Use data-val + data-label attributes so no user-controlled text ever appears
+    // inside a JS string in an onclick attribute — eliminates stored XSS vector.
+    menu.innerHTML=`<div class="filter-dd-opt opt-all" data-val="" data-label="${h(defLabel)}" onclick="selectFDOptionEl('${id}',this)">${h(defLabel)}</div>`+
+      projects.map(p=>`<div class="filter-dd-opt${cur===p.name?' selected':''}" data-val="${h(p.name)}" data-label="${h(p.name)}" onclick="selectFDOptionEl('${id}',this)">`+
         `<span class="filter-dd-opt-dot" style="background:var(--michels-red)"></span>${h(p.name)}</div>`).join('');
     if(cur&&!projects.find(p=>p.name===cur)) clearFD(id);
   });
@@ -4437,6 +4561,18 @@ function logActivity(type, action, label, detail){
   _saveActivity();
   renderActivity();
   updateNotifDot();
+  // Mirror to Supabase for a tamper-proof server-side audit trail.
+  // INSERT-only RLS on activity_log means no client can delete or modify records.
+  if(sb){
+    sb.from('activity_log').insert({
+      type: entry.type,
+      action: entry.action,
+      label: entry.label,
+      detail: entry.detail,
+      username: currentUser ? currentUser.username : 'unknown',
+      ts: entry.ts
+    }); // fire-and-forget — local log is always saved regardless
+  }
 }
 
 function setActivityFilter(f){
@@ -4641,20 +4777,67 @@ function updateNotifDot(){
 }
 </script>
 
+<!-- ── security.js ── -->
+<script>
+// Idle timeout, one-time localStorage migration
+
+// ── IDLE SESSION TIMEOUT ──────────────────────────────────
+// Signs the user out after 30 minutes of inactivity.
+const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
+let _idleTimer = null;
+
+function _resetIdleTimer(){
+  clearTimeout(_idleTimer);
+  if(!currentUser) return;
+  _idleTimer = setTimeout(()=>{
+    if(currentUser){
+      logout();
+      setTimeout(()=>{
+        const errEl = document.getElementById('login-error');
+        if(errEl){ errEl.textContent='You have been signed out due to inactivity.'; errEl.style.display='block'; }
+      }, 50);
+    }
+  }, IDLE_TIMEOUT_MS);
+}
+
+function initIdleTimeout(){
+  ['mousedown','keydown','scroll','touchstart','click'].forEach(evt=>
+    document.addEventListener(evt, _resetIdleTimer, {passive:true})
+  );
+}
+
+// ── ONE-TIME SECURITY MIGRATION ───────────────────────────
+// Removes legacy localStorage data that may contain v1 password hashes
+// (including any cached 'admin'/'Michels2024!' entry from earlier versions).
+// Runs once on every page load — safe to call repeatedly.
+(function _securityMigration(){
+  try{
+    // Purge cached user list — may contain v1 SHA-256 hashes.
+    // loadUsers() will repopulate from Supabase (hash-excluded) on next login.
+    localStorage.removeItem('apm_users');
+    // If hardcoded credentials are active, remove any stale localStorage copies
+    // so they can't be read out of the browser after logout.
+    if(typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL){
+      localStorage.removeItem('apm_sb_url');
+      localStorage.removeItem('apm_sb_key');
+    }
+  }catch(e){}
+})();
+</script>
+
 <!-- ── Initialization ── -->
 <script>
 // Run after all modules are loaded.
 initDatePickers(); // replace native date inputs with Flatpickr
+initIdleTimeout();
 loadTodoState();
 loadActivity();
-initDefaultAdmin().then(()=>{
-  if(!checkSession()){
-    document.getElementById('login-overlay').style.display='flex';
-    renderAll();
-  }
-  // If checkSession() showed the dashboard it calls loadData(),
-  // which calls renderAll() once data is ready — no early render needed.
-});
+if(!checkSession()){
+  document.getElementById('login-overlay').style.display='flex';
+  renderAll();
+}
+// If checkSession() showed the dashboard it calls loadData(),
+// which calls renderAll() once data is ready — no early render needed.
 </script>
 
 <!-- Notification Bell Panel -->
