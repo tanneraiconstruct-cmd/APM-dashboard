@@ -504,19 +504,13 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .inline-item-table td{padding:5px 4px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
 .inline-item-table tr:last-child td{border-bottom:none}
 .inline-item-table input[type=text],.inline-item-table input[type=date],.inline-item-table select{width:100%;font-size:12px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;background:var(--white);font-family:'DM Sans',sans-serif;color:var(--text)}
-/* SCHEDULE RISK BANNER */
-.risk-banner{display:none;margin-bottom:14px;padding:11px 16px;background:#fff0f0;border:1px solid #fca5a5;border-radius:8px;font-size:13px;color:var(--michels-red);line-height:1.5}
-.risk-banner strong{font-weight:700}
 /* PROJECT DETAIL PANEL IN CONTROLS TABLE */
 .proj-detail-panel{padding:16px 18px 16px 22px;border-left:3px solid var(--michels-red)}
-.proj-detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px}
+.proj-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 @media(max-width:900px){.proj-detail-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.proj-detail-grid{grid-template-columns:1fr}}
 .proj-detail-section-title{font-size:10px;font-weight:700;color:var(--michels-red);text-transform:uppercase;letter-spacing:.6px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:10px}
-.proj-risk-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
-.proj-risk-item:last-child{border-bottom:none}
-.proj-risk-label{font-weight:600;color:var(--text)}
-.proj-risk-meta{color:var(--text-muted);font-size:11px;margin-top:1px}
+
 </style>
 </head>
 <body>
@@ -751,7 +745,6 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <div class="section-title">Project Controls</div>
       <button class="btn-add" onclick="openModal('controls-modal')">+ New Job</button>
     </div>
-    <div id="schedule-risk-banner" class="risk-banner"></div>
     <div class="table-wrap">
       <table>
         <thead><tr>
@@ -1812,7 +1805,6 @@ function setLoadingState(){
 // ── RENDER ALL ───────────────────────────────────────────
 function renderAll(){
   renderProjectControls();
-  renderScheduleRiskBanner();
   renderProjects();
   renderReportPreview();
   renderRFI();
@@ -1828,42 +1820,6 @@ function renderAll(){
 // ── SCHEDULE RISK ENGINE ─────────────────────────────────
 // Returns open RFIs and pending submittals due within windowDays days (or already overdue).
 // Pass projectId=null for all projects, or a specific project id to filter.
-function getScheduleRisks(projectId = null, windowDays = 7){
-  const today = new Date(); today.setHours(0,0,0,0);
-  const cutoff = new Date(today.getTime() + windowDays * 86400000);
-  const openRfi = ['Open','Under Review'];
-  const openSub = ['Pending','Under Review'];
-  let rPool = rfis.filter(r => openRfi.includes(r.status) && r.due);
-  let sPool = submittals.filter(s => openSub.includes(s.status) && (s.need_date));
-  if(projectId != null){
-    const pid = String(projectId);
-    const proj = projects.find(p => String(p.id) === pid);
-    if(proj){
-      rPool = rPool.filter(r => r.project === proj.name);
-      sPool = sPool.filter(s => s.project === proj.name);
-    } else {
-      rPool = []; sPool = [];
-    }
-  }
-  return {
-    rfis:       rPool.filter(r => new Date(r.due)       <= cutoff),
-    submittals: sPool.filter(s => new Date(s.need_date) <= cutoff),
-  };
-}
-
-function renderScheduleRiskBanner(){
-  const el  = document.getElementById('schedule-risk-banner');
-  if(!el) return;
-  const {rfis: rr, submittals: ss} = getScheduleRisks(null, 7);
-  const total = rr.length + ss.length;
-  if(total === 0){ el.style.display = 'none'; return; }
-  el.style.display = '';
-  const rTxt = rr.length ? `${rr.length} open RFI${rr.length!==1?'s':''}` : '';
-  const sTxt = ss.length ? `${ss.length} submittal${ss.length!==1?'s':''}` : '';
-  const parts = [rTxt, sTxt].filter(Boolean).join(' and ');
-  el.innerHTML = `<strong>&#9888; Schedule Risk</strong> &mdash; ${h(parts)} due within 7 days across active projects.`;
-}
-
 // ── DATE CHIP HELPER ─────────────────────────────────────
 function dateChip(dateStr, isDue){
   if(!dateStr) return '<span style="color:var(--text-muted);font-size:12px">—</span>';
@@ -2867,15 +2823,12 @@ function renderProjectControls(){
     return;
   }
   body.innerHTML=projects.map(p=>{
-    const risks = getScheduleRisks(p.id, 7);
-    const riskCount = risks.rfis.length + risks.submittals.length;
-    const riskBadge = riskCount ? `<span style="display:inline-flex;align-items:center;gap:3px;background:#fee2e2;color:var(--red);font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:5px">&#9888; ${riskCount}</span>` : '';
     return `
     <tr id="ctrl-row-${p.id}" class="data-row" onclick="toggleCtrlDetail(${p.id})">
       <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">
         <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>${h(p.number)||'&mdash;'}
       </td>
-      <td class="truncate">${h(p.name)}${riskBadge}</td>
+      <td class="truncate">${h(p.name)}</td>
       <td class="truncate">${h(p.client)||'&mdash;'}</td>
       <td class="truncate">${h(p.contract_type)||'&mdash;'}</td>
       <td>${p.contract_value?'$'+Number(p.contract_value).toLocaleString():'&mdash;'}</td>
@@ -2916,7 +2869,6 @@ function renderProjectDetailPanel(projectId, panel){
   const projMilestones = milestones.filter(m => String(m.project_id) === String(projectId))
     .sort((a,b) => (a.milestone_date||'').localeCompare(b.milestone_date||''));
   const projSubs = subcontractors.filter(s => String(s.project_id) === String(projectId));
-  const risks = getScheduleRisks(projectId, 7);
 
   // Milestone days helper
   function milestoneDays(dateStr){
@@ -2956,18 +2908,6 @@ function renderProjectDetailPanel(projectId, panel){
       </div>`).join('')
     : `<div style="color:var(--text-muted);font-size:12px;padding:8px 0">No subcontractors — edit job to add.</div>`;
 
-  // Risk section
-  let riskHtml = '';
-  if(risks.rfis.length + risks.submittals.length === 0){
-    riskHtml = `<div style="display:flex;align-items:center;gap:7px;padding:8px 10px;background:var(--green-light);border-radius:6px;font-size:12px;color:var(--green);font-weight:600">&#10003; No schedule risks in the next 7 days</div>`;
-  } else {
-    const items = [
-      ...risks.rfis.map(r=>`<div class="proj-risk-item"><div style="flex-shrink:0;padding:2px 7px;background:#fee2e2;color:var(--red);font-size:9px;font-weight:700;border-radius:10px;text-transform:uppercase">RFI</div><div><div class="proj-risk-label">#${h(r.num)} — ${h(r.subject)}</div><div class="proj-risk-meta">Due ${fmt(r.due)} &middot; ${h(r.status)}</div></div></div>`),
-      ...risks.submittals.map(s=>`<div class="proj-risk-item"><div style="flex-shrink:0;padding:2px 7px;background:var(--amber-light);color:var(--amber);font-size:9px;font-weight:700;border-radius:10px;text-transform:uppercase">Sub</div><div><div class="proj-risk-label">#${h(s.num)} — ${h(s.desc||s.description||'')}</div><div class="proj-risk-meta">Reqd By ${fmt(s.need_date)} &middot; ${h(s.status)}</div></div></div>`),
-    ];
-    riskHtml = items.join('');
-  }
-
   panel.innerHTML = `
     <div class="proj-detail-grid">
       <div>
@@ -2978,10 +2918,6 @@ function renderProjectDetailPanel(projectId, panel){
       <div>
         <div class="proj-detail-section-title">Subcontractors (${projSubs.length})</div>
         ${subRows}
-      </div>
-      <div>
-        <div class="proj-detail-section-title">Schedule Risk &mdash; Next 7 Days</div>
-        ${riskHtml}
       </div>
     </div>`;
 }
@@ -4433,26 +4369,7 @@ function renderReportPreview(){
     </div>`;
   }).join('');
 
-  // Schedule Risk section
-  const allRisks = filtered.map(p=>({p, risks:getScheduleRisks(p.id,7)})).filter(x=>x.risks.rfis.length+x.risks.submittals.length>0);
-  let riskSection = '';
-  if(allRisks.length){
-    const riskItems = allRisks.map(({p,risks})=>{
-      const items=[
-        ...risks.rfis.map(r=>`<div style="padding:3px 0 3px 12px;font-size:12px;color:var(--text-mid)">&#9888; RFI #${h(r.num)} &mdash; ${h(r.subject)} <span style="color:var(--red)">due ${fmt(r.due)}</span></div>`),
-        ...risks.submittals.map(s=>`<div style="padding:3px 0 3px 12px;font-size:12px;color:var(--text-mid)">&#9888; Sub #${h(s.num)} &mdash; ${h(s.desc||s.description||'')} <span style="color:var(--amber)">reqd by ${fmt(s.need_date)}</span></div>`),
-      ].join('');
-      return `<div style="padding:6px 0;border-bottom:1px solid var(--border)"><div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">${h(p.name)}</div>${items}</div>`;
-    }).join('');
-    riskSection = `<div style="margin-top:18px">
-      <div style="font-size:11px;font-weight:700;color:var(--michels-red);text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid var(--michels-red);padding-bottom:5px;margin-bottom:10px">&#9888; Schedule Risk &mdash; Next 7 Days</div>
-      ${riskItems}
-    </div>`;
-  } else {
-    riskSection = `<div style="margin-top:18px;padding:10px 14px;background:var(--green-light);border-radius:8px;font-size:12px;color:var(--green);font-weight:600">&#10003; No schedule risks detected in the next 7 days across all active projects.</div>`;
-  }
-
-  preview.innerHTML = projectRows + riskSection;
+  preview.innerHTML = projectRows;
 }
 
 async function generateSummaryPDF(){
@@ -4646,45 +4563,6 @@ async function generateSummaryPDF(){
       doc.text(item.detail,37,y+12);
       if(item.project){doc.setFontSize(7);doc.setTextColor(...midGray);doc.text(item.project,pw-12,y+6,{align:'right'});}
       y+=20;
-    });
-  }
-  // ── SCHEDULE RISK SECTION ───────────────────────────────
-  const pdfRisks = filtered.map(p=>({p,risks:getScheduleRisks(p.id,7)})).filter(x=>x.risks.rfis.length+x.risks.submittals.length>0);
-  if(y>ph-60){drawFooter('Page 1  |  Overview');doc.addPage();drawHeader('Schedule Risk');y=36;}
-  y=secTitle('SCHEDULE RISK — NEXT 7 DAYS',y);
-  if(!pdfRisks.length){
-    doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,12,2,2,'F');
-    doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
-    doc.text('No schedule risks detected in the next 7 days across all active projects.',pw/2,y+8,{align:'center'});
-    y+=18;
-  } else {
-    pdfRisks.forEach(({p,risks})=>{
-      if(y>ph-40){drawFooter('Page 1  |  Overview');doc.addPage();drawHeader('Schedule Risk (cont.)');y=36;}
-      doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
-      doc.text(p.name||'',10,y); y+=6;
-      risks.rfis.forEach(r=>{
-        if(y>ph-20){doc.addPage();drawHeader('Schedule Risk (cont.)');y=36;}
-        doc.setFillColor(254,226,226); doc.roundedRect(10,y,pw-20,10,1,1,'F');
-        doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(200,16,46);
-        doc.text('RFI',14,y+7);
-        doc.setFont('helvetica','normal'); doc.setTextColor(...black);
-        doc.text(`#${r.num} — ${(r.subject||'').substring(0,40)}`,28,y+7);
-        doc.setTextColor(...darkGray);
-        doc.text(`Due: ${fmtD(r.due)}  |  ${r.status}`,pw-12,y+7,{align:'right'});
-        y+=13;
-      });
-      risks.submittals.forEach(s=>{
-        if(y>ph-20){doc.addPage();drawHeader('Schedule Risk (cont.)');y=36;}
-        doc.setFillColor(255,243,200); doc.roundedRect(10,y,pw-20,10,1,1,'F');
-        doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(180,100,0);
-        doc.text('SUB',14,y+7);
-        doc.setFont('helvetica','normal'); doc.setTextColor(...black);
-        doc.text(`#${s.num} — ${(s.desc||s.description||'').substring(0,40)}`,28,y+7);
-        doc.setTextColor(...darkGray);
-        doc.text(`Reqd: ${fmtD(s.need_date)}  |  ${s.status}`,pw-12,y+7,{align:'right'});
-        y+=13;
-      });
-      y+=4;
     });
   }
   drawFooter('Page 1  |  Overview');
