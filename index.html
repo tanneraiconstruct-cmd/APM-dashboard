@@ -1179,7 +1179,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 </div>
 
 <div class="modal-overlay" id="supabase-modal">
-  <div class="modal">
+  <div class="modal" style="max-width:560px">
     <div class="modal-header">
       <span class="modal-title">Supabase Database Setup</span>
       <button class="modal-close" onclick="closeModal('supabase-modal')">×</button>
@@ -1188,14 +1188,142 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--text-mid);line-height:1.6">
         Paste your Supabase credentials below. Find them at <strong>supabase.com → Settings → API</strong>.<br>These are stored locally and only used to connect to your own database.
       </div>
-      <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:11.5px;color:#78350f;line-height:1.6">
-        <strong>Security requirement:</strong> You must enable <strong>Row Level Security (RLS)</strong> on all Supabase tables (<code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">projects</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">rfis</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">submittals</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">rental</code>, <code style="font-family:'DM Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px">users</code>) and configure appropriate policies. Without RLS, anyone with the anon key can read or write all data directly. The app's role checks are client-side only and cannot substitute for server-side enforcement.
-      </div>
       <div class="form-row-full"><label>Project URL</label><input type="text" id="sb-url" placeholder="https://xxxx.supabase.co"></div>
-      <div class="form-row-full"><label>Anon / Public Key</label><textarea id="sb-key" style="min-height:80px;font-family:'DM Mono',monospace;font-size:11px" placeholder="eyJhbGci..."></textarea></div>
-      <div id="sb-status" style="font-size:12px;margin-top:8px;min-height:18px"></div>
+      <div class="form-row-full"><label>Anon / Public Key</label><textarea id="sb-key" style="min-height:72px;font-family:'DM Mono',monospace;font-size:11px" placeholder="eyJhbGci... or sb_publishable_..."></textarea></div>
+      <!-- Per-table diagnostic results -->
+      <div id="sb-status" style="font-size:12px;margin-top:10px;min-height:18px"></div>
+      <!-- SQL Setup accordion -->
+      <details id="sb-sql-details" style="margin-top:14px" ontoggle="document.getElementById('sb-sql-arrow').style.transform=this.open?'rotate(90deg)':''">
+        <summary style="cursor:pointer;font-size:12px;font-weight:600;color:var(--text-mid);user-select:none;list-style:none;display:flex;align-items:center;gap:6px">
+          <span id="sb-sql-arrow" style="font-size:10px;transition:transform .2s">▶</span>
+          Show required SQL — run this once in Supabase SQL Editor
+        </summary>
+        <div style="margin-top:10px">
+          <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;padding:8px 12px;font-size:11.5px;color:#78350f;margin-bottom:8px;line-height:1.5">
+            <strong>Security note:</strong> These policies grant the <code style="font-family:'DM Mono',monospace;font-size:10.5px;background:rgba(0,0,0,.07);padding:1px 4px;border-radius:3px">anon</code> role full access so the dashboard can read and write data using your public key. The app enforces role-based permissions client-side. Do not expose this dashboard publicly without adding server-side auth.
+          </div>
+          <div style="position:relative">
+            <button onclick="copySBSql()" style="position:absolute;top:6px;right:6px;font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text-mid);cursor:pointer;z-index:1" id="sb-copy-btn">Copy</button>
+            <pre id="sb-sql-block" style="background:#1e1e2e;color:#cdd6f4;border-radius:6px;padding:12px 12px 12px 12px;font-family:'DM Mono',monospace;font-size:10.5px;line-height:1.6;overflow:auto;max-height:320px;margin:0;white-space:pre">-- ── APM Dashboard — Run once in Supabase SQL Editor ──────────
+
+-- 1. TABLES
+
+create table if not exists users (
+  id bigserial primary key,
+  username text unique not null,
+  display_name text,
+  role text not null default 'apm',
+  hash text not null
+);
+
+create table if not exists projects (
+  id bigserial primary key,
+  name text not null,
+  client text,
+  number text,
+  status text default 'Planning',
+  start_date text,
+  end_date text,
+  notes text,
+  contract_type text,
+  contract_value numeric,
+  address text,
+  owner_name text,
+  owner_phone text,
+  owner_email text,
+  assigned_pm text,
+  assigned_apm text,
+  assigned_super text,
+  assigned_foreman text
+);
+
+create table if not exists rfis (
+  id bigserial primary key,
+  num text,
+  project text,
+  subject text,
+  submitted text,
+  due text,
+  status text default 'Open',
+  priority text default 'Low',
+  description text,
+  spec_section text
+);
+
+create table if not exists submittals (
+  id bigserial primary key,
+  num text,
+  project text,
+  description text,
+  spec text,
+  submitted_date text,
+  status text default 'Pending',
+  bic text
+);
+
+create table if not exists rental (
+  id bigserial primary key,
+  name text not null,
+  project text,
+  vendor text,
+  onsite_date text,
+  release_date text,
+  status text default 'On Site'
+);
+
+create table if not exists activity_log (
+  id bigserial primary key,
+  type text,
+  action text,
+  label text,
+  detail text,
+  username text,
+  ts text
+);
+
+-- 2. ENABLE ROW LEVEL SECURITY
+
+alter table users        enable row level security;
+alter table projects     enable row level security;
+alter table rfis         enable row level security;
+alter table submittals   enable row level security;
+alter table rental       enable row level security;
+alter table activity_log enable row level security;
+
+-- 3. RLS POLICIES (anon role — matches your publishable/anon key)
+
+-- users: full access (login, user management)
+create policy "anon_select_users" on users for select using (true);
+create policy "anon_insert_users" on users for insert with check (true);
+create policy "anon_update_users" on users for update using (true) with check (true);
+create policy "anon_delete_users" on users for delete using (true);
+
+-- data tables: full access
+create policy "anon_all_projects"   on projects   for all using (true) with check (true);
+create policy "anon_all_rfis"       on rfis        for all using (true) with check (true);
+create policy "anon_all_submittals" on submittals  for all using (true) with check (true);
+create policy "anon_all_rental"     on rental      for all using (true) with check (true);
+
+-- activity_log: insert-only (tamper-proof audit trail)
+create policy "anon_insert_activity" on activity_log for insert with check (true);
+
+-- 4. IF UPGRADING: add missing project columns to existing table
+alter table projects add column if not exists contract_type text;
+alter table projects add column if not exists contract_value numeric;
+alter table projects add column if not exists address text;
+alter table projects add column if not exists owner_name text;
+alter table projects add column if not exists owner_phone text;
+alter table projects add column if not exists owner_email text;
+alter table projects add column if not exists assigned_pm text;
+alter table projects add column if not exists assigned_apm text;
+alter table projects add column if not exists assigned_super text;
+alter table projects add column if not exists assigned_foreman text;</pre>
+          </div>
+        </div>
+      </details>
     </div>
     <div class="modal-footer">
+      <button class="btn-sm" onclick="testSupabaseConnection()">Test Tables</button>
       <button class="btn-sm" onclick="closeModal('supabase-modal')">Cancel</button>
       <button class="btn-add" onclick="saveSupabaseConfig()">Save &amp; Connect</button>
     </div>
@@ -1711,10 +1839,13 @@ async function saveSupabaseConfig(){
   localStorage.setItem('apm_sb_url', url);
   localStorage.setItem('apm_sb_key', key);
   try{ sb = supabase.createClient(url, key); }catch(e){ setSBStatus('Invalid credentials: '+e.message,'var(--red)'); return; }
-  setSBStatus('Connected! Loading data...','var(--green)');
+  setSBStatus('Connected! Testing tables…','var(--green)');
+  // Run table diagnostic so user sees per-table status before we load data
+  await testSupabaseConnection();
   try{
     await loadData();
-    if(!dataLoaded){ setSBStatus('Connection succeeded but data failed to load. Check your table permissions.','var(--red)'); return; }
+    if(!dataLoaded){ setSBStatus('Tables accessible but data failed to load — check RLS policies.','var(--red)'); return; }
+    showToast('Supabase connected.');
     closeModal('supabase-modal');
   }catch(e){
     setSBStatus('Error loading data: '+e.message,'var(--red)');
@@ -1723,7 +1854,57 @@ async function saveSupabaseConfig(){
 
 function setSBStatus(msg,color){
   const el=document.getElementById('sb-status');
-  if(el){ el.textContent=msg; el.style.color=color||'var(--text-muted)'; }
+  if(el){ el.textContent=msg; el.style.color=color||'var(--text-muted)'; el.style.lineHeight=''; }
+}
+
+async function testSupabaseConnection(){
+  const el=document.getElementById('sb-status');
+  if(!el) return;
+  if(!sb){
+    setSBStatus('Not connected — save your credentials first, then click Test Tables.','var(--red)');
+    return;
+  }
+  el.innerHTML='<span style="color:var(--text-muted)">Testing tables…</span>';
+  const tables=['users','projects','rfis','submittals','rental','activity_log'];
+  const labels={users:'users',projects:'projects',rfis:'rfis',submittals:'submittals',rental:'rental',activity_log:'activity_log'};
+  const rows=[];
+  for(const t of tables){
+    try{
+      // activity_log is write-only — test with an explain rather than a real select
+      const res= t==='activity_log'
+        ? await sb.from(t).select('id').limit(0)
+        : await sb.from(t).select('id').limit(1);
+      if(res.error){
+        rows.push({t,ok:false,msg:res.error.message||res.error.code||'Error'});
+      } else {
+        rows.push({t,ok:true});
+      }
+    }catch(e){
+      rows.push({t,ok:false,msg:e.message||'Unknown error'});
+    }
+  }
+  const allOk=rows.every(r=>r.ok);
+  const html=`<div style="line-height:1.8;padding:4px 0">`+
+    rows.map(r=>`<div style="display:flex;align-items:baseline;gap:6px">
+      <span style="color:${r.ok?'var(--green)':'var(--red)'};font-weight:700;font-size:13px">${r.ok?'✓':'✗'}</span>
+      <code style="font-family:'DM Mono',monospace;font-size:11px;min-width:96px;display:inline-block">${r.t}</code>
+      <span style="font-size:11px;color:${r.ok?'var(--green)':'var(--red)'}">${r.ok?'accessible':r.msg}</span>
+    </div>`).join('')+
+    `<div style="margin-top:6px;font-size:11.5px;color:${allOk?'var(--green)':'var(--text-muted)'}">
+      ${allOk?'All tables OK — ready to use.':'Fix the errors above, then run the SQL setup and try again.'}
+    </div></div>`;
+  el.innerHTML=html;
+  el.style.color='';
+  el.style.lineHeight='1';
+}
+
+function copySBSql(){
+  const block=document.getElementById('sb-sql-block');
+  if(!block) return;
+  navigator.clipboard.writeText(block.textContent).then(()=>{
+    const btn=document.getElementById('sb-copy-btn');
+    if(btn){ btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',2000); }
+  }).catch(()=>{ alert('Copy failed — please select the text manually.'); });
 }
 
 // ── DATA LAYER (Supabase with localStorage fallback) ──────
@@ -2169,9 +2350,10 @@ async function verifyCurrentUser(){
 function logout(){
   currentUser = null;
   clearTimeout(typeof _idleTimer !== 'undefined' ? _idleTimer : null);
-  // Clear all sensitive cached data on logout — prevents data exposure on shared machines
+  // Clear session + project data on logout — apm_users is intentionally kept so
+  // users can log back in (offline installs store hashes there)
   [
-    'apm_session','apm_remember','apm_users',
+    'apm_session','apm_remember',
     'apm_projects','apm_rfis','apm_submittals','apm_rental',
     'apm_done_todos','apm_dissolved_todos','apm_snoozed_todos',
     'apm_reminder_days','apm_activity','apm_activity_seen',
@@ -2225,6 +2407,42 @@ async function renderUserList(){
       ${currentUser&&u.username===currentUser.username?'<span style="font-size:11px;color:var(--text-muted)">You</span>':`<button class="btn-sm btn-danger" onclick="removeUser('${h(u.username)}')">Remove</button>`}
     </div>
   `).join('');
+}
+
+// First-run bootstrap: if no users exist anywhere, create a default admin.
+// Runs at startup after loadSBConfig() so it saves to Supabase when connected.
+async function initFirstRun(){
+  // Check Supabase first if connected
+  if(sb){
+    try{
+      const res = await sb.from('users').select('id').limit(1);
+      if(!res.error && res.data && res.data.length > 0) return; // users exist
+    }catch(e){}
+  } else {
+    // No Supabase — check localStorage
+    try{
+      const local = JSON.parse(localStorage.getItem('apm_users')||'[]');
+      if(local.length > 0) return;
+    }catch(e){}
+  }
+  // No users found — create default admin
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
+  const arr = new Uint8Array(14);
+  crypto.getRandomValues(arr);
+  const pw = Array.from(arr).map(b => chars[b % chars.length]).join('');
+  const hash = await hashPassword(pw);
+  const admin = {username:'admin', displayName:'Administrator', role:'superadmin', hash};
+  await saveUserToDB(admin);
+  setTimeout(()=>{
+    alert(
+      'First-run setup complete.\n\n' +
+      'A default administrator account has been created:\n\n' +
+      '  Username: admin\n' +
+      '  Password: ' + pw + '\n\n' +
+      'Copy this password now — it will not be shown again.\n' +
+      'After signing in, create your own account and remove this default.'
+    );
+  }, 400);
 }
 
 async function addUser(){
@@ -4832,10 +5050,13 @@ initDatePickers(); // replace native date inputs with Flatpickr
 initIdleTimeout();
 loadTodoState();
 loadActivity();
-if(!checkSession()){
-  document.getElementById('login-overlay').style.display='flex';
-  renderAll();
-}
+loadSBConfig(); // must run before checkSession so sb is set before any auth query
+initFirstRun().then(() => {
+  if(!checkSession()){
+    document.getElementById('login-overlay').style.display='flex';
+    renderAll();
+  }
+});
 // If checkSession() showed the dashboard it calls loadData(),
 // which calls renderAll() once data is ready — no early render needed.
 </script>
