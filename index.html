@@ -463,6 +463,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .detail-field-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
 .detail-field-value{font-size:13px;color:var(--text);font-weight:500;word-break:break-word;line-height:1.4}
 .detail-desc-block{font-size:12.5px;color:var(--text-mid);line-height:1.55;padding:10px 12px;background:var(--white);border-radius:6px;border:1px solid var(--border);margin-bottom:12px;white-space:pre-wrap}
+.detail-desc-block-warn{border-color:#fcd34d;background:var(--amber-light)}
 .detail-actions{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap}
 .spec-section-row>td{background:var(--surface);padding:6px 14px;border-bottom:1px solid var(--border)}
 .spec-section-badge{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10.5px;font-weight:700;color:var(--text-mid);background:#eef2f7;padding:3px 10px;border-radius:20px;letter-spacing:.3px;text-transform:uppercase}
@@ -490,6 +491,32 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .btn-icon:hover{background:var(--surface);color:var(--text)}
 .btn-icon-danger{border-color:#fca5a5;color:var(--red)!important}
 .btn-icon-danger:hover{background:#fee2e2!important}
+/* CONTROLS MODAL TABS */
+.ctrl-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin:-20px -20px 20px;padding:0 16px;background:var(--surface);overflow-x:auto}
+.ctrl-tab-btn{padding:10px 15px;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s;white-space:nowrap}
+.ctrl-tab-btn:hover{color:var(--text)}
+.ctrl-tab-btn.active{color:var(--michels-red);border-bottom-color:var(--michels-red)}
+.ctrl-tab-pane{display:none}
+.ctrl-tab-pane.active{display:block}
+/* INLINE MILESTONE / SUB TABLES IN MODAL */
+.inline-item-table{width:100%;border-collapse:collapse;margin-top:6px;font-size:12px}
+.inline-item-table th{text-align:left;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:5px 7px;background:var(--surface);border-bottom:1px solid var(--border)}
+.inline-item-table td{padding:5px 4px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+.inline-item-table tr:last-child td{border-bottom:none}
+.inline-item-table input[type=text],.inline-item-table input[type=date],.inline-item-table select{width:100%;font-size:12px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;background:var(--white);font-family:'DM Sans',sans-serif;color:var(--text)}
+/* SCHEDULE RISK BANNER */
+.risk-banner{display:none;margin-bottom:14px;padding:11px 16px;background:#fff0f0;border:1px solid #fca5a5;border-radius:8px;font-size:13px;color:var(--michels-red);line-height:1.5}
+.risk-banner strong{font-weight:700}
+/* PROJECT DETAIL PANEL IN CONTROLS TABLE */
+.proj-detail-panel{padding:16px 18px 16px 22px;border-left:3px solid var(--michels-red)}
+.proj-detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px}
+@media(max-width:900px){.proj-detail-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.proj-detail-grid{grid-template-columns:1fr}}
+.proj-detail-section-title{font-size:10px;font-weight:700;color:var(--michels-red);text-transform:uppercase;letter-spacing:.6px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.proj-risk-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.proj-risk-item:last-child{border-bottom:none}
+.proj-risk-label{font-weight:600;color:var(--text)}
+.proj-risk-meta{color:var(--text-muted);font-size:11px;margin-top:1px}
 </style>
 </head>
 <body>
@@ -715,6 +742,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="nav-tab" data-tab="rfi">RFI Log</div>
     <div class="nav-tab" data-tab="submittal">Submittal Log</div>
     <div class="nav-tab" data-tab="rental">Rental Equipment</div>
+    <div class="nav-tab" data-tab="daily">Daily Reports</div>
   </div>
 
   <!-- PROJECT CONTROLS -->
@@ -723,6 +751,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <div class="section-title">Project Controls</div>
       <button class="btn-add" onclick="openModal('controls-modal')">+ New Job</button>
     </div>
+    <div id="schedule-risk-banner" class="risk-banner"></div>
     <div class="table-wrap">
       <table>
         <thead><tr>
@@ -977,68 +1006,152 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <div class="archive-body" id="rental-archive-body"></div>
     </div>
   </div>
+
+  <!-- DAILY FIELD REPORTS -->
+  <div class="main" id="tab-daily">
+    <div class="section-header">
+      <div class="section-title">Daily Field Reports</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="exportToExcel('daily',this)">&#8595; Excel</button>
+        <button class="btn-add" onclick="openModal('daily-modal')">+ New Report</button>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <span class="filter-bar-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filter</span>
+      <div class="filter-bar-sep"></div>
+      <input class="filter-input" id="daily-filter-text" placeholder="Search work performed, issues…" oninput="renderDailyReports()">
+      <div class="filter-dd" id="fd-daily-project" data-fd-val="" data-default-label="All Projects" data-render="renderDailyReports">
+        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-daily-project')">
+          <span class="filter-dd-val">All Projects</span>
+          <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-dd-menu"><div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-daily-project','','All Projects')">All Projects</div></div>
+      </div>
+      <input class="filter-input" id="daily-filter-from" type="date" style="width:140px" placeholder="From" oninput="renderDailyReports()">
+      <input class="filter-input" id="daily-filter-to" type="date" style="width:140px" placeholder="To" oninput="renderDailyReports()">
+      <button class="filter-clear" onclick="clearDailyFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th style="width:110px">Date</th>
+          <th style="width:20%">Project</th>
+          <th style="width:110px">Weather</th>
+          <th style="width:90px">Temp (°F)</th>
+          <th style="width:60px">Crew</th>
+          <th>Work Summary</th>
+          <th style="width:90px">By</th>
+          <th style="width:60px"></th>
+        </tr></thead>
+        <tbody id="daily-body"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 
 <!-- MODALS -->
 <div class="modal-overlay" id="controls-modal">
-  <div class="modal" style="width:min(620px,94vw)">
+  <div class="modal" style="width:min(740px,96vw)">
     <div class="modal-header">
       <span class="modal-title" id="controls-modal-title">New Job</span>
       <button class="modal-close" onclick="closeModal('controls-modal')">×</button>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" style="padding-top:0">
       <input type="hidden" id="ctrl-id" value="">
-
-      <div class="modal-section-title">Job Information</div>
-      <div class="form-row-full"><label>Job Name</label><input type="text" id="ctrl-name" placeholder="e.g. Riverside Substation Upgrade"></div>
-      <div class="form-row">
-        <div><label>Job Number</label><input type="text" id="ctrl-number" placeholder="e.g. 2024-001"></div>
-        <div><label>Client</label><input type="text" id="ctrl-client" placeholder="Client or owner name"></div>
+      <!-- Tab strip -->
+      <div class="ctrl-tabs">
+        <button class="ctrl-tab-btn active" onclick="switchCtrlTab(0)">Job Info</button>
+        <button class="ctrl-tab-btn" onclick="switchCtrlTab(1)">Schedule</button>
+        <button class="ctrl-tab-btn" onclick="switchCtrlTab(2)">Team &amp; Subs</button>
+        <button class="ctrl-tab-btn" onclick="switchCtrlTab(3)">Notes</button>
       </div>
-      <div class="form-row">
-        <div><label>Contract Type</label>
-          <select id="ctrl-contract-type">
-            <option value="">— Select —</option>
-            <option>Lump Sum</option><option>T&amp;M</option><option>Unit Price</option><option>Cost Plus</option>
-          </select>
+
+      <!-- Tab 0: Job Info -->
+      <div class="ctrl-tab-pane active" id="ctrl-tab-0">
+        <div class="modal-section-title" style="margin-top:0">Job Information</div>
+        <div class="form-row-full"><label>Job Name</label><input type="text" id="ctrl-name" placeholder="e.g. Riverside Substation Upgrade"></div>
+        <div class="form-row">
+          <div><label>Job Number</label><input type="text" id="ctrl-number" placeholder="e.g. 2024-001"></div>
+          <div><label>Client</label><input type="text" id="ctrl-client" placeholder="Client or owner name"></div>
         </div>
-        <div><label>Contract Value ($)</label><input type="number" id="ctrl-value" placeholder="e.g. 1500000" min="0"></div>
-      </div>
-      <div class="form-row-full"><label>Address / Location</label><input type="text" id="ctrl-address" placeholder="Street, City, State"></div>
-
-      <div class="modal-section-title">Schedule</div>
-      <div class="form-row">
-        <div><label>Start Date</label><input type="date" id="ctrl-start"></div>
-        <div><label>End Date</label><input type="date" id="ctrl-end"></div>
-      </div>
-      <div class="form-row-full">
-        <div><label>Status</label>
-          <select id="ctrl-status">
-            <option>Pre-Construction</option><option>In Progress</option><option>On Hold</option><option>Closeout</option><option>Complete</option>
-          </select>
+        <div class="form-row">
+          <div><label>Contract Type</label>
+            <select id="ctrl-contract-type">
+              <option value="">— Select —</option>
+              <option>Lump Sum</option><option>T&amp;M</option><option>Unit Price</option><option>Cost Plus</option>
+            </select>
+          </div>
+          <div><label>Contract Value ($)</label><input type="number" id="ctrl-value" placeholder="e.g. 1500000" min="0"></div>
+        </div>
+        <div class="form-row-full"><label>Address / Location</label><input type="text" id="ctrl-address" placeholder="Street, City, State"></div>
+        <div class="modal-section-title">Owner / GC Contact</div>
+        <div class="form-row-full"><label>Contact Name</label><input type="text" id="ctrl-owner-name" placeholder="e.g. Jane Smith"></div>
+        <div class="form-row">
+          <div><label>Phone</label><input type="text" id="ctrl-owner-phone" placeholder="e.g. (555) 123-4567"></div>
+          <div><label>Email</label><input type="text" id="ctrl-owner-email" placeholder="e.g. jane@example.com"></div>
         </div>
       </div>
 
-      <div class="modal-section-title">Owner / GC Contact</div>
-      <div class="form-row-full"><label>Contact Name</label><input type="text" id="ctrl-owner-name" placeholder="e.g. Jane Smith"></div>
-      <div class="form-row">
-        <div><label>Phone</label><input type="text" id="ctrl-owner-phone" placeholder="e.g. (555) 123-4567"></div>
-        <div><label>Email</label><input type="text" id="ctrl-owner-email" placeholder="e.g. jane@example.com"></div>
+      <!-- Tab 1: Schedule -->
+      <div class="ctrl-tab-pane" id="ctrl-tab-1">
+        <div class="modal-section-title" style="margin-top:0">Schedule</div>
+        <div class="form-row">
+          <div><label>NTP Date</label><input type="date" id="ctrl-ntp"></div>
+          <div><label>Status</label>
+            <select id="ctrl-status">
+              <option>Pre-Construction</option><option>In Progress</option><option>On Hold</option><option>Closeout</option><option>Complete</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div><label>Start Date</label><input type="date" id="ctrl-start"></div>
+          <div><label>End Date</label><input type="date" id="ctrl-end"></div>
+        </div>
+        <div class="modal-section-title">Milestones</div>
+        <table class="inline-item-table">
+          <thead><tr>
+            <th style="width:38%">Milestone Name</th>
+            <th style="width:24%">Date</th>
+            <th style="width:28%">Type</th>
+            <th style="width:10%"></th>
+          </tr></thead>
+          <tbody id="ctrl-milestone-body"></tbody>
+        </table>
+        <button class="btn-sm" style="margin-top:8px" onclick="addMilestoneRow()">+ Add Milestone</button>
       </div>
 
-      <div class="modal-section-title">Project Team</div>
-      <div class="form-row">
-        <div><label>Project Manager</label><select id="ctrl-pm"><option value="">— Unassigned —</option></select></div>
-        <div><label>APM</label><select id="ctrl-apm"><option value="">— Unassigned —</option></select></div>
-      </div>
-      <div class="form-row">
-        <div><label>Superintendent</label><select id="ctrl-super"><option value="">— Unassigned —</option></select></div>
-        <div><label>Foreman</label><select id="ctrl-foreman"><option value="">— Unassigned —</option></select></div>
+      <!-- Tab 2: Team & Subs -->
+      <div class="ctrl-tab-pane" id="ctrl-tab-2">
+        <div class="modal-section-title" style="margin-top:0">Project Team</div>
+        <div class="form-row">
+          <div><label>Project Manager</label><select id="ctrl-pm"><option value="">— Unassigned —</option></select></div>
+          <div><label>APM</label><select id="ctrl-apm"><option value="">— Unassigned —</option></select></div>
+        </div>
+        <div class="form-row">
+          <div><label>Superintendent</label><select id="ctrl-super"><option value="">— Unassigned —</option></select></div>
+          <div><label>Foreman</label><select id="ctrl-foreman"><option value="">— Unassigned —</option></select></div>
+        </div>
+        <div class="modal-section-title">Subcontractors</div>
+        <table class="inline-item-table">
+          <thead><tr>
+            <th style="width:26%">Company</th>
+            <th style="width:16%">Trade</th>
+            <th style="width:20%">Contact</th>
+            <th style="width:18%">Phone</th>
+            <th style="width:12%">Status</th>
+            <th style="width:8%"></th>
+          </tr></thead>
+          <tbody id="ctrl-sub-body"></tbody>
+        </table>
+        <button class="btn-sm" style="margin-top:8px" onclick="addSubRow()">+ Add Subcontractor</button>
       </div>
 
-      <div class="modal-section-title">Notes</div>
-      <div class="form-row-full"><textarea id="ctrl-notes" placeholder="Additional notes or job description..."></textarea></div>
+      <!-- Tab 3: Notes -->
+      <div class="ctrl-tab-pane" id="ctrl-tab-3">
+        <div class="modal-section-title" style="margin-top:0">Notes</div>
+        <div class="form-row-full"><textarea id="ctrl-notes" placeholder="Additional notes or job description..." style="min-height:160px"></textarea></div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('controls-modal')">Cancel</button>
@@ -1128,8 +1241,11 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
           </div>
         </div>
       </div>
-      <div class="form-row" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="form-row" style="grid-template-columns:1fr 1fr">
         <div><label>Date Submitted</label><input type="date" id="sub-date"></div>
+        <div><label>Required By</label><input type="date" id="sub-need-date"></div>
+      </div>
+      <div class="form-row" style="grid-template-columns:1fr 1fr">
         <div><label>Status</label>
           <select id="sub-status">
             <option>Pending</option><option>Under Review</option><option>Approved</option><option>Approved as Noted</option><option>Revise &amp; Resubmit</option><option>Rejected</option>
@@ -1174,6 +1290,50 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('rental-modal')">Cancel</button>
       <button class="btn-add" id="ren-save-btn" onclick="saveRental()">Save Rental</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="daily-modal">
+  <div class="modal" style="width:min(680px,96vw)">
+    <div class="modal-header">
+      <span class="modal-title" id="daily-modal-title">New Daily Report</span>
+      <button class="modal-close" onclick="closeModal('daily-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="dr-edit-id" value="">
+      <div class="modal-section-title" style="margin-top:0">Job &amp; Conditions</div>
+      <div class="form-row">
+        <div><label>Project</label><select id="dr-project"><option value="">Select project</option></select></div>
+        <div><label>Date</label><input type="date" id="dr-date"></div>
+      </div>
+      <div class="form-row" style="grid-template-columns:2fr 1fr 1fr 1fr">
+        <div><label>Weather</label>
+          <select id="dr-weather">
+            <option value="">— Select —</option>
+            <option>Clear</option>
+            <option>Partly Cloudy</option>
+            <option>Cloudy</option>
+            <option>Rain</option>
+            <option>Thunderstorm</option>
+            <option>Snow</option>
+            <option>Fog</option>
+            <option>High Wind</option>
+          </select>
+        </div>
+        <div><label>High (°F)</label><input type="number" id="dr-temp-high" placeholder="e.g. 72" min="-40" max="130"></div>
+        <div><label>Low (°F)</label><input type="number" id="dr-temp-low" placeholder="e.g. 55" min="-40" max="130"></div>
+        <div><label>Crew Count</label><input type="number" id="dr-crew" placeholder="0" min="0"></div>
+      </div>
+      <div class="modal-section-title">Work Log</div>
+      <div class="form-row-full"><label>Work Performed <span style="color:var(--michels-red)">*</span></label><textarea id="dr-work" placeholder="Describe work completed today…" style="min-height:90px"></textarea></div>
+      <div class="form-row-full"><label>Equipment Used</label><textarea id="dr-equipment" placeholder="List equipment on site (optional)…" style="min-height:52px"></textarea></div>
+      <div class="form-row-full"><label>Visitors / Inspections</label><input type="text" id="dr-visitors" placeholder="e.g. Owner rep site visit, OSHA inspection (optional)"></div>
+      <div class="form-row-full"><label>Issues / Notes</label><textarea id="dr-issues" placeholder="Safety observations, delays, concerns, next-day plan…" style="min-height:60px"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('daily-modal')">Cancel</button>
+      <button class="btn-add" id="dr-save-btn" onclick="saveDailyReport()">Save Report</button>
     </div>
   </div>
 </div>
@@ -1273,6 +1433,7 @@ create table if not exists rental (
 
 create table if not exists activity_log (
   id bigserial primary key,
+  entry_id text,        -- client-generated stable ID for cross-device seen tracking
   type text,
   action text,
   label text,
@@ -1304,7 +1465,8 @@ create policy "anon_all_rfis"       on rfis        for all using (true) with che
 create policy "anon_all_submittals" on submittals  for all using (true) with check (true);
 create policy "anon_all_rental"     on rental      for all using (true) with check (true);
 
--- activity_log: insert-only (tamper-proof audit trail)
+-- activity_log: read + insert (clients can read the feed; no update/delete)
+create policy "anon_select_activity" on activity_log for select using (true);
 create policy "anon_insert_activity" on activity_log for insert with check (true);
 
 -- 4. IF UPGRADING: add missing project columns to existing table
@@ -1317,7 +1479,10 @@ alter table projects add column if not exists owner_email text;
 alter table projects add column if not exists assigned_pm text;
 alter table projects add column if not exists assigned_apm text;
 alter table projects add column if not exists assigned_super text;
-alter table projects add column if not exists assigned_foreman text;</pre>
+alter table projects add column if not exists assigned_foreman text;
+
+-- IF UPGRADING activity_log: add entry_id column for cross-device seen tracking
+alter table activity_log add column if not exists entry_id text;</pre>
           </div>
         </div>
       </details>
@@ -1442,7 +1607,10 @@ const statusColors = {
   'In Progress':'badge-blue','Pre-Construction':'badge-gray','On Hold':'badge-amber','Closeout':'badge-green','Complete':'badge-green',
   'Open':'badge-red','Under Review':'badge-amber','Answered':'badge-green','Closed':'badge-gray',
   'Pending':'badge-gray','Approved':'badge-green','Approved as Noted':'badge-green','Revise & Resubmit':'badge-amber','Rejected':'badge-red',
-  'Ordered':'badge-amber','On Site':'badge-blue','Released':'badge-green'
+  'Ordered':'badge-amber','On Site':'badge-blue','Released':'badge-green',
+  // Weather
+  'Clear':'badge-green','Partly Cloudy':'badge-blue','Cloudy':'badge-gray','Rain':'badge-blue',
+  'Thunderstorm':'badge-amber','Snow':'badge-blue','Fog':'badge-gray','High Wind':'badge-amber',
 };
 const priorityColors = {'High':'badge-red','Medium':'badge-amber','Low':'badge-blue'};
 </script>
@@ -1458,6 +1626,12 @@ let projects = [];
 let rfis = [];
 let submittals = [];
 let rental = [];
+let milestones = [];
+let subcontractors = [];
+let dailyReports = [];
+let _pendingMilestones = []; // modal-local: {_tid, id, name, date, type, notes, isNew, isDeleted}
+let _pendingSubs = [];        // modal-local: {_tid, id, company_name, trade, contact_name, contact_phone, contact_email, status, isNew, isDeleted}
+let _pendingTid = 0;          // temp id counter for pending rows
 let nextId = 1;
 let sb = null;
 let currentUser = null;
@@ -1496,7 +1670,7 @@ function calcPct(start, end, status=''){
 
 // ── MODAL HELPERS ────────────────────────────────────────
 // controls-modal requires cachedUsers to be loaded for team selects
-const DATA_DEPENDENT_MODALS = ['controls-modal','rfi-modal','submittal-modal','rental-modal'];
+const DATA_DEPENDENT_MODALS = ['controls-modal','rfi-modal','submittal-modal','rental-modal','daily-modal'];
 
 // resetModal clears a modal back to its default "new" state.
 // Pass noReset=true from editJobControls() to preserve pre-filled edit values.
@@ -1505,6 +1679,7 @@ function resetModal(id){
   else if(id==='rfi-modal')    resetRFIModal();
   else if(id==='submittal-modal') resetSubmittalModal();
   else if(id==='rental-modal') resetRentalModal();
+  else if(id==='daily-modal')  resetDailyReportModal();
 }
 
 function openModal(id, noReset=false){
@@ -1637,15 +1812,56 @@ function setLoadingState(){
 // ── RENDER ALL ───────────────────────────────────────────
 function renderAll(){
   renderProjectControls();
+  renderScheduleRiskBanner();
   renderProjects();
   renderReportPreview();
   renderRFI();
   renderSubmittals();
   renderRental();
+  renderDailyReports();
   renderTodos();
   renderChartStrips();
   populateProjectSelects();
   applyWritePermissions();
+}
+
+// ── SCHEDULE RISK ENGINE ─────────────────────────────────
+// Returns open RFIs and pending submittals due within windowDays days (or already overdue).
+// Pass projectId=null for all projects, or a specific project id to filter.
+function getScheduleRisks(projectId = null, windowDays = 7){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const cutoff = new Date(today.getTime() + windowDays * 86400000);
+  const openRfi = ['Open','Under Review'];
+  const openSub = ['Pending','Under Review'];
+  let rPool = rfis.filter(r => openRfi.includes(r.status) && r.due);
+  let sPool = submittals.filter(s => openSub.includes(s.status) && (s.need_date));
+  if(projectId != null){
+    const pid = String(projectId);
+    const proj = projects.find(p => String(p.id) === pid);
+    if(proj){
+      rPool = rPool.filter(r => r.project === proj.name);
+      sPool = sPool.filter(s => s.project === proj.name);
+    } else {
+      rPool = []; sPool = [];
+    }
+  }
+  return {
+    rfis:       rPool.filter(r => new Date(r.due)       <= cutoff),
+    submittals: sPool.filter(s => new Date(s.need_date) <= cutoff),
+  };
+}
+
+function renderScheduleRiskBanner(){
+  const el  = document.getElementById('schedule-risk-banner');
+  if(!el) return;
+  const {rfis: rr, submittals: ss} = getScheduleRisks(null, 7);
+  const total = rr.length + ss.length;
+  if(total === 0){ el.style.display = 'none'; return; }
+  el.style.display = '';
+  const rTxt = rr.length ? `${rr.length} open RFI${rr.length!==1?'s':''}` : '';
+  const sTxt = ss.length ? `${ss.length} submittal${ss.length!==1?'s':''}` : '';
+  const parts = [rTxt, sTxt].filter(Boolean).join(' and ');
+  el.innerHTML = `<strong>&#9888; Schedule Risk</strong> &mdash; ${h(parts)} due within 7 days across active projects.`;
 }
 
 // ── DATE CHIP HELPER ─────────────────────────────────────
@@ -1910,11 +2126,14 @@ function copySBSql(){
 // ── DATA LAYER (Supabase with localStorage fallback) ──────
 function saveLocal(){
   try{
-    localStorage.setItem('apm_projects',   JSON.stringify(projects));
-    localStorage.setItem('apm_rfis',       JSON.stringify(rfis));
-    localStorage.setItem('apm_submittals', JSON.stringify(submittals));
-    localStorage.setItem('apm_rental',     JSON.stringify(rental));
-    localStorage.setItem('apm_done_todos', JSON.stringify(doneTodos));
+    localStorage.setItem('apm_projects',       JSON.stringify(projects));
+    localStorage.setItem('apm_rfis',           JSON.stringify(rfis));
+    localStorage.setItem('apm_submittals',     JSON.stringify(submittals));
+    localStorage.setItem('apm_rental',         JSON.stringify(rental));
+    localStorage.setItem('apm_milestones',     JSON.stringify(milestones));
+    localStorage.setItem('apm_subcontractors', JSON.stringify(subcontractors));
+    localStorage.setItem('apm_daily_reports',  JSON.stringify(dailyReports));
+    localStorage.setItem('apm_done_todos',     JSON.stringify(doneTodos));
   }catch(e){}
 }
 
@@ -1933,23 +2152,29 @@ async function loadData(){
   if(!sb){
     // fallback to localStorage
     try{
-      projects   = JSON.parse(localStorage.getItem('apm_projects')   || '[]');
-      rfis       = JSON.parse(localStorage.getItem('apm_rfis')       || '[]');
-      submittals = JSON.parse(localStorage.getItem('apm_submittals') || '[]');
-      rental     = JSON.parse(localStorage.getItem('apm_rental')     || '[]');
-      doneTodos  = JSON.parse(localStorage.getItem('apm_done_todos') || '[]');
+      projects       = JSON.parse(localStorage.getItem('apm_projects')       || '[]');
+      rfis           = JSON.parse(localStorage.getItem('apm_rfis')           || '[]');
+      submittals     = JSON.parse(localStorage.getItem('apm_submittals')     || '[]');
+      rental         = JSON.parse(localStorage.getItem('apm_rental')         || '[]');
+      milestones     = JSON.parse(localStorage.getItem('apm_milestones')     || '[]');
+      subcontractors = JSON.parse(localStorage.getItem('apm_subcontractors') || '[]');
+      dailyReports   = JSON.parse(localStorage.getItem('apm_daily_reports')  || '[]');
+      doneTodos      = JSON.parse(localStorage.getItem('apm_done_todos')     || '[]');
     }catch(e){}
     // Only commit if this is still the latest load request
     if(token !== loadToken) return;
-    nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental].map(x=>x.id||0)) + 1;
+    nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental,...milestones,...subcontractors,...dailyReports].map(x=>x.id||0)) + 1;
     dataLoaded = true; renderAll(); return;
   }
   try{
-    const [p,r,s,rn] = await Promise.all([
+    const [p,r,s,rn,ms,sbs,dr] = await Promise.all([
       sb.from('projects').select('*').order('id'),
       sb.from('rfis').select('*').order('id'),
       sb.from('submittals').select('*').order('id'),
       sb.from('rental').select('*').order('id'),
+      sb.from('milestones').select('*').order('milestone_date'),
+      sb.from('subcontractors').select('*').order('id'),
+      sb.from('daily_reports').select('*').order('report_date', {ascending: false}),
     ]);
     // Discard results if a newer load has started
     if(token !== loadToken) return;
@@ -1961,12 +2186,15 @@ async function loadData(){
       console.error('Supabase table error', err);
       throw new Error(err.message || 'Failed to load one or more tables — check table permissions in Supabase.');
     }
-    projects   = (p.data||[]).map(x=>({...x, start:x.start_date, end:x.end_date}));
-    rfis       = (r.data||[]).map(x=>({...x, desc:x.description}));
-    submittals = (s.data||[]).map(x=>({...x, date:x.submitted_date, desc:x.description}));
-    rental     = (rn.data||[]).map(x=>({...x, onsite:x.onsite_date, offsite:x.release_date}));
-    doneTodos  = JSON.parse(localStorage.getItem('apm_done_todos') || '[]');
-    nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental].map(x=>x.id||0)) + 1;
+    projects       = (p.data||[]).map(x=>({...x, start:x.start_date, end:x.end_date}));
+    rfis           = (r.data||[]).map(x=>({...x, desc:x.description}));
+    submittals     = (s.data||[]).map(x=>({...x, date:x.submitted_date, desc:x.description}));
+    rental         = (rn.data||[]).map(x=>({...x, onsite:x.onsite_date, offsite:x.release_date}));
+    milestones     = ms.error  ? [] : (ms.data||[]);
+    subcontractors = sbs.error ? [] : (sbs.data||[]);
+    dailyReports   = dr.error  ? [] : (dr.data||[]);
+    doneTodos      = JSON.parse(localStorage.getItem('apm_done_todos') || '[]');
+    nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental,...milestones,...subcontractors,...dailyReports].map(x=>x.id||0)) + 1;
     saveLocal();
   }catch(e){ console.error('Supabase load error',e); return; }
   if(token !== loadToken) return;
@@ -2305,7 +2533,7 @@ function showDashboard(){
 
   loadSBConfig();
   loadData();
-  renderActivity();
+  loadActivity(); // fetches from Supabase when connected so all accounts see the same feed
   verifyCurrentUser(); // async — corrects role if tampered or changed by an admin
 }
 
@@ -2355,6 +2583,7 @@ function logout(){
   [
     'apm_session','apm_remember',
     'apm_projects','apm_rfis','apm_submittals','apm_rental',
+    'apm_milestones','apm_subcontractors','apm_daily_reports',
     'apm_done_todos','apm_dissolved_todos','apm_snoozed_todos',
     'apm_reminder_days','apm_activity','apm_activity_seen',
     'apm_sb_url','apm_sb_key'
@@ -2637,22 +2866,124 @@ function renderProjectControls(){
     body.innerHTML='<tr><td colspan="9" class="empty">No jobs yet. Click &ldquo;+ New Job&rdquo; to get started.</td></tr>';
     return;
   }
-  body.innerHTML=projects.map(p=>`
-    <tr>
-      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${h(p.number)||'&mdash;'}</td>
-      <td class="truncate">${h(p.name)}</td>
+  body.innerHTML=projects.map(p=>{
+    const risks = getScheduleRisks(p.id, 7);
+    const riskCount = risks.rfis.length + risks.submittals.length;
+    const riskBadge = riskCount ? `<span style="display:inline-flex;align-items:center;gap:3px;background:#fee2e2;color:var(--red);font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:5px">&#9888; ${riskCount}</span>` : '';
+    return `
+    <tr id="ctrl-row-${p.id}" class="data-row" onclick="toggleCtrlDetail(${p.id})">
+      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">
+        <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>${h(p.number)||'&mdash;'}
+      </td>
+      <td class="truncate">${h(p.name)}${riskBadge}</td>
       <td class="truncate">${h(p.client)||'&mdash;'}</td>
       <td class="truncate">${h(p.contract_type)||'&mdash;'}</td>
       <td>${p.contract_value?'$'+Number(p.contract_value).toLocaleString():'&mdash;'}</td>
       <td>${badge(p.status)}</td>
       <td class="truncate">${h(getUserDisplay(p.assigned_pm))||'&mdash;'}</td>
       <td class="truncate">${h(getUserDisplay(p.assigned_apm))||'&mdash;'}</td>
-      <td style="white-space:nowrap">
+      <td onclick="event.stopPropagation()" style="white-space:nowrap">
         <button class="btn-sm" onclick="editJobControls(${p.id})">Edit</button>
         <button class="btn-sm btn-danger" onclick="deleteItem('projects',${p.id})">Delete</button>
       </td>
     </tr>
-  `).join('');
+    <tr id="ctrl-detail-${p.id}" class="detail-row" style="display:none">
+      <td colspan="9"><div class="proj-detail-panel" id="ctrl-detail-panel-${p.id}"></div></td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleCtrlDetail(id){
+  const row    = document.getElementById(`ctrl-row-${id}`);
+  const detail = document.getElementById(`ctrl-detail-${id}`);
+  const panel  = document.getElementById(`ctrl-detail-panel-${id}`);
+  if(!row||!detail||!panel) return;
+  const opening = !row.classList.contains('expanded');
+  // Collapse all
+  document.querySelectorAll('[id^="ctrl-row-"]').forEach(r=>r.classList.remove('expanded'));
+  document.querySelectorAll('[id^="ctrl-detail-"]').forEach(r=>r.style.display='none');
+  if(opening){
+    row.classList.add('expanded');
+    detail.style.display='';
+    renderProjectDetailPanel(id, panel);
+  }
+}
+
+function renderProjectDetailPanel(projectId, panel){
+  const p = projects.find(x => x.id === projectId);
+  if(!p){ panel.innerHTML='<div style="color:var(--text-muted);font-size:13px">Project not found.</div>'; return; }
+
+  const projMilestones = milestones.filter(m => String(m.project_id) === String(projectId))
+    .sort((a,b) => (a.milestone_date||'').localeCompare(b.milestone_date||''));
+  const projSubs = subcontractors.filter(s => String(s.project_id) === String(projectId));
+  const risks = getScheduleRisks(projectId, 7);
+
+  // Milestone days helper
+  function milestoneDays(dateStr){
+    if(!dateStr) return '';
+    const d = new Date(dateStr+'T00:00:00');
+    const t = new Date(); t.setHours(0,0,0,0);
+    const diff = Math.ceil((d-t)/(1000*60*60*24));
+    if(diff < 0) return `<span class="date-chip date-overdue">&#9888; ${Math.abs(diff)}d overdue</span>`;
+    if(diff === 0) return `<span class="date-chip date-soon">Today</span>`;
+    if(diff <= 14) return `<span class="date-chip date-soon">${diff}d away</span>`;
+    return `<span class="date-chip date-normal">${diff}d away</span>`;
+  }
+
+  // Schedule section
+  const milestoneRows = projMilestones.length
+    ? projMilestones.map(m=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px">
+        <div>
+          <div style="font-weight:600;color:var(--text)">${h(m.name)}</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px">${h(m.type||'Custom')}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:12px">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-mid)">${fmt(m.milestone_date)}</div>
+          ${milestoneDays(m.milestone_date)}
+        </div>
+      </div>`).join('')
+    : `<div style="color:var(--text-muted);font-size:12px;padding:8px 0">No milestones — edit job to add.</div>`;
+
+  const ntpLine = p.ntp_date ? `<div style="font-size:12px;color:var(--text-mid);margin-bottom:10px"><strong>NTP:</strong> ${fmt(p.ntp_date)} ${milestoneDays(p.ntp_date)}</div>` : '';
+
+  // Subs section
+  const subRows = projSubs.length
+    ? projSubs.map(s=>`
+      <div style="padding:5px 0;border-bottom:1px solid var(--border);font-size:12px">
+        <div style="font-weight:600;color:var(--text)">${h(s.company_name)}</div>
+        <div style="color:var(--text-muted);font-size:11px">${[h(s.trade),h(s.contact_name),h(s.contact_phone)].filter(Boolean).join(' · ')}</div>
+      </div>`).join('')
+    : `<div style="color:var(--text-muted);font-size:12px;padding:8px 0">No subcontractors — edit job to add.</div>`;
+
+  // Risk section
+  let riskHtml = '';
+  if(risks.rfis.length + risks.submittals.length === 0){
+    riskHtml = `<div style="display:flex;align-items:center;gap:7px;padding:8px 10px;background:var(--green-light);border-radius:6px;font-size:12px;color:var(--green);font-weight:600">&#10003; No schedule risks in the next 7 days</div>`;
+  } else {
+    const items = [
+      ...risks.rfis.map(r=>`<div class="proj-risk-item"><div style="flex-shrink:0;padding:2px 7px;background:#fee2e2;color:var(--red);font-size:9px;font-weight:700;border-radius:10px;text-transform:uppercase">RFI</div><div><div class="proj-risk-label">#${h(r.num)} — ${h(r.subject)}</div><div class="proj-risk-meta">Due ${fmt(r.due)} &middot; ${h(r.status)}</div></div></div>`),
+      ...risks.submittals.map(s=>`<div class="proj-risk-item"><div style="flex-shrink:0;padding:2px 7px;background:var(--amber-light);color:var(--amber);font-size:9px;font-weight:700;border-radius:10px;text-transform:uppercase">Sub</div><div><div class="proj-risk-label">#${h(s.num)} — ${h(s.desc||s.description||'')}</div><div class="proj-risk-meta">Reqd By ${fmt(s.need_date)} &middot; ${h(s.status)}</div></div></div>`),
+    ];
+    riskHtml = items.join('');
+  }
+
+  panel.innerHTML = `
+    <div class="proj-detail-grid">
+      <div>
+        <div class="proj-detail-section-title">Schedule</div>
+        ${ntpLine}
+        ${milestoneRows}
+      </div>
+      <div>
+        <div class="proj-detail-section-title">Subcontractors (${projSubs.length})</div>
+        ${subRows}
+      </div>
+      <div>
+        <div class="proj-detail-section-title">Schedule Risk &mdash; Next 7 Days</div>
+        ${riskHtml}
+      </div>
+    </div>`;
 }
 
 // ── CUSTOM FILTER DROPDOWN HELPERS ──────────────────────
@@ -3059,7 +3390,7 @@ function selectFDOptionEl(ddId, el){
 
 function populateProjectSelects(){
   // Form selects in modals
-  const formIds=['rfi-project','sub-project','ren-project'];
+  const formIds=['rfi-project','sub-project','ren-project','dr-project'];
   formIds.forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
@@ -3072,6 +3403,7 @@ function populateProjectSelects(){
     {id:'fd-rfi-project',defLabel:'All Projects'},
     {id:'fd-sub-project',defLabel:'All Projects'},
     {id:'fd-ren-project',defLabel:'All Projects'},
+    {id:'fd-daily-project',defLabel:'All Projects'},
   ].forEach(({id,defLabel})=>{
     const el=document.getElementById(id);
     if(!el) return;
@@ -3387,7 +3719,7 @@ function renderTodos(){
 // ── MODAL RESET FUNCTIONS ─────────────────────────────────
 function resetControlsModal(){
   clearFields(['ctrl-id','ctrl-name','ctrl-number','ctrl-client','ctrl-value','ctrl-address',
-               'ctrl-start','ctrl-end','ctrl-owner-name','ctrl-owner-phone','ctrl-owner-email','ctrl-notes']);
+               'ctrl-ntp','ctrl-start','ctrl-end','ctrl-owner-name','ctrl-owner-phone','ctrl-owner-email','ctrl-notes']);
   document.getElementById('ctrl-contract-type').value='';
   document.getElementById('ctrl-status').value='Pre-Construction';
   ['ctrl-pm','ctrl-apm','ctrl-super','ctrl-foreman'].forEach(id=>{
@@ -3395,6 +3727,12 @@ function resetControlsModal(){
   });
   document.getElementById('controls-modal-title').textContent='New Job';
   document.getElementById('controls-save-btn').textContent='Save Job';
+  // Reset pending arrays and re-render empty lists
+  _pendingMilestones=[];
+  _pendingSubs=[];
+  renderPendingMilestones();
+  renderPendingSubs();
+  switchCtrlTab(0);
 }
 // ── RFI AUTO-NUMBER ──────────────────────────────────────
 function getNextRFINum(projectName){
@@ -3597,7 +3935,7 @@ function resetRFIModal(){
   if(specDescEl) specDescEl.value = '';
 }
 function resetSubmittalModal(){
-  clearFields(['sub-edit-id','sub-num','sub-desc','sub-date']);
+  clearFields(['sub-edit-id','sub-num','sub-desc','sub-date','sub-need-date']);
   document.getElementById('sub-project').value='';
   document.getElementById('sub-status').value='Pending';
   document.getElementById('sub-bic').value='Contractor';
@@ -3636,6 +3974,7 @@ function editJobControls(id){
   document.getElementById('ctrl-contract-type').value=p.contract_type||'';
   document.getElementById('ctrl-value').value=p.contract_value||'';
   document.getElementById('ctrl-address').value=p.address||'';
+  setDateVal('ctrl-ntp', p.ntp_date||'');
   setDateVal('ctrl-start', p.start||p.start_date||'');
   setDateVal('ctrl-end', p.end||p.end_date||'');
   document.getElementById('ctrl-status').value=p.status||'Pre-Construction';
@@ -3648,7 +3987,17 @@ function editJobControls(id){
   document.getElementById('ctrl-apm').value=p.assigned_apm||'';
   document.getElementById('ctrl-super').value=p.assigned_super||'';
   document.getElementById('ctrl-foreman').value=p.assigned_foreman||'';
+  // Load existing milestones and subs into pending arrays
+  _pendingMilestones = milestones
+    .filter(m => String(m.project_id) === String(id))
+    .map(m => ({_tid:++_pendingTid, id:m.id, name:m.name||'', date:m.milestone_date||'', type:m.type||'custom', notes:m.notes||'', isNew:false, isDeleted:false}));
+  _pendingSubs = subcontractors
+    .filter(s => String(s.project_id) === String(id))
+    .map(s => ({_tid:++_pendingTid, id:s.id, company_name:s.company_name||'', trade:s.trade||'', contact_name:s.contact_name||'', contact_phone:s.contact_phone||'', contact_email:s.contact_email||'', status:s.status||'Active', isNew:false, isDeleted:false}));
   openModal('controls-modal', true);
+  switchCtrlTab(0);
+  renderPendingMilestones();
+  renderPendingSubs();
 }
 
 function editRFI(id){
@@ -3698,6 +4047,7 @@ function editSubmittal(id){
   document.getElementById('sub-desc').value=s.desc||s.description||'';
   document.getElementById('sub-project').value=s.project||'';
   setDateVal('sub-date', s.date||s.submitted_date||'');
+  setDateVal('sub-need-date', s.need_date||'');
   document.getElementById('sub-status').value=s.status||'Pending';
   document.getElementById('sub-bic').value=s.bic||'Contractor';
   // Populate spec section dropdown for this project, then restore saved value
@@ -3743,9 +4093,106 @@ function populateTeamSelects(){
   });
 }
 
+// ── CONTROLS MODAL TAB SWITCHING ────────────────────────
+function switchCtrlTab(idx){
+  document.querySelectorAll('.ctrl-tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  document.querySelectorAll('.ctrl-tab-pane').forEach((p,i)=>p.classList.toggle('active',i===idx));
+  // Init date pickers for newly visible tab
+  initDatePickers();
+}
+
+// ── PENDING MILESTONE MANAGEMENT ────────────────────────
+function renderPendingMilestones(){
+  const tbody = document.getElementById('ctrl-milestone-body');
+  if(!tbody) return;
+  const active = _pendingMilestones.filter(m=>!m.isDeleted);
+  if(!active.length){
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px">No milestones yet — click + Add below.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = active.map(m=>`
+    <tr>
+      <td><input type="text" data-tid="${m._tid}" data-field="name" value="${h(m.name)}" placeholder="e.g. Substantial Completion" oninput="updatePendingMilestone(this)"></td>
+      <td><input type="date" data-tid="${m._tid}" data-field="date" value="${h(m.date)}" oninput="updatePendingMilestone(this)"></td>
+      <td><select data-tid="${m._tid}" data-field="type" onchange="updatePendingMilestone(this)">
+        <option value="ntp"${m.type==='ntp'?' selected':''}>NTP</option>
+        <option value="substantial_completion"${m.type==='substantial_completion'?' selected':''}>Substantial Completion</option>
+        <option value="final_completion"${m.type==='final_completion'?' selected':''}>Final Completion</option>
+        <option value="phase"${m.type==='phase'?' selected':''}>Phase</option>
+        <option value="custom"${(!m.type||m.type==='custom')?' selected':''}>Custom</option>
+      </select></td>
+      <td style="text-align:center"><button class="btn-icon btn-icon-danger" onclick="removeMilestoneRow(${m._tid})" title="Remove">✕</button></td>
+    </tr>`).join('');
+  initDatePickers();
+}
+
+function addMilestoneRow(){
+  _pendingMilestones.push({_tid:++_pendingTid, id:null, name:'', date:'', type:'custom', notes:'', isNew:true, isDeleted:false});
+  renderPendingMilestones();
+}
+
+function removeMilestoneRow(tid){
+  const m = _pendingMilestones.find(x=>x._tid===tid);
+  if(!m) return;
+  if(m.id){ m.isDeleted=true; } // existing record — mark for deletion on save
+  else { _pendingMilestones = _pendingMilestones.filter(x=>x._tid!==tid); }
+  renderPendingMilestones();
+}
+
+function updatePendingMilestone(el){
+  const tid = parseInt(el.dataset.tid);
+  const field = el.dataset.field;
+  const m = _pendingMilestones.find(x=>x._tid===tid);
+  if(m) m[field] = el.value;
+}
+
+// ── PENDING SUBCONTRACTOR MANAGEMENT ────────────────────
+function renderPendingSubs(){
+  const tbody = document.getElementById('ctrl-sub-body');
+  if(!tbody) return;
+  const active = _pendingSubs.filter(s=>!s.isDeleted);
+  if(!active.length){
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px">No subcontractors yet — click + Add below.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = active.map(s=>`
+    <tr>
+      <td><input type="text" data-tid="${s._tid}" data-field="company_name" value="${h(s.company_name)}" placeholder="Company name" oninput="updatePendingSub(this)"></td>
+      <td><input type="text" data-tid="${s._tid}" data-field="trade" value="${h(s.trade)}" placeholder="e.g. Electrical" oninput="updatePendingSub(this)"></td>
+      <td><input type="text" data-tid="${s._tid}" data-field="contact_name" value="${h(s.contact_name)}" placeholder="Contact" oninput="updatePendingSub(this)"></td>
+      <td><input type="text" data-tid="${s._tid}" data-field="contact_phone" value="${h(s.contact_phone)}" placeholder="(555) 000-0000" oninput="updatePendingSub(this)"></td>
+      <td><select data-tid="${s._tid}" data-field="status" onchange="updatePendingSub(this)">
+        <option${s.status==='Active'?' selected':''}>Active</option>
+        <option${s.status==='Complete'?' selected':''}>Complete</option>
+        <option${s.status==='Inactive'?' selected':''}>Inactive</option>
+      </select></td>
+      <td style="text-align:center"><button class="btn-icon btn-icon-danger" onclick="removeSubRow(${s._tid})" title="Remove">✕</button></td>
+    </tr>`).join('');
+}
+
+function addSubRow(){
+  _pendingSubs.push({_tid:++_pendingTid, id:null, company_name:'', trade:'', contact_name:'', contact_phone:'', contact_email:'', status:'Active', isNew:true, isDeleted:false});
+  renderPendingSubs();
+}
+
+function removeSubRow(tid){
+  const s = _pendingSubs.find(x=>x._tid===tid);
+  if(!s) return;
+  if(s.id){ s.isDeleted=true; }
+  else { _pendingSubs = _pendingSubs.filter(x=>x._tid!==tid); }
+  renderPendingSubs();
+}
+
+function updatePendingSub(el){
+  const tid = parseInt(el.dataset.tid);
+  const field = el.dataset.field;
+  const s = _pendingSubs.find(x=>x._tid===tid);
+  if(s) s[field] = el.value;
+}
+
 async function saveJobControls(){
   if(!canWrite('controls')){ alert('You do not have permission to create or edit jobs.'); return; }
-  const name=val('ctrl-name');if(!name)return alert('Job name required.');
+  const name=val('ctrl-name');if(!name){ switchCtrlTab(0); return alert('Job name required.'); }
   const editId=document.getElementById('ctrl-id').value;
   const rawVal=document.getElementById('ctrl-value').value.trim();
   const data={
@@ -3755,6 +4202,7 @@ async function saveJobControls(){
     contract_type:val('ctrl-contract-type'),
     contract_value:rawVal?parseFloat(rawVal):null,
     address:val('ctrl-address'),
+    ntp_date:val('ctrl-ntp')||null,
     start_date:val('ctrl-start'),
     end_date:val('ctrl-end'),
     status:val('ctrl-status'),
@@ -3767,6 +4215,7 @@ async function saveJobControls(){
     assigned_foreman:val('ctrl-foreman'),
     notes:val('ctrl-notes'),
   };
+  let savedProjectId;
   if(editId){
     const id=parseInt(editId);
     const idx=projects.findIndex(x=>x.id===id);
@@ -3775,9 +4224,53 @@ async function saveJobControls(){
       if(res.error){ alert('Failed to update job: '+res.error.message); return; }
       projects[idx]={...projects[idx],...data,start:data.start_date,end:data.end_date};
     }
+    savedProjectId = id;
   } else {
-    if(sb){ const res=await sb.from('projects').insert(data).select(); if(res.error){ alert('Failed to save job: '+res.error.message); return; } if(res.data?.[0]) projects.push({...res.data[0],start:res.data[0].start_date,end:res.data[0].end_date}); }
-    else { projects.push({id:nextId++,...data,start:data.start_date,end:data.end_date}); }
+    if(sb){
+      const res=await sb.from('projects').insert(data).select();
+      if(res.error){ alert('Failed to save job: '+res.error.message); return; }
+      if(res.data?.[0]){ projects.push({...res.data[0],start:res.data[0].start_date,end:res.data[0].end_date}); savedProjectId=res.data[0].id; }
+    } else {
+      const newId=nextId++;
+      projects.push({id:newId,...data,start:data.start_date,end:data.end_date});
+      savedProjectId=newId;
+    }
+  }
+  // ── Batch save milestones ────────────────────────────
+  if(savedProjectId != null){
+    // Sync in-DOM values first (user may not have blurred fields)
+    document.querySelectorAll('[data-field]').forEach(el=>{
+      const tid=parseInt(el.dataset.tid||'0');
+      const field=el.dataset.field;
+      if(!tid||!field) return;
+      const m=_pendingMilestones.find(x=>x._tid===tid);
+      if(m) m[field]=el.value;
+      const s=_pendingSubs.find(x=>x._tid===tid);
+      if(s) s[field]=el.value;
+    });
+    const toDeleteMs=_pendingMilestones.filter(m=>m.isDeleted&&m.id);
+    const toInsertMs=_pendingMilestones.filter(m=>m.isNew&&!m.isDeleted&&m.name);
+    for(const m of toDeleteMs){
+      milestones=milestones.filter(x=>x.id!==m.id);
+      await sbDelete('milestones',m.id);
+    }
+    for(const m of toInsertMs){
+      const row={project_id:savedProjectId,name:m.name,milestone_date:m.date||null,type:m.type||'custom',notes:m.notes||''};
+      if(sb){ const res=await sb.from('milestones').insert(row).select(); if(res.data?.[0]) milestones.push(res.data[0]); }
+      else { milestones.push({id:nextId++,...row}); }
+    }
+    // ── Batch save subcontractors ──────────────────────
+    const toDeleteSubs=_pendingSubs.filter(s=>s.isDeleted&&s.id);
+    const toInsertSubs=_pendingSubs.filter(s=>s.isNew&&!s.isDeleted&&s.company_name);
+    for(const s of toDeleteSubs){
+      subcontractors=subcontractors.filter(x=>x.id!==s.id);
+      await sbDelete('subcontractors',s.id);
+    }
+    for(const s of toInsertSubs){
+      const row={project_id:savedProjectId,company_name:s.company_name,trade:s.trade||'',contact_name:s.contact_name||'',contact_phone:s.contact_phone||'',contact_email:s.contact_email||'',status:s.status||'Active'};
+      if(sb){ const res=await sb.from('subcontractors').insert(row).select(); if(res.data?.[0]) subcontractors.push(res.data[0]); }
+      else { subcontractors.push({id:nextId++,...row}); }
+    }
   }
   const _jobLabel = data.name || 'Unnamed Job';
   resetControlsModal();
@@ -3814,7 +4307,7 @@ async function saveSubmittal(){
   if(!getPerms().canEdit){ alert('You do not have permission to create or edit submittals.'); return; }
   const num=val('sub-num'),desc=val('sub-desc');if(!num||!desc)return alert('Submittal # and description required.');
   const editId=document.getElementById('sub-edit-id').value;
-  const data={num,project:val('sub-project'),description:desc,spec:getSubSpecFromModal(),submitted_date:val('sub-date'),status:val('sub-status'),bic:val('sub-bic')};
+  const data={num,project:val('sub-project'),description:desc,spec:getSubSpecFromModal(),submitted_date:val('sub-date'),need_date:val('sub-need-date')||null,status:val('sub-status'),bic:val('sub-bic')};
   if(editId){
     const id=parseInt(editId);
     const idx=submittals.findIndex(x=>x.id===id);
@@ -3861,10 +4354,10 @@ async function saveRental(){
 async function deleteItem(store,id){
   if(!getPerms().canDelete){ alert('You do not have permission to delete records.'); return; }
   if(!confirm('Delete this record? This cannot be undone.')) return;
-  const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental'};
-  const _delArr=store==='projects'?projects:store==='rfis'?rfis:store==='submittals'?submittals:rental;
+  const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental','daily':'daily_reports'};
+  const _delArr=store==='projects'?projects:store==='rfis'?rfis:store==='submittals'?submittals:store==='daily'?dailyReports:rental;
   const _delItem=_delArr.find(x=>x.id===id);
-  const _delLabel=_delItem?(_delItem.name||_delItem.subject||_delItem.num||'Record'):'Record';
+  const _delLabel=_delItem?(_delItem.name||_delItem.subject||_delItem.num||(_delItem.report_date?'Report '+fmt(_delItem.report_date):'Record')):'Record';
   if(tableMap[store]){
     const res=await sbDelete(tableMap[store],id);
     if(res.error){ alert('Failed to delete record: '+res.error.message); return; }
@@ -3873,6 +4366,7 @@ async function deleteItem(store,id){
   else if(store==='rfis')rfis=rfis.filter(x=>x.id!==id);
   else if(store==='submittals')submittals=submittals.filter(x=>x.id!==id);
   else if(store==='rental')rental=rental.filter(x=>x.id!==id);
+  else if(store==='daily')dailyReports=dailyReports.filter(x=>x.id!==id);
   saveLocal();renderAll();
   showToast('Record deleted.');
   logActivity('delete','deleted',_delLabel,store.charAt(0).toUpperCase()+store.slice(1)+' deleted');
@@ -3912,7 +4406,8 @@ function renderReportPreview(){
     preview.innerHTML=`<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:24px 16px">${msg}</div>`;
     return;
   }
-  preview.innerHTML = filtered.map(p=>{
+  // Build project rows
+  const projectRows = filtered.map(p=>{
     const pct = calcPct(p.start_date||p.start, p.end_date||p.end, p.status);
     const ph = projectHealth(p);
     const openR = rfis.filter(r=>r.project===p.name&&!['Answered','Closed'].includes(r.status)).length;
@@ -3937,6 +4432,27 @@ function renderReportPreview(){
       </div>
     </div>`;
   }).join('');
+
+  // Schedule Risk section
+  const allRisks = filtered.map(p=>({p, risks:getScheduleRisks(p.id,7)})).filter(x=>x.risks.rfis.length+x.risks.submittals.length>0);
+  let riskSection = '';
+  if(allRisks.length){
+    const riskItems = allRisks.map(({p,risks})=>{
+      const items=[
+        ...risks.rfis.map(r=>`<div style="padding:3px 0 3px 12px;font-size:12px;color:var(--text-mid)">&#9888; RFI #${h(r.num)} &mdash; ${h(r.subject)} <span style="color:var(--red)">due ${fmt(r.due)}</span></div>`),
+        ...risks.submittals.map(s=>`<div style="padding:3px 0 3px 12px;font-size:12px;color:var(--text-mid)">&#9888; Sub #${h(s.num)} &mdash; ${h(s.desc||s.description||'')} <span style="color:var(--amber)">reqd by ${fmt(s.need_date)}</span></div>`),
+      ].join('');
+      return `<div style="padding:6px 0;border-bottom:1px solid var(--border)"><div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">${h(p.name)}</div>${items}</div>`;
+    }).join('');
+    riskSection = `<div style="margin-top:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--michels-red);text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid var(--michels-red);padding-bottom:5px;margin-bottom:10px">&#9888; Schedule Risk &mdash; Next 7 Days</div>
+      ${riskItems}
+    </div>`;
+  } else {
+    riskSection = `<div style="margin-top:18px;padding:10px 14px;background:var(--green-light);border-radius:8px;font-size:12px;color:var(--green);font-weight:600">&#10003; No schedule risks detected in the next 7 days across all active projects.</div>`;
+  }
+
+  preview.innerHTML = projectRows + riskSection;
 }
 
 async function generateSummaryPDF(){
@@ -4130,6 +4646,45 @@ async function generateSummaryPDF(){
       doc.text(item.detail,37,y+12);
       if(item.project){doc.setFontSize(7);doc.setTextColor(...midGray);doc.text(item.project,pw-12,y+6,{align:'right'});}
       y+=20;
+    });
+  }
+  // ── SCHEDULE RISK SECTION ───────────────────────────────
+  const pdfRisks = filtered.map(p=>({p,risks:getScheduleRisks(p.id,7)})).filter(x=>x.risks.rfis.length+x.risks.submittals.length>0);
+  if(y>ph-60){drawFooter('Page 1  |  Overview');doc.addPage();drawHeader('Schedule Risk');y=36;}
+  y=secTitle('SCHEDULE RISK — NEXT 7 DAYS',y);
+  if(!pdfRisks.length){
+    doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,12,2,2,'F');
+    doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+    doc.text('No schedule risks detected in the next 7 days across all active projects.',pw/2,y+8,{align:'center'});
+    y+=18;
+  } else {
+    pdfRisks.forEach(({p,risks})=>{
+      if(y>ph-40){drawFooter('Page 1  |  Overview');doc.addPage();drawHeader('Schedule Risk (cont.)');y=36;}
+      doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+      doc.text(p.name||'',10,y); y+=6;
+      risks.rfis.forEach(r=>{
+        if(y>ph-20){doc.addPage();drawHeader('Schedule Risk (cont.)');y=36;}
+        doc.setFillColor(254,226,226); doc.roundedRect(10,y,pw-20,10,1,1,'F');
+        doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(200,16,46);
+        doc.text('RFI',14,y+7);
+        doc.setFont('helvetica','normal'); doc.setTextColor(...black);
+        doc.text(`#${r.num} — ${(r.subject||'').substring(0,40)}`,28,y+7);
+        doc.setTextColor(...darkGray);
+        doc.text(`Due: ${fmtD(r.due)}  |  ${r.status}`,pw-12,y+7,{align:'right'});
+        y+=13;
+      });
+      risks.submittals.forEach(s=>{
+        if(y>ph-20){doc.addPage();drawHeader('Schedule Risk (cont.)');y=36;}
+        doc.setFillColor(255,243,200); doc.roundedRect(10,y,pw-20,10,1,1,'F');
+        doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(180,100,0);
+        doc.text('SUB',14,y+7);
+        doc.setFont('helvetica','normal'); doc.setTextColor(...black);
+        doc.text(`#${s.num} — ${(s.desc||s.description||'').substring(0,40)}`,28,y+7);
+        doc.setTextColor(...darkGray);
+        doc.text(`Reqd: ${fmtD(s.need_date)}  |  ${s.status}`,pw-12,y+7,{align:'right'});
+        y+=13;
+      });
+      y+=4;
     });
   }
   drawFooter('Page 1  |  Overview');
@@ -4331,6 +4886,192 @@ async function generateSummaryPDF(){
 }
 </script>
 
+<!-- ── daily.js ── -->
+<script>
+// Daily Field Report CRUD, render, and filter logic
+
+function weatherBadge(w){
+  if(!w) return '&mdash;';
+  return badge(w);
+}
+
+function renderDailyReports(){
+  const body = document.getElementById('daily-body');
+  if(!body) return;
+
+  const txt  = (document.getElementById('daily-filter-text')?.value||'').toLowerCase();
+  const proj = getFDValue('fd-daily-project');
+  const from = document.getElementById('daily-filter-from')?.value||'';
+  const to   = document.getElementById('daily-filter-to')?.value||'';
+
+  if(!dailyReports.length){
+    body.innerHTML='<tr><td colspan="8" class="empty"><div class="empty-icon">📋</div>No daily reports yet — click &ldquo;+ New Report&rdquo; to log today&rsquo;s field activity.</td></tr>';
+    return;
+  }
+
+  let rows = [...dailyReports].sort((a,b)=>(b.report_date||'').localeCompare(a.report_date||''));
+
+  if(proj) rows = rows.filter(r=>r.project===proj);
+  if(from) rows = rows.filter(r=>r.report_date >= from);
+  if(to)   rows = rows.filter(r=>r.report_date <= to);
+  if(txt)  rows = rows.filter(r=>{
+    return (r.project||'').toLowerCase().includes(txt)
+      || (r.work_performed||'').toLowerCase().includes(txt)
+      || (r.issues_notes||'').toLowerCase().includes(txt)
+      || (r.equipment_used||'').toLowerCase().includes(txt);
+  });
+
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="8" class="empty">No daily reports match the current filters.</td></tr>';
+    return;
+  }
+
+  body.innerHTML = rows.map(r=>{
+    const summary = (r.work_performed||'').split('\n')[0].slice(0,60) + ((r.work_performed||'').length>60?'…':'');
+    const tempStr = (r.temp_high||r.temp_low)
+      ? [(r.temp_high?r.temp_high+'°':''), (r.temp_low?r.temp_low+'°':'')].filter(Boolean).join(' / ')
+      : '&mdash;';
+    const issueFlag = r.issues_notes
+      ? `<span class="status badge-amber" style="margin-left:4px;font-size:10px;padding:1px 5px" title="Has issues/notes">!</span>`
+      : '';
+    return `
+    <tr id="dr-row-${r.id}" class="data-row" onclick="toggleDrDetail(${r.id})">
+      <td style="font-family:'DM Mono',monospace;font-size:12px;white-space:nowrap">
+        <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>${fmt(r.report_date)}
+      </td>
+      <td class="truncate">${h(r.project)||'&mdash;'}</td>
+      <td>${weatherBadge(r.weather)}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px">${tempStr}</td>
+      <td style="text-align:center;font-weight:600">${r.crew_count??'&mdash;'}</td>
+      <td class="truncate"><span class="cell-primary">${h(summary)}</span>${issueFlag}</td>
+      <td class="truncate"><span class="cell-secondary">${h(r.created_by||'')}</span></td>
+      <td onclick="event.stopPropagation()" style="white-space:nowrap">
+        <div class="row-actions">
+          <button class="btn-icon" onclick="editDailyReport(${r.id})" title="Edit">✎</button>
+          <button class="btn-icon btn-icon-danger" onclick="deleteItem('daily',${r.id})" title="Delete">✕</button>
+        </div>
+      </td>
+    </tr>
+    <tr id="dr-detail-${r.id}" class="detail-row" style="display:none">
+      <td colspan="8">
+        <div class="detail-panel">
+          <div class="detail-grid">
+            ${r.weather   ? `<div><div class="detail-field-label">Weather</div><div class="detail-field-value">${weatherBadge(r.weather)} ${r.temp_high?r.temp_high+'°F high':''}${r.temp_low?' / '+r.temp_low+'°F low':''}</div></div>` : ''}
+            ${r.crew_count != null ? `<div><div class="detail-field-label">Crew Count</div><div class="detail-field-value">${r.crew_count} workers</div></div>` : ''}
+            ${r.visitors  ? `<div><div class="detail-field-label">Visitors / Inspections</div><div class="detail-field-value">${h(r.visitors)}</div></div>` : ''}
+          </div>
+          ${r.work_performed ? `<div class="detail-field-label">Work Performed</div><div class="detail-desc-block">${h(r.work_performed)}</div>` : ''}
+          ${r.equipment_used ? `<div class="detail-field-label">Equipment Used</div><div class="detail-desc-block">${h(r.equipment_used)}</div>` : ''}
+          ${r.issues_notes   ? `<div class="detail-field-label">Issues / Notes</div><div class="detail-desc-block detail-desc-block-warn">${h(r.issues_notes)}</div>` : ''}
+          <div class="detail-actions">
+            <button class="btn-sm" onclick="event.stopPropagation();editDailyReport(${r.id})">Edit Report</button>
+            <button class="btn-sm btn-danger" onclick="event.stopPropagation();deleteItem('daily',${r.id})">Delete</button>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleDrDetail(id){
+  const row    = document.getElementById(`dr-row-${id}`);
+  const detail = document.getElementById(`dr-detail-${id}`);
+  if(!row||!detail) return;
+  const opening = !row.classList.contains('expanded');
+  document.querySelectorAll('[id^="dr-row-"]').forEach(r=>r.classList.remove('expanded'));
+  document.querySelectorAll('[id^="dr-detail-"]').forEach(r=>r.style.display='none');
+  if(opening){ row.classList.add('expanded'); detail.style.display=''; }
+}
+
+function clearDailyFilters(){
+  const t = document.getElementById('daily-filter-text');
+  const f = document.getElementById('daily-filter-from');
+  const to = document.getElementById('daily-filter-to');
+  if(t) t.value=''; if(f) f.value=''; if(to) to.value='';
+  clearFD('fd-daily-project');
+  renderDailyReports();
+}
+
+// ── MODAL RESET ──────────────────────────────────────────
+function resetDailyReportModal(){
+  clearFields(['dr-edit-id','dr-work','dr-equipment','dr-visitors','dr-issues','dr-temp-high','dr-temp-low','dr-crew']);
+  document.getElementById('dr-project').value='';
+  document.getElementById('dr-weather').value='';
+  // Default date to today
+  const today = new Date().toISOString().split('T')[0];
+  const dateEl = document.getElementById('dr-date');
+  if(dateEl){ if(dateEl._flatpickr) dateEl._flatpickr.setDate(today); else dateEl.value=today; }
+  document.getElementById('daily-modal-title').textContent='New Daily Report';
+  document.getElementById('dr-save-btn').textContent='Save Report';
+}
+
+// ── SAVE ─────────────────────────────────────────────────
+async function saveDailyReport(){
+  if(!getPerms().canEdit){ alert('You do not have permission to create or edit daily reports.'); return; }
+  const work = val('dr-work');
+  if(!work) return alert('Work Performed is required.');
+  const project = val('dr-project');
+  if(!project) return alert('Please select a project.');
+  const editId = document.getElementById('dr-edit-id').value;
+  const data = {
+    project,
+    report_date:    val('dr-date') || new Date().toISOString().split('T')[0],
+    weather:        val('dr-weather')||null,
+    temp_high:      document.getElementById('dr-temp-high').value ? parseInt(document.getElementById('dr-temp-high').value) : null,
+    temp_low:       document.getElementById('dr-temp-low').value  ? parseInt(document.getElementById('dr-temp-low').value)  : null,
+    crew_count:     document.getElementById('dr-crew').value      ? parseInt(document.getElementById('dr-crew').value)      : null,
+    work_performed: work,
+    equipment_used: val('dr-equipment')||null,
+    visitors:       val('dr-visitors')||null,
+    issues_notes:   val('dr-issues')||null,
+    created_by:     currentUser?.displayName||currentUser?.username||'',
+  };
+  if(editId){
+    const id = parseInt(editId);
+    const idx = dailyReports.findIndex(x=>x.id===id);
+    if(idx>-1){
+      const res = await sbUpdate('daily_reports', id, data);
+      if(res.error){ alert('Failed to update report: '+res.error.message); return; }
+      dailyReports[idx] = {...dailyReports[idx], ...data};
+    }
+  } else {
+    if(sb){
+      const res = await sb.from('daily_reports').insert(data).select();
+      if(res.error){ alert('Failed to save report: '+res.error.message); return; }
+      if(res.data?.[0]) dailyReports.unshift(res.data[0]);
+    } else {
+      dailyReports.unshift({id:nextId++, ...data});
+    }
+  }
+  resetDailyReportModal();
+  closeModal('daily-modal');
+  saveLocal(); renderAll();
+  showToast(editId ? 'Report updated.' : 'Daily report saved.');
+  logActivity('daily', editId?'updated':'created', `Daily Report — ${data.project} ${fmt(data.report_date)}`, editId?'Report updated':'New daily report filed');
+}
+
+// ── EDIT ─────────────────────────────────────────────────
+function editDailyReport(id){
+  if(!getPerms().canEdit){ alert('You do not have permission to edit daily reports.'); return; }
+  const r = dailyReports.find(x=>x.id===id);
+  if(!r) return;
+  document.getElementById('daily-modal-title').textContent='Edit Daily Report';
+  document.getElementById('dr-save-btn').textContent='Update Report';
+  document.getElementById('dr-edit-id').value=id;
+  document.getElementById('dr-project').value=r.project||'';
+  setDateVal('dr-date', r.report_date||'');
+  document.getElementById('dr-weather').value=r.weather||'';
+  document.getElementById('dr-temp-high').value=r.temp_high!=null?r.temp_high:'';
+  document.getElementById('dr-temp-low').value=r.temp_low!=null?r.temp_low:'';
+  document.getElementById('dr-crew').value=r.crew_count!=null?r.crew_count:'';
+  document.getElementById('dr-work').value=r.work_performed||'';
+  document.getElementById('dr-equipment').value=r.equipment_used||'';
+  document.getElementById('dr-visitors').value=r.visitors||'';
+  document.getElementById('dr-issues').value=r.issues_notes||'';
+  openModal('daily-modal', true);
+}
+</script>
+
 <!-- ── exports.js ── -->
 <script>
 // Excel and PDF export for RFI, Submittal, and Rental logs
@@ -4379,6 +5120,21 @@ function exportToExcel(type, btn){
       'Release Date': r.offsite||r.release_date||'',
       'Status':       r.status||''
     }));
+  } else if(type === 'daily'){
+    filename = 'Daily_Field_Reports.xlsx';
+    data = [...dailyReports].sort((a,b)=>(b.report_date||'').localeCompare(a.report_date||'')).map(r=>({
+      'Date':            r.report_date||'',
+      'Project':         r.project||'',
+      'Weather':         r.weather||'',
+      'High (°F)':       r.temp_high!=null ? r.temp_high : '',
+      'Low (°F)':        r.temp_low!=null  ? r.temp_low  : '',
+      'Crew Count':      r.crew_count!=null ? r.crew_count : '',
+      'Work Performed':  r.work_performed||'',
+      'Equipment Used':  r.equipment_used||'',
+      'Visitors':        r.visitors||'',
+      'Issues / Notes':  r.issues_notes||'',
+      'Reported By':     r.created_by||'',
+    }));
   }
 
   if(!data.length){
@@ -4393,7 +5149,7 @@ function exportToExcel(type, btn){
   ws['!cols'] = colWidths;
 
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, type==='rfi'?'RFI Log':type==='submittal'?'Submittal Log':'Rental Equipment');
+  XLSX.utils.book_append_sheet(wb, ws, type==='rfi'?'RFI Log':type==='submittal'?'Submittal Log':type==='daily'?'Daily Reports':'Rental Equipment');
 
   // Add metadata sheet
   const meta = XLSX.utils.aoa_to_sheet([
@@ -4709,9 +5465,10 @@ let activityCustomFrom = null;
 let activityCustomTo   = null;
 let seenActivityIds = new Set();
 
-const ACTIVITY_KEY      = 'apm_activity';
-const ACTIVITY_SEEN_KEY = 'apm_activity_seen';
-const ACTIVITY_MAX = 500;
+const ACTIVITY_KEY  = 'apm_activity';
+const ACTIVITY_MAX  = 500;
+// Seen-state key is per-user so read/unread doesn't bleed between accounts on the same device
+function _seenKey(){ return 'apm_activity_seen_' + (currentUser?.username || '_anon'); }
 const ACTIVITY_COLORS = {
   project:   'var(--michels-red)',
   rfi:       'var(--amber)',
@@ -4723,17 +5480,42 @@ const ACTIVITY_COLORS = {
 
 function _loadSeenIds(){
   try {
-    const raw = localStorage.getItem(ACTIVITY_SEEN_KEY);
+    const raw = localStorage.getItem(_seenKey());
     seenActivityIds = new Set(raw ? JSON.parse(raw) : []);
   } catch(e){ seenActivityIds = new Set(); }
 }
 
 function _saveSeenIds(){
-  localStorage.setItem(ACTIVITY_SEEN_KEY, JSON.stringify([...seenActivityIds]));
+  localStorage.setItem(_seenKey(), JSON.stringify([...seenActivityIds]));
 }
 
-function loadActivity(){
-  _loadSeenIds();
+async function loadActivity(){
+  _loadSeenIds(); // always reload for current user's seen state
+  if(sb){
+    try{
+      const res = await sb.from('activity_log')
+        .select('*')
+        .order('ts', {ascending:false})
+        .limit(500);
+      if(!res.error && res.data){
+        activityLog = res.data.map(r=>({
+          // entry_id is the stable client-generated ID; fall back to ts+username for old rows
+          id:     r.entry_id || (r.ts + '_' + (r.username||'')),
+          type:   r.type   || '',
+          action: r.action || '',
+          label:  r.label  || '',
+          detail: r.detail || '',
+          user:   r.username || '',
+          ts:     r.ts,
+        }));
+        _saveActivity(); // cache for offline fallback
+        renderActivity();
+        updateNotifDot();
+        return;
+      }
+    }catch(e){}
+  }
+  // Offline fallback — use localStorage cache
   try {
     const raw = localStorage.getItem(ACTIVITY_KEY);
     activityLog = raw ? JSON.parse(raw) : [];
@@ -4783,6 +5565,7 @@ function logActivity(type, action, label, detail){
   // INSERT-only RLS on activity_log means no client can delete or modify records.
   if(sb){
     sb.from('activity_log').insert({
+      entry_id: entry.id,  // stable ID — enables cross-device seen/unread tracking
       type: entry.type,
       action: entry.action,
       label: entry.label,
