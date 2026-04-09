@@ -745,6 +745,26 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <div class="section-title">Project Controls</div>
       <button class="btn-add" onclick="openModal('controls-modal')">+ New Job</button>
     </div>
+    <div class="filter-bar">
+      <span class="filter-bar-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filter</span>
+      <div class="filter-bar-sep"></div>
+      <input class="filter-input" id="ctrl-filter-text" placeholder="Search job name, number, client…" oninput="renderProjectControls()">
+      <div class="filter-dd" id="fd-ctrl-status" data-fd-val="" data-default-label="All Statuses" data-render="renderProjectControls">
+        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-ctrl-status')">
+          <span class="filter-dd-val">All Statuses</span>
+          <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-dd-menu">
+          <div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-ctrl-status','','All Statuses')">All Statuses</div>
+          <div class="filter-dd-opt" data-val="Pre-Construction" onclick="selectFDOption('fd-ctrl-status','Pre-Construction','Pre-Construction')"><span class="filter-dd-opt-dot" style="background:#94a3b8"></span>Pre-Construction</div>
+          <div class="filter-dd-opt" data-val="In Progress" onclick="selectFDOption('fd-ctrl-status','In Progress','In Progress')"><span class="filter-dd-opt-dot" style="background:#3b82f6"></span>In Progress</div>
+          <div class="filter-dd-opt" data-val="On Hold" onclick="selectFDOption('fd-ctrl-status','On Hold','On Hold')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>On Hold</div>
+          <div class="filter-dd-opt" data-val="Closeout" onclick="selectFDOption('fd-ctrl-status','Closeout','Closeout')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>Closeout</div>
+          <div class="filter-dd-opt" data-val="Complete" onclick="selectFDOption('fd-ctrl-status','Complete','Complete')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>Complete</div>
+        </div>
+      </div>
+      <button class="filter-clear" onclick="clearControlsFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
+    </div>
     <div class="table-wrap">
       <table>
         <thead><tr>
@@ -1215,8 +1235,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="modal-body">
       <input type="hidden" id="sub-edit-id" value="">
       <div class="form-row">
-        <div><label>Submittal #</label><input type="text" id="sub-num" placeholder="e.g. SUB-001"></div>
-        <div><label>Project</label><select id="sub-project" onchange="autoFillSubSpec()"><option value="">Select project</option></select></div>
+        <div>
+          <label style="display:flex;align-items:center;gap:6px">
+            Submittal #
+            <span id="sub-num-auto-badge" style="display:none;font-size:9px;font-weight:700;background:var(--green-light);color:var(--green);padding:1px 6px;border-radius:10px;letter-spacing:.3px;text-transform:uppercase">Auto</span>
+          </label>
+          <input type="text" id="sub-num" placeholder="Select a project first" oninput="subNumManualOverride()">
+        </div>
+        <div><label>Project</label><select id="sub-project" onchange="autoFillSubNum();autoFillSubSpec()"><option value="">Select project</option></select></div>
       </div>
       <div class="form-row-full"><label>Description</label><input type="text" id="sub-desc" placeholder="e.g. Structural Steel Shop Drawings"></div>
       <div class="form-row-full">
@@ -1600,7 +1626,7 @@ const statusColors = {
   'In Progress':'badge-blue','Pre-Construction':'badge-gray','On Hold':'badge-amber','Closeout':'badge-green','Complete':'badge-green',
   'Open':'badge-red','Under Review':'badge-amber','Answered':'badge-green','Closed':'badge-gray',
   'Pending':'badge-gray','Approved':'badge-green','Approved as Noted':'badge-green','Revise & Resubmit':'badge-amber','Rejected':'badge-red',
-  'Ordered':'badge-amber','On Site':'badge-blue','Released':'badge-green',
+  'Ordered':'badge-amber','On Site':'badge-blue','Released':'badge-green','Release':'badge-green',
   // Weather
   'Clear':'badge-green','Partly Cloudy':'badge-blue','Cloudy':'badge-gray','Rain':'badge-blue',
   'Thunderstorm':'badge-amber','Snow':'badge-blue','Fog':'badge-gray','High Wind':'badge-amber',
@@ -2815,14 +2841,31 @@ function getUserDisplay(username){
   return u ? (u.displayName||u.username) : username;
 }
 
+function clearControlsFilters(){
+  const t=document.getElementById('ctrl-filter-text');if(t)t.value='';
+  clearFD('fd-ctrl-status');
+  renderProjectControls();
+}
+
 function renderProjectControls(){
   const body=document.getElementById('controls-body');
   if(!body) return;
+  const txt=(document.getElementById('ctrl-filter-text')?.value||'').toLowerCase();
+  const stat=getFDValue('fd-ctrl-status');
   if(!projects.length){
     body.innerHTML='<tr><td colspan="9" class="empty">No jobs yet. Click &ldquo;+ New Job&rdquo; to get started.</td></tr>';
     return;
   }
-  body.innerHTML=projects.map(p=>{
+  const filtered=projects.filter(p=>{
+    if(stat && p.status!==stat) return false;
+    if(txt && !(p.name||'').toLowerCase().includes(txt) && !(p.number||'').toLowerCase().includes(txt) && !(p.client||'').toLowerCase().includes(txt)) return false;
+    return true;
+  });
+  if(!filtered.length){
+    body.innerHTML='<tr><td colspan="9" class="empty">No jobs match the current filters.</td></tr>';
+    return;
+  }
+  body.innerHTML=filtered.map(p=>{
     return `
     <tr id="ctrl-row-${p.id}" class="data-row" onclick="toggleCtrlDetail(${p.id})">
       <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">
@@ -3091,6 +3134,7 @@ function renderSubmittals(){
             <div><div class="detail-field-label">Project</div><div class="detail-field-value">${h(s.project)||'—'}</div></div>
             ${s.spec?`<div><div class="detail-field-label">Spec Section</div><div class="detail-field-value">${h(s.spec)}</div></div>`:''}
             <div><div class="detail-field-label">Date Submitted</div><div class="detail-field-value">${fmt(s.date)||'—'}</div></div>
+            ${s.need_date?`<div><div class="detail-field-label">Required By</div><div class="detail-field-value">${dateChip(s.need_date,true)}</div></div>`:''}
             <div><div class="detail-field-label">Ball in Court</div><div class="detail-field-value">${h(s.bic)||'—'}</div></div>
             <div><div class="detail-field-label">Status</div><div class="detail-field-value">${badge(s.status)}</div></div>
           </div>
@@ -3709,6 +3753,42 @@ function rfiNumManualOverride(){
   if(badge) badge.style.display = 'none';
 }
 
+// ── SUBMITTAL AUTO-NUMBER ────────────────────────────────
+function getNextSubNum(projectName){
+  if(!projectName) return '';
+  const nums = submittals
+    .filter(s => s.project === projectName)
+    .map(s => {
+      const m = String(s.num||'').match(/(\d+)$/);
+      return m ? parseInt(m[1], 10) : 0;
+    });
+  const next = nums.length ? Math.max(...nums) + 1 : 1;
+  return String(next).padStart(3, '0');
+}
+
+function autoFillSubNum(){
+  const proj = document.getElementById('sub-project').value;
+  const numEl = document.getElementById('sub-num');
+  const badge = document.getElementById('sub-num-auto-badge');
+  if(!proj){
+    numEl.value = '';
+    numEl.placeholder = 'Select a project first';
+    if(badge) badge.style.display = 'none';
+    return;
+  }
+  const wasAuto = badge && badge.style.display !== 'none';
+  if(!numEl.value || wasAuto){
+    numEl.value = getNextSubNum(proj);
+    numEl.placeholder = '';
+    if(badge) badge.style.display = 'inline-flex';
+  }
+}
+
+function subNumManualOverride(){
+  const badge = document.getElementById('sub-num-auto-badge');
+  if(badge) badge.style.display = 'none';
+}
+
 // Returns sorted unique spec sections already assigned to RFIs in a project
 function getProjectSpecSections(projectName){
   if(!projectName) return [];
@@ -3877,6 +3957,9 @@ function resetSubmittalModal(){
   document.getElementById('sub-bic').value='Contractor';
   document.getElementById('sub-modal-title').textContent='New Submittal';
   document.getElementById('sub-save-btn').textContent='Save Submittal';
+  const subNumBadge = document.getElementById('sub-num-auto-badge');
+  if(subNumBadge) subNumBadge.style.display = 'none';
+  document.getElementById('sub-num').placeholder = 'Select a project first';
   // Reset spec section
   const specSel = document.getElementById('sub-spec-select');
   if(specSel) specSel.innerHTML = '<option value="">— None —</option>';
@@ -3980,6 +4063,9 @@ function editSubmittal(id){
   document.getElementById('sub-save-btn').textContent='Update Submittal';
   document.getElementById('sub-edit-id').value=id;
   document.getElementById('sub-num').value=s.num||'';
+  document.getElementById('sub-num').placeholder='';
+  const subNumBadge = document.getElementById('sub-num-auto-badge');
+  if(subNumBadge) subNumBadge.style.display = 'none';
   document.getElementById('sub-desc').value=s.desc||s.description||'';
   document.getElementById('sub-project').value=s.project||'';
   setDateVal('sub-date', s.date||s.submitted_date||'');
@@ -4653,7 +4739,8 @@ async function generateSummaryPDF(){
       'Rejected':          {bg:[253,234,237], fg:[180,16,30]},  // badge-red
       'Ordered':           {bg:[254,243,200], fg:[161,98,7]},
       'On Site':           {bg:[220,252,231], fg:[21,128,61]},
-      'Released':          {bg:[220,252,231], fg:[21,128,61]},  // badge-green
+      'Released':          {bg:[220,252,231], fg:[21,128,61]},
+      'Release':           {bg:[220,252,231], fg:[21,128,61]},  // legacy status value
       'High':              {bg:[253,234,237], fg:[180,16,30]},
       'Medium':            {bg:[254,243,200], fg:[161,98,7]},
       'Low':               {bg:[239,246,255], fg:[37,99,235]},
@@ -5077,7 +5164,7 @@ async function exportToPDF(type, btn){
     'Open':[200,16,46],'Under Review':[217,119,6],'Answered':[21,128,61],'Closed':[100,116,139],
     'Pending':[100,116,139],'Approved':[21,128,61],'Approved as Noted':[5,150,105],
     'Revise & Resubmit':[200,16,46],'Rejected':[200,16,46],   // red
-    'Ordered':[217,119,6],'On Site':[21,128,61],'Released':[21,128,61],  // green
+    'Ordered':[217,119,6],'On Site':[21,128,61],'Released':[21,128,61],'Release':[21,128,61],  // green
   };
 
   // Format YYYY-MM-DD → MM/DD/YYYY for table display
@@ -5107,11 +5194,11 @@ async function exportToPDF(type, btn){
     ];
   } else if(type==='submittal'){
     title='Submittal Log'; filename='Submittal_Log.pdf';
-    columns=['Sub #','Description','Project','Spec Section','Submitted','Status','Ball in Court'];
-    rows=submittals.map(s=>[s.num||'',s.desc||s.description||'',s.project||'',s.spec||'',fmtDate(s.date||s.submitted_date),s.status||'',s.bic||'']);
-    statusColIdx=5;
-    // 'Spec Section'=30, 'Submitted'=26, 'Status'=36 (fits 'Approved as Noted'), 'Ball in Court'=32
-    columnStyles={0:{fontStyle:'bold',cellWidth:22},3:{cellWidth:30},4:{cellWidth:26},5:{cellWidth:36},6:{cellWidth:32}};
+    columns=['Sub #','Description','Project','Spec Section','Submitted','Required By','Status','Ball in Court'];
+    rows=submittals.map(s=>[s.num||'',s.desc||s.description||'',s.project||'',s.spec||'',fmtDate(s.date||s.submitted_date),fmtDate(s.need_date||''),s.status||'',s.bic||'']);
+    statusColIdx=6; dueDateColIdx=5;
+    // 'Spec Section'=26, 'Submitted'=22, 'Required By'=22, 'Status'=34, 'Ball in Court'=26
+    columnStyles={0:{fontStyle:'bold',cellWidth:22},3:{cellWidth:26},4:{cellWidth:22},5:{cellWidth:22},6:{cellWidth:34},7:{cellWidth:26}};
     const pending=submittals.filter(s=>['Pending','Under Review'].includes(s.status)).length;
     const approved=submittals.filter(s=>s.status==='Approved'||s.status==='Approved as Noted').length;
     const rnr=submittals.filter(s=>s.status==='Revise & Resubmit').length;
@@ -5375,7 +5462,7 @@ async function loadActivity(){
         .select('*')
         .order('ts', {ascending:false})
         .limit(500);
-      if(!res.error && res.data){
+      if(!res.error && res.data && res.data.length > 0){
         activityLog = res.data.map(r=>({
           // entry_id is the stable client-generated ID; fall back to ts+username for old rows
           id:     r.entry_id || (r.ts + '_' + (r.username||'')),
