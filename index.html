@@ -1488,6 +1488,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:14px">
         <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">Material</div>
         <div style="font-size:14px;font-weight:600;color:var(--text)" id="order-mat-name"></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px" id="order-mat-meta"></div>
       </div>
       <div class="form-row">
         <div>
@@ -2564,10 +2565,11 @@ async function callClaude(messages, model, systemPrompt){
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'x-api-key':          apiKey,
-        'anthropic-version':  '2023-06-01',
-        'anthropic-beta':     'prompt-caching-2024-07-31',
-        'content-type':       'application/json'
+        'x-api-key':                             apiKey,
+        'anthropic-version':                     '2023-06-01',
+        'anthropic-beta':                        'prompt-caching-2024-07-31',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type':                          'application/json'
       },
       body: JSON.stringify(body)
     });
@@ -4075,7 +4077,26 @@ function orderMaterial(id){
   if(!m) return;
   document.getElementById('order-mat-id').value = id;
   document.getElementById('order-mat-name').textContent = m.name;
-  document.getElementById('order-qty').value = m.quantity != null ? m.quantity : '';
+  // Meta line: project + needed date
+  const metaParts = [];
+  if(m.project) metaParts.push(m.project);
+  if(m.date_needed) metaParts.push('Needed: ' + fmt(m.date_needed));
+  const metaEl = document.getElementById('order-mat-meta');
+  if(metaEl) metaEl.textContent = metaParts.join(' · ');
+  // Quantity — pre-fill from material record; unit shown in label
+  const unit = m.unit || 'each';
+  const qtyLabel = document.querySelector('label[for-order-qty]') || null;
+  const qtyInput = document.getElementById('order-qty');
+  if(qtyInput){
+    qtyInput.value = m.quantity != null ? m.quantity : '';
+    qtyInput.previousElementSibling && (qtyInput.previousElementSibling.textContent = `Quantity to Order (${unit})`);
+  }
+  // Update the label text to show unit
+  const orderQtyWrapper = qtyInput?.closest('div');
+  if(orderQtyWrapper){
+    const lbl = orderQtyWrapper.querySelector('label');
+    if(lbl) lbl.textContent = `Quantity to Order (${unit})`;
+  }
   document.getElementById('order-notes').value = '';
   document.getElementById('order-email-preview').value = '';
   setDateVal('order-expected-delivery', '');
