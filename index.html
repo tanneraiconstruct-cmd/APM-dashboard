@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdn.emailjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co https://api.anthropic.com https://api.emailjs.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
 <title>APM Project Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('rP9haQYPdsYInMuHl');</script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
@@ -1514,7 +1516,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('order-modal')">Cancel</button>
-      <button class="btn-sm" id="btn-send-email" onclick="sendOrderEmail()">&#9993; Send via Email</button>
+      <button class="btn-sm" id="btn-send-email" onclick="sendOrderEmail()">&#9993; Send Email</button>
       <button class="btn-add" onclick="confirmOrderSent()">&#10003; Confirm Order Sent</button>
     </div>
   </div>
@@ -4145,18 +4147,33 @@ Keep it professional and concise. Request they reply with availability, pricing,
   }
 }
 
-function sendOrderEmail(){
+async function sendOrderEmail(){
   const sel = document.getElementById('order-vendor-select');
   const opt = sel.options[sel.selectedIndex];
-  const email      = opt?.dataset?.email || '';
+  const toEmail    = opt?.dataset?.email || '';
   const vendorName = opt?.text || '';
   const matName    = document.getElementById('order-mat-name').textContent;
   const body       = document.getElementById('order-email-preview').value;
-  if(!email){ alert('This vendor has no email address on file. Please add one in Manage Vendors first.'); return; }
-  if(!body.trim()){ alert('Please draft the email first before sending.'); return; }
-  const subject = encodeURIComponent('Purchase Order Request — ' + matName);
-  const bodyEnc = encodeURIComponent(body);
-  window.open('mailto:'+encodeURIComponent(email)+'?subject='+subject+'&body='+bodyEnc);
+  if(!toEmail){ alert('This vendor has no email address on file. Add one in Manage Vendors first.'); return; }
+  if(!body.trim()){ alert('Please draft the email first.'); return; }
+  const session = JSON.parse(sessionStorage.getItem('apm_session')||'{}');
+  const fromName = session.display_name || session.username || 'APM Team';
+  const btn = document.getElementById('btn-send-email');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    await emailjs.send('service_qqaqmvj', 'template_yof6asf', {
+      to_email:  toEmail,
+      from_name: fromName,
+      subject:   'Purchase Order Request — ' + matName,
+      message:   body
+    });
+    btn.innerHTML = '&#10003; Sent!';
+    showToast('Email sent to ' + vendorName + '.');
+    setTimeout(() => { btn.disabled = false; btn.innerHTML = '&#9993; Send Email'; }, 3000);
+  } catch(e) {
+    btn.disabled = false; btn.innerHTML = '&#9993; Send Email';
+    alert('Failed to send email: ' + (e?.text || e?.message || JSON.stringify(e)));
+  }
 }
 
 async function confirmOrderSent(){
