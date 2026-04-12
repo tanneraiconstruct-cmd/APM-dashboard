@@ -24,7 +24,7 @@
   --michels-red:#c8102e;--michels-red-dark:#a00d24;--michels-red-light:#fdeaed;
   --michels-black:#1a1a1a;--michels-dark:#2a2a2a;
   --accent:#c8102e;--accent-light:#fdeaed;
-  --amber:#d97706;--amber-light:#fef3c7;
+  --amber:#b45309;--amber-light:#fef3c7;
   --green:#15803d;--green-light:#dcfce7;
   --red:#c8102e;--red-light:#fdeaed;
   --blue-light:#eff6ff;
@@ -226,6 +226,8 @@ textarea{resize:vertical;min-height:72px}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--michels-black);color:#fff;padding:11px 16px;border-radius:8px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);max-width:320px}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast-bar{width:3px;min-height:18px;background:var(--michels-red);border-radius:2px;flex-shrink:0;align-self:stretch}
+.toast.toast-error{background:#3b1416;border:1px solid #7a1d23}
+.toast.toast-error .toast-bar{background:#ef4444}
 /* TABLE FILTER BAR */
 .filter-bar{display:flex;align-items:center;gap:6px;margin-bottom:12px;flex-wrap:wrap;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:7px 14px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .filter-bar-label{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;flex-shrink:0;user-select:none}
@@ -489,6 +491,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 /* HOVER ACTIONS */
 .row-actions{display:flex;gap:4px;justify-content:flex-end;opacity:0;transition:opacity .12s}
 .data-row:hover .row-actions,.data-row.expanded .row-actions{opacity:1}
+@media (hover:none){.row-actions{opacity:1}}
 .btn-icon{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:5px;background:var(--white);cursor:pointer;color:var(--text-mid);transition:background .1s,color .1s;flex-shrink:0;font-size:14px;line-height:1;padding:0;font-family:inherit}
 .btn-icon:hover{background:var(--surface);color:var(--text)}
 .btn-icon-danger{border-color:#fca5a5;color:var(--red)!important}
@@ -637,7 +640,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
             </button>
           </div>
         </div>
-        <button class="landing-notif-bell" id="landing-bell-btn" title="Notifications" onclick="toggleNotifPanel(this)">
+        <button type="button" class="landing-notif-bell" id="landing-bell-btn" aria-label="Notifications" title="Notifications" onclick="toggleNotifPanel(this)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="notif-dot" id="landing-bell-dot"></span>
         </button>
@@ -725,7 +728,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <div class="header-date" id="header-date"></div>
-      <button class="header-notif-bell" id="header-bell-btn" title="Notifications" style="display:none" onclick="toggleNotifPanel(this)">
+      <button type="button" class="header-notif-bell" id="header-bell-btn" aria-label="Notifications" title="Notifications" style="display:none" onclick="toggleNotifPanel(this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-dot" id="header-bell-dot"></span>
       </button>
@@ -1144,11 +1147,11 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 </div>
 
 <!-- MODALS -->
-<div class="modal-overlay" id="controls-modal">
+<div class="modal-overlay" id="controls-modal" role="dialog" aria-modal="true" aria-labelledby="controls-modal-title">
   <div class="modal" style="width:min(740px,96vw)">
     <div class="modal-header">
       <span class="modal-title" id="controls-modal-title">New Job</span>
-      <button class="modal-close" onclick="closeModal('controls-modal')">×</button>
+      <button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('controls-modal')">×</button>
     </div>
     <div class="modal-body" style="padding-top:0">
       <input type="hidden" id="ctrl-id" value="">
@@ -1200,6 +1203,10 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
           <div><label>Start Date</label><input type="date" id="ctrl-start"></div>
           <div><label>End Date</label><input type="date" id="ctrl-end"></div>
         </div>
+        <div class="form-row">
+          <div><label>NTP Date</label><input type="date" id="ctrl-ntp"></div>
+          <div></div>
+        </div>
         <div class="modal-section-title">Milestones</div>
         <table class="inline-item-table">
           <thead><tr>
@@ -1247,14 +1254,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('controls-modal')">Cancel</button>
-      <button class="btn-add" id="controls-save-btn" onclick="saveJobControls()">Save Job</button>
+      <button class="btn-add" id="controls-save-btn" onclick="withSaving('controls-save-btn', saveJobControls)">Save Job</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="rfi-modal">
+<div class="modal-overlay" id="rfi-modal" role="dialog" aria-modal="true" aria-labelledby="rfi-modal-title">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title" id="rfi-modal-title">New RFI</span><button class="modal-close" onclick="closeModal('rfi-modal')">×</button></div>
+    <div class="modal-header"><span class="modal-title" id="rfi-modal-title">New RFI</span><button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('rfi-modal')">×</button></div>
     <div class="modal-body">
       <input type="hidden" id="rfi-edit-id" value="">
       <div class="form-row">
@@ -1303,14 +1310,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('rfi-modal')">Cancel</button>
-      <button class="btn-add" id="rfi-save-btn" onclick="saveRFI()">Save RFI</button>
+      <button class="btn-add" id="rfi-save-btn" onclick="withSaving('rfi-save-btn', saveRFI)">Save RFI</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="submittal-modal">
+<div class="modal-overlay" id="submittal-modal" role="dialog" aria-modal="true" aria-labelledby="sub-modal-title">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title" id="sub-modal-title">New Submittal</span><button class="modal-close" onclick="closeModal('submittal-modal')">×</button></div>
+    <div class="modal-header"><span class="modal-title" id="sub-modal-title">New Submittal</span><button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('submittal-modal')">×</button></div>
     <div class="modal-body">
       <input type="hidden" id="sub-edit-id" value="">
       <div class="form-row">
@@ -1358,14 +1365,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('submittal-modal')">Cancel</button>
-      <button class="btn-add" id="sub-save-btn" onclick="saveSubmittal()">Save Submittal</button>
+      <button class="btn-add" id="sub-save-btn" onclick="withSaving('sub-save-btn', saveSubmittal)">Save Submittal</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="rental-modal">
+<div class="modal-overlay" id="rental-modal" role="dialog" aria-modal="true" aria-labelledby="ren-modal-title">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title" id="ren-modal-title">New Rental Equipment</span><button class="modal-close" onclick="closeModal('rental-modal')">×</button></div>
+    <div class="modal-header"><span class="modal-title" id="ren-modal-title">New Rental Equipment</span><button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('rental-modal')">×</button></div>
     <div class="modal-body">
       <input type="hidden" id="ren-edit-id" value="">
       <div class="form-row">
@@ -1387,17 +1394,17 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('rental-modal')">Cancel</button>
-      <button class="btn-add" id="ren-save-btn" onclick="saveRental()">Save Rental</button>
+      <button class="btn-add" id="ren-save-btn" onclick="withSaving('ren-save-btn', saveRental)">Save Rental</button>
     </div>
   </div>
 </div>
 
 <!-- MATERIAL: Add / Edit Material -->
-<div class="modal-overlay" id="materials-modal">
+<div class="modal-overlay" id="materials-modal" role="dialog" aria-modal="true" aria-labelledby="mat-modal-title">
   <div class="modal" style="width:min(620px,96vw)">
     <div class="modal-header">
       <span class="modal-title" id="mat-modal-title">Add Material</span>
-      <button class="modal-close" onclick="closeModal('materials-modal')">×</button>
+      <button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('materials-modal')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="mat-id" value="">
@@ -1424,17 +1431,17 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('materials-modal')">Cancel</button>
-      <button class="btn-add" onclick="saveMaterial()">Save Material</button>
+      <button class="btn-add" id="mat-save-btn" onclick="withSaving('mat-save-btn', saveMaterial)">Save Material</button>
     </div>
   </div>
 </div>
 
 <!-- MATERIAL: Manage Vendors -->
-<div class="modal-overlay" id="vendors-modal">
+<div class="modal-overlay" id="vendors-modal" role="dialog" aria-modal="true" aria-labelledby="vendors-modal-aria-title">
   <div class="modal" style="width:min(640px,96vw)">
     <div class="modal-header">
-      <span class="modal-title">Manage Vendors</span>
-      <button class="modal-close" onclick="closeModal('vendors-modal')">×</button>
+      <span class="modal-title" id="vendors-modal-aria-title">Manage Vendors</span>
+      <button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('vendors-modal')">×</button>
     </div>
     <div class="modal-body">
       <!-- Vendor list -->
@@ -1468,7 +1475,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <div id="vendor-form-error" style="color:var(--red);font-size:12px;margin-bottom:6px;display:none"></div>
         <div style="display:flex;gap:8px;margin-top:4px">
           <button class="btn-sm" onclick="resetVendorForm()">Clear</button>
-          <button class="btn-add" onclick="saveVendor()" style="flex:1;justify-content:center">Save Vendor</button>
+          <button class="btn-add" id="vendor-save-btn" onclick="withSaving('vendor-save-btn', saveVendor)" style="flex:1;justify-content:center">Save Vendor</button>
         </div>
       </div>
     </div>
@@ -1479,11 +1486,11 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 </div>
 
 <!-- MATERIAL: Order Workflow -->
-<div class="modal-overlay" id="order-modal">
+<div class="modal-overlay" id="order-modal" role="dialog" aria-modal="true" aria-labelledby="order-modal-aria-title">
   <div class="modal" style="width:min(580px,96vw)">
     <div class="modal-header">
-      <span class="modal-title">Order Material</span>
-      <button class="modal-close" onclick="closeModal('order-modal')">×</button>
+      <span class="modal-title" id="order-modal-aria-title">Order Material</span>
+      <button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('order-modal')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="order-mat-id" value="">
@@ -1523,11 +1530,11 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 </div>
 
 <!-- MATERIAL: Log Vendor Response -->
-<div class="modal-overlay" id="vendor-response-modal">
+<div class="modal-overlay" id="vendor-response-modal" role="dialog" aria-modal="true" aria-labelledby="vendor-response-modal-aria-title">
   <div class="modal" style="width:min(560px,96vw)">
     <div class="modal-header">
-      <span class="modal-title">Log Vendor Response</span>
-      <button class="modal-close" onclick="closeModal('vendor-response-modal')">×</button>
+      <span class="modal-title" id="vendor-response-modal-aria-title">Log Vendor Response</span>
+      <button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('vendor-response-modal')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="vr-mat-id" value="">
@@ -1562,11 +1569,11 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
   </div>
 </div>
 
-<div class="modal-overlay" id="daily-modal">
+<div class="modal-overlay" id="daily-modal" role="dialog" aria-modal="true" aria-labelledby="daily-modal-title">
   <div class="modal" style="width:min(680px,96vw)">
     <div class="modal-header">
       <span class="modal-title" id="daily-modal-title">New Daily Report</span>
-      <button class="modal-close" onclick="closeModal('daily-modal')">×</button>
+      <button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('daily-modal')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="dr-edit-id" value="">
@@ -1601,16 +1608,16 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('daily-modal')">Cancel</button>
-      <button class="btn-add" id="dr-save-btn" onclick="saveDailyReport()">Save Report</button>
+      <button class="btn-add" id="dr-save-btn" onclick="withSaving('dr-save-btn', saveDailyReport)">Save Report</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="supabase-modal">
+<div class="modal-overlay" id="supabase-modal" role="dialog" aria-modal="true" aria-labelledby="supabase-modal-aria-title">
   <div class="modal" style="max-width:560px">
     <div class="modal-header">
-      <span class="modal-title">Supabase Database Setup</span>
-      <button class="modal-close" onclick="closeModal('supabase-modal')">×</button>
+      <span class="modal-title" id="supabase-modal-aria-title">Supabase Database Setup</span>
+      <button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('supabase-modal')">×</button>
     </div>
     <div class="modal-body">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--text-mid);line-height:1.6">
@@ -1859,11 +1866,11 @@ create policy "anon_all_materials" on materials for all using (true) with check 
   </div>
 </div>
 
-<div class="modal-overlay" id="user-modal">
+<div class="modal-overlay" id="user-modal" role="dialog" aria-modal="true" aria-labelledby="user-modal-title">
   <div class="modal">
     <div class="modal-header">
       <span class="modal-title" id="user-modal-title">Manage Users</span>
-      <button class="modal-close" onclick="closeModal('user-modal')">×</button>
+      <button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('user-modal')">×</button>
     </div>
     <div class="modal-body">
       <div id="user-list" style="margin-bottom:16px"></div>
@@ -2027,8 +2034,8 @@ function h(s){if(!s&&s!==0)return'';return String(s).replace(/&/g,'&amp;').repla
 function calcPct(start, end, status=''){
   if(['Complete','Closeout'].includes(status)) return 100;
   if(!start||!end) return 0;
-  const s=new Date(start).getTime();
-  const e=new Date(end).getTime();
+  const s=new Date(start+'T00:00:00').getTime();
+  const e=new Date(end+'T00:00:00').getTime();
   const n=Date.now();
   if(n<=s) return 0;
   if(n>=e) return 100;
@@ -2066,6 +2073,11 @@ function openModal(id, noReset=false){
   const el=document.getElementById(id);
   if(!el){ console.warn('openModal: no element found for id "'+id+'"'); return; }
   el.classList.add('open');
+  // Focus first focusable control so keyboard users land inside the dialog
+  setTimeout(()=>{
+    const first = el.querySelector('input:not([type="hidden"]),select,textarea,button:not(.modal-close)');
+    if(first){ try{ first.focus(); }catch(e){} }
+  }, 30);
 }
 function closeModal(id){
   const el=document.getElementById(id);
@@ -2116,10 +2128,23 @@ document.addEventListener('click', e=>{
 });
 // Escape key closes modals, settings dropdown, and snooze menus
 document.addEventListener('keydown', e=>{
-  if(e.key !== 'Escape') return;
-  closeSettings();
-  closeAllSnoozeMenus();
-  document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+  if(e.key === 'Escape'){
+    closeSettings();
+    closeAllSnoozeMenus();
+    document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+    return;
+  }
+  // Focus trap — when a modal is open, Tab wraps inside it
+  if(e.key === 'Tab'){
+    const open = document.querySelector('.modal-overlay.open');
+    if(!open) return;
+    const focusables = open.querySelectorAll('a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),[tabindex]:not([tabindex="-1"])');
+    if(!focusables.length) return;
+    const first = focusables[0];
+    const last  = focusables[focusables.length-1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  }
 });
 
 // ── FLATPICKR DATE HELPERS ───────────────────────────────
@@ -2157,16 +2182,34 @@ function initDatePickers(){
 }
 
 // ── TOAST NOTIFICATION ───────────────────────────────────
-function showToast(msg){
+function showToast(msg, type){
   const t = document.getElementById('toast');
   const m = document.getElementById('toast-msg');
   if(!t||!m) return;
   m.textContent = msg;
-  t.classList.remove('show');
+  t.classList.remove('show','toast-error');
+  if(type === 'error') t.classList.add('toast-error');
   void t.offsetWidth; // force reflow to restart animation
   t.classList.add('show');
   clearTimeout(t._timer);
-  t._timer = setTimeout(()=>t.classList.remove('show'), 2800);
+  t._timer = setTimeout(()=>t.classList.remove('show'), type === 'error' ? 4500 : 2800);
+}
+
+// ── IN-FLIGHT SAVE GUARD ─────────────────────────────────
+// Prevents double-submit on any modal save button. Also toggles button label/disabled.
+let _isSaving = false;
+async function withSaving(btnId, fn){
+  if(_isSaving) return;
+  _isSaving = true;
+  const btn = btnId ? document.getElementById(btnId) : null;
+  const orig = btn ? btn.textContent : null;
+  if(btn){ btn.disabled = true; btn.textContent = 'Saving…'; }
+  try {
+    return await fn();
+  } finally {
+    _isSaving = false;
+    if(btn){ btn.disabled = false; btn.textContent = orig; }
+  }
 }
 
 // ── LOADING STATE ─────────────────────────────────────────
@@ -2237,7 +2280,7 @@ async function quickStatusChange(type,id,newStatus){
   const oldStatus=item.status;
   item.status=newStatus;
   const res=await sbUpdate(tableMap[type],id,{status:newStatus});
-  if(res.error){ item.status=oldStatus; alert('Failed to update status: '+res.error.message); return; }
+  if(res.error){ item.status=oldStatus; showToast('Failed to update status: '+res.error.message, 'error'); return; }
   saveLocal();
   renderAll();
   showToast('Status updated to '+newStatus);
@@ -2719,6 +2762,7 @@ async function _loadUserForAuth(username){
 }
 
 async function saveUserToDB(user){
+  if(!getPerms().canManageUsers){ showToast('You do not have permission to manage users.','error'); return false; }
   if(sb){
     try{
       const res = await sb.from('users').insert({
@@ -2742,11 +2786,12 @@ async function saveUserToDB(user){
 }
 
 async function deleteUserFromDB(username){
+  if(!getPerms().canManageUsers){ showToast('You do not have permission to manage users.','error'); return false; }
   if(sb){
     try{
       const res = await sb.from('users').delete().eq('username', username);
-      if(res.error){ alert('Failed to delete user: '+res.error.message); return false; }
-    }catch(e){ alert('Failed to delete user. Please try again.'); return false; }
+      if(res.error){ showToast('Failed to delete user: '+res.error.message, 'error'); return false; }
+    }catch(e){ showToast('Failed to delete user. Please try again.', 'error'); return false; }
   }
   let users = JSON.parse(localStorage.getItem('apm_users')||'[]');
   users = users.filter(u=>u.username!==username);
@@ -2768,8 +2813,19 @@ async function attemptLogin(){
   const btn = document.querySelector('.btn-login');
   btn.textContent='Signing in...'; btn.disabled=true;
 
-  const dbUser = await _loadUserForAuth(username);
-  const valid = dbUser && await verifyPassword(password, dbUser.hash);
+  let dbUser = null, valid = false;
+  try{
+    dbUser = await _loadUserForAuth(username);
+    valid  = dbUser && await verifyPassword(password, dbUser.hash);
+  }catch(e){
+    // Count transient auth failures against the rate limit so brute force
+    // cannot bypass lockout by hammering the system during an outage.
+    _rlFail(username);
+    btn.textContent='Sign In'; btn.disabled=false;
+    errEl.style.display='block';
+    errEl.textContent='Unable to verify credentials. Please try again.';
+    return;
+  }
 
   btn.textContent='Sign In'; btn.disabled=false;
 
@@ -2786,13 +2842,16 @@ async function attemptLogin(){
   // Auto-upgrade legacy v1 hash to v2 on successful login
   if(dbUser.hash && !dbUser.hash.startsWith('v2:')){
     const newHash = await hashPassword(password);
-    if(sb) sb.from('users').update({hash:newHash}).eq('username', username);
-    // Also update in localStorage for offline installs
-    try{
-      const ls = JSON.parse(localStorage.getItem('apm_users')||'[]');
-      const idx = ls.findIndex(u=>u.username===username);
-      if(idx>-1){ ls[idx].hash=newHash; localStorage.setItem('apm_users',JSON.stringify(ls)); }
-    }catch(e){}
+    if(sb){
+      sb.from('users').update({hash:newHash}).eq('username', username);
+    } else {
+      // Offline installs only: the local apm_users is the sole auth store
+      try{
+        const ls = JSON.parse(localStorage.getItem('apm_users')||'[]');
+        const idx = ls.findIndex(u=>u.username===username);
+        if(idx>-1){ ls[idx].hash=newHash; localStorage.setItem('apm_users',JSON.stringify(ls)); }
+      }catch(e){}
+    }
   }
 
   const currentUserObj = {
@@ -2978,6 +3037,13 @@ function logout(){
     'apm_reminder_days','apm_activity','apm_activity_seen',
     'apm_sb_url','apm_sb_key','apm_claude_api_key'
   ].forEach(k => localStorage.removeItem(k));
+  // Per-user notification seen state — clear all to prevent cross-account leakage on shared devices
+  try{
+    for(let i = localStorage.length - 1; i >= 0; i--){
+      const k = localStorage.key(i);
+      if(k && k.indexOf('apm_activity_seen_') === 0) localStorage.removeItem(k);
+    }
+  }catch(e){}
   sessionStorage.removeItem('apm_session');
   document.getElementById('main-dashboard').style.display='none';
   document.getElementById('landing-page').style.display='none';
@@ -3065,6 +3131,7 @@ async function initFirstRun(){
 }
 
 async function addUser(){
+  if(!getPerms().canManageUsers){ showToast('You do not have permission to add users.','error'); return; }
   const username = document.getElementById('new-username').value.trim().toLowerCase();
   const displayName = document.getElementById('new-displayname').value.trim();
   const password = document.getElementById('new-password').value;
@@ -3092,6 +3159,7 @@ async function addUser(){
 }
 
 async function removeUser(username){
+  if(!getPerms().canManageUsers){ showToast('You do not have permission to remove users.','error'); return; }
   if(currentUser && username === currentUser.username){
     showToast('You cannot remove your own account.'); return;
   }
@@ -3473,7 +3541,13 @@ function renderRFI(){
   let rows=activeRfis.filter(r=>{
     if(proj && r.project!==proj) return false;
     if(stat && r.status!==stat) return false;
-    if(txt && !(r.num||'').toLowerCase().includes(txt) && !(r.subject||'').toLowerCase().includes(txt)) return false;
+    if(txt){
+      const desc = (r.desc || r.description || '').toLowerCase();
+      if(!(r.num||'').toLowerCase().includes(txt)
+         && !(r.subject||'').toLowerCase().includes(txt)
+         && !desc.includes(txt)
+         && !(r.spec_section||'').toLowerCase().includes(txt)) return false;
+    }
     return true;
   });
   if(!activeRfis.length){body.innerHTML=`<tr><td colspan="7" class="empty"><div class="empty-icon">📋</div>No open RFIs — add one to get started, or check the Archive below.</td></tr>`;return}
@@ -3506,8 +3580,8 @@ function renderRFI(){
       <td>${prio(r.priority)}</td>
       <td onclick="event.stopPropagation()">
         <div class="row-actions">
-          <button class="btn-icon" onclick="editRFI(${r.id})" title="Edit">✎</button>
-          <button class="btn-icon btn-icon-danger" onclick="deleteItem('rfis',${r.id})" title="Delete">✕</button>
+          <button type="button" class="btn-icon" aria-label="Edit" onclick="editRFI(${r.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteItem('rfis',${r.id})" title="Delete">✕</button>
         </div>
       </td>
     </tr>
@@ -3557,7 +3631,12 @@ function renderSubmittals(){
   let rows=activeSubs.filter(s=>{
     if(proj && s.project!==proj) return false;
     if(stat && s.status!==stat) return false;
-    if(txt && !(s.num||'').toLowerCase().includes(txt) && !(s.desc||'').toLowerCase().includes(txt)) return false;
+    if(txt){
+      if(!(s.num||'').toLowerCase().includes(txt)
+         && !(s.desc||'').toLowerCase().includes(txt)
+         && !(s.spec||'').toLowerCase().includes(txt)
+         && !(s.bic||'').toLowerCase().includes(txt)) return false;
+    }
     return true;
   });
   if(!activeSubs.length){body.innerHTML=`<tr><td colspan="7" class="empty"><div class="empty-icon">📁</div>No pending submittals — add one to get started, or check the Archive below.</td></tr>`;return}
@@ -3589,8 +3668,8 @@ function renderSubmittals(){
       <td class="truncate" style="font-size:12px">${h(s.bic)||'—'}</td>
       <td onclick="event.stopPropagation()">
         <div class="row-actions">
-          <button class="btn-icon" onclick="editSubmittal(${s.id})" title="Edit">✎</button>
-          <button class="btn-icon btn-icon-danger" onclick="deleteItem('submittals',${s.id})" title="Delete">✕</button>
+          <button type="button" class="btn-icon" aria-label="Edit" onclick="editSubmittal(${s.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteItem('submittals',${s.id})" title="Delete">✕</button>
         </div>
       </td>
     </tr>
@@ -3660,8 +3739,8 @@ function renderRental(){
       <td>${badge(r.status)}</td>
       <td onclick="event.stopPropagation()">
         <div class="row-actions">
-          <button class="btn-icon" onclick="editRental(${r.id})" title="Edit">✎</button>
-          <button class="btn-icon btn-icon-danger" onclick="deleteItem('rental',${r.id})" title="Delete">✕</button>
+          <button type="button" class="btn-icon" aria-label="Edit" onclick="editRental(${r.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteItem('rental',${r.id})" title="Delete">✕</button>
         </div>
       </td>
     </tr>
@@ -4009,7 +4088,7 @@ async function saveMaterial(){
       materials.push({...row, id: Date.now()});
     }
   }
-  if(err){ alert('Save failed: '+err.message); return; }
+  if(err){ showToast('Save failed: '+err.message, 'error'); return; }
   saveLocal(); renderAll(); closeModal('materials-modal');
   showToast(id ? 'Material updated.' : 'Material added.');
   logActivity('materials', id ? 'updated' : 'created', row.name, row.project||'');
@@ -4024,6 +4103,7 @@ function resetVendorForm(){
 }
 
 function editVendor(id){
+  if(!canWrite('materials')){ showToast('You do not have permission to edit vendors.','error'); return; }
   const v = vendors.find(x => x.id === id);
   if(!v) return;
   document.getElementById('vendor-form-title').textContent = 'Edit Vendor';
@@ -4037,6 +4117,7 @@ function editVendor(id){
 }
 
 async function saveVendor(){
+  if(!canWrite('materials')){ showToast('You do not have permission to save vendors.','error'); return; }
   const id = val('vendor-id');
   const row = {
     name:          val('vendor-name'),
@@ -4058,7 +4139,7 @@ async function saveVendor(){
     if(!err && res.data?.[0]) vendors.push(res.data[0]);
     else if(!err && !res.data?.[0]) vendors.push({...row, id: Date.now()});
   }
-  if(err){ alert('Save failed: '+err.message); return; }
+  if(err){ showToast('Save failed: '+err.message, 'error'); return; }
   saveLocal(); renderMaterials(); resetVendorForm();
   showToast(id ? 'Vendor updated.' : 'Vendor added.');
 }
@@ -4067,7 +4148,7 @@ async function deleteVendor(id){
   if(!getPerms().canDelete){ alert('You do not have permission to delete vendors.'); return; }
   if(!confirm('Delete this vendor? This cannot be undone.')) return;
   const res = await sbDelete('vendors', id);
-  if(res.error){ alert('Failed to delete vendor: '+res.error.message); return; }
+  if(res.error){ showToast('Failed to delete vendor: '+res.error.message, 'error'); return; }
   vendors = vendors.filter(x=>x.id!==id);
   saveLocal(); renderMaterials();
   showToast('Vendor deleted.');
@@ -4172,7 +4253,7 @@ async function sendOrderEmail(){
     setTimeout(() => { btn.disabled = false; btn.innerHTML = '&#9993; Send Email'; }, 3000);
   } catch(e) {
     btn.disabled = false; btn.innerHTML = '&#9993; Send Email';
-    alert('Failed to send email: ' + (e?.text || e?.message || JSON.stringify(e)));
+    showToast('Failed to send email: '+(e?.text || e?.message || JSON.stringify(e)), 'error');
   }
 }
 
@@ -4261,7 +4342,7 @@ async function saveVendorResponse(){
     expected_delivery: val('vr-delivery')   || null
   };
   const res = await sbUpdate('materials', +id, row);
-  if(res.error){ alert('Save failed: '+res.error.message); return; }
+  if(res.error){ showToast('Save failed: '+res.error.message, 'error'); return; }
   const i = materials.findIndex(x=>x.id===+id);
   if(i>=0) materials[i]={...materials[i],...row};
   saveLocal(); renderAll(); closeModal('vendor-response-modal');
@@ -4687,7 +4768,7 @@ function renderTodos(){
 // ── MODAL RESET FUNCTIONS ─────────────────────────────────
 function resetControlsModal(){
   clearFields(['ctrl-id','ctrl-name','ctrl-number','ctrl-client','ctrl-value','ctrl-address',
-               'ctrl-start','ctrl-end','ctrl-owner-name','ctrl-owner-phone','ctrl-owner-email','ctrl-notes']);
+               'ctrl-start','ctrl-end','ctrl-ntp','ctrl-owner-name','ctrl-owner-phone','ctrl-owner-email','ctrl-notes']);
   document.getElementById('ctrl-contract-type').value='';
   document.getElementById('ctrl-status').value='Pre-Construction';
   ['ctrl-pm','ctrl-apm','ctrl-super','ctrl-foreman'].forEach(id=>{
@@ -4983,6 +5064,7 @@ function editJobControls(id){
   document.getElementById('ctrl-address').value=p.address||'';
   setDateVal('ctrl-start', p.start||p.start_date||'');
   setDateVal('ctrl-end', p.end||p.end_date||'');
+  setDateVal('ctrl-ntp', p.ntp_date||'');
   document.getElementById('ctrl-status').value=p.status||'Pre-Construction';
   document.getElementById('ctrl-owner-name').value=p.owner_name||'';
   document.getElementById('ctrl-owner-phone').value=p.owner_phone||'';
@@ -5213,6 +5295,7 @@ async function saveJobControls(){
     address:val('ctrl-address'),
     start_date:val('ctrl-start'),
     end_date:val('ctrl-end'),
+    ntp_date:val('ctrl-ntp')||null,
     status:val('ctrl-status'),
     owner_name:val('ctrl-owner-name'),
     owner_phone:val('ctrl-owner-phone'),
@@ -5229,14 +5312,14 @@ async function saveJobControls(){
     const idx=projects.findIndex(x=>x.id===id);
     if(idx>-1){
       const res=await sbUpdate('projects',id,data);
-      if(res.error){ alert('Failed to update job: '+res.error.message); return; }
+      if(res.error){ showToast('Failed to update job: '+res.error.message, 'error'); return; }
       projects[idx]={...projects[idx],...data,start:data.start_date,end:data.end_date};
     }
     savedProjectId = id;
   } else {
     if(sb){
       const res=await sb.from('projects').insert(data).select();
-      if(res.error){ alert('Failed to save job: '+res.error.message); return; }
+      if(res.error){ showToast('Failed to save job: '+res.error.message, 'error'); return; }
       if(res.data?.[0]){ projects.push({...res.data[0],start:res.data[0].start_date,end:res.data[0].end_date}); savedProjectId=res.data[0].id; }
     } else {
       const newId=nextId++;
@@ -5300,11 +5383,11 @@ async function saveRFI(){
     const idx=rfis.findIndex(x=>x.id===id);
     if(idx>-1){
       const res=await sbUpdate('rfis',id,data);
-      if(res.error){ alert('Failed to update RFI: '+res.error.message); return; }
+      if(res.error){ showToast('Failed to update RFI: '+res.error.message, 'error'); return; }
       rfis[idx]={...rfis[idx],...data,desc:data.description};
     }
   } else {
-    if(sb){ const res=await sb.from('rfis').insert(data).select(); if(res.error){ alert('Failed to save RFI: '+res.error.message); return; } if(res.data?.[0]) rfis.push({...res.data[0],desc:res.data[0].description}); }
+    if(sb){ const res=await sb.from('rfis').insert(data).select(); if(res.error){ showToast('Failed to save RFI: '+res.error.message, 'error'); return; } if(res.data?.[0]) rfis.push({...res.data[0],desc:res.data[0].description}); }
     else rfis.push({id:nextId++,...data,desc:data.description});
   }
   const _rfiLabel = (data.num ? 'RFI #'+data.num+' — ' : '') + (data.subject || 'RFI');
@@ -5324,11 +5407,11 @@ async function saveSubmittal(){
     const idx=submittals.findIndex(x=>x.id===id);
     if(idx>-1){
       const res=await sbUpdate('submittals',id,data);
-      if(res.error){ alert('Failed to update submittal: '+res.error.message); return; }
+      if(res.error){ showToast('Failed to update submittal: '+res.error.message, 'error'); return; }
       submittals[idx]={...submittals[idx],...data,desc,date:data.submitted_date};
     }
   } else {
-    if(sb){ const res=await sb.from('submittals').insert(data).select(); if(res.error){ alert('Failed to save submittal: '+res.error.message); return; } if(res.data?.[0]) submittals.push({...res.data[0],desc:res.data[0].description,date:res.data[0].submitted_date}); }
+    if(sb){ const res=await sb.from('submittals').insert(data).select(); if(res.error){ showToast('Failed to save submittal: '+res.error.message, 'error'); return; } if(res.data?.[0]) submittals.push({...res.data[0],desc:res.data[0].description,date:res.data[0].submitted_date}); }
     else submittals.push({id:nextId++,...data,desc,date:data.submitted_date});
   }
   const _subLabel = (data.num ? '#'+data.num+' — ' : '') + (data.description || 'Submittal');
@@ -5348,11 +5431,11 @@ async function saveRental(){
     const idx=rental.findIndex(x=>x.id===id);
     if(idx>-1){
       const res=await sbUpdate('rental',id,data);
-      if(res.error){ alert('Failed to update rental: '+res.error.message); return; }
+      if(res.error){ showToast('Failed to update rental: '+res.error.message, 'error'); return; }
       rental[idx]={...rental[idx],...data,onsite:data.onsite_date,offsite:data.release_date};
     }
   } else {
-    if(sb){ const res=await sb.from('rental').insert(data).select(); if(res.error){ alert('Failed to save rental: '+res.error.message); return; } if(res.data?.[0]) rental.push({...res.data[0],onsite:res.data[0].onsite_date,offsite:res.data[0].release_date}); }
+    if(sb){ const res=await sb.from('rental').insert(data).select(); if(res.error){ showToast('Failed to save rental: '+res.error.message, 'error'); return; } if(res.data?.[0]) rental.push({...res.data[0],onsite:res.data[0].onsite_date,offsite:res.data[0].release_date}); }
     else rental.push({id:nextId++,...data,onsite:data.onsite_date,offsite:data.release_date});
   }
   const _renLabel = data.name || 'Equipment';
@@ -5371,7 +5454,7 @@ async function deleteItem(store,id){
   const _delLabel=_delItem?(_delItem.name||_delItem.subject||_delItem.num||(_delItem.report_date?'Report '+fmt(_delItem.report_date):'Record')):'Record';
   if(tableMap[store]){
     const res=await sbDelete(tableMap[store],id);
-    if(res.error){ alert('Failed to delete record: '+res.error.message); return; }
+    if(res.error){ showToast('Failed to delete record: '+res.error.message, 'error'); return; }
   }
   if(store==='projects')projects=projects.filter(x=>x.id!==id);
   else if(store==='rfis')rfis=rfis.filter(x=>x.id!==id);
@@ -5884,8 +5967,9 @@ function renderDailyReports(){
 
   body.innerHTML = rows.map(r=>{
     const summary = (r.work_performed||'').split('\n')[0].slice(0,60) + ((r.work_performed||'').length>60?'…':'');
-    const tempStr = (r.temp_high||r.temp_low)
-      ? [(r.temp_high?r.temp_high+'°':''), (r.temp_low?r.temp_low+'°':'')].filter(Boolean).join(' / ')
+    const hasTemp = (r.temp_high!=null) || (r.temp_low!=null);
+    const tempStr = hasTemp
+      ? [(r.temp_high!=null?r.temp_high+'°':''), (r.temp_low!=null?r.temp_low+'°':'')].filter(Boolean).join(' / ')
       : '&mdash;';
     const issueFlag = r.issues_notes
       ? `<span class="status badge-amber" style="margin-left:4px;font-size:10px;padding:1px 5px" title="Has issues/notes">!</span>`
@@ -5903,8 +5987,8 @@ function renderDailyReports(){
       <td class="truncate"><span class="cell-secondary">${h(r.created_by||'')}</span></td>
       <td onclick="event.stopPropagation()" style="white-space:nowrap">
         <div class="row-actions">
-          <button class="btn-icon" onclick="editDailyReport(${r.id})" title="Edit">✎</button>
-          <button class="btn-icon btn-icon-danger" onclick="deleteItem('daily',${r.id})" title="Delete">✕</button>
+          <button type="button" class="btn-icon" aria-label="Edit" onclick="editDailyReport(${r.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteItem('daily',${r.id})" title="Delete">✕</button>
         </div>
       </td>
     </tr>
@@ -5912,7 +5996,7 @@ function renderDailyReports(){
       <td colspan="8">
         <div class="detail-panel">
           <div class="detail-grid">
-            ${r.weather   ? `<div><div class="detail-field-label">Weather</div><div class="detail-field-value">${weatherBadge(r.weather)} ${r.temp_high?r.temp_high+'°F high':''}${r.temp_low?' / '+r.temp_low+'°F low':''}</div></div>` : ''}
+            ${r.weather   ? `<div><div class="detail-field-label">Weather</div><div class="detail-field-value">${weatherBadge(r.weather)} ${r.temp_high!=null?r.temp_high+'°F high':''}${r.temp_low!=null?' / '+r.temp_low+'°F low':''}</div></div>` : ''}
             ${r.crew_count != null ? `<div><div class="detail-field-label">Crew Count</div><div class="detail-field-value">${r.crew_count} workers</div></div>` : ''}
             ${r.visitors  ? `<div><div class="detail-field-label">Visitors / Inspections</div><div class="detail-field-value">${h(r.visitors)}</div></div>` : ''}
           </div>
@@ -5987,13 +6071,13 @@ async function saveDailyReport(){
     const idx = dailyReports.findIndex(x=>x.id===id);
     if(idx>-1){
       const res = await sbUpdate('daily_reports', id, data);
-      if(res.error){ alert('Failed to update report: '+res.error.message); return; }
+      if(res.error){ showToast('Failed to update report: '+res.error.message, 'error'); return; }
       dailyReports[idx] = {...dailyReports[idx], ...data};
     }
   } else {
     if(sb){
       const res = await sb.from('daily_reports').insert(data).select();
-      if(res.error){ alert('Failed to save report: '+res.error.message); return; }
+      if(res.error){ showToast('Failed to save report: '+res.error.message, 'error'); return; }
       if(res.data?.[0]) dailyReports.unshift(res.data[0]);
     } else {
       dailyReports.unshift({id:nextId++, ...data});
@@ -6063,6 +6147,7 @@ function exportToExcel(type, btn){
       'Project':       s.project||'',
       'Spec Section':  s.spec||'',
       'Date Submitted':s.date||s.submitted_date||'',
+      'Required By':   s.need_date||'',
       'Status':        s.status||'',
       'Ball in Court': s.bic||''
     }));
@@ -6165,7 +6250,8 @@ async function exportToPDF(type, btn){
     return p.length===3 ? `${p[1]}/${p[2]}/${p[0]}` : d;
   };
 
-  let title='', filename='', columns=[], rows=[], stats=[], columnStyles={};
+  let title='', filename='', columns=[], rows=[],
+   stats=[], columnStyles={};
   let statusColIdx=-1, priorityColIdx=-1, dueDateColIdx=-1;
 
   if(type==='rfi'){
@@ -6528,7 +6614,10 @@ function logActivity(type, action, label, detail){
       detail: entry.detail,
       username: currentUser ? currentUser.username : 'unknown',
       ts: entry.ts
-    }); // fire-and-forget — local log is always saved regardless
+    }).then(res=>{
+      if(res && res.error) console.warn('[activity_log] insert failed:', res.error.message);
+    }, err => console.warn('[activity_log] insert threw:', err));
+    // fire-and-forget — local log is always saved regardless
   }
 }
 
@@ -6808,7 +6897,7 @@ initFirstRun().then(() => {
       Notifications
       <span id="notif-panel-badge" style="display:none;background:var(--michels-red);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;font-family:'DM Mono',monospace">0</span>
     </div>
-    <button class="notif-panel-close" onclick="closeNotifPanel()" title="Close">&times;</button>
+    <button type="button" class="notif-panel-close" aria-label="Close notifications" onclick="closeNotifPanel()" title="Close">&times;</button>
   </div>
   <div class="notif-panel-filters">
     <button class="notif-panel-filter-btn active" onclick="setNotifPanelFilter('7d')" data-pf="7d">7 Days</button>
