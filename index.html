@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdn.emailjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co https://api.anthropic.com https://api.emailjs.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdn.emailjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co https://api.emailjs.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
 <title>APM Project Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -1625,13 +1625,6 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       </div>
       <div class="form-row-full"><label>Project URL</label><input type="text" id="sb-url" placeholder="https://xxxx.supabase.co"></div>
       <div class="form-row-full"><label>Anon / Public Key</label><textarea id="sb-key" style="min-height:72px;font-family:'DM Mono',monospace;font-size:11px" placeholder="eyJhbGci... or sb_publishable_..."></textarea></div>
-      <div class="form-row-full" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
-        <label>Claude API Key <span style="font-size:10px;font-weight:400;color:var(--text-muted)">(used for AI email drafting &amp; vendor response parsing)</span></label>
-        <div style="display:flex;gap:6px;align-items:center">
-          <input type="password" id="claude-api-key" placeholder="sk-ant-api03-..." style="flex:1;font-family:'DM Mono',monospace;font-size:11px">
-          <button type="button" onclick="toggleClaudeKeyVisibility()" style="padding:5px 10px;font-size:11px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text-mid);cursor:pointer;white-space:nowrap">Show</button>
-        </div>
-      </div>
       <!-- Per-table diagnostic results -->
       <div id="sb-status" style="font-size:12px;margin-top:10px;min-height:18px"></div>
       <!-- SQL Setup accordion -->
@@ -2427,9 +2420,6 @@ function loadSBConfig(){
   const keyEl=document.getElementById('sb-key');
   if(urlEl && url) urlEl.value=url;
   if(keyEl && key) keyEl.value=key;
-  const claudeEl=document.getElementById('claude-api-key');
-  const claudeKey=localStorage.getItem('apm_claude_api_key')||'';
-  if(claudeEl && claudeKey) claudeEl.value=claudeKey;
 }
 
 async function saveSupabaseConfig(){
@@ -2438,8 +2428,6 @@ async function saveSupabaseConfig(){
   if(!url||!key){ setSBStatus('Please fill in both fields.','var(--red)'); return; }
   localStorage.setItem('apm_sb_url', url);
   localStorage.setItem('apm_sb_key', key);
-  const claudeKey=(document.getElementById('claude-api-key')||{}).value||'';
-  if(claudeKey.trim()) localStorage.setItem('apm_claude_api_key', claudeKey.trim());
   try{ sb = supabase.createClient(url, key); }catch(e){ setSBStatus('Invalid credentials: '+e.message,'var(--red)'); return; }
   setSBStatus('Connected! Testing tables…','var(--green)');
   // Run table diagnostic so user sees per-table status before we load data
@@ -2596,42 +2584,39 @@ async function loadData(){
 }
 
 // ── CLAUDE API HELPER ─────────────────────────────────────
-// Generic wrapper for Anthropic Messages API.
+// Proxy call to Supabase Edge Function `claude-proxy` — no API key ever touches the browser.
+// The function validates origin + X-Dashboard-Username, wraps `system` with cache_control,
+// enforces a model allow-list, and logs every call to api_usage.
 // model: 'claude-sonnet-4-6' for drafting, 'claude-haiku-4-5-20251001' for parsing.
-// systemPrompt: cached via prompt-caching-2024-07-31 beta header.
-async function callClaude(messages, model, systemPrompt){
-  const apiKey = localStorage.getItem('apm_claude_api_key');
-  if(!apiKey){ alert('Claude API key not configured. Add it in Settings → DB Setup.'); return null; }
-  const body = { model, max_tokens: 1024, messages };
-  if(systemPrompt){
-    body.system = [{ type:'text', text:systemPrompt, cache_control:{ type:'ephemeral' } }];
+// caller: free-form tag (e.g. 'draftOrderEmail') used for telemetry.
+async function callClaude(messages, model, systemPrompt, caller){
+  if(!currentUser || !currentUser.username){
+    showToast('Not signed in — cannot call AI.', 'error');
+    return null;
   }
+  const body = { model, max_tokens: 1024, messages, caller: caller || 'unknown' };
+  if(systemPrompt) body.system = systemPrompt; // server wraps with cache_control: ephemeral
   try{
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/Claude-proxy`, {
       method: 'POST',
       headers: {
-        'x-api-key':                             apiKey,
-        'anthropic-version':                     '2023-06-01',
-        'anthropic-beta':                        'prompt-caching-2024-07-31',
-        'anthropic-dangerous-direct-browser-access': 'true',
-        'content-type':                          'application/json'
+        'content-type':         'application/json',
+        'x-dashboard-username': currentUser.username,
+        'apikey':               SUPABASE_ANON_KEY,
+        'authorization':        `Bearer ${SUPABASE_ANON_KEY}`,
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
+    const data = await res.json().catch(()=>({}));
     if(!res.ok){
-      const e = await res.json().catch(()=>({}));
-      alert('Claude API error: '+(e.error?.message||res.status));
+      showToast('AI request failed: '+(data.error||res.status), 'error');
       return null;
     }
-    const data = await res.json();
-    return data.content?.[0]?.text ?? null;
-  }catch(e){ alert('Claude API request failed: '+e.message); return null; }
-}
-
-function toggleClaudeKeyVisibility(){
-  const el = document.getElementById('claude-api-key');
-  if(!el) return;
-  el.type = el.type === 'password' ? 'text' : 'password';
+    return data.content ?? null;
+  }catch(e){
+    showToast('AI request failed: '+e.message, 'error');
+    return null;
+  }
 }
 
 // ── SUPABASE WRITE HELPERS ────────────────────────────────
@@ -2652,6 +2637,18 @@ async function sbDelete(table, id){
 <!-- ── auth.js ── -->
 <script>
 // Password hashing, user loading/saving, login, session, logout
+
+// ── ONE-SHOT LEGACY KEY PURGE ─────────────────────────────
+// The Claude API key used to live in localStorage under `apm_claude_api_key`.
+// It now lives server-side as a Supabase secret via the claude-proxy Edge Function,
+// so any lingering client-side copy is stale and should be removed on every load.
+(function _purgeLegacyClaudeKey(){
+  try{
+    if(localStorage.getItem('apm_claude_api_key') !== null){
+      localStorage.removeItem('apm_claude_api_key');
+    }
+  }catch(_){}
+})();
 
 // ── PASSWORD HASHING ──────────────────────────────────────
 // v2 format: "v2:<hex-salt>:<hex-hash>" — PBKDF2-SHA256, 200k iterations, per-user salt
@@ -4218,7 +4215,7 @@ Quantity: ${qty || '(see below)'}${notes ? '\nNotes: '+notes : ''}
 
 Keep it professional and concise. Request they reply with availability, pricing, lead time, and assign a PO number.`;
 
-  const text = await callClaude([{role:'user', content:userMsg}], 'claude-sonnet-4-6', systemPrompt);
+  const text = await callClaude([{role:'user', content:userMsg}], 'claude-sonnet-4-6', systemPrompt, 'draftOrderEmail');
   btn.disabled = false; btn.textContent = 'Draft Email with AI';
   if(text){
     document.getElementById('order-email-preview').value = text;
@@ -4310,7 +4307,7 @@ async function parseVendorEmail(){
 
   const systemPrompt = `Extract procurement details from vendor emails. Return ONLY a valid JSON object with exactly these keys: po_number (string or null), lead_time_days (integer or null), unit_price (number or null), total_price (number or null), expected_delivery (ISO date string YYYY-MM-DD or null). No markdown, no explanation, no code block. Just the raw JSON object on a single line.`;
 
-  const text = await callClaude([{role:'user', content:emailText}], 'claude-haiku-4-5-20251001', systemPrompt);
+  const text = await callClaude([{role:'user', content:emailText}], 'claude-haiku-4-5-20251001', systemPrompt, 'parseVendorEmail');
   btn.disabled = false; btn.textContent = 'Parse with AI';
 
   if(!text){ if(statusEl) statusEl.textContent=''; return; }
