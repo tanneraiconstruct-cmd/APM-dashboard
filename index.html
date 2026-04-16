@@ -71,29 +71,13 @@ body{font-family:'Inter',sans-serif;background:var(--surface);color:var(--text);
 .section-title{font-size:15px;font-weight:600;color:var(--text)}
 .btn-add{background:var(--michels-red);color:#fff;border:none;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;box-shadow:var(--shadow-sm);}
 .btn-add:hover{background:var(--michels-red-dark);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.btn-pdf{padding:9px 20px;font-size:13px;box-shadow:0 1px 4px rgba(200,16,46,.3)}
 .btn-sm{background:transparent;border:1px solid var(--border);color:var(--text-mid);padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
 .btn-sm:hover{background:var(--surface)}
 .btn-danger{border-color:#fca5a5;color:var(--red)}
 .btn-danger:hover{background:#fee2e2}
 
-.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;transition:box-shadow .2s ease, transform .2s ease;box-shadow:var(--shadow-sm);}
-.stat-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px);}
-.stat-top-bar{height:3px;background:linear-gradient(90deg,var(--michels-red-dark),var(--michels-red))}
-.stat-card-pad{padding:14px 16px}
-.stat-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;font-weight:600}
-.stat-value{font-size:32px;font-weight:700;color:var(--text);line-height:1;margin-bottom:6px;letter-spacing:-1px}
-.stat-secondary{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);font-weight:500}
-.stat-pip{display:inline-block;width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.stat-pip-red{background:var(--michels-red)}
-.stat-pip-amber{background:var(--amber)}
-.stat-pip-blue{background:#3b82f6}
-.stat-pip-gray{background:#94a3b8}
-.stat-project-row{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border);line-height:1.3}
-.stat-project-row:last-child{border-bottom:none;padding-bottom:0}
-.stat-project-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--michels-red);font-weight:700;white-space:nowrap;flex-shrink:0;background:var(--michels-red-light);padding:2px 5px;border-radius:4px;letter-spacing:.2px}
-.stat-project-name{font-size:12px;color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.stat-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500}
+
 .badge-green{background:var(--green-light);color:var(--green)}
 .badge-amber{background:var(--amber-light);color:var(--amber)}
 .badge-red{background:var(--red-light);color:var(--red)}
@@ -136,7 +120,6 @@ select{appearance:none;-webkit-appearance:none;background-color:var(--surface);b
 select:focus{background-color:var(--white);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
 textarea{resize:vertical;min-height:72px}
 
-.project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
 .project-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);padding:20px;transition:box-shadow .2s ease, transform .2s ease;border-top:3px solid var(--michels-red);box-shadow:var(--shadow-md);}
 .project-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-3px);}
 .project-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;min-width:0}
@@ -387,7 +370,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 /* RESPONSIVE — 768px and below */
 @media(max-width:768px){
   .header,.section-header,.todo-header{flex-direction:column;align-items:stretch;gap:12px}
-  .stat-row,.form-row,.project-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
   .nav{overflow-x:auto;padding:0 12px}
   .main{padding:16px 12px}
 }
@@ -817,24 +800,16 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 
   <!-- ACTIVE PROJECTS -->
   <div class="main active" id="tab-projects">
-    <div class="stat-row" id="project-stats"></div>
-
-    <!-- REPORT SECTION -->
-    <div class="todo-section" style="margin-bottom:16px">
-      <div class="todo-header">
-        <div class="todo-header-left">
-          <div class="todo-title">Project Summary Report</div>
-          <span class="todo-badge" id="report-count" style="display:none">0</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <select id="report-filter" onchange="renderReportPreview()" style="font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:5px;font-family:'DM Sans',sans-serif">
-            <option value="">All Projects</option>
-          </select>
-          <button class="btn-add" onclick="generateSummaryPDF()" style="font-size:12px">&#8595; Generate PDF</button>
-        </div>
+    <div class="section-header">
+      <div class="section-title">Active Projects</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <select id="report-filter" onchange="renderReportPreview()" style="font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:5px;font-family:'DM Sans',sans-serif">
+          <option value="">All Projects</option>
+        </select>
+        <button class="btn-add btn-pdf" onclick="generateSummaryPDF()">&#8595; Generate PDF Report</button>
       </div>
-      <div id="report-preview" style="padding:12px 16px"></div>
     </div>
+    <div id="report-preview" style="margin-bottom:20px"></div>
 
     <!-- TODO REMINDER SECTION -->
     <div class="todo-section">
@@ -858,9 +833,21 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
 
     <div class="section-header">
-      <div class="section-title">Active Projects</div>
+      <div class="section-title">Milestones</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="filter-dd" id="fd-ms-project" data-fd-val="" data-default-label="All Projects" data-render="renderMilestoneTable">
+          <button class="filter-dd-btn" onclick="toggleFD('fd-ms-project')">
+            <span class="filter-dd-val">All Projects</span>
+            <svg class="dd-chevron" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="fd-ms-project-menu"></div>
+        </div>
+        <button class="btn-add" onclick="addMilestoneInline()">+ Add Milestone</button>
+      </div>
     </div>
-    <div class="project-grid" id="project-grid"></div>
+    <table class="data-table"><thead><tr>
+      <th>Milestone</th><th>Start Date</th><th>End Date</th><th>Type</th><th>Project</th><th style="width:80px"></th>
+    </tr></thead><tbody id="milestone-body"></tbody></table>
   </div>
 
   <!-- RFI LOG -->
@@ -1270,10 +1257,12 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <div class="modal-section-title">Milestones</div>
         <table class="inline-item-table">
           <thead><tr>
-            <th style="width:38%">Milestone Name</th>
-            <th style="width:24%">Date</th>
-            <th style="width:28%">Type</th>
-            <th style="width:10%"></th>
+            <th style="width:26%">Milestone Name</th>
+            <th style="width:17%">Start Date</th>
+            <th style="width:17%">End Date</th>
+            <th style="width:20%">Type</th>
+            <th style="width:8%">TBD</th>
+            <th style="width:6%"></th>
           </tr></thead>
           <tbody id="ctrl-milestone-body"></tbody>
         </table>
@@ -1868,6 +1857,8 @@ create table if not exists milestones (
   project_id     bigint references projects(id) on delete cascade,
   name           text not null,
   milestone_date date,
+  milestone_end_date date,
+  is_tbd         boolean default false,
   type           text default 'custom',
   notes          text,
   created_by     text,
@@ -2342,7 +2333,7 @@ function setLoadingState(){
 // ── RENDER ALL ───────────────────────────────────────────
 function renderAll(){
   renderProjectControls();
-  renderProjects();
+  renderMilestoneTable();
   renderReportPreview();
   renderRFI();
   renderSubmittals();
@@ -3359,90 +3350,52 @@ function applyWritePermissions(){
 }
 </script>
 
+<!-- ── project helpers ── -->
+<script>
+function statusAccentColor(s){
+  if(['Complete','Closeout'].includes(s)) return 'var(--green)';
+  if(s==='On Hold') return 'var(--amber)';
+  if(s==='In Progress') return 'var(--michels-red)';
+  return '#cbd5e1';
+}
+
+function teamPillsHTML(p){
+  return [
+    p.assigned_pm      && 'PM: '+h(getUserDisplay(p.assigned_pm)),
+    p.assigned_apm     && 'APM: '+h(getUserDisplay(p.assigned_apm)),
+    p.assigned_super   && 'Super: '+h(getUserDisplay(p.assigned_super)),
+    p.assigned_foreman && 'Foreman: '+h(getUserDisplay(p.assigned_foreman)),
+  ].filter(Boolean).map(t=>'<span class="ctrl-job-team-pill">'+t+'</span>').join('');
+}
+
+function openCounts(proj){
+  const byProj = proj ? (r=>r.project===proj) : (()=>true);
+  return {
+    openRFIs:     rfis.filter(r=>byProj(r)&&!['Answered','Closed'].includes(r.status)).length,
+    highRFIs:     rfis.filter(r=>byProj(r)&&r.priority==='High'&&!['Answered','Closed'].includes(r.status)).length,
+    openSubs:     submittals.filter(s=>byProj(s)&&!['Approved','Approved as Noted','Rejected'].includes(s.status)).length,
+    onSiteRental: rental.filter(r=>byProj(r)&&!['Release','Released'].includes(r.status)).length,
+    pendingProc:  procurement.filter(r=>byProj(r)&&r.status!=='Delivered').length,
+  };
+}
+
+function progressBarHTML(pct, accent){
+  return '<div style="font-size:11px;color:var(--text-mid);margin-bottom:4px;display:flex;justify-content:space-between">'
+    +'<span>Progress</span><span style="font-weight:600;color:'+accent+'">'+pct+'%</span></div>'
+    +'<div class="progress-bar-bg"><div class="progress-bar-fill" style="width:'+pct+'%;background:'+accent+'"></div></div>';
+}
+
+function milestoneDaysDiff(dateStr){
+  if(!dateStr) return null;
+  const d=new Date(dateStr+'T00:00:00'), now=new Date();
+  now.setHours(0,0,0,0);
+  return Math.ceil((d-now)/(1000*60*60*24));
+}
+</script>
 <!-- ── render.js ── -->
 <script>
 // Render functions for projects, RFIs, submittals, rental,
 // and project select dropdowns
-
-function renderProjects(){
-  const g=document.getElementById('project-grid');
-  const s=document.getElementById('project-stats');
-  const openRFIs=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
-  const openSubs=submittals.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
-  const onSiteRental=rental.filter(r=>r.status!=='Release'&&r.status!=='Released').length;
-  const projectList = projects.length
-    ? projects.map(p=>`<div class="stat-project-row"><span class="stat-project-num">${h(p.number)||'—'}</span><span class="stat-project-name">${h(p.name)}</span></div>`).join('')
-    : `<div style="font-size:11px;color:var(--text-muted);padding:4px 0">No projects yet.</div>`;
-  s.innerHTML=`
-    <div class="stat-card">
-      <div class="stat-top-bar"></div>
-      <div class="stat-card-pad" style="max-height:148px;overflow-y:auto">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <div class="stat-label" style="margin:0">Projects</div>
-          <span style="background:var(--michels-red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace;letter-spacing:.3px">${projects.length}</span>
-        </div>
-        ${projectList}
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-top-bar"></div>
-      <div class="stat-card-pad">
-        <div class="stat-label">RFIs</div>
-        <div class="stat-value">${rfis.length}</div>
-        <div class="stat-secondary"><span class="stat-pip stat-pip-red"></span>${openRFIs} open</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-top-bar"></div>
-      <div class="stat-card-pad">
-        <div class="stat-label">Submittals</div>
-        <div class="stat-value">${submittals.length}</div>
-        <div class="stat-secondary"><span class="stat-pip stat-pip-amber"></span>${openSubs} pending review</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-top-bar"></div>
-      <div class="stat-card-pad">
-        <div class="stat-label">Rental Equipment</div>
-        <div class="stat-value">${rental.length}</div>
-        <div class="stat-secondary"><span class="stat-pip stat-pip-blue"></span>${onSiteRental} on site</div>
-      </div>
-    </div>
-  `;
-  // Filter: APMs only see jobs they are assigned to
-  const visibleProjects = (currentUser?.role === 'apm')
-    ? projects.filter(p => p.assigned_apm === currentUser.username)
-    : projects;
-  if(!visibleProjects.length){
-    g.innerHTML='<div class="empty"><div class="empty-icon">📁</div>'+(currentUser?.role==='apm'?'No jobs are currently assigned to you.':'No jobs yet. Use the Project Controls tab to add one.')+'</div>';
-    return;
-  }
-  g.innerHTML=visibleProjects.map(p=>{
-    const teamLines=[
-      p.assigned_pm      && `PM: ${h(getUserDisplay(p.assigned_pm))}`,
-      p.assigned_apm     && `APM: ${h(getUserDisplay(p.assigned_apm))}`,
-      p.assigned_super   && `Super: ${h(getUserDisplay(p.assigned_super))}`,
-      p.assigned_foreman && `Foreman: ${h(getUserDisplay(p.assigned_foreman))}`,
-    ].filter(Boolean);
-    const cardAccent = ['Complete','Closeout'].includes(p.status) ? 'var(--green)' : p.status==='On Hold' ? 'var(--amber)' : p.status==='In Progress' ? 'var(--michels-red)' : '#cbd5e1';
-    return `
-    <div class="project-card" style="border-top-color:${cardAccent}">
-      <div class="project-card-header">
-        <div style="min-width:0">
-          <div class="project-name">${h(p.name)}</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'DM Mono',monospace">${h(p.number)}</div>
-        </div>
-        ${badge(p.status)}
-      </div>
-      <div style="font-size:12px;color:var(--text-mid);margin-bottom:8px">Client: <strong>${h(p.client)}</strong></div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">${fmt(p.start)} → ${fmt(p.end)}</div>
-      <div style="font-size:11px;color:var(--text-mid);margin-bottom:4px;display:flex;justify-content:space-between"><span>Progress</span><span style="font-weight:600;color:${cardAccent}">${calcPct(p.start,p.end,p.status)}%</span></div>
-      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${calcPct(p.start,p.end,p.status)}%;background:${cardAccent}"></div></div>
-      ${teamLines.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">${teamLines.map(t=>`<span style="font-size:11px;color:var(--text-mid);background:var(--surface);border:1px solid var(--border);padding:2px 7px;border-radius:10px">${t}</span>`).join('')}</div>`:''}
-      ${p.notes?`<div style="font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5">${h(p.notes)}</div>`:''}
-    </div>
-  `}).join('');
-}
 
 function getUserDisplay(username){
   if(!username) return null;
@@ -3475,23 +3428,17 @@ function renderProjectControls(){
     return;
   }
   grid.innerHTML=filtered.map(p=>{
-    const accent=['Complete','Closeout'].includes(p.status)?'var(--green)':p.status==='On Hold'?'var(--amber)':p.status==='In Progress'?'var(--michels-red)':'#cbd5e1';
-    const teamPills=[
-      p.assigned_pm      && `PM: ${h(getUserDisplay(p.assigned_pm))}`,
-      p.assigned_apm     && `APM: ${h(getUserDisplay(p.assigned_apm))}`,
-      p.assigned_super   && `Super: ${h(getUserDisplay(p.assigned_super))}`,
-      p.assigned_foreman && `Foreman: ${h(getUserDisplay(p.assigned_foreman))}`,
-    ].filter(Boolean).map(t=>`<span class="ctrl-job-team-pill">${t}</span>`).join('');
+    const accent=statusAccentColor(p.status);
+    const tp=teamPillsHTML(p);
     // Next upcoming milestone chip
-    const upcoming=milestones.filter(m=>String(m.project_id)===String(p.id)&&m.milestone_date).sort((a,b)=>a.milestone_date.localeCompare(b.milestone_date));
+    const upcoming=milestones.filter(m=>String(m.project_id)===String(p.id)&&!m.is_tbd&&m.milestone_date).sort((a,b)=>a.milestone_date.localeCompare(b.milestone_date));
+    const tbdMs=milestones.filter(m=>String(m.project_id)===String(p.id)&&m.is_tbd);
     let milestoneChip='';
     if(upcoming.length){
       const next=upcoming[0];
-      const d=new Date(next.milestone_date+'T00:00:00');
-      const now=new Date(); now.setHours(0,0,0,0);
-      const diff=Math.ceil((d-now)/(1000*60*60*24));
-      if(diff<0) milestoneChip=`<span class="date-chip date-overdue" style="margin-left:6px">&#9888; ${h(next.name)} overdue</span>`;
-      else if(diff<=14) milestoneChip=`<span class="date-chip date-soon" style="margin-left:6px">${h(next.name)}: ${diff}d</span>`;
+      milestoneChip=`<span class="date-chip date-normal" style="margin-left:6px">${h(next.name)}</span>`;
+    } else if(tbdMs.length){
+      milestoneChip=`<span class="date-chip date-normal" style="margin-left:6px">${h(tbdMs[0].name)}: TBD</span>`;
     }
     const valueTxt=p.contract_value?'$'+Number(p.contract_value).toLocaleString():'';
     const metaParts=[h(p.client),h(p.contract_type),valueTxt].filter(Boolean).join(' &middot; ');
@@ -3503,7 +3450,7 @@ function renderProjectControls(){
       <div class="ctrl-job-num">${h(p.number)||'&mdash;'}${milestoneChip}</div>
       ${metaParts?`<div class="ctrl-job-meta">${metaParts}</div>`:''}
       ${p.start_date||p.end_date?`<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">${fmt(p.start_date)} &rarr; ${fmt(p.end_date)}</div>`:''}
-      ${teamPills?`<div class="ctrl-job-team">${teamPills}</div>`:''}
+      ${tp?`<div class="ctrl-job-team">${tp}</div>`:''}
     </div>`;
   }).join('');
 }
@@ -3525,31 +3472,29 @@ function renderJobDashboard(projectId,container){
   if(!p){ container.innerHTML='<div style="color:var(--text-muted)">Project not found.</div>'; return; }
   const projMilestones=milestones.filter(m=>String(m.project_id)===String(projectId)).sort((a,b)=>(a.milestone_date||'').localeCompare(b.milestone_date||''));
   const projSubs=subcontractors.filter(s=>String(s.project_id)===String(projectId));
-  const accent=['Complete','Closeout'].includes(p.status)?'var(--green)':p.status==='On Hold'?'var(--amber)':p.status==='In Progress'?'var(--michels-red)':'#cbd5e1';
+  const accent=statusAccentColor(p.status);
   const pct=calcPct(p.start_date,p.end_date,p.status);
-  const progressBar=(p.start_date&&p.end_date)?`
-    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:4px;margin-top:12px">
-      <span>Progress</span><span style="font-weight:700;color:${accent}">${pct}%</span>
-    </div>
-    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;background:${accent}"></div></div>`:'';
+  const progressBar=(p.start_date&&p.end_date)?'<div style="margin-top:12px">'+progressBarHTML(pct,accent)+'</div>':'';
   function teamRow(label,username){
     if(!username) return '';
     return `<div class="job-dash-field"><div class="job-dash-label">${label}</div><div class="job-dash-value">${h(getUserDisplay(username))}</div></div>`;
   }
   function milestoneDays(dateStr){
-    if(!dateStr) return '';
-    const d=new Date(dateStr+'T00:00:00'); const now=new Date(); now.setHours(0,0,0,0);
-    const diff=Math.ceil((d-now)/(1000*60*60*24));
+    const diff=milestoneDaysDiff(dateStr);
+    if(diff===null) return '';
     if(diff<0) return `<span class="date-chip date-overdue">&#9888; ${Math.abs(diff)}d overdue</span>`;
     if(diff===0) return `<span class="date-chip date-soon">Today</span>`;
     if(diff<=14) return `<span class="date-chip date-soon">${diff}d away</span>`;
     return `<span class="date-chip date-normal">${diff}d away</span>`;
   }
   const milestoneHTML=projMilestones.length
-    ?projMilestones.map(m=>`<div class="job-dash-milestone-row">
+    ?projMilestones.map(m=>{
+      const startStr=m.is_tbd?'TBD':fmt(m.milestone_date);
+      const endStr=m.is_tbd?'TBD':fmt(m.milestone_end_date);
+      return `<div class="job-dash-milestone-row">
       <div><div style="font-weight:600">${h(m.name)}</div><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px">${h(m.type||'Custom')}</div></div>
-      <div style="text-align:right"><div style="font-family:'DM Mono',monospace;font-size:11px">${fmt(m.milestone_date)}</div>${milestoneDays(m.milestone_date)}</div>
-    </div>`).join('')
+      <div style="text-align:right;font-family:'DM Mono',monospace;font-size:11px">${startStr} — ${endStr}</div>
+    </div>`;}).join('')
     :`<div class="job-dash-empty">No milestones added.</div>`;
   const subsHTML=projSubs.length
     ?projSubs.map(s=>`<div class="job-dash-sub-row">
@@ -4075,6 +4020,153 @@ function populateProjectSelects(){
 }
 </script>
 
+<!-- ── milestones.js ── -->
+<script>
+let _msEditId=null;
+
+function _msTypeLabel(t){return({'ntp':'NTP','substantial_completion':'Substantial Completion','final_completion':'Final Completion','phase':'Phase','custom':'Custom'})[t]||'Custom';}
+function _msTypeOpts(sel){return['custom','ntp','substantial_completion','final_completion','phase'].map(t=>`<option value="${t}"${t===sel?' selected':''}>${_msTypeLabel(t)}</option>`).join('');}
+function _msProjOpts(sel){return'<option value="">Select project</option>'+projects.map(p=>`<option value="${p.id}"${String(p.id)===String(sel)?' selected':''}>${h(p.name)}</option>`).join('');}
+
+function renderMilestoneTable(){
+  const body=document.getElementById('milestone-body');
+  if(!body) return;
+
+  const menu=document.getElementById('fd-ms-project-menu');
+  if(menu){
+    const names=[...new Set(milestones.map(m=>{
+      const p=projects.find(x=>String(x.id)===String(m.project_id));
+      return p?p.name:'Unknown';
+    }))].sort();
+    menu.innerHTML='<div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption(\'fd-ms-project\',\'\',\'All Projects\')">All Projects</div>'
+      +names.map(n=>`<div class="filter-dd-opt" data-val="${h(n)}" onclick="selectFDOption('fd-ms-project','${h(n)}','${h(n)}')">${h(n)}</div>`).join('');
+  }
+
+  const proj=getFDValue('fd-ms-project');
+
+  let rows=milestones.map(m=>{
+    const p=projects.find(x=>String(x.id)===String(m.project_id));
+    return {...m, projectName: p?p.name:'Unknown'};
+  });
+
+  if(proj) rows=rows.filter(r=>r.projectName===proj);
+
+  rows.sort((a,b)=>{
+    if(!a.milestone_date&&!b.milestone_date) return 0;
+    if(!a.milestone_date) return 1;
+    if(!b.milestone_date) return -1;
+    return a.milestone_date.localeCompare(b.milestone_date);
+  });
+
+  if(!rows.length && _msEditId!=='new'){
+    body.innerHTML='<tr><td colspan="7" class="empty"><div class="empty-icon">📅</div>No milestones found.</td></tr>';
+    return;
+  }
+
+  let html='';
+  if(_msEditId==='new') html+=_msEditRow(null);
+  html+=rows.map(m=>{
+    if(_msEditId===m.id) return _msEditRow(m);
+    const startStr=m.is_tbd?'TBD':(m.milestone_date?dateChip(m.milestone_date,true):'—');
+    const endStr=m.is_tbd?'TBD':(m.milestone_end_date?dateChip(m.milestone_end_date,true):'—');
+    return `<tr class="data-row" onclick="editMilestoneInline(${m.id})">
+      <td>${h(m.name||'')}</td>
+      <td>${startStr}</td>
+      <td>${endStr}</td>
+      <td>${badge(_msTypeLabel(m.type))}</td>
+      <td>${h(m.projectName)}</td>
+      <td onclick="event.stopPropagation()"><div class="row-actions"><button class="row-action-btn" onclick="deleteMilestoneInline(${m.id})" title="Delete">🗑</button></div></td>
+    </tr>`;
+  }).join('');
+  body.innerHTML=html;
+}
+
+function _msEditRow(m){
+  const isTbd=!!m?.is_tbd;
+  return `<tr class="data-row" style="background:var(--surface-hover)">
+    <td><input type="text" id="ms-ed-name" value="${h(m?.name||'')}" placeholder="Milestone name" style="width:100%;padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
+    <td><input type="date" id="ms-ed-date" value="${m?.milestone_date||''}" ${isTbd?'disabled':''} style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
+    <td><input type="date" id="ms-ed-end-date" value="${m?.milestone_end_date||''}" ${isTbd?'disabled':''} style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
+    <td><select id="ms-ed-type" style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit">${_msTypeOpts(m?.type||'custom')}</select></td>
+    <td><select id="ms-ed-project" style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit">${_msProjOpts(m?.project_id)}</select></td>
+    <td colspan="2" style="white-space:nowrap">
+      <label style="font-size:11px;margin-right:6px;cursor:pointer"><input type="checkbox" id="ms-ed-tbd" ${isTbd?'checked':''} onchange="_msToggleTbd(this)"> TBD</label>
+      <button class="btn-add" onclick="saveMilestoneInline(${m?.id||'null'})" style="font-size:11px;padding:4px 10px">Save</button>
+      <button class="btn-sm" onclick="cancelMilestoneInline()" style="font-size:11px;padding:4px 10px">Cancel</button>
+    </td>
+  </tr>`;
+}
+
+function _msToggleTbd(cb){
+  const d=document.getElementById('ms-ed-date');
+  const ed=document.getElementById('ms-ed-end-date');
+  if(cb.checked){ if(d){d.value='';d.disabled=true;} if(ed){ed.value='';ed.disabled=true;} }
+  else { if(d)d.disabled=false; if(ed)ed.disabled=false; }
+}
+
+function _msInitEditRow(){
+  renderMilestoneTable();
+  initDatePickers();
+  document.getElementById('ms-ed-name')?.focus();
+}
+
+function addMilestoneInline(){
+  _msEditId='new';
+  _msInitEditRow();
+}
+
+function editMilestoneInline(id){
+  _msEditId=id;
+  _msInitEditRow();
+}
+
+function cancelMilestoneInline(){
+  _msEditId=null;
+  renderMilestoneTable();
+}
+
+async function saveMilestoneInline(id){
+  const name=document.getElementById('ms-ed-name')?.value?.trim();
+  const date=document.getElementById('ms-ed-date')?.value||null;
+  const endDate=document.getElementById('ms-ed-end-date')?.value||null;
+  const isTbd=!!document.getElementById('ms-ed-tbd')?.checked;
+  const type=document.getElementById('ms-ed-type')?.value||'custom';
+  const projectId=document.getElementById('ms-ed-project')?.value;
+  if(!name){showToast('Milestone name is required.','error');return;}
+  if(!projectId){showToast('Please select a project.','error');return;}
+  const row={name,milestone_date:isTbd?null:date,milestone_end_date:isTbd?null:endDate,is_tbd:isTbd,type,project_id:parseInt(projectId)};
+  if(id){
+    const res=await sbUpdate('milestones',id,row);
+    if(res.error){showToast('Failed to save: '+res.error.message,'error');return;}
+    const idx=milestones.findIndex(x=>x.id===id);
+    if(idx>=0) Object.assign(milestones[idx],row);
+    logActivity('milestone','updated',name,'Milestone updated');
+  } else {
+    const res=await sbInsert('milestones',row);
+    if(res.error){showToast('Failed to save: '+res.error.message,'error');return;}
+    if(res.data?.[0]) milestones.push(res.data[0]);
+    else milestones.push({id:nextId++,...row});
+    logActivity('milestone','created',name,'New milestone created');
+  }
+  if(!sb) localStorage.setItem('apm_milestones',JSON.stringify(milestones));
+  _msEditId=null;
+  showToast(id?'Milestone updated.':'Milestone added.','success');
+  renderMilestoneTable();
+}
+
+async function deleteMilestoneInline(id){
+  if(!getPerms().canDelete){showToast('You do not have permission to delete.','error');return;}
+  if(!confirm('Delete this milestone? This cannot be undone.')) return;
+  const m=milestones.find(x=>x.id===id);
+  const res=await sbDelete('milestones',id);
+  if(res.error){showToast('Failed to delete: '+res.error.message,'error');return;}
+  milestones=milestones.filter(x=>x.id!==id);
+  if(!sb) localStorage.setItem('apm_milestones',JSON.stringify(milestones));
+  logActivity('milestone','deleted',m?.name||'','Milestone deleted');
+  showToast('Milestone deleted.','success');
+  renderMilestoneTable();
+}
+</script>
 <!-- ── materials.js ── -->
 <script>
 // Material Log: render, CRUD, vendor management, order workflow,
@@ -5205,7 +5297,7 @@ function editJobControls(id){
   // Load existing milestones and subs into pending arrays
   _pendingMilestones = milestones
     .filter(m => String(m.project_id) === String(id))
-    .map(m => ({_tid:++_pendingTid, id:m.id, name:m.name||'', date:m.milestone_date||'', type:m.type||'custom', notes:m.notes||'', isNew:false, isDeleted:false}));
+    .map(m => ({_tid:++_pendingTid, id:m.id, name:m.name||'', date:m.milestone_date||'', end_date:m.milestone_end_date||'', is_tbd:!!m.is_tbd, type:m.type||'custom', notes:m.notes||'', isNew:false, isDeleted:false}));
   _pendingSubs = subcontractors
     .filter(s => String(s.project_id) === String(id))
     .map(s => ({_tid:++_pendingTid, id:s.id, company_name:s.company_name||'', trade:s.trade||'', contact_name:s.contact_name||'', contact_phone:s.contact_phone||'', contact_email:s.contact_email||'', status:s.status||'Active', isNew:false, isDeleted:false}));
@@ -5325,13 +5417,14 @@ function renderPendingMilestones(){
   if(!tbody) return;
   const active = _pendingMilestones.filter(m=>!m.isDeleted);
   if(!active.length){
-    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px">No milestones yet — click + Add below.</td></tr>';
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px">No milestones yet — click + Add below.</td></tr>';
     return;
   }
   tbody.innerHTML = active.map(m=>`
     <tr>
       <td><input type="text" data-tid="${m._tid}" data-field="name" value="${h(m.name)}" placeholder="e.g. Substantial Completion" oninput="updatePendingMilestone(this)"></td>
-      <td><input type="date" data-tid="${m._tid}" data-field="date" value="${h(m.date)}" oninput="updatePendingMilestone(this)"></td>
+      <td><input type="date" data-tid="${m._tid}" data-field="date" value="${h(m.date)}" ${m.is_tbd?'disabled':''} oninput="updatePendingMilestone(this)"></td>
+      <td><input type="date" data-tid="${m._tid}" data-field="end_date" value="${h(m.end_date)}" ${m.is_tbd?'disabled':''} oninput="updatePendingMilestone(this)"></td>
       <td><select data-tid="${m._tid}" data-field="type" onchange="updatePendingMilestone(this)">
         <option value="ntp"${m.type==='ntp'?' selected':''}>NTP</option>
         <option value="substantial_completion"${m.type==='substantial_completion'?' selected':''}>Substantial Completion</option>
@@ -5339,13 +5432,14 @@ function renderPendingMilestones(){
         <option value="phase"${m.type==='phase'?' selected':''}>Phase</option>
         <option value="custom"${(!m.type||m.type==='custom')?' selected':''}>Custom</option>
       </select></td>
+      <td style="text-align:center"><input type="checkbox" data-tid="${m._tid}" data-field="is_tbd" ${m.is_tbd?'checked':''} onchange="updatePendingMilestone(this)" title="Dates not yet determined"></td>
       <td style="text-align:center"><button class="btn-icon btn-icon-danger" onclick="removeMilestoneRow(${m._tid})" title="Remove">✕</button></td>
     </tr>`).join('');
   initDatePickers();
 }
 
 function addMilestoneRow(){
-  _pendingMilestones.push({_tid:++_pendingTid, id:null, name:'', date:'', type:'custom', notes:'', isNew:true, isDeleted:false});
+  _pendingMilestones.push({_tid:++_pendingTid, id:null, name:'', date:'', end_date:'', is_tbd:false, type:'custom', notes:'', isNew:true, isDeleted:false});
   renderPendingMilestones();
 }
 
@@ -5361,7 +5455,14 @@ function updatePendingMilestone(el){
   const tid = parseInt(el.dataset.tid);
   const field = el.dataset.field;
   const m = _pendingMilestones.find(x=>x._tid===tid);
-  if(m) m[field] = el.value;
+  if(!m) return;
+  if(field==='is_tbd'){
+    m.is_tbd=el.checked;
+    if(el.checked){ m.date=''; m.end_date=''; }
+    renderPendingMilestones();
+  } else {
+    m[field] = el.value;
+  }
 }
 
 // ── PENDING SUBCONTRACTOR MANAGEMENT ────────────────────
@@ -5473,7 +5574,7 @@ async function saveJobControls(){
       await sbDelete('milestones',m.id);
     }
     for(const m of toInsertMs){
-      const row={project_id:savedProjectId,name:m.name,milestone_date:m.date||null,type:m.type||'custom',notes:m.notes||''};
+      const row={project_id:savedProjectId,name:m.name,milestone_date:m.date||null,milestone_end_date:m.end_date||null,is_tbd:!!m.is_tbd,type:m.type||'custom',notes:m.notes||''};
       if(sb){ const res=await sb.from('milestones').insert(row).select(); if(res.data?.[0]) milestones.push(res.data[0]); }
       else { milestones.push({id:nextId++,...row}); }
     }
@@ -5603,12 +5704,10 @@ async function deleteItem(store,id){
 
 function projectHealth(p){
   const pct = calcPct(p.start_date||p.start, p.end_date||p.end, p.status);
-  const highR = rfis.filter(r=>r.project===p.name&&r.priority==='High'&&!['Answered','Closed'].includes(r.status)).length;
-  const openR = rfis.filter(r=>r.project===p.name&&!['Answered','Closed'].includes(r.status)).length;
-  const openS = submittals.filter(s=>s.project===p.name&&!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
+  const c = openCounts(p.name);
   if(p.status==='On Hold')                         return {label:'On Hold',  cls:'badge-amber', color:[180,120,0],  bg:[255,243,200]};
   if(['Complete','Closeout'].includes(p.status))   return {label:'Closeout', cls:'badge-green', color:[21,128,61],  bg:[220,252,231]};
-  if(highR>0||openR>5||openS>5)                    return {label:'At Risk',  cls:'badge-red',   color:[180,16,30],  bg:[254,226,226]};
+  if(c.highRFIs>0||c.openRFIs>5||c.openSubs>5)    return {label:'At Risk',  cls:'badge-red',   color:[180,16,30],  bg:[254,226,226]};
   if(pct>0&&pct<100)                               return {label:'On Track', cls:'badge-green', color:[21,128,61],  bg:[220,252,231]};
   return {label:'Pending', cls:'badge-gray', color:[80,80,80], bg:[241,245,249]};
 }
@@ -5616,33 +5715,28 @@ function projectHealth(p){
 function renderReportPreview(){
   const sel = document.getElementById('report-filter');
   const preview = document.getElementById('report-preview');
-  const badge = document.getElementById('report-count');
   if(!sel||!preview) return;
   const cur = sel.value;
   sel.innerHTML = '<option value="">All Projects</option>' +
     projects.map(p=>`<option value="${p.id}"${p.id==cur?' selected':''}>${h(p.name)}</option>`).join('');
-  const filtered = cur ? projects.filter(p=>p.id==cur) : projects;
-  if(badge){ badge.textContent=filtered.length; badge.style.display=filtered.length?'inline-flex':'none'; }
+  const preFiltered = cur ? projects.filter(p=>p.id==cur) : projects;
+  const filtered = (currentUser?.role==='apm')
+    ? preFiltered.filter(p=>p.assigned_apm===currentUser.username)
+    : preFiltered;
   if(!filtered.length){
     const msg = projects.length
-      ? 'No project matches the selected filter.'
+      ? (currentUser?.role==='apm' ? 'No jobs are currently assigned to you.' : 'No project matches the selected filter.')
       : 'No projects yet. Click "+ New Project" to get started.';
     preview.innerHTML=`<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:24px 16px">${msg}</div>`;
     return;
   }
-  // Build dashboard-style project cards
+  const chip = (label,count)=>`<span style="background:var(--surface);border:1px solid var(--border);padding:3px 9px;border-radius:12px;font-size:11px;color:var(--text-mid);display:inline-flex;align-items:center;gap:5px"><span>${label}</span><strong style="color:${count>0?'var(--michels-red)':'var(--text-mid)'}">${count}</strong></span>`;
   const projectCards = filtered.map(p=>{
     const pct = calcPct(p.start_date||p.start, p.end_date||p.end, p.status);
     const ph = projectHealth(p);
-    const openR = rfis.filter(r=>r.project===p.name&&!['Answered','Closed'].includes(r.status)).length;
-    const openS = submittals.filter(s=>s.project===p.name&&!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
-    const onSite = rental.filter(r=>r.project===p.name&&r.status!=='Release'&&r.status!=='Released').length;
-    const accent = ph.label==='At Risk' ? 'var(--michels-red)'
-                 : ph.label==='On Hold' ? 'var(--amber)'
-                 : (ph.label==='On Track'||ph.label==='Closeout') ? 'var(--green)'
-                 : '#cbd5e1';
+    const c = openCounts(p.name);
+    const accent = statusAccentColor(p.status);
     const metaParts = [p.client, p.number].filter(Boolean).map(v=>h(v)).join(' · ');
-    const chip = (label,count)=>`<span style="background:var(--surface);border:1px solid var(--border);padding:3px 9px;border-radius:12px;font-size:11px;color:var(--text-mid);display:inline-flex;align-items:center;gap:5px"><span>${label}</span><strong style="color:${count>0?'var(--michels-red)':'var(--text-mid)'}">${count}</strong></span>`;
     return `<div class="project-card" style="border-top-color:${accent}">
       <div class="project-card-header">
         <div style="min-width:0">
@@ -5651,17 +5745,17 @@ function renderReportPreview(){
         </div>
         <span class="status ${ph.cls}">${ph.label}</span>
       </div>
-      <div style="font-size:11px;color:var(--text-mid);margin:10px 0 4px;display:flex;justify-content:space-between"><span>Progress</span><span style="font-weight:600;color:${accent}">${pct}%</span></div>
-      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;background:${accent}"></div></div>
+      <div style="margin:10px 0 0">${progressBarHTML(pct,accent)}</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
-        ${chip('Open RFIs',openR)}
-        ${chip('Open Subs',openS)}
-        ${chip('Rental On Site',onSite)}
+        ${chip('Open RFIs',c.openRFIs)}
+        ${chip('Open Subs',c.openSubs)}
+        ${chip('Rental On Site',c.onSiteRental)}
+        ${chip('Active Orders',c.pendingProc)}
       </div>
     </div>`;
   }).join('');
 
-  preview.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">${projectCards}</div>`;
+  preview.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px">${projectCards}</div>`;
 }
 
 async function generateSummaryPDF(){
@@ -5734,16 +5828,15 @@ async function generateSummaryPDF(){
   let y=36;
 
   // Stat cards
-  const totalOpenRFIs=rfis.filter(r=>!['Answered','Closed'].includes(r.status)).length;
-  const totalOpenSubs=submittals.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status)).length;
-  const totalRental=rental.filter(r=>r.status!=='Release'&&r.status!=='Released').length;
+  const tc=openCounts(null);
   const avgPct=filtered.length?Math.round(filtered.reduce((a,p)=>a+calcPct(p.start_date||p.start,p.end_date||p.end,p.status),0)/filtered.length):0;
   const statCards=[
     {label:'Total Projects', value:filtered.length, color:black},
     {label:'Avg. Complete',  value:avgPct+'%',       color:red},
-    {label:'Open RFIs',      value:totalOpenRFIs,    color:totalOpenRFIs>0?red:darkGray},
-    {label:'Open Submittals',value:totalOpenSubs,    color:totalOpenSubs>0?[180,100,0]:darkGray},
-    {label:'Rental On Site', value:totalRental,      color:darkGray},
+    {label:'Open RFIs',      value:tc.openRFIs,    color:tc.openRFIs>0?red:darkGray},
+    {label:'Open Submittals',value:tc.openSubs,    color:tc.openSubs>0?[180,100,0]:darkGray},
+    {label:'Rental On Site', value:tc.onSiteRental,      color:darkGray},
+    {label:'Active Orders',  value:tc.pendingProc,  color:tc.pendingProc>0?[124,58,237]:darkGray},
   ];
   const cw=(pw-20)/statCards.length;
   statCards.forEach((c,i)=>{
@@ -5832,6 +5925,61 @@ async function generateSummaryPDF(){
       y+=20;
     });
   }
+  // Milestones (all projects, card-style rows grouped by project)
+  const filteredIds=new Set(filtered.map(p=>String(p.id)));
+  const reportMilestones=milestones
+    .filter(m=>filteredIds.has(String(m.project_id)))
+    .map(m=>{
+      const p=projects.find(x=>String(x.id)===String(m.project_id));
+      return {...m, projectName: p?p.name:'Unknown'};
+    })
+    .sort((a,b)=>{
+      if(a.is_tbd&&!b.is_tbd) return 1;
+      if(!a.is_tbd&&b.is_tbd) return -1;
+      if(!a.milestone_date&&!b.milestone_date) return 0;
+      if(!a.milestone_date) return 1;
+      if(!b.milestone_date) return -1;
+      return a.milestone_date.localeCompare(b.milestone_date);
+    });
+  if(reportMilestones.length){
+    if(y>ph-40){drawFooter('Page 1  |  Overview');doc.addPage();drawHeader('Project Summary Report');y=36;}
+    y=secTitle('MILESTONES',y);
+
+    const grouped={};
+    reportMilestones.forEach(m=>{
+      if(!grouped[m.projectName]) grouped[m.projectName]=[];
+      grouped[m.projectName].push(m);
+    });
+
+    Object.keys(grouped).sort().forEach(projName=>{
+      if(y>ph-30){drawFooter('Page 1  |  Overview');doc.addPage();drawHeader('Milestones (cont.)');y=36;}
+      doc.setFillColor(245,244,244); doc.roundedRect(10,y,pw-20,8,1.5,1.5,'F');
+      doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(...darkGray);
+      doc.text(projName,14,y+5.5);
+      y+=11;
+
+      grouped[projName].forEach(m=>{
+        if(y>ph-30){drawFooter('Page 1  |  Overview');doc.addPage();drawHeader('Milestones (cont.)');y=36;}
+        const startStr=m.is_tbd?'TBD':fmtD(m.milestone_date);
+        const endStr=m.is_tbd?'TBD':fmtD(m.milestone_end_date);
+
+        doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,12,2,2,'F');
+
+        doc.setFontSize(8.5); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+        doc.text(String(m.name||'').substring(0,45),14,y+5.5);
+
+        doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+        doc.text(_msTypeLabel(m.type),14,y+10);
+
+        doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...black);
+        doc.text(startStr+' — '+endStr,pw-12,y+7,{align:'right'});
+
+        y+=15;
+      });
+      y+=2;
+    });
+  }
+
   drawFooter('Page 1  |  Overview');
 
   // ══════════════════════════════════════════════════════════
@@ -5847,9 +5995,12 @@ async function generateSummaryPDF(){
     const projRFIs=rfis.filter(r=>r.project===p.name);
     const projSubs=submittals.filter(s=>s.project===p.name);
     const projRental=rental.filter(r=>r.project===p.name);
-    const openR=projRFIs.filter(r=>!['Answered','Closed'].includes(r.status));
-    const openS=projSubs.filter(s=>!['Approved','Approved as Noted','Rejected'].includes(s.status));
-    const onSiteR=projRental.filter(r=>r.status!=='Release'&&r.status!=='Released');
+    const projProc=procurement.filter(r=>r.project===p.name);
+    const pc=openCounts(p.name);
+    const openR={length:pc.openRFIs};
+    const openS={length:pc.openSubs};
+    const onSiteR={length:pc.onSiteRental};
+    const activeProc={length:pc.pendingProc};
 
     // Title card
     doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,24,3,3,'F');
@@ -5870,6 +6021,7 @@ async function generateSummaryPDF(){
       {label:'Open RFIs',      value:String(openR.length), color:openR.length>0?red:darkGray},
       {label:'Open Submittals',value:String(openS.length), color:openS.length>0?[180,100,0]:darkGray},
       {label:'Rental On Site', value:String(onSiteR.length),color:darkGray},
+      {label:'Active Orders',  value:String(activeProc.length),color:activeProc.length>0?[124,58,237]:darkGray},
     ];
     const sw=(pw-20)/sts.length;
     sts.forEach((s,i)=>{
@@ -5925,6 +6077,11 @@ async function generateSummaryPDF(){
       'High':              {bg:[253,234,237], fg:[180,16,30]},
       'Medium':            {bg:[254,243,200], fg:[161,98,7]},
       'Low':               {bg:[239,246,255], fg:[37,99,235]},
+      'Shipped':           {bg:[243,232,255], fg:[124,58,237]},
+      'Delivered':         {bg:[220,252,231], fg:[21,128,61]},
+      'Needed':            {bg:[239,246,255], fg:[37,99,235]},
+      'Backordered':       {bg:[253,234,237], fg:[180,16,30]},
+      'Cancelled':         {bg:[241,245,249], fg:[100,116,139]},
     };
     const cellColor = (data, statusCol, priorityCol=-1, dueDateCol=-1) => {
       if(data.section !== 'body') return;
@@ -6002,6 +6159,24 @@ async function generateSummaryPDF(){
         columnStyles:{0:{fontStyle:'bold'},1:{cellWidth:'auto'},2:{cellWidth:28},3:{cellWidth:28},4:{cellWidth:24}},
         margin:{left:10,right:10},
         didParseCell:(data)=>cellColor(data,4,-1,3),
+      });
+    }
+
+    // Procurement Table
+    if(projProc.length){
+      if(y>ph-50){drawFooter(`${p.name}  |  Page ${pi+2}`);doc.addPage();drawHeader(`Project Status  —  ${pi+1} of ${filtered.length}`);y=36;}
+      y=secTitle('Procurement Orders',y);
+      doc.autoTable({
+        head:[['Material','Status','Order Date','Ship Date','Req. On-Site','Vendor','Contact']],
+        body:projProc.map(r=>[r.name||'',r.status||'Pending',fmtD(r.order_date),fmtD(r.shipping_date),fmtD(r.requested_onsite_date),r.vendor||'—',r.vendor_contact||'—']),
+        startY:y-4, theme:'grid',
+        headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8,cellPadding:{top:2.5,bottom:2.5,left:3,right:3}},
+        bodyStyles:{fontSize:8,textColor:[30,30,30],cellPadding:{top:2.5,bottom:2.5,left:3,right:3}},
+        alternateRowStyles:{fillColor:[249,248,248]},
+        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
+        columnStyles:{0:{fontStyle:'bold'},1:{cellWidth:20},2:{cellWidth:22},3:{cellWidth:22},4:{cellWidth:22},5:{cellWidth:'auto'},6:{cellWidth:'auto'}},
+        margin:{left:10,right:10},
+        didParseCell:(data)=>cellColor(data,1),
       });
     }
     drawFooter(`${p.name}  |  Page ${pi+2}`);
