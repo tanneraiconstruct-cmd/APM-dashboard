@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdn.emailjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co https://api.emailjs.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
 <title>APM Project Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>emailjs.init({ publicKey: 'rP9haQYPdsYInMuHl' });</script>
@@ -114,7 +114,7 @@ tbody tr:not(.spec-section-row):hover td:first-child{box-shadow:inset 3px 0 0 va
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .form-row-full{margin-bottom:12px}
 label{display:block;font-size:11px;font-weight:600;color:var(--text-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
-input[type=text],input[type=password],input[type=date],input[type=number],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--white);outline:none;transition:all .15s ease;box-shadow:var(--shadow-sm)}
+input[type=text],input[type=password],input[type=date],input[type=number],input[type=email],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--white);outline:none;transition:all .15s ease;box-shadow:var(--shadow-sm)}
 input:focus,select:focus,textarea:focus{border-color:var(--michels-red)}
 select{appearance:none;-webkit-appearance:none;background-color:var(--surface);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23c8102e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:32px;cursor:pointer;font-weight:500;transition:border-color .15s,box-shadow .15s,background .15s}
 select:focus{background-color:var(--white);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
@@ -845,9 +845,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <button class="btn-add" onclick="addMilestoneInline()">+ Add Milestone</button>
       </div>
     </div>
-    <table class="data-table"><thead><tr>
-      <th>Milestone</th><th>Start Date</th><th>End Date</th><th>Type</th><th>Project</th><th style="width:80px"></th>
-    </tr></thead><tbody id="milestone-body"></tbody></table>
+    <div class="table-wrap">
+      <table style="min-width:0">
+        <thead><tr>
+          <th style="width:25%">Milestone</th><th style="width:14%">Start Date</th><th style="width:14%">End Date</th><th style="width:12%">Type</th><th style="width:18%">Project</th><th style="width:17%">Actions</th>
+        </tr></thead>
+        <tbody id="milestone-body"></tbody>
+      </table>
+    </div>
   </div>
 
   <!-- RFI LOG -->
@@ -1783,6 +1788,7 @@ create table if not exists submittals (
   description text,
   spec text,
   submitted_date text,
+  need_date text,
   status text default 'Pending',
   bic text
 );
@@ -3037,6 +3043,7 @@ function showDashboard(){
   document.getElementById('login-overlay').style.display='none';
   document.getElementById('main-dashboard').style.display='none';
   document.getElementById('landing-page').style.display='';
+  _resetIdleTimer();
   const perms = getPerms();
 
   // ── User badge ──────────────────────────────────────────
@@ -3206,7 +3213,7 @@ async function renderUserList(){
           <div style="font-size:11px;color:var(--text-muted);margin-top:2px">@${h(u.username)}</div>
         </div>
       </div>
-      ${currentUser&&u.username===currentUser.username?'<span style="font-size:11px;color:var(--text-muted)">You</span>':`<button class="btn-sm btn-danger" onclick="removeUser('${h(u.username)}')">Remove</button>`}
+      ${currentUser&&u.username===currentUser.username?'<span style="font-size:11px;color:var(--text-muted)">You</span>':`<button class="btn-sm btn-danger" data-user="${h(u.username)}" onclick="removeUser(this.dataset.user)">Remove</button>`}
     </div>
   `).join('');
 }
@@ -3234,7 +3241,14 @@ async function initFirstRun(){
   const pw = Array.from(arr).map(b => chars[b % chars.length]).join('');
   const hash = await hashPassword(pw);
   const admin = {username:'admin', displayName:'Administrator', role:'superadmin', hash};
-  await saveUserToDB(admin);
+  if(sb){
+    const res=await sb.from('users').insert({username:admin.username,display_name:admin.displayName,role:admin.role,hash:admin.hash}).select();
+    if(res.error){console.error('initFirstRun insert failed',res.error);return;}
+  } else {
+    const local=JSON.parse(localStorage.getItem('apm_users')||'[]');
+    local.push({username:admin.username,displayName:admin.displayName,role:admin.role,hash:admin.hash});
+    localStorage.setItem('apm_users',JSON.stringify(local));
+  }
   setTimeout(()=>{
     alert(
       'First-run setup complete.\n\n' +
@@ -3489,7 +3503,7 @@ function renderJobDashboard(projectId,container){
   }
   const milestoneHTML=projMilestones.length
     ?projMilestones.map(m=>{
-      const startStr=m.is_tbd?'TBD':fmt(m.milestone_date);
+      const startStr=fmt(m.milestone_date);
       const endStr=m.is_tbd?'TBD':fmt(m.milestone_end_date);
       return `<div class="job-dash-milestone-row">
       <div><div style="font-weight:600">${h(m.name)}</div><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px">${h(m.type||'Custom')}</div></div>
@@ -4038,8 +4052,8 @@ function renderMilestoneTable(){
       const p=projects.find(x=>String(x.id)===String(m.project_id));
       return p?p.name:'Unknown';
     }))].sort();
-    menu.innerHTML='<div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption(\'fd-ms-project\',\'\',\'All Projects\')">All Projects</div>'
-      +names.map(n=>`<div class="filter-dd-opt" data-val="${h(n)}" onclick="selectFDOption('fd-ms-project','${h(n)}','${h(n)}')">${h(n)}</div>`).join('');
+    menu.innerHTML='<div class="filter-dd-opt opt-all" data-val="" data-label="All Projects" onclick="selectFDOptionEl(\'fd-ms-project\',this)">All Projects</div>'
+      +names.map(n=>`<div class="filter-dd-opt" data-val="${h(n)}" data-label="${h(n)}" onclick="selectFDOptionEl('fd-ms-project',this)">${h(n)}</div>`).join('');
   }
 
   const proj=getFDValue('fd-ms-project');
@@ -4059,7 +4073,7 @@ function renderMilestoneTable(){
   });
 
   if(!rows.length && _msEditId!=='new'){
-    body.innerHTML='<tr><td colspan="7" class="empty"><div class="empty-icon">📅</div>No milestones found.</td></tr>';
+    body.innerHTML='<tr><td colspan="6" class="empty"><div class="empty-icon">📅</div>No milestones found.</td></tr>';
     return;
   }
 
@@ -4067,15 +4081,20 @@ function renderMilestoneTable(){
   if(_msEditId==='new') html+=_msEditRow(null);
   html+=rows.map(m=>{
     if(_msEditId===m.id) return _msEditRow(m);
-    const startStr=m.is_tbd?'TBD':(m.milestone_date?dateChip(m.milestone_date,true):'—');
-    const endStr=m.is_tbd?'TBD':(m.milestone_end_date?dateChip(m.milestone_end_date,true):'—');
-    return `<tr class="data-row" onclick="editMilestoneInline(${m.id})">
+    const startStr=m.milestone_date?fmt(m.milestone_date):'—';
+    const endStr=m.is_tbd?'TBD':(m.milestone_end_date?fmt(m.milestone_end_date):'—');
+    return `<tr class="data-row">
       <td>${h(m.name||'')}</td>
-      <td>${startStr}</td>
-      <td>${endStr}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${startStr}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${endStr}</td>
       <td>${badge(_msTypeLabel(m.type))}</td>
       <td>${h(m.projectName)}</td>
-      <td onclick="event.stopPropagation()"><div class="row-actions"><button class="row-action-btn" onclick="deleteMilestoneInline(${m.id})" title="Delete">🗑</button></div></td>
+      <td>
+        <div class="row-actions" style="opacity:1">
+          <button type="button" class="btn-icon" aria-label="Edit" onclick="editMilestoneInline(${m.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteMilestoneInline(${m.id})" title="Delete">✕</button>
+        </div>
+      </td>
     </tr>`;
   }).join('');
   body.innerHTML=html;
@@ -4085,12 +4104,12 @@ function _msEditRow(m){
   const isTbd=!!m?.is_tbd;
   return `<tr class="data-row" style="background:var(--surface-hover)">
     <td><input type="text" id="ms-ed-name" value="${h(m?.name||'')}" placeholder="Milestone name" style="width:100%;padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
-    <td><input type="date" id="ms-ed-date" value="${m?.milestone_date||''}" ${isTbd?'disabled':''} style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
+    <td><input type="date" id="ms-ed-date" value="${m?.milestone_date||''}" style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
     <td><input type="date" id="ms-ed-end-date" value="${m?.milestone_end_date||''}" ${isTbd?'disabled':''} style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
     <td><select id="ms-ed-type" style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit">${_msTypeOpts(m?.type||'custom')}</select></td>
     <td><select id="ms-ed-project" style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit">${_msProjOpts(m?.project_id)}</select></td>
-    <td colspan="2" style="white-space:nowrap">
-      <label style="font-size:11px;margin-right:6px;cursor:pointer"><input type="checkbox" id="ms-ed-tbd" ${isTbd?'checked':''} onchange="_msToggleTbd(this)"> TBD</label>
+    <td style="white-space:nowrap">
+      <label style="font-size:13px;font-weight:600;margin-right:8px;cursor:pointer;display:inline-flex;align-items:center;gap:4px"><input type="checkbox" id="ms-ed-tbd" ${isTbd?'checked':''} onchange="_msToggleTbd(this)" style="width:16px;height:16px"> TBD</label>
       <button class="btn-add" onclick="saveMilestoneInline(${m?.id||'null'})" style="font-size:11px;padding:4px 10px">Save</button>
       <button class="btn-sm" onclick="cancelMilestoneInline()" style="font-size:11px;padding:4px 10px">Cancel</button>
     </td>
@@ -4098,10 +4117,9 @@ function _msEditRow(m){
 }
 
 function _msToggleTbd(cb){
-  const d=document.getElementById('ms-ed-date');
   const ed=document.getElementById('ms-ed-end-date');
-  if(cb.checked){ if(d){d.value='';d.disabled=true;} if(ed){ed.value='';ed.disabled=true;} }
-  else { if(d)d.disabled=false; if(ed)ed.disabled=false; }
+  if(cb.checked){ if(ed){ed.value='';ed.disabled=true;} }
+  else { if(ed)ed.disabled=false; }
 }
 
 function _msInitEditRow(){
@@ -4134,7 +4152,7 @@ async function saveMilestoneInline(id){
   const projectId=document.getElementById('ms-ed-project')?.value;
   if(!name){showToast('Milestone name is required.','error');return;}
   if(!projectId){showToast('Please select a project.','error');return;}
-  const row={name,milestone_date:isTbd?null:date,milestone_end_date:isTbd?null:endDate,is_tbd:isTbd,type,project_id:parseInt(projectId)};
+  const row={name,milestone_date:date,milestone_end_date:isTbd?null:endDate,is_tbd:isTbd,type,project_id:parseInt(projectId)};
   if(id){
     const res=await sbUpdate('milestones',id,row);
     if(res.error){showToast('Failed to save: '+res.error.message,'error');return;}
@@ -4286,7 +4304,7 @@ async function saveMaterial(){
     name:        val('mat-name'),
     project:     val('mat-project'),
     description: val('mat-description'),
-    quantity:    parseFloat(val('mat-quantity')) || null,
+    quantity:    val('mat-quantity')!==''?parseFloat(val('mat-quantity')):null,
     unit:        val('mat-unit') || 'each',
     status:      val('mat-status') || 'Needed',
     date_needed: val('mat-date-needed') || null,
@@ -4486,7 +4504,7 @@ async function confirmOrderSent(){
   const vendorName = opt.text;
   const today      = new Date().toISOString().slice(0,10);
   const delivery   = val('order-expected-delivery') || null;
-  const username   = (()=>{try{return JSON.parse(localStorage.getItem('apm_session')||'{}').username||'';}catch(e){return '';} })();
+  const username   = (()=>{try{return JSON.parse(sessionStorage.getItem('apm_session')||'{}').username||'';}catch(e){return '';} })();
 
   const row = {
     status:           'Ordered',
@@ -4555,9 +4573,9 @@ async function saveVendorResponse(){
   if(!id){ alert('No material selected.'); return; }
   const row = {
     po_number:         val('vr-po')         || null,
-    lead_time_days:    parseInt(val('vr-lead-time'),10) || null,
-    unit_price:        parseFloat(val('vr-unit-price')) || null,
-    total_price:       parseFloat(val('vr-total-price'))|| null,
+    lead_time_days:    val('vr-lead-time')!==''?parseInt(val('vr-lead-time'),10):null,
+    unit_price:        val('vr-unit-price')!==''?parseFloat(val('vr-unit-price')):null,
+    total_price:       val('vr-total-price')!==''?parseFloat(val('vr-total-price')):null,
     expected_delivery: val('vr-delivery')   || null
   };
   const res = await sbUpdate('materials', +id, row);
@@ -4579,7 +4597,7 @@ function importMaterialsCSV(input){
     const lines = (e.target.result||'').split('\n').map(l=>l.trim()).filter(Boolean);
     if(lines.length < 2){ alert('CSV appears to be empty or has no data rows.'); input.value=''; return; }
 
-    const headers = lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/^"|"$/g,''));
+    const headers = lines[0].split(',').map(col=>col.trim().toLowerCase().replace(/^"|"$/g,''));
     const rows = lines.slice(1).map(line=>{
       // Simple CSV parser — handles quoted fields with commas
       const cols = [];
@@ -4640,7 +4658,7 @@ function importVendorsCSV(input){
     const lines = (e.target.result||'').split('\n').map(l=>l.trim()).filter(Boolean);
     if(lines.length < 2){ alert('CSV appears to be empty or has no data rows.'); input.value=''; return; }
 
-    const headers = lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/^"|"$/g,''));
+    const headers = lines[0].split(',').map(col=>col.trim().toLowerCase().replace(/^"|"$/g,''));
     const rows = lines.slice(1).map(line=>{
       const cols = [];
       let cur='', inQ=false;
@@ -4934,7 +4952,7 @@ function renderTodos(){
       <div>
         <div class="todo-item-title">${item.type} ${h(item.num)} — ${h(item.subject)}</div>
         <div class="todo-item-meta">
-          <span class="status ${statusColors[item.status]||'badge-gray'}">${item.status}</span>
+          <span class="status ${statusColors[item.status]||'badge-gray'}">${h(item.status)}</span>
           <span style="font-size:11px;color:var(--text-muted)">${h(item.project)}</span>
           <span class="todo-item-age ${urgency}">${daysLabel}</span>
         </div>
@@ -5423,7 +5441,7 @@ function renderPendingMilestones(){
   tbody.innerHTML = active.map(m=>`
     <tr>
       <td><input type="text" data-tid="${m._tid}" data-field="name" value="${h(m.name)}" placeholder="e.g. Substantial Completion" oninput="updatePendingMilestone(this)"></td>
-      <td><input type="date" data-tid="${m._tid}" data-field="date" value="${h(m.date)}" ${m.is_tbd?'disabled':''} oninput="updatePendingMilestone(this)"></td>
+      <td><input type="date" data-tid="${m._tid}" data-field="date" value="${h(m.date)}" oninput="updatePendingMilestone(this)"></td>
       <td><input type="date" data-tid="${m._tid}" data-field="end_date" value="${h(m.end_date)}" ${m.is_tbd?'disabled':''} oninput="updatePendingMilestone(this)"></td>
       <td><select data-tid="${m._tid}" data-field="type" onchange="updatePendingMilestone(this)">
         <option value="ntp"${m.type==='ntp'?' selected':''}>NTP</option>
@@ -5432,7 +5450,7 @@ function renderPendingMilestones(){
         <option value="phase"${m.type==='phase'?' selected':''}>Phase</option>
         <option value="custom"${(!m.type||m.type==='custom')?' selected':''}>Custom</option>
       </select></td>
-      <td style="text-align:center"><input type="checkbox" data-tid="${m._tid}" data-field="is_tbd" ${m.is_tbd?'checked':''} onchange="updatePendingMilestone(this)" title="Dates not yet determined"></td>
+      <td style="text-align:center"><input type="checkbox" data-tid="${m._tid}" data-field="is_tbd" ${m.is_tbd?'checked':''} onchange="updatePendingMilestone(this)" title="End date not yet determined"></td>
       <td style="text-align:center"><button class="btn-icon btn-icon-danger" onclick="removeMilestoneRow(${m._tid})" title="Remove">✕</button></td>
     </tr>`).join('');
   initDatePickers();
@@ -5458,7 +5476,7 @@ function updatePendingMilestone(el){
   if(!m) return;
   if(field==='is_tbd'){
     m.is_tbd=el.checked;
-    if(el.checked){ m.date=''; m.end_date=''; }
+    if(el.checked){ m.end_date=''; }
     renderPendingMilestones();
   } else {
     m[field] = el.value;
@@ -5562,28 +5580,43 @@ async function saveJobControls(){
       const tid=parseInt(el.dataset.tid||'0');
       const field=el.dataset.field;
       if(!tid||!field) return;
+      const v=el.type==='checkbox'?el.checked:el.value;
       const m=_pendingMilestones.find(x=>x._tid===tid);
-      if(m) m[field]=el.value;
+      if(m) m[field]=v;
       const s=_pendingSubs.find(x=>x._tid===tid);
-      if(s) s[field]=el.value;
+      if(s) s[field]=v;
     });
     const toDeleteMs=_pendingMilestones.filter(m=>m.isDeleted&&m.id);
+    const toUpdateMs=_pendingMilestones.filter(m=>!m.isNew&&!m.isDeleted&&m.id);
     const toInsertMs=_pendingMilestones.filter(m=>m.isNew&&!m.isDeleted&&m.name);
     for(const m of toDeleteMs){
       milestones=milestones.filter(x=>x.id!==m.id);
       await sbDelete('milestones',m.id);
     }
+    for(const m of toUpdateMs){
+      const row={name:m.name,milestone_date:m.date||null,milestone_end_date:m.is_tbd?null:(m.end_date||null),is_tbd:!!m.is_tbd,type:m.type||'custom',notes:m.notes||''};
+      await sbUpdate('milestones',m.id,row);
+      const idx=milestones.findIndex(x=>x.id===m.id);
+      if(idx>-1) Object.assign(milestones[idx],row);
+    }
     for(const m of toInsertMs){
-      const row={project_id:savedProjectId,name:m.name,milestone_date:m.date||null,milestone_end_date:m.end_date||null,is_tbd:!!m.is_tbd,type:m.type||'custom',notes:m.notes||''};
+      const row={project_id:savedProjectId,name:m.name,milestone_date:m.date||null,milestone_end_date:m.is_tbd?null:(m.end_date||null),is_tbd:!!m.is_tbd,type:m.type||'custom',notes:m.notes||''};
       if(sb){ const res=await sb.from('milestones').insert(row).select(); if(res.data?.[0]) milestones.push(res.data[0]); }
       else { milestones.push({id:nextId++,...row}); }
     }
     // ── Batch save subcontractors ──────────────────────
     const toDeleteSubs=_pendingSubs.filter(s=>s.isDeleted&&s.id);
+    const toUpdateSubs=_pendingSubs.filter(s=>!s.isNew&&!s.isDeleted&&s.id);
     const toInsertSubs=_pendingSubs.filter(s=>s.isNew&&!s.isDeleted&&s.company_name);
     for(const s of toDeleteSubs){
       subcontractors=subcontractors.filter(x=>x.id!==s.id);
       await sbDelete('subcontractors',s.id);
+    }
+    for(const s of toUpdateSubs){
+      const row={company_name:s.company_name,trade:s.trade||'',contact_name:s.contact_name||'',contact_phone:s.contact_phone||'',contact_email:s.contact_email||'',status:s.status||'Active'};
+      await sbUpdate('subcontractors',s.id,row);
+      const idx=subcontractors.findIndex(x=>x.id===s.id);
+      if(idx>-1) Object.assign(subcontractors[idx],row);
     }
     for(const s of toInsertSubs){
       const row={project_id:savedProjectId,company_name:s.company_name,trade:s.trade||'',contact_name:s.contact_name||'',contact_phone:s.contact_phone||'',contact_email:s.contact_email||'',status:s.status||'Active'};
@@ -5743,7 +5776,7 @@ function renderReportPreview(){
           <div class="project-name">${h(p.name)}</div>
           ${metaParts?`<div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'DM Mono',monospace">${metaParts}</div>`:''}
         </div>
-        <span class="status ${ph.cls}">${ph.label}</span>
+        <span class="status ${ph.cls}">${phlth.label}</span>
       </div>
       <div style="margin:10px 0 0">${progressBarHTML(pct,accent)}</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
@@ -5804,7 +5837,7 @@ async function generateSummaryPDF(){
     doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(180,180,180);
     doc.text('Michels Power Inc.  —  APM Dashboard',89,22);
     doc.setFontSize(7.5); doc.text(todayStr,pw-10,10,{align:'right'});
-    doc.text('CONFIDENTIAL',pw-10,17,{align:'right'});
+    doc.text('Internal Use Only',pw-10,17,{align:'right'});
   }
   function drawFooter(label){
     const fy=ph-8;
@@ -5812,7 +5845,7 @@ async function generateSummaryPDF(){
     doc.setFontSize(7); doc.setTextColor(...darkGray); doc.setFont('helvetica','normal');
     doc.text('Michels Power Inc.  |  APM Dashboard',10,fy+1);
     doc.text(label||todayStr,pw/2,fy+1,{align:'center'});
-    doc.text('CONFIDENTIAL — Internal Use Only',pw-10,fy+1,{align:'right'});
+    doc.text('Internal Use Only',pw-10,fy+1,{align:'right'});
   }
   function secTitle(text,y){
     doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
@@ -5855,15 +5888,15 @@ async function generateSummaryPDF(){
   const maxPerRow=4; const hcw=(pw-20)/Math.min(filtered.length,maxPerRow);
   filtered.forEach((p,i)=>{
     if(i>0&&i%maxPerRow===0) y+=32;
-    const h=projectHealth(p);
+    const hlth=projectHealth(p);
     const pct=calcPct(p.start_date||p.start,p.end_date||p.end,p.status);
     const cx=10+(i%maxPerRow)*hcw;
-    doc.setFillColor(...h.bg); doc.roundedRect(cx,y,hcw-4,28,2,2,'F');
-    doc.setFillColor(...h.color); doc.rect(cx,y,hcw-4,2,'F');
+    doc.setFillColor(...hlth.bg); doc.roundedRect(cx,y,hcw-4,28,2,2,'F');
+    doc.setFillColor(...hlth.color); doc.rect(cx,y,hcw-4,2,'F');
     doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
     doc.text(p.name.substring(0,22),cx+(hcw-4)/2,y+9,{align:'center'});
-    doc.setFontSize(13); doc.setFont('helvetica','bold'); doc.setTextColor(...h.color);
-    doc.text(h.label,cx+(hcw-4)/2,y+19,{align:'center'});
+    doc.setFontSize(13); doc.setFont('helvetica','bold'); doc.setTextColor(...hlth.color);
+    doc.text(hlth.label,cx+(hcw-4)/2,y+19,{align:'center'});
     doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
     doc.text(`${pct}% complete`,cx+(hcw-4)/2,y+25,{align:'center'});
   });
@@ -5893,7 +5926,7 @@ async function generateSummaryPDF(){
   overdueSubs.forEach(s=>{
     const dt=s.submitted_date||s.date;
     const d=Math.floor((Date.now()-new Date(dt+'T00:00:00').getTime())/86400000);
-    actions.push({level:'FOLLOW-UP',type:'Sub',label:`${s.num} — ${s.desc||s.description||''}`,project:s.project,detail:`${d} days since submission | Status: ${s.status}`});
+    actions.push({level:'FOLLOW-UP',type:'Submittal',label:`${s.num} — ${s.desc||s.description||''}`,project:s.project,detail:`${d} days since submission | Status: ${s.status}`});
   });
   filtered.filter(p=>p.status==='On Hold').forEach(p=>{
     actions.push({level:'REVIEW',type:'Project',label:p.name,project:p.client||'',detail:'Project is on hold — review status with stakeholders'});
@@ -5960,7 +5993,7 @@ async function generateSummaryPDF(){
 
       grouped[projName].forEach(m=>{
         if(y>ph-30){drawFooter('Page 1  |  Overview');doc.addPage();drawHeader('Milestones (cont.)');y=36;}
-        const startStr=m.is_tbd?'TBD':fmtD(m.milestone_date);
+        const startStr=fmtD(m.milestone_date);
         const endStr=m.is_tbd?'TBD':fmtD(m.milestone_end_date);
 
         doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,12,2,2,'F');
@@ -5991,7 +6024,7 @@ async function generateSummaryPDF(){
     let y=36;
 
     const pct=calcPct(p.start_date||p.start,p.end_date||p.end,p.status);
-    const h=projectHealth(p);
+    const hlth=projectHealth(p);
     const projRFIs=rfis.filter(r=>r.project===p.name);
     const projSubs=submittals.filter(s=>s.project===p.name);
     const projRental=rental.filter(r=>r.project===p.name);
@@ -6004,20 +6037,20 @@ async function generateSummaryPDF(){
 
     // Title card
     doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,24,3,3,'F');
-    doc.setFillColor(...h.color); doc.rect(10,y,4,24,'F');
+    doc.setFillColor(...hlth.color); doc.rect(10,y,4,24,'F');
     doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
     doc.text(p.name||'',17,y+10);
     doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
     const meta=[p.client&&`Client: ${p.client}`,p.number&&`#${p.number}`,p.start&&`Start: ${fmtD(p.start_date||p.start)}`,p.end&&`End: ${fmtD(p.end_date||p.end)}`].filter(Boolean).join('   |   ');
     doc.text(meta,17,y+18);
-    doc.setFillColor(...h.bg); doc.roundedRect(pw-50,y+5,38,13,2,2,'F');
-    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...h.color);
-    doc.text(h.label,pw-31,y+13.5,{align:'center'});
+    doc.setFillColor(...hlth.bg); doc.roundedRect(pw-50,y+5,38,13,2,2,'F');
+    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...hlth.color);
+    doc.text(hlth.label,pw-31,y+13.5,{align:'center'});
     y+=32;
 
     // Stat cards
     const sts=[
-      {label:'% Complete',     value:`${pct}%`,           color:h.color},
+      {label:'% Complete',     value:`${pct}%`,           color:hlth.color},
       {label:'Open RFIs',      value:String(openR.length), color:openR.length>0?red:darkGray},
       {label:'Open Submittals',value:String(openS.length), color:openS.length>0?[180,100,0]:darkGray},
       {label:'Rental On Site', value:String(onSiteR.length),color:darkGray},
@@ -6119,6 +6152,7 @@ async function generateSummaryPDF(){
         styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
         columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:30},3:{cellWidth:22},4:{cellWidth:22},5:{cellWidth:28},6:{cellWidth:20}},
         margin:{left:10,right:10},
+        rowPageBreak:'avoid',
         didParseCell:(data)=>cellColor(data,5,6,4),
       });
       y=doc.lastAutoTable.finalY+8;
@@ -6131,16 +6165,17 @@ async function generateSummaryPDF(){
       doc.text('No submittals logged for this project.',10,y); y+=10;
     } else {
       doc.autoTable({
-        head:[['Sub #','Description','Spec Section','Submitted','Status','Ball in Court']],
-        body:projSubs.map(s=>[s.num||'',s.desc||s.description||'',s.spec||'',fmtD(s.submitted_date||s.date),s.status||'',s.bic||'']),
+        head:[['Sub #','Description','Spec Section','Submitted','Due','Status','Ball in Court']],
+        body:projSubs.map(s=>[s.num||'',s.desc||s.description||'',s.spec||'',fmtD(s.submitted_date||s.date),fmtD(s.need_date),s.status||'',s.bic||'']),
         startY:y, theme:'grid',
         headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
         bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
         alternateRowStyles:{fillColor:[249,248,248]},
         styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
-        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:28},3:{cellWidth:24},4:{cellWidth:34},5:{cellWidth:30}},
+        columnStyles:{0:{cellWidth:16},1:{cellWidth:'auto'},2:{cellWidth:26},3:{cellWidth:22},4:{cellWidth:22},5:{cellWidth:28},6:{cellWidth:26}},
         margin:{left:10,right:10},
-        didParseCell:(data)=>cellColor(data,4),
+        rowPageBreak:'avoid',
+        didParseCell:(data)=>cellColor(data,5,undefined,4),
       });
       y=doc.lastAutoTable.finalY+8;
     }
@@ -6158,8 +6193,10 @@ async function generateSummaryPDF(){
         styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
         columnStyles:{0:{fontStyle:'bold'},1:{cellWidth:'auto'},2:{cellWidth:28},3:{cellWidth:28},4:{cellWidth:24}},
         margin:{left:10,right:10},
+        rowPageBreak:'avoid',
         didParseCell:(data)=>cellColor(data,4,-1,3),
       });
+      y=doc.lastAutoTable.finalY+8;
     }
 
     // Procurement Table
@@ -6176,6 +6213,7 @@ async function generateSummaryPDF(){
         styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
         columnStyles:{0:{fontStyle:'bold'},1:{cellWidth:20},2:{cellWidth:22},3:{cellWidth:22},4:{cellWidth:22},5:{cellWidth:'auto'},6:{cellWidth:'auto'}},
         margin:{left:10,right:10},
+        rowPageBreak:'avoid',
         didParseCell:(data)=>cellColor(data,1),
       });
     }
@@ -6661,6 +6699,7 @@ async function exportToPDF(type, btn){
     'Ordered':           {bg:[254,243,200], fg:[161,98,7]},
     'On Site':           {bg:[220,252,231], fg:[21,128,61]},
     'Released':          {bg:[220,252,231], fg:[21,128,61]},  // badge-green
+    'Release':           {bg:[220,252,231], fg:[21,128,61]},  // legacy alias
     'High':              {bg:[253,234,237], fg:[180,16,30]},
     'Medium':            {bg:[254,243,200], fg:[161,98,7]},
     'Low':               {bg:[239,246,255], fg:[37,99,235]},
@@ -6835,6 +6874,7 @@ async function exportToPDF(type, btn){
       body: rows,
       startY: tableY,
       theme: 'plain',
+      rowPageBreak: 'avoid',
       headStyles: {
         fillColor: black,
         textColor: white,
@@ -6965,7 +7005,7 @@ async function loadActivity(){
   if(sb){
     try{
       const res = await sb.from('activity_log')
-        .select('*')
+        .select('entry_id,type,action,label,detail,username,ts')
         .order('ts', {ascending:false})
         .limit(500);
       if(!res.error && res.data && res.data.length > 0){
@@ -7117,9 +7157,8 @@ function renderActivity(){
     const ago = _timeAgo(new Date(e.ts));
     const detailHtml = e.detail ? ` <span style="color:var(--text-muted);font-weight:400">— ${h(e.detail)}</span>` : '';
     const newBadge = isNew ? `<span class="notif-new-badge">new</span>` : '';
-    const safeId = String(e.id).replace(/'/g,"\\'");
     const checkBtn = isNew
-      ? `<button class="notif-check-btn" onclick="markActivitySeen('${safeId}')" title="Mark as read">✓</button>`
+      ? `<button class="notif-check-btn" data-eid="${h(String(e.id))}" onclick="markActivitySeen(this.dataset.eid)" title="Mark as read">✓</button>`
       : `<button class="notif-check-btn" style="opacity:.3;cursor:default" title="Already read" disabled>✓</button>`;
     const rowBg = isNew ? 'background:#fff8f8;' : '';
     return `<div class="landing-notif-item" style="${rowBg}">
@@ -7195,9 +7234,8 @@ function renderNotifPanel(){
     const ago = _timeAgo(new Date(e.ts));
     const detailHtml = e.detail ? ` <span style="color:var(--text-muted);font-weight:400">— ${h(e.detail)}</span>` : '';
     const newBadge = isNew ? `<span class="notif-new-badge">new</span>` : '';
-    const safeId = String(e.id).replace(/'/g,"\\'");
     const checkBtn = isNew
-      ? `<button class="notif-check-btn" onclick="markActivitySeenPanel('${safeId}')" title="Mark as read">✓</button>`
+      ? `<button class="notif-check-btn" data-eid="${h(String(e.id))}" onclick="markActivitySeenPanel(this.dataset.eid)" title="Mark as read">✓</button>`
       : `<button class="notif-check-btn" style="opacity:.3;cursor:default" disabled title="Read">✓</button>`;
     const rowBg = isNew ? 'background:#fff8f8;' : '';
     return `<div class="landing-notif-item" style="${rowBg}">
@@ -7287,11 +7325,10 @@ function initIdleTimeout(){
 // Runs once on every page load — safe to call repeatedly.
 (function _securityMigration(){
   try{
-    // Purge cached user list — may contain v1 SHA-256 hashes.
-    // loadUsers() will repopulate from Supabase (hash-excluded) on next login.
-    localStorage.removeItem('apm_users');
-    // If hardcoded credentials are active, remove any stale localStorage copies
-    // so they can't be read out of the browser after logout.
+    if(!localStorage.getItem('apm_security_migrated_v2')){
+      localStorage.removeItem('apm_users');
+      localStorage.setItem('apm_security_migrated_v2','1');
+    }
     if(typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL){
       localStorage.removeItem('apm_sb_url');
       localStorage.removeItem('apm_sb_key');
@@ -7306,8 +7343,8 @@ function initIdleTimeout(){
 initDatePickers(); // replace native date inputs with Flatpickr
 initIdleTimeout();
 loadTodoState();
-loadActivity();
 loadSBConfig(); // must run before checkSession so sb is set before any auth query
+loadActivity();
 initFirstRun().then(() => {
   if(!checkSession()){
     document.getElementById('login-overlay').style.display='flex';
