@@ -1306,9 +1306,12 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <div class="form-row-full"><textarea id="ctrl-notes" placeholder="Additional notes or job description..." style="min-height:160px"></textarea></div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-sm" onclick="closeModal('controls-modal')">Cancel</button>
-      <button class="btn-add" id="controls-save-btn" onclick="withSaving('controls-save-btn', saveJobControls)">Save Job</button>
+    <div class="modal-footer" style="justify-content:space-between">
+      <button class="btn-sm" id="controls-delete-btn" style="display:none;background:var(--michels-red);color:#fff;border:none" onclick="deleteItem('projects',+this.dataset.id);closeModal('controls-modal');closeJobDetail()">Delete Job</button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button class="btn-sm" onclick="closeModal('controls-modal')">Cancel</button>
+        <button class="btn-add" id="controls-save-btn" onclick="withSaving('controls-save-btn', saveJobControls)">Save Job</button>
+      </div>
     </div>
   </div>
 </div>
@@ -5013,6 +5016,7 @@ function resetControlsModal(){
   });
   document.getElementById('controls-modal-title').textContent='New Job';
   document.getElementById('controls-save-btn').textContent='Save Job';
+  document.getElementById('controls-delete-btn').style.display='none';
   // Reset pending arrays and re-render empty lists
   _pendingMilestones=[];
   _pendingSubs=[];
@@ -5319,6 +5323,8 @@ function editJobControls(id){
   _pendingSubs = subcontractors
     .filter(s => String(s.project_id) === String(id))
     .map(s => ({_tid:++_pendingTid, id:s.id, company_name:s.company_name||'', trade:s.trade||'', contact_name:s.contact_name||'', contact_phone:s.contact_phone||'', contact_email:s.contact_email||'', status:s.status||'Active', isNew:false, isDeleted:false}));
+  const delBtn=document.getElementById('controls-delete-btn');
+  if(getPerms().canDelete){delBtn.style.display='';delBtn.dataset.id=id;}else{delBtn.style.display='none';}
   openModal('controls-modal', true);
   switchCtrlTab(0);
   renderPendingMilestones();
@@ -6142,18 +6148,36 @@ async function generateSummaryPDF(){
       doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...midGray);
       doc.text('No RFIs logged for this project.',10,y); y+=10;
     } else {
-      doc.autoTable({
-        head:[['RFI #','Subject','Spec Section','Submitted','Due','Status','Priority']],
-        body:projRFIs.map(r=>[r.num||'',r.subject||'',r.spec_section||'',fmtD(r.submitted),fmtD(r.due),r.status||'',r.priority||'']),
-        startY:y, theme:'grid',
-        headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
-        bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
-        alternateRowStyles:{fillColor:[249,248,248]},
-        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
-        columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:30},3:{cellWidth:22},4:{cellWidth:22},5:{cellWidth:28},6:{cellWidth:20}},
-        margin:{left:10,right:10},
-        rowPageBreak:'avoid',
-        didParseCell:(data)=>cellColor(data,5,6,4),
+      const rfiBySpec={};
+      projRFIs.forEach(r=>{const k=r.spec_section||'General';if(!rfiBySpec[k])rfiBySpec[k]=[];rfiBySpec[k].push(r);});
+      const rfiSpecs=Object.keys(rfiBySpec).sort((a,b)=>a==='General'?1:b==='General'?-1:a.localeCompare(b));
+      let rfiFirst=true;
+      rfiSpecs.forEach(spec=>{
+        doc.autoTable({
+          body:[[spec]],
+          startY:rfiFirst?y:doc.lastAutoTable.finalY,
+          showHead:false,
+          bodyStyles:{fillColor:darkGray,textColor:white,fontStyle:'bold',fontSize:8,cellPadding:{top:2.5,bottom:2.5,left:3,right:3}},
+          styles:{lineColor:borderGray,lineWidth:0.35},
+          margin:{left:10,right:10},
+          columnStyles:{0:{cellWidth:'auto'}},
+        });
+        doc.autoTable({
+          head:rfiFirst?[['RFI #','Subject','Submitted','Due','Status','Priority']]:undefined,
+          showHead:rfiFirst,
+          body:rfiBySpec[spec].map(r=>[r.num||'',r.subject||'',fmtD(r.submitted),fmtD(r.due),r.status||'',r.priority||'']),
+          startY:doc.lastAutoTable.finalY,
+          theme:'grid',
+          headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
+          bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
+          alternateRowStyles:{fillColor:[249,248,248]},
+          styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
+          columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:22},3:{cellWidth:22},4:{cellWidth:28},5:{cellWidth:20}},
+          margin:{left:10,right:10},
+          rowPageBreak:'avoid',
+          didParseCell:(data)=>cellColor(data,4,5,3),
+        });
+        rfiFirst=false;
       });
       y=doc.lastAutoTable.finalY+8;
     }
@@ -6164,18 +6188,36 @@ async function generateSummaryPDF(){
       doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...midGray);
       doc.text('No submittals logged for this project.',10,y); y+=10;
     } else {
-      doc.autoTable({
-        head:[['Sub #','Description','Spec Section','Submitted','Due','Status','Ball in Court']],
-        body:projSubs.map(s=>[s.num||'',s.desc||s.description||'',s.spec||'',fmtD(s.submitted_date||s.date),fmtD(s.need_date),s.status||'',s.bic||'']),
-        startY:y, theme:'grid',
-        headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
-        bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
-        alternateRowStyles:{fillColor:[249,248,248]},
-        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
-        columnStyles:{0:{cellWidth:16},1:{cellWidth:'auto'},2:{cellWidth:26},3:{cellWidth:22},4:{cellWidth:22},5:{cellWidth:28},6:{cellWidth:26}},
-        margin:{left:10,right:10},
-        rowPageBreak:'avoid',
-        didParseCell:(data)=>cellColor(data,5,undefined,4),
+      const subBySpec={};
+      projSubs.forEach(s=>{const k=s.spec||'General';if(!subBySpec[k])subBySpec[k]=[];subBySpec[k].push(s);});
+      const subSpecs=Object.keys(subBySpec).sort((a,b)=>a==='General'?1:b==='General'?-1:a.localeCompare(b));
+      let subFirst=true;
+      subSpecs.forEach(spec=>{
+        doc.autoTable({
+          body:[[spec]],
+          startY:subFirst?y:doc.lastAutoTable.finalY,
+          showHead:false,
+          bodyStyles:{fillColor:darkGray,textColor:white,fontStyle:'bold',fontSize:8,cellPadding:{top:2.5,bottom:2.5,left:3,right:3}},
+          styles:{lineColor:borderGray,lineWidth:0.35},
+          margin:{left:10,right:10},
+          columnStyles:{0:{cellWidth:'auto'}},
+        });
+        doc.autoTable({
+          head:subFirst?[['Sub #','Description','Submitted','Due','Status','Ball in Court']]:undefined,
+          showHead:subFirst,
+          body:subBySpec[spec].map(s=>[s.num||'',s.desc||s.description||'',fmtD(s.submitted_date||s.date),fmtD(s.need_date),s.status||'',s.bic||'']),
+          startY:doc.lastAutoTable.finalY,
+          theme:'grid',
+          headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:3,right:3}},
+          bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:3,right:3}},
+          alternateRowStyles:{fillColor:[249,248,248]},
+          styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
+          columnStyles:{0:{cellWidth:16},1:{cellWidth:'auto'},2:{cellWidth:22},3:{cellWidth:22},4:{cellWidth:28},5:{cellWidth:26}},
+          margin:{left:10,right:10},
+          rowPageBreak:'avoid',
+          didParseCell:(data)=>cellColor(data,4,undefined,3),
+        });
+        subFirst=false;
       });
       y=doc.lastAutoTable.finalY+8;
     }
