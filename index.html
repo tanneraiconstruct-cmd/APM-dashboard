@@ -5776,7 +5776,7 @@ function renderReportPreview(){
           <div class="project-name">${h(p.name)}</div>
           ${metaParts?`<div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'DM Mono',monospace">${metaParts}</div>`:''}
         </div>
-        <span class="status ${ph.cls}">${phlth.label}</span>
+        <span class="status ${ph.cls}">${ph.label}</span>
       </div>
       <div style="margin:10px 0 0">${progressBarHTML(pct,accent)}</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
