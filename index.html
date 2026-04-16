@@ -99,6 +99,7 @@ body{font-family:'Inter',sans-serif;background:var(--surface);color:var(--text);
 .badge-red{background:var(--red-light);color:var(--red)}
 .badge-blue{background:#eef2f7;color:#374151}
 .badge-gray{background:#f1f5f9;color:var(--text-mid)}
+.badge-purple{background:#f3e8ff;color:#7c3aed}
 
 .table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);overflow-x:auto;overflow-y:hidden;margin-bottom:20px;box-shadow:var(--shadow-sm);}
 table{width:100%;min-width:900px;border-collapse:collapse;table-layout:fixed}
@@ -773,6 +774,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="nav-tab" data-tab="submittal">Submittal Log</div>
     <div class="nav-tab" data-tab="rental">Rental Equipment</div>
     <div class="nav-tab" data-tab="daily">Daily Reports</div>
+    <div class="nav-tab" data-tab="procurement">Procurement</div>
     <div class="nav-tab" data-tab="materials">Material Log</div>
   </div>
 
@@ -1087,6 +1089,59 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
           <th style="width:60px"></th>
         </tr></thead>
         <tbody id="daily-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PROCUREMENT -->
+  <div class="main" id="tab-procurement">
+    <div class="section-header">
+      <div class="section-title">Procurement Orders</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="exportToExcel('procurement',this)">&#8595; Excel</button>
+        <button class="btn-add" onclick="openModal('procurement-modal')">+ New Order</button>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <span class="filter-bar-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filter</span>
+      <div class="filter-bar-sep"></div>
+      <input class="filter-input" id="proc-filter-text" placeholder="Search material or vendor…" oninput="renderProcurement()">
+      <div class="filter-dd" id="fd-proc-project" data-fd-val="" data-default-label="All Projects" data-render="renderProcurement">
+        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-proc-project')">
+          <span class="filter-dd-val">All Projects</span>
+          <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-dd-menu"><div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-proc-project','','All Projects')">All Projects</div></div>
+      </div>
+      <div class="filter-dd" id="fd-proc-status" data-fd-val="" data-default-label="All Statuses" data-render="renderProcurement">
+        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-proc-status')">
+          <span class="filter-dd-val">All Statuses</span>
+          <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-dd-menu">
+          <div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-proc-status','','All Statuses')">All Statuses</div>
+          <div class="filter-dd-opt" data-val="Pending" onclick="selectFDOption('fd-proc-status','Pending','Pending')"><span class="filter-dd-opt-dot" style="background:#94a3b8"></span>Pending</div>
+          <div class="filter-dd-opt" data-val="Ordered" onclick="selectFDOption('fd-proc-status','Ordered','Ordered')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Ordered</div>
+          <div class="filter-dd-opt" data-val="Shipped" onclick="selectFDOption('fd-proc-status','Shipped','Shipped')"><span class="filter-dd-opt-dot" style="background:#7c3aed"></span>Shipped</div>
+          <div class="filter-dd-opt" data-val="Delivered" onclick="selectFDOption('fd-proc-status','Delivered','Delivered')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>Delivered</div>
+        </div>
+      </div>
+      <button class="filter-clear" onclick="clearProcFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Material</th>
+          <th style="width:16%">Project</th>
+          <th style="width:110px">Status</th>
+          <th style="width:100px">Order Date</th>
+          <th style="width:100px">Ship Date</th>
+          <th style="width:110px">Req. On-Site</th>
+          <th style="width:14%">Vendor</th>
+          <th style="width:13%">Contact</th>
+          <th style="width:60px"></th>
+        </tr></thead>
+        <tbody id="proc-body"></tbody>
       </table>
     </div>
   </div>
@@ -1574,6 +1629,48 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
   </div>
 </div>
 
+<div class="modal-overlay" id="procurement-modal" role="dialog" aria-modal="true" aria-labelledby="proc-modal-title">
+  <div class="modal" style="width:min(620px,96vw)">
+    <div class="modal-header">
+      <span class="modal-title" id="proc-modal-title">New Procurement Order</span>
+      <button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('procurement-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="proc-edit-id" value="">
+      <div class="modal-section-title" style="margin-top:0">Order Details</div>
+      <div class="form-row">
+        <div><label>Material Name <span style="color:var(--michels-red)">*</span></label><input type="text" id="proc-name" placeholder="e.g. Conduit, Grounding"></div>
+        <div><label>Project <span style="color:var(--michels-red)">*</span></label><select id="proc-project"><option value="">Select project</option></select></div>
+      </div>
+      <div class="form-row">
+        <div><label>Status</label>
+          <select id="proc-status">
+            <option value="Pending">Pending</option>
+            <option value="Ordered">Ordered</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Delivered">Delivered</option>
+          </select>
+        </div>
+        <div><label>Order Date</label><input type="date" id="proc-order-date"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Shipping Date</label><input type="date" id="proc-ship-date"></div>
+        <div><label>Requested On-Site Date</label><input type="date" id="proc-onsite-date"></div>
+      </div>
+      <div class="modal-section-title">Vendor Info</div>
+      <div class="form-row">
+        <div><label>Vendor</label><input type="text" id="proc-vendor" placeholder="Vendor name"></div>
+        <div><label>Vendor Contact</label><input type="text" id="proc-contact" placeholder="Contact name / phone / email"></div>
+      </div>
+      <div class="form-row-full"><label>Notes</label><textarea id="proc-notes" placeholder="Additional details (optional)…" style="min-height:52px"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('procurement-modal')">Cancel</button>
+      <button class="btn-add" id="proc-save-btn" onclick="withSaving('proc-save-btn', saveProcurement)">Save Order</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="daily-modal" role="dialog" aria-modal="true" aria-labelledby="daily-modal-title">
   <div class="modal" style="width:min(680px,96vw)">
     <div class="modal-header">
@@ -1851,7 +1948,27 @@ create table if not exists materials (
 alter table vendors   enable row level security;
 alter table materials enable row level security;
 create policy "anon_all_vendors"   on vendors   for all using (true) with check (true);
-create policy "anon_all_materials" on materials for all using (true) with check (true);</pre>
+create policy "anon_all_materials" on materials for all using (true) with check (true);
+
+-- ── Procurement table ──────────────────────────────────────
+
+create table if not exists procurement (
+  id                    bigserial primary key,
+  project               text not null,
+  name                  text not null,
+  status                text default 'Pending',
+  order_date            date,
+  shipping_date         date,
+  requested_onsite_date date,
+  vendor                text,
+  vendor_contact        text,
+  notes                 text,
+  created_by            text,
+  created_at            timestamptz default now()
+);
+
+alter table procurement enable row level security;
+create policy "anon_all_procurement" on procurement for all using (true) with check (true);</pre>
           </div>
         </div>
       </details>
@@ -1912,7 +2029,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_azzdB7RMkUJJyflytlchqw_A1jF8Dq1';
 const ROLE_PERMISSIONS = {
   apm: {
     label: 'Associate PM',
-    tabs: ['projects', 'rfi', 'submittal', 'rental', 'daily', 'materials'],
+    tabs: ['projects', 'rfi', 'submittal', 'rental', 'daily', 'procurement', 'materials'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: false,
@@ -1922,7 +2039,7 @@ const ROLE_PERMISSIONS = {
   },
   pm: {
     label: 'Project Manager',
-    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'materials'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'procurement', 'materials'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -1932,7 +2049,7 @@ const ROLE_PERMISSIONS = {
   },
   regional: {
     label: 'Regional Manager',
-    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'materials'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'procurement', 'materials'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -1943,7 +2060,7 @@ const ROLE_PERMISSIONS = {
   // Legacy 'admin' maps to regional for backward compat
   admin: {
     label: 'Regional Manager',
-    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'materials'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'procurement', 'materials'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -1953,7 +2070,7 @@ const ROLE_PERMISSIONS = {
   },
   superadmin: {
     label: 'Super Admin',
-    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'materials'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'procurement', 'materials'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -1977,7 +2094,7 @@ const statusColors = {
   'Open':'badge-red','Under Review':'badge-amber','Answered':'badge-green','Closed':'badge-gray',
   'Pending':'badge-gray','Approved':'badge-green','Approved as Noted':'badge-green','Revise & Resubmit':'badge-amber','Rejected':'badge-red',
   'Ordered':'badge-amber','On Site':'badge-blue','Released':'badge-green','Release':'badge-green',
-  'Needed':'badge-blue','Backordered':'badge-red','Delivered':'badge-green','Cancelled':'badge-gray',
+  'Needed':'badge-blue','Backordered':'badge-red','Delivered':'badge-green','Cancelled':'badge-gray','Shipped':'badge-purple',
   // Weather
   'Clear':'badge-green','Partly Cloudy':'badge-blue','Cloudy':'badge-gray','Rain':'badge-blue',
   'Thunderstorm':'badge-amber','Snow':'badge-blue','Fog':'badge-gray','High Wind':'badge-amber',
@@ -2001,6 +2118,7 @@ let subcontractors = [];
 let dailyReports = [];
 let materials = [];
 let vendors = [];
+let procurement = [];
 let _pendingMilestones = []; // modal-local: {_tid, id, name, date, type, notes, isNew, isDeleted}
 let _pendingSubs = [];        // modal-local: {_tid, id, company_name, trade, contact_name, contact_phone, contact_email, status, isNew, isDeleted}
 let _pendingTid = 0;          // temp id counter for pending rows
@@ -2042,7 +2160,7 @@ function calcPct(start, end, status=''){
 
 // ── MODAL HELPERS ────────────────────────────────────────
 // controls-modal requires cachedUsers to be loaded for team selects
-const DATA_DEPENDENT_MODALS = ['controls-modal','rfi-modal','submittal-modal','rental-modal','daily-modal','materials-modal','order-modal','vendor-response-modal','vendors-modal'];
+const DATA_DEPENDENT_MODALS = ['controls-modal','rfi-modal','submittal-modal','rental-modal','daily-modal','procurement-modal','materials-modal','order-modal','vendor-response-modal','vendors-modal'];
 
 // resetModal clears a modal back to its default "new" state.
 // Pass noReset=true from editJobControls() to preserve pre-filled edit values.
@@ -2052,6 +2170,7 @@ function resetModal(id){
   else if(id==='submittal-modal') resetSubmittalModal();
   else if(id==='rental-modal') resetRentalModal();
   else if(id==='daily-modal')  resetDailyReportModal();
+  else if(id==='procurement-modal') resetProcurementModal();
   else if(id==='materials-modal') resetMaterialModal();
   else if(id==='vendor-response-modal') resetVendorResponseModal();
 }
@@ -2229,6 +2348,7 @@ function renderAll(){
   renderSubmittals();
   renderRental();
   renderDailyReports();
+  renderProcurement();
   renderMaterials();
   renderTodos();
   renderChartStrips();
@@ -2460,7 +2580,7 @@ async function testSupabaseConnection(){
     return;
   }
   el.innerHTML='<span style="color:var(--text-muted)">Testing tables…</span>';
-  const tables=['users','projects','rfis','submittals','rental','activity_log','milestones','subcontractors','daily_reports','vendors','materials'];
+  const tables=['users','projects','rfis','submittals','rental','activity_log','milestones','subcontractors','daily_reports','vendors','materials','procurement'];
   const labels={users:'users',projects:'projects',rfis:'rfis',submittals:'submittals',rental:'rental',activity_log:'activity_log',milestones:'milestones',subcontractors:'subcontractors',daily_reports:'daily_reports',vendors:'vendors',materials:'materials'};
   const rows=[];
   for(const t of tables){
@@ -2515,6 +2635,7 @@ function saveLocal(){
     localStorage.setItem('apm_done_todos',     JSON.stringify(doneTodos));
     localStorage.setItem('apm_materials',      JSON.stringify(materials));
     localStorage.setItem('apm_vendors',        JSON.stringify(vendors));
+    localStorage.setItem('apm_procurement',    JSON.stringify(procurement));
   }catch(e){}
 }
 
@@ -2543,6 +2664,7 @@ async function loadData(){
       doneTodos      = JSON.parse(localStorage.getItem('apm_done_todos')     || '[]');
       materials      = JSON.parse(localStorage.getItem('apm_materials')      || '[]');
       vendors        = JSON.parse(localStorage.getItem('apm_vendors')        || '[]');
+      procurement    = JSON.parse(localStorage.getItem('apm_procurement')    || '[]');
     }catch(e){}
     // Only commit if this is still the latest load request
     if(token !== loadToken) return;
@@ -2550,7 +2672,7 @@ async function loadData(){
     dataLoaded = true; renderAll(); return;
   }
   try{
-    const [p,r,s,rn,ms,sbs,dr,mat,ven] = await Promise.all([
+    const [p,r,s,rn,ms,sbs,dr,mat,ven,proc] = await Promise.all([
       sb.from('projects').select('*').order('id'),
       sb.from('rfis').select('*').order('id'),
       sb.from('submittals').select('*').order('id'),
@@ -2560,6 +2682,7 @@ async function loadData(){
       sb.from('daily_reports').select('*').order('report_date', {ascending: false}),
       sb.from('materials').select('*').order('id'),
       sb.from('vendors').select('*').order('name'),
+      sb.from('procurement').select('*').order('id'),
     ]);
     // Discard results if a newer load has started
     if(token !== loadToken) return;
@@ -2580,6 +2703,7 @@ async function loadData(){
     dailyReports   = dr.error  ? [] : (dr.data||[]);
     materials      = mat.error ? [] : (mat.data||[]);
     vendors        = ven.error ? [] : (ven.data||[]);
+    procurement    = proc.error ? [] : (proc.data||[]);
     doneTodos      = JSON.parse(localStorage.getItem('apm_done_todos') || '[]');
     nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental,...milestones,...subcontractors,...dailyReports].map(x=>x.id||0)) + 1;
     saveLocal();
@@ -3919,7 +4043,7 @@ function selectFDOptionEl(ddId, el){
 
 function populateProjectSelects(){
   // Form selects in modals
-  const formIds=['rfi-project','sub-project','ren-project','dr-project','mat-project'];
+  const formIds=['rfi-project','sub-project','ren-project','dr-project','proc-project','mat-project'];
   formIds.forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
@@ -3933,6 +4057,7 @@ function populateProjectSelects(){
     {id:'fd-sub-project',defLabel:'All Projects'},
     {id:'fd-ren-project',defLabel:'All Projects'},
     {id:'fd-daily-project',defLabel:'All Projects'},
+    {id:'fd-proc-project',defLabel:'All Projects'},
     {id:'fd-mat-project',defLabel:'All Projects'},
   ].forEach(({id,defLabel})=>{
     const el=document.getElementById(id);
@@ -5450,8 +5575,8 @@ async function saveRental(){
 async function deleteItem(store,id){
   if(!getPerms().canDelete){ alert('You do not have permission to delete records.'); return; }
   if(!confirm('Delete this record? This cannot be undone.')) return;
-  const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental','daily':'daily_reports','materials':'materials','vendors':'vendors'};
-  const _delArr=store==='projects'?projects:store==='rfis'?rfis:store==='submittals'?submittals:store==='daily'?dailyReports:store==='materials'?materials:store==='vendors'?vendors:rental;
+  const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental','daily':'daily_reports','materials':'materials','vendors':'vendors','procurement':'procurement'};
+  const _delArr=store==='projects'?projects:store==='rfis'?rfis:store==='submittals'?submittals:store==='daily'?dailyReports:store==='materials'?materials:store==='vendors'?vendors:store==='procurement'?procurement:rental;
   const _delItem=_delArr.find(x=>x.id===id);
   const _delLabel=_delItem?(_delItem.name||_delItem.subject||_delItem.num||(_delItem.report_date?'Report '+fmt(_delItem.report_date):'Record')):'Record';
   if(tableMap[store]){
@@ -5465,6 +5590,7 @@ async function deleteItem(store,id){
   else if(store==='daily')dailyReports=dailyReports.filter(x=>x.id!==id);
   else if(store==='materials')materials=materials.filter(x=>x.id!==id);
   else if(store==='vendors')vendors=vendors.filter(x=>x.id!==id);
+  else if(store==='procurement')procurement=procurement.filter(x=>x.id!==id);
   saveLocal();renderAll();
   showToast('Record deleted.');
   logActivity('delete','deleted',_delLabel,store.charAt(0).toUpperCase()+store.slice(1)+' deleted');
@@ -6093,6 +6219,140 @@ function editDailyReport(id){
 }
 </script>
 
+<!-- ── procurement.js ── -->
+<script>
+function renderProcurement(){
+  const body = document.getElementById('proc-body');
+  if(!body) return;
+
+  const txt  = (document.getElementById('proc-filter-text')?.value||'').toLowerCase();
+  const proj = getFDValue('fd-proc-project');
+  const stat = getFDValue('fd-proc-status');
+
+  if(!procurement.length){
+    body.innerHTML='<tr><td colspan="9" class="empty"><div class="empty-icon">📦</div>No procurement orders yet — click &ldquo;+ New Order&rdquo; to track a delivery.</td></tr>';
+    return;
+  }
+
+  let rows = [...procurement].sort((a,b)=>{
+    const sa = {'Pending':0,'Ordered':1,'Shipped':2,'Delivered':3};
+    const diff = (sa[a.status]??9) - (sa[b.status]??9);
+    if(diff !== 0) return diff;
+    return (b.order_date||'').localeCompare(a.order_date||'');
+  });
+
+  if(proj) rows = rows.filter(r=>r.project===proj);
+  if(stat) rows = rows.filter(r=>r.status===stat);
+  if(txt)  rows = rows.filter(r=>{
+    return (r.name||'').toLowerCase().includes(txt)
+      || (r.project||'').toLowerCase().includes(txt)
+      || (r.vendor||'').toLowerCase().includes(txt)
+      || (r.vendor_contact||'').toLowerCase().includes(txt);
+  });
+
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="9" class="empty">No procurement orders match the current filters.</td></tr>';
+    return;
+  }
+
+  body.innerHTML = rows.map(r=>`
+    <tr class="data-row">
+      <td><span class="cell-primary">${h(r.name)}</span>${r.notes?'<span class="cell-secondary" style="display:block;margin-top:1px" title="'+h(r.notes)+'">'+h((r.notes||'').slice(0,40))+(r.notes.length>40?'…':'')+'</span>':''}</td>
+      <td class="truncate">${h(r.project)||'&mdash;'}</td>
+      <td>${badge(r.status||'Pending')}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${fmt(r.order_date)}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${fmt(r.shipping_date)}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${fmt(r.requested_onsite_date)}</td>
+      <td class="truncate">${h(r.vendor||'')}</td>
+      <td class="truncate"><span class="cell-secondary">${h(r.vendor_contact||'')}</span></td>
+      <td onclick="event.stopPropagation()" style="white-space:nowrap">
+        <div class="row-actions">
+          <button type="button" class="btn-icon" aria-label="Edit" onclick="editProcurement(${r.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteItem('procurement',${r.id})" title="Delete">✕</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function clearProcFilters(){
+  const t = document.getElementById('proc-filter-text');
+  if(t) t.value='';
+  clearFD('fd-proc-project');
+  clearFD('fd-proc-status');
+  renderProcurement();
+}
+
+function resetProcurementModal(){
+  clearFields(['proc-edit-id','proc-name','proc-order-date','proc-ship-date','proc-onsite-date','proc-vendor','proc-contact','proc-notes']);
+  document.getElementById('proc-project').value='';
+  document.getElementById('proc-status').value='Pending';
+  document.getElementById('proc-modal-title').textContent='New Procurement Order';
+  document.getElementById('proc-save-btn').textContent='Save Order';
+}
+
+async function saveProcurement(){
+  if(!canWrite('procurement')){ showToast('You do not have permission to create or edit procurement orders.','error'); return; }
+  const name = val('proc-name');
+  if(!name) return alert('Material name is required.');
+  const project = val('proc-project');
+  if(!project) return alert('Please select a project.');
+  const editId = document.getElementById('proc-edit-id').value;
+  const data = {
+    project,
+    name,
+    status:                val('proc-status')||'Pending',
+    order_date:            val('proc-order-date')||null,
+    shipping_date:         val('proc-ship-date')||null,
+    requested_onsite_date: val('proc-onsite-date')||null,
+    vendor:                val('proc-vendor')||null,
+    vendor_contact:        val('proc-contact')||null,
+    notes:                 val('proc-notes')||null,
+    created_by:            currentUser?.displayName||currentUser?.username||'',
+  };
+  if(editId){
+    const id = parseInt(editId);
+    const idx = procurement.findIndex(x=>x.id===id);
+    if(idx>-1){
+      const res = await sbUpdate('procurement', id, data);
+      if(res.error){ showToast('Failed to update order: '+res.error.message, 'error'); return; }
+      procurement[idx] = {...procurement[idx], ...data};
+    }
+  } else {
+    if(sb){
+      const res = await sbInsert('procurement', data);
+      if(res.error){ showToast('Failed to save order: '+res.error.message, 'error'); return; }
+      if(res.data?.[0]) procurement.unshift(res.data[0]);
+      else procurement.unshift({id:nextId++, ...data});
+    } else {
+      procurement.unshift({id:nextId++, ...data});
+    }
+  }
+  resetProcurementModal();
+  closeModal('procurement-modal');
+  saveLocal(); renderAll();
+  showToast(editId ? 'Order updated.' : 'Procurement order saved.');
+  logActivity('procurement', editId?'updated':'created', `${data.name} — ${data.project}`, editId?'Order updated':'New procurement order');
+}
+
+function editProcurement(id){
+  if(!canWrite('procurement')){ showToast('You do not have permission to edit procurement orders.','error'); return; }
+  const r = procurement.find(x=>x.id===id);
+  if(!r) return;
+  document.getElementById('proc-modal-title').textContent='Edit Procurement Order';
+  document.getElementById('proc-save-btn').textContent='Update Order';
+  document.getElementById('proc-edit-id').value=id;
+  document.getElementById('proc-name').value=r.name||'';
+  document.getElementById('proc-project').value=r.project||'';
+  document.getElementById('proc-status').value=r.status||'Pending';
+  setDateVal('proc-order-date', r.order_date||'');
+  setDateVal('proc-ship-date', r.shipping_date||'');
+  setDateVal('proc-onsite-date', r.requested_onsite_date||'');
+  document.getElementById('proc-vendor').value=r.vendor||'';
+  document.getElementById('proc-contact').value=r.vendor_contact||'';
+  document.getElementById('proc-notes').value=r.notes||'';
+  openModal('procurement-modal', true);
+}
+</script>
 <!-- ── exports.js ── -->
 <script>
 // Excel and PDF export for RFI, Submittal, and Rental logs
@@ -6157,6 +6417,19 @@ function exportToExcel(type, btn){
       'Issues / Notes':  r.issues_notes||'',
       'Reported By':     r.created_by||'',
     }));
+  } else if(type === 'procurement'){
+    filename = 'Procurement_Orders.xlsx';
+    data = procurement.map(r=>({
+      'Material':           r.name||'',
+      'Project':            r.project||'',
+      'Status':             r.status||'',
+      'Order Date':         r.order_date||'',
+      'Shipping Date':      r.shipping_date||'',
+      'Req. On-Site Date':  r.requested_onsite_date||'',
+      'Vendor':             r.vendor||'',
+      'Vendor Contact':     r.vendor_contact||'',
+      'Notes':              r.notes||'',
+    }));
   }
 
   if(!data.length){
@@ -6171,7 +6444,7 @@ function exportToExcel(type, btn){
   ws['!cols'] = colWidths;
 
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, type==='rfi'?'RFI Log':type==='submittal'?'Submittal Log':type==='daily'?'Daily Reports':'Rental Equipment');
+  XLSX.utils.book_append_sheet(wb, ws, type==='rfi'?'RFI Log':type==='submittal'?'Submittal Log':type==='daily'?'Daily Reports':type==='procurement'?'Procurement Orders':'Rental Equipment');
 
   // Add metadata sheet
   const meta = XLSX.utils.aoa_to_sheet([
