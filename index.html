@@ -387,7 +387,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .notif-panel-filter-btn{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;transition:background .12s,color .12s,border-color .12s;letter-spacing:.2px;font-family:'DM Mono',monospace}
 .notif-panel-filter-btn:hover{border-color:var(--michels-red);color:var(--michels-red)}
 .notif-panel-filter-btn.active{background:var(--michels-red);border-color:var(--michels-red);color:#fff}
-.notif-panel-body{overflow-y:auto;flex:1}
+.notif-panel-body{overflow-y:auto;overscroll-behavior:contain;flex:1}
 .notif-panel-footer{padding:8px 12px;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface);display:flex;justify-content:flex-end}
 .notif-new-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;background:var(--michels-red);color:#fff;padding:1px 6px;border-radius:20px;margin-left:7px;vertical-align:middle;flex-shrink:0}
 .notif-check-btn{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--border);border-radius:5px;background:var(--white);cursor:pointer;color:var(--green);transition:background .1s,border-color .1s;flex-shrink:0;padding:0;font-size:13px;line-height:1;font-family:inherit}
@@ -672,33 +672,22 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .ov-empty-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
 .ov-empty-sub{font-size:12.5px;color:var(--text-muted);margin-bottom:14px}
 
-/* ⌘K COMMAND PALETTE */
-.cmdk-trigger-hd{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px 0 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#aaa;font-size:12.5px;cursor:pointer;min-width:240px;transition:background .12s,border-color .12s;font-family:'Inter',sans-serif}
-.cmdk-trigger-hd:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:#fff}
-.cmdk-trigger-hd svg{opacity:.7;flex-shrink:0}
-.cmdk-trigger-hd .cmdk-text{flex:1;text-align:left}
-.cmdk-kbd{display:inline-flex;align-items:center;gap:2px;font-family:'DM Mono',monospace;font-size:10.5px;font-weight:600;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.08);color:#ccc;border:1px solid rgba(255,255,255,0.1)}
-.cmdk-overlay{display:none;position:fixed;inset:0;background:rgba(9,9,11,.55);backdrop-filter:blur(4px);z-index:9999;padding-top:12vh;justify-content:center;align-items:flex-start}
-.cmdk-overlay.open{display:flex}
-.cmdk-modal{background:var(--white);border-radius:14px;width:min(640px,94vw);max-height:70vh;overflow:hidden;box-shadow:0 25px 80px -12px rgba(0,0,0,.4);border:1px solid var(--border);display:flex;flex-direction:column}
-.cmdk-search{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)}
-.cmdk-search svg{color:var(--text-muted);flex-shrink:0}
-.cmdk-input{flex:1;border:none;outline:none;font-size:15px;font-family:'Inter',sans-serif;color:var(--text);background:transparent;padding:0;box-shadow:none}
-.cmdk-input:focus{box-shadow:none;border:none}
-.cmdk-esc{font-family:'DM Mono',monospace;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:5px;background:var(--surface);color:var(--text-muted);border:1px solid var(--border)}
-.cmdk-results{flex:1;overflow-y:auto;padding:6px 0}
-.cmdk-group-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:8px 18px 4px;font-family:'DM Mono',monospace}
-.cmdk-item{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:12px;padding:8px 18px;cursor:pointer;font-size:13px;color:var(--text)}
-.cmdk-item:hover,.cmdk-item.active{background:var(--michels-red-light)}
-.cmdk-item.active{color:var(--michels-red)}
-.cmdk-item .cmdk-icn{color:var(--text-muted);display:flex;align-items:center;justify-content:center}
-.cmdk-item.active .cmdk-icn{color:var(--michels-red)}
-.cmdk-item-title{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cmdk-item-meta{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace;white-space:nowrap}
-.cmdk-empty{text-align:center;padding:28px 20px;color:var(--text-muted);font-size:13px}
-.cmdk-footer{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-top:1px solid var(--border);background:var(--surface);font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
-.cmdk-footer .cmdk-hint{display:inline-flex;align-items:center;gap:5px}
-.cmdk-footer kbd{display:inline-block;padding:1px 5px;border-radius:3px;background:var(--white);border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;line-height:1.2}
+/* OVERVIEW — MILESTONES SECTION */
+#ov-milestones-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:24px}
+.ov-ms-table{width:100%;border-collapse:collapse;font-size:13px}
+.ov-ms-table thead th{text-align:left;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--border)}
+.ov-ms-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
+.ov-ms-table tbody tr:last-child td{border-bottom:none}
+.ov-ms-table tbody tr.data-row:hover{background:var(--surface-hover)}
+.ov-ms-table .empty{text-align:center;padding:28px 16px;color:var(--text-muted);font-size:13px}
+.ov-ms-table .empty-icon{font-size:24px;margin-bottom:6px}
+.ov-ms-table .cell-primary{font-weight:600;color:var(--text)}
+.ov-ms-chip{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:20px;letter-spacing:.2px}
+.ov-ms-chip-ok{background:var(--green-light);color:var(--green)}
+.ov-ms-chip-soon{background:var(--amber-light);color:var(--amber)}
+.ov-ms-chip-late{background:var(--red-light);color:var(--red)}
+.ov-ms-chip-muted{background:var(--surface);color:var(--text-muted)}
+.btn-ov-ms-add{margin-left:6px}
 
 /* SKELETON LOADING */
 @keyframes ov-shimmer{0%{background-position:-468px 0}100%{background-position:468px 0}}
@@ -887,11 +876,6 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <div class="header-date" id="header-date"></div>
-      <button type="button" class="cmdk-trigger-hd" id="cmdk-trigger" onclick="openCommandPalette()" title="Search (⌘K)" style="display:none">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span class="cmdk-text">Search projects, RFIs, materials…</span>
-        <span class="cmdk-kbd" id="cmdk-kbd-hint">⌘K</span>
-      </button>
       <button type="button" class="header-notif-bell" id="header-bell-btn" aria-label="Notifications" title="Notifications" style="display:none" onclick="toggleNotifPanel(this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-dot" id="header-bell-dot"></span>
@@ -928,13 +912,12 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 
   <div class="nav">
     <div class="nav-tab active" data-tab="projects">Overview</div>
-    <div class="nav-tab" data-tab="controls">Project Controls</div>
     <div class="nav-tab" data-tab="rfi">RFI Log</div>
     <div class="nav-tab" data-tab="submittal">Submittal Log</div>
     <div class="nav-tab" data-tab="rental">Rental Equipment</div>
-    <div class="nav-tab" data-tab="daily">Daily Reports</div>
     <div class="nav-tab" data-tab="procurement">Procurement</div>
     <div class="nav-tab" data-tab="materials">Material Log</div>
+    <div class="nav-tab" data-tab="controls">Project Controls</div>
   </div>
 
   <!-- PROJECT CONTROLS -->
@@ -1007,6 +990,28 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       </div>
     </div>
 
+    <!-- OVERVIEW — milestones -->
+    <div class="ov-section-head">
+      <div class="ov-section-title">
+        Milestones
+        <span class="ov-section-sub" id="ov-ms-count"></span>
+      </div>
+      <div class="ov-section-filter" id="ov-ms-filter">
+        <button class="ov-sf-btn active" data-filter="upcoming" onclick="setOvMsFilter('upcoming')">Upcoming</button>
+        <button class="ov-sf-btn" data-filter="past" onclick="setOvMsFilter('past')">Past</button>
+        <button class="ov-sf-btn" data-filter="all" onclick="setOvMsFilter('all')">All</button>
+        <div class="filter-dd" id="fd-ovms-project" data-fd-val="" data-default-label="All Projects" data-render="renderOvMilestones">
+          <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-ovms-project')">
+            <span class="filter-dd-val">All Projects</span>
+            <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="fd-ovms-project-menu"></div>
+        </div>
+        <button class="btn-add btn-ov-ms-add" onclick="addMilestoneInline()">+ Add Milestone</button>
+      </div>
+    </div>
+    <div id="ov-milestones-wrap"></div>
+
     <!-- OVERVIEW — your jobs -->
     <div class="ov-section-head">
       <div class="ov-section-title">
@@ -1025,9 +1030,6 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div id="report-preview" style="display:none"></div>
     <!-- Hidden project filter (legacy id kept for functions that query it) -->
     <select id="report-filter" style="display:none"><option value="">All Projects</option></select>
-
-    <!-- Legacy milestone body kept (hidden) so renderMilestoneTable doesn't crash if invoked elsewhere -->
-    <tbody id="milestone-body" style="display:none"></tbody>
   </div>
 
   <!-- RFI LOG -->
@@ -1080,14 +1082,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       </table>
     </div>
     <!-- RFI RECENTLY APPROVED -->
-    <div class="archive-section recently-approved-section" id="rfi-recent-section" style="display:none">
+    <div class="archive-section recently-approved-section open" id="rfi-recent-section">
       <button class="archive-header" onclick="toggleRecent('rfi')">
         <div class="archive-header-left">
           <svg class="archive-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           <span class="archive-title-text">Recently Approved</span>
           <span class="archive-count" id="rfi-recent-count">0</span>
         </div>
-        <span class="archive-hint">Closed in the last 7 days</span>
+        <span class="archive-hint">Answered in the last 7 days — auto-close to Archive after that</span>
       </button>
       <div class="archive-body" id="rfi-recent-body"></div>
     </div>
@@ -1156,7 +1158,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       </table>
     </div>
     <!-- SUBMITTAL RECENTLY APPROVED -->
-    <div class="archive-section recently-approved-section" id="submittal-recent-section" style="display:none">
+    <div class="archive-section recently-approved-section open" id="submittal-recent-section">
       <button class="archive-header" onclick="toggleRecent('submittal')">
         <div class="archive-header-left">
           <svg class="archive-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -1240,47 +1242,6 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <span class="archive-hint">Released equipment</span>
       </button>
       <div class="archive-body" id="rental-archive-body"></div>
-    </div>
-  </div>
-
-  <!-- DAILY FIELD REPORTS -->
-  <div class="main" id="tab-daily">
-    <div class="section-header">
-      <div class="section-title">Daily Field Reports</div>
-      <div style="display:flex;gap:8px">
-        <button class="btn-sm" onclick="exportToExcel('daily',this)">&#8595; Excel</button>
-        <button class="btn-add" onclick="openModal('daily-modal')">+ New Report</button>
-      </div>
-    </div>
-    <div class="filter-bar">
-      <span class="filter-bar-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filter</span>
-      <div class="filter-bar-sep"></div>
-      <input class="filter-input" id="daily-filter-text" placeholder="Search work performed, issues…" oninput="renderDailyReports()">
-      <div class="filter-dd" id="fd-daily-project" data-fd-val="" data-default-label="All Projects" data-render="renderDailyReports">
-        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-daily-project')">
-          <span class="filter-dd-val">All Projects</span>
-          <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="filter-dd-menu"><div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-daily-project','','All Projects')">All Projects</div></div>
-      </div>
-      <input class="filter-input" id="daily-filter-from" type="date" style="width:140px" placeholder="From" oninput="renderDailyReports()">
-      <input class="filter-input" id="daily-filter-to" type="date" style="width:140px" placeholder="To" oninput="renderDailyReports()">
-      <button class="filter-clear" onclick="clearDailyFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th style="width:110px">Date</th>
-          <th style="width:20%">Project</th>
-          <th style="width:110px">Weather</th>
-          <th style="width:90px">Temp (°F)</th>
-          <th style="width:60px">Crew</th>
-          <th>Work Summary</th>
-          <th style="width:90px">By</th>
-          <th style="width:60px"></th>
-        </tr></thead>
-        <tbody id="daily-body"></tbody>
-      </table>
     </div>
   </div>
 
@@ -1909,50 +1870,6 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
   </div>
 </div>
 
-<div class="modal-overlay" id="daily-modal" role="dialog" aria-modal="true" aria-labelledby="daily-modal-title">
-  <div class="modal" style="width:min(680px,96vw)">
-    <div class="modal-header">
-      <span class="modal-title" id="daily-modal-title">New Daily Report</span>
-      <button type="button" class="modal-close" aria-label="Close dialog" onclick="closeModal('daily-modal')">×</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="dr-edit-id" value="">
-      <div class="modal-section-title" style="margin-top:0">Job &amp; Conditions</div>
-      <div class="form-row">
-        <div><label>Project</label><select id="dr-project"><option value="">Select project</option></select></div>
-        <div><label>Date</label><input type="date" id="dr-date"></div>
-      </div>
-      <div class="form-row" style="grid-template-columns:2fr 1fr 1fr 1fr">
-        <div><label>Weather</label>
-          <select id="dr-weather">
-            <option value="">— Select —</option>
-            <option>Clear</option>
-            <option>Partly Cloudy</option>
-            <option>Cloudy</option>
-            <option>Rain</option>
-            <option>Thunderstorm</option>
-            <option>Snow</option>
-            <option>Fog</option>
-            <option>High Wind</option>
-          </select>
-        </div>
-        <div><label>High (°F)</label><input type="number" id="dr-temp-high" placeholder="e.g. 72" min="-40" max="130"></div>
-        <div><label>Low (°F)</label><input type="number" id="dr-temp-low" placeholder="e.g. 55" min="-40" max="130"></div>
-        <div><label>Crew Count</label><input type="number" id="dr-crew" placeholder="0" min="0"></div>
-      </div>
-      <div class="modal-section-title">Work Log</div>
-      <div class="form-row-full"><label>Work Performed <span style="color:var(--michels-red)">*</span></label><textarea id="dr-work" placeholder="Describe work completed today…" style="min-height:90px"></textarea></div>
-      <div class="form-row-full"><label>Equipment Used</label><textarea id="dr-equipment" placeholder="List equipment on site (optional)…" style="min-height:52px"></textarea></div>
-      <div class="form-row-full"><label>Visitors / Inspections</label><input type="text" id="dr-visitors" placeholder="e.g. Owner rep site visit, OSHA inspection (optional)"></div>
-      <div class="form-row-full"><label>Issues / Notes</label><textarea id="dr-issues" placeholder="Safety observations, delays, concerns, next-day plan…" style="min-height:60px"></textarea></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-sm" onclick="closeModal('daily-modal')">Cancel</button>
-      <button class="btn-add" id="dr-save-btn" onclick="withSaving('dr-save-btn', saveDailyReport)">Save Report</button>
-    </div>
-  </div>
-</div>
-
 <div class="modal-overlay" id="supabase-modal" role="dialog" aria-modal="true" aria-labelledby="supabase-modal-aria-title">
   <div class="modal" style="max-width:560px">
     <div class="modal-header">
@@ -2135,28 +2052,10 @@ create table if not exists subcontractors (
   created_at     timestamptz default now()
 );
 
-create table if not exists daily_reports (
-  id             bigserial primary key,
-  project        text not null,
-  report_date    date not null,
-  weather        text,
-  temp_high      integer,
-  temp_low       integer,
-  crew_count     integer,
-  work_performed text,
-  equipment_used text,
-  visitors       text,
-  issues_notes   text,
-  created_by     text,
-  created_at     timestamptz default now()
-);
-
 alter table milestones     enable row level security;
 alter table subcontractors enable row level security;
-alter table daily_reports  enable row level security;
 create policy "anon_all_milestones"     on milestones     for all using (true) with check (true);
 create policy "anon_all_subcontractors" on subcontractors for all using (true) with check (true);
-create policy "anon_all_daily_reports"  on daily_reports  for all using (true) with check (true);
 
 -- ── Material Log tables ─────────────────────────────────────
 
@@ -2262,22 +2161,6 @@ create policy "anon_all_procurement" on procurement for all using (true) with ch
   </div>
 </div>
 
-<!-- COMMAND PALETTE -->
-<div class="cmdk-overlay" id="cmdk-overlay" onclick="if(event.target===this)closeCommandPalette()">
-  <div class="cmdk-modal" role="dialog" aria-label="Command palette">
-    <div class="cmdk-search">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input id="cmdk-input" class="cmdk-input" type="text" placeholder="Search projects, RFIs, materials, or type a command…" autocomplete="off" spellcheck="false" oninput="onCmdKInput()">
-      <span class="cmdk-esc">Esc</span>
-    </div>
-    <div class="cmdk-results" id="cmdk-results"></div>
-    <div class="cmdk-footer">
-      <span class="cmdk-hint"><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
-      <span class="cmdk-hint"><kbd>↵</kbd> select</span>
-      <span class="cmdk-hint"><kbd>esc</kbd> close</span>
-    </div>
-  </div>
-</div>
 
 <!-- ── config.js ── -->
 <script>
@@ -2298,7 +2181,7 @@ const RECENTLY_APPROVED_DAYS = 7;
 const ROLE_PERMISSIONS = {
   apm: {
     label: 'Associate PM',
-    tabs: ['projects', 'rfi', 'submittal', 'rental', 'daily', 'procurement', 'materials'],
+    tabs: ['projects', 'rfi', 'submittal', 'rental', 'procurement', 'materials'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: false,
@@ -2308,7 +2191,7 @@ const ROLE_PERMISSIONS = {
   },
   pm: {
     label: 'Project Manager',
-    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'procurement', 'materials'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'procurement', 'materials'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -2318,7 +2201,7 @@ const ROLE_PERMISSIONS = {
   },
   regional: {
     label: 'Regional Manager',
-    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'procurement', 'materials'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'procurement', 'materials'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -2329,7 +2212,7 @@ const ROLE_PERMISSIONS = {
   // Legacy 'admin' maps to regional for backward compat
   admin: {
     label: 'Regional Manager',
-    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'procurement', 'materials'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'procurement', 'materials'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -2339,7 +2222,7 @@ const ROLE_PERMISSIONS = {
   },
   superadmin: {
     label: 'Super Admin',
-    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'daily', 'procurement', 'materials'],
+    tabs: ['controls', 'projects', 'rfi', 'submittal', 'rental', 'procurement', 'materials'],
     readonlyTabs: [],
     canEdit: true,
     canDelete: true,
@@ -2384,7 +2267,6 @@ let submittals = [];
 let rental = [];
 let milestones = [];
 let subcontractors = [];
-let dailyReports = [];
 let materials = [];
 let vendors = [];
 let procurement = [];
@@ -2426,7 +2308,7 @@ function calcPct(start, end, status=''){
 
 // ── MODAL HELPERS ────────────────────────────────────────
 // controls-modal requires cachedUsers to be loaded for team selects
-const DATA_DEPENDENT_MODALS = ['controls-modal','rfi-modal','submittal-modal','rental-modal','daily-modal','procurement-modal','materials-modal','order-modal','vendor-response-modal','vendors-modal'];
+const DATA_DEPENDENT_MODALS = ['controls-modal','rfi-modal','submittal-modal','rental-modal','procurement-modal','materials-modal','order-modal','vendor-response-modal','vendors-modal'];
 
 // resetModal clears a modal back to its default "new" state.
 // Pass noReset=true from editJobControls() to preserve pre-filled edit values.
@@ -2435,7 +2317,6 @@ function resetModal(id){
   else if(id==='rfi-modal')    resetRFIModal();
   else if(id==='submittal-modal') resetSubmittalModal();
   else if(id==='rental-modal') resetRentalModal();
-  else if(id==='daily-modal')  resetDailyReportModal();
   else if(id==='procurement-modal') resetProcurementModal();
   else if(id==='materials-modal') resetMaterialModal();
   else if(id==='vendor-response-modal') resetVendorResponseModal();
@@ -2591,7 +2472,6 @@ function setLoadingState(){
     'rfi-body':       7,  // RFI #, Subject/Project, Submitted, Due, Status, Priority, actions
     'submittal-body': 7,  // Sub #, Desc/Project, Spec Section, Submitted, Status, BIC, actions
     'rental-body':    6,  // Equipment, Project, On Site, Release, Status, actions
-    'daily-body':     8,  // Date, Project, Weather, Temp, Crew, Work Summary, By, actions
     'proc-body':      7,  // Material, Project, Status, Order, Ship, Req On-Site, actions
     'mat-tbody':     10   // Material, Project, Qty/Unit, Status, Vendor, Ordered, Expected, PO, Price, actions
   };
@@ -2623,12 +2503,10 @@ function setLoadingState(){
 function renderAll(){
   try { renderOverview(); } catch(e){ console.error('renderOverview', e); }
   renderProjectControls();
-  renderMilestoneTable();
   renderReportPreview();
   renderRFI();
   renderSubmittals();
   renderRental();
-  renderDailyReports();
   renderProcurement();
   renderMaterials();
   renderChartStrips();
@@ -2688,9 +2566,19 @@ async function quickStatusChange(type,id,newStatus){
     patch.approved_at = nowTerminal ? new Date().toISOString() : null;
     item.approved_at  = patch.approved_at;
   } else if(type === 'rfi'){
-    const nowTerminal = newStatus === 'Closed';
-    patch.closed_at = nowTerminal ? new Date().toISOString() : null;
-    item.closed_at  = patch.closed_at;
+    // closed_at semantically = "when the RFI entered the Recently Approved bucket."
+    // Stamped on transition → Answered. Manual transition → Closed leaves the stamp
+    // alone (it either has one from Answered, or is null if they skipped Answered —
+    // either way straight to Archive). Transition back to Open/Under Review clears.
+    if(newStatus === 'Answered'){
+      if(oldStatus !== 'Answered' || !item.closed_at){
+        patch.closed_at = new Date().toISOString();
+        item.closed_at  = patch.closed_at;
+      }
+    } else if(newStatus !== 'Closed'){
+      patch.closed_at = null;
+      item.closed_at  = null;
+    }
   }
   item.status=newStatus;
   const res=await sbUpdate(tableMap[type],id,patch);
@@ -2811,10 +2699,8 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
     document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
-    // Auto-open the archive for this tab whenever the tab is activated
-    const archiveSection = document.getElementById(tab.dataset.tab+'-archive-section');
-    if(archiveSection) archiveSection.classList.add('open');
-    // Also auto-open the Recently Approved section (RFI + Submittal only)
+    // Auto-open the Recently Approved section (RFI + Submittal only).
+    // Archive stays collapsed by default — user clicks the header to expand.
     const recentSection = document.getElementById(tab.dataset.tab+'-recent-section');
     if(recentSection) recentSection.classList.add('open');
     // Reset controls detail view when navigating away so returning shows the card list
@@ -2829,208 +2715,6 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')});
 });
 
-/* ══════════════════════════════════════════════════════════════
-   ⌘K COMMAND PALETTE
-   ══════════════════════════════════════════════════════════════ */
-let _cmdkActive = 0;
-let _cmdkResults = [];
-
-function _cmdkKindMeta(kind){
-  return ({
-    projects:{label:'Projects', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>'},
-    rfis:{label:'RFIs', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'},
-    submittals:{label:'Submittals', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'},
-    materials:{label:'Materials', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>'},
-    procurement:{label:'Procurement', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>'},
-    vendors:{label:'Vendors', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'},
-    actions:{label:'Actions', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'}
-  })[kind] || {label:kind, icon:''};
-}
-
-function _cmdkBuildDataset(q){
-  const query = (q||'').trim().toLowerCase();
-  const out = [];
-  const vis = (typeof _ovVisibleProjects === 'function' ? _ovVisibleProjects() : (projects||[]));
-  const visNames = new Set(vis.map(p => p.name));
-  const match = (s) => !query || String(s||'').toLowerCase().indexOf(query) >= 0;
-  const canW = (key) => (typeof canWrite === 'function') ? canWrite(key) : true;
-
-  const actions = [
-    {title:'Go to Overview',         kind:'actions', run:() => switchTab('tab-projects')},
-    {title:'Go to Project Controls', kind:'actions', gate:() => canW('controls'), run:() => switchTab('tab-controls')},
-    {title:'Go to RFI Log',          kind:'actions', run:() => switchTab('tab-rfi')},
-    {title:'Go to Submittal Log',    kind:'actions', run:() => switchTab('tab-submittal')},
-    {title:'Go to Rental Equipment', kind:'actions', run:() => switchTab('tab-rental')},
-    {title:'Go to Daily Reports',    kind:'actions', run:() => switchTab('tab-daily')},
-    {title:'Go to Procurement',      kind:'actions', run:() => switchTab('tab-procurement')},
-    {title:'Go to Material Log',     kind:'actions', run:() => switchTab('tab-materials')},
-    {title:'New RFI',         kind:'actions', gate:() => canW('rfi'),         run:() => openModal('rfi-modal')},
-    {title:'New Submittal',   kind:'actions', gate:() => canW('submittal'),   run:() => openModal('submittal-modal')},
-    {title:'New Rental',      kind:'actions', gate:() => canW('rental'),      run:() => openModal('rental-modal')},
-    {title:'New Daily Report',kind:'actions', gate:() => canW('daily'),       run:() => openModal('daily-modal')},
-    {title:'New Material',    kind:'actions', gate:() => canW('materials'),   run:() => openModal('materials-modal')},
-    {title:'New Procurement', kind:'actions', gate:() => canW('procurement'), run:() => openModal('procurement-modal')},
-    {title:'Sign out',        kind:'actions', run:() => logout()}
-  ];
-  actions.forEach(a => {
-    if(a.gate && !a.gate()) return;
-    if(match(a.title)) out.push({kind:'actions', title:a.title, meta:'', run:a.run});
-  });
-
-  // Projects
-  (projects||[]).forEach(p => {
-    if(!visNames.has(p.name)) return;
-    if(match(p.name) || match(p.num)){
-      out.push({kind:'projects', title:(p.name||'(unnamed)'), meta:(p.num||''), run:() => {
-        switchTab('tab-controls');
-        if(typeof openJobDetail === 'function') setTimeout(() => openJobDetail(p.id), 50);
-      }});
-    }
-  });
-
-  // RFIs
-  (rfis||[]).slice(0, 500).forEach(r => {
-    if(!visNames.has(r.project)) return;
-    if(match(r.subject) || match('rfi-'+r.num) || match(r.num)){
-      out.push({kind:'rfis', title:(r.subject||'(untitled)'), meta:'RFI-'+(r.num||'?')+' · '+(r.project||''), run:() => switchTab('tab-rfi')});
-    }
-  });
-
-  // Submittals
-  (submittals||[]).slice(0, 500).forEach(s => {
-    if(!visNames.has(s.project)) return;
-    if(match(s.desc) || match('sub-'+s.num) || match(s.num)){
-      out.push({kind:'submittals', title:(s.desc||'(untitled)'), meta:'SUB-'+(s.num||'?')+' · '+(s.project||''), run:() => switchTab('tab-submittal')});
-    }
-  });
-
-  // Materials
-  (materials||[]).slice(0, 500).forEach(m => {
-    if(!visNames.has(m.project)) return;
-    if(match(m.name) || match(m.po_number) || match(m.vendor_name)){
-      out.push({kind:'materials', title:(m.name||'(material)'), meta:(m.project||'')+(m.po_number?(' · PO '+m.po_number):''), run:() => switchTab('tab-materials')});
-    }
-  });
-
-  // Procurement
-  (procurement||[]).slice(0, 500).forEach(po => {
-    if(!visNames.has(po.project)) return;
-    if(match(po.name) || match(po.vendor)){
-      out.push({kind:'procurement', title:(po.name||'(procurement)'), meta:(po.project||'')+(po.vendor?(' · '+po.vendor):''), run:() => switchTab('tab-procurement')});
-    }
-  });
-
-  // Vendors
-  (Array.isArray(vendors) ? vendors : []).slice(0, 500).forEach(v => {
-    if(match(v.name) || match(v.contact_name)){
-      out.push({kind:'vendors', title:(v.name||'(vendor)'), meta:(v.category||v.contact_name||''), run:() => { if(canW('materials')) openModal('vendors-modal'); else switchTab('tab-materials'); }});
-    }
-  });
-
-  return out.slice(0, 60);
-}
-
-function openCommandPalette(){
-  const ov = document.getElementById('cmdk-overlay');
-  if(!ov) return;
-  ov.classList.add('open');
-  const input = document.getElementById('cmdk-input');
-  if(input){ input.value = ''; input.focus(); }
-  _cmdkActive = 0;
-  _cmdkRender('');
-}
-
-function closeCommandPalette(){
-  const ov = document.getElementById('cmdk-overlay');
-  if(!ov) return;
-  ov.classList.remove('open');
-}
-
-function onCmdKInput(){
-  const input = document.getElementById('cmdk-input');
-  if(!input) return;
-  _cmdkRender(input.value);
-}
-
-function _cmdkRender(q){
-  _cmdkResults = _cmdkBuildDataset(q);
-  _cmdkActive = 0;
-  const box = document.getElementById('cmdk-results');
-  if(!box) return;
-
-  if(_cmdkResults.length === 0){
-    box.innerHTML = '<div class="cmdk-empty">No matches for "'+h(q||'')+'"</div>';
-    return;
-  }
-
-  const order = ['actions','projects','rfis','submittals','materials','procurement','vendors'];
-  const groups = {};
-  _cmdkResults.forEach((r, i) => {
-    if(!groups[r.kind]) groups[r.kind] = [];
-    groups[r.kind].push({r, i});
-  });
-  box.innerHTML = order.filter(k => groups[k]).map(k => {
-    const meta = _cmdkKindMeta(k);
-    return (
-      '<div class="cmdk-group-label">'+h(meta.label)+'</div>'+
-      groups[k].map(({r,i}) =>
-        '<div class="cmdk-item'+(i===_cmdkActive?' active':'')+'" data-cmdk-idx="'+i+'">'+
-          '<div class="cmdk-icn">'+meta.icon+'</div>'+
-          '<div class="cmdk-item-title">'+h(r.title)+'</div>'+
-          (r.meta?'<div class="cmdk-item-meta">'+h(r.meta)+'</div>':'<div></div>')+
-        '</div>'
-      ).join('')
-    );
-  }).join('');
-
-  box.querySelectorAll('.cmdk-item').forEach(n => {
-    n.addEventListener('mouseenter', () => {
-      _cmdkActive = +n.getAttribute('data-cmdk-idx');
-      _cmdkHighlight();
-    });
-    n.addEventListener('click', () => {
-      _cmdkActive = +n.getAttribute('data-cmdk-idx');
-      _cmdkRun();
-    });
-  });
-}
-
-function _cmdkHighlight(){
-  const box = document.getElementById('cmdk-results');
-  if(!box) return;
-  box.querySelectorAll('.cmdk-item').forEach(n => {
-    n.classList.toggle('active', +n.getAttribute('data-cmdk-idx') === _cmdkActive);
-  });
-  const active = box.querySelector('.cmdk-item.active');
-  if(active) active.scrollIntoView({block:'nearest'});
-}
-
-function _cmdkRun(){
-  const r = _cmdkResults[_cmdkActive];
-  if(!r) return;
-  closeCommandPalette();
-  try { r.run(); } catch(e) { console.error('cmdk run failed', e); }
-}
-
-// Global keybindings
-document.addEventListener('keydown', function(e){
-  const cmdOrCtrl = e.metaKey || e.ctrlKey;
-  if(cmdOrCtrl && (e.key === 'k' || e.key === 'K')){
-    // Only if a user is logged in
-    if(!currentUser) return;
-    e.preventDefault();
-    const ov = document.getElementById('cmdk-overlay');
-    if(ov && ov.classList.contains('open')) closeCommandPalette();
-    else openCommandPalette();
-    return;
-  }
-  const ov = document.getElementById('cmdk-overlay');
-  if(!ov || !ov.classList.contains('open')) return;
-  if(e.key === 'Escape'){ e.preventDefault(); closeCommandPalette(); return; }
-  if(e.key === 'ArrowDown'){ e.preventDefault(); _cmdkActive = Math.min(_cmdkResults.length-1, _cmdkActive+1); _cmdkHighlight(); return; }
-  if(e.key === 'ArrowUp')  { e.preventDefault(); _cmdkActive = Math.max(0, _cmdkActive-1); _cmdkHighlight(); return; }
-  if(e.key === 'Enter')    { e.preventDefault(); _cmdkRun(); return; }
-});
 </script>
 
 <!-- ── data.js ── -->
@@ -3088,8 +2772,8 @@ async function testSupabaseConnection(){
     return;
   }
   el.innerHTML='<span style="color:var(--text-muted)">Testing tables…</span>';
-  const tables=['users','projects','rfis','submittals','rental','activity_log','milestones','subcontractors','daily_reports','vendors','materials','procurement'];
-  const labels={users:'users',projects:'projects',rfis:'rfis',submittals:'submittals',rental:'rental',activity_log:'activity_log',milestones:'milestones',subcontractors:'subcontractors',daily_reports:'daily_reports',vendors:'vendors',materials:'materials'};
+  const tables=['users','projects','rfis','submittals','rental','activity_log','milestones','subcontractors','vendors','materials','procurement'];
+  const labels={users:'users',projects:'projects',rfis:'rfis',submittals:'submittals',rental:'rental',activity_log:'activity_log',milestones:'milestones',subcontractors:'subcontractors',vendors:'vendors',materials:'materials'};
   const rows=[];
   for(const t of tables){
     try{
@@ -3139,7 +2823,6 @@ function saveLocal(){
     localStorage.setItem('apm_rental',         JSON.stringify(rental));
     localStorage.setItem('apm_milestones',     JSON.stringify(milestones));
     localStorage.setItem('apm_subcontractors', JSON.stringify(subcontractors));
-    localStorage.setItem('apm_daily_reports',  JSON.stringify(dailyReports));
     localStorage.setItem('apm_materials',      JSON.stringify(materials));
     localStorage.setItem('apm_vendors',        JSON.stringify(vendors));
     localStorage.setItem('apm_procurement',    JSON.stringify(procurement));
@@ -3167,25 +2850,23 @@ async function loadData(){
       rental         = JSON.parse(localStorage.getItem('apm_rental')         || '[]');
       milestones     = JSON.parse(localStorage.getItem('apm_milestones')     || '[]');
       subcontractors = JSON.parse(localStorage.getItem('apm_subcontractors') || '[]');
-      dailyReports   = JSON.parse(localStorage.getItem('apm_daily_reports')  || '[]');
       materials      = JSON.parse(localStorage.getItem('apm_materials')      || '[]');
       vendors        = JSON.parse(localStorage.getItem('apm_vendors')        || '[]');
       procurement    = JSON.parse(localStorage.getItem('apm_procurement')    || '[]');
     }catch(e){}
     // Only commit if this is still the latest load request
     if(token !== loadToken) return;
-    nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental,...milestones,...subcontractors,...dailyReports].map(x=>x.id||0)) + 1;
+    nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental,...milestones,...subcontractors].map(x=>x.id||0)) + 1;
     dataLoaded = true; renderAll(); return;
   }
   try{
-    const [p,r,s,rn,ms,sbs,dr,mat,ven,proc] = await Promise.all([
+    const [p,r,s,rn,ms,sbs,mat,ven,proc] = await Promise.all([
       sb.from('projects').select('*').order('id'),
       sb.from('rfis').select('*').order('id'),
       sb.from('submittals').select('*').order('id'),
       sb.from('rental').select('*').order('id'),
       sb.from('milestones').select('*').order('milestone_date'),
       sb.from('subcontractors').select('*').order('id'),
-      sb.from('daily_reports').select('*').order('report_date', {ascending: false}),
       sb.from('materials').select('*').order('id'),
       sb.from('vendors').select('*').order('name'),
       sb.from('procurement').select('*').order('id'),
@@ -3206,15 +2887,39 @@ async function loadData(){
     rental         = (rn.data||[]).map(x=>({...x, onsite:x.onsite_date, offsite:x.release_date}));
     milestones     = ms.error  ? [] : (ms.data||[]);
     subcontractors = sbs.error ? [] : (sbs.data||[]);
-    dailyReports   = dr.error  ? [] : (dr.data||[]);
     materials      = mat.error ? [] : (mat.data||[]);
     vendors        = ven.error ? [] : (ven.data||[]);
     procurement    = proc.error ? [] : (proc.data||[]);
-    nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental,...milestones,...subcontractors,...dailyReports].map(x=>x.id||0)) + 1;
+    nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental,...milestones,...subcontractors].map(x=>x.id||0)) + 1;
     saveLocal();
   }catch(e){ console.error('Supabase load error',e); return; }
   if(token !== loadToken) return;
+  await sweepExpiredAnsweredRFIs();
   dataLoaded = true; renderAll();
+}
+
+// Background graduation: any RFI that's been sitting in the Recently Approved
+// bucket (status=Answered) longer than RECENTLY_APPROVED_DAYS gets auto-flipped
+// to Closed so it drops into the Archive. Runs once per loadData.
+// Safe: no-op when offline (no sb), guarded by closed_at existence so pre-migration
+// Answered rows (no timestamp) aren't swept.
+async function sweepExpiredAnsweredRFIs(){
+  if(!sb) return;
+  if(typeof RECENTLY_APPROVED_DAYS === 'undefined') return;
+  const windowMs = RECENTLY_APPROVED_DAYS * 86400000;
+  const expired = rfis.filter(r =>
+    r.status === 'Answered' &&
+    r.closed_at &&
+    (Date.now() - new Date(r.closed_at).getTime()) >= windowMs
+  );
+  if(!expired.length) return;
+  const results = await Promise.all(expired.map(async r => {
+    const res = await sbUpdate('rfis', r.id, { status: 'Closed' });
+    if(!res.error){ r.status = 'Closed'; return true; }
+    console.warn('sweepExpiredAnsweredRFIs: failed to close RFI', r.id, res.error);
+    return false;
+  }));
+  if(results.some(Boolean)) saveLocal();
 }
 
 // ── CLAUDE API HELPER ─────────────────────────────────────
@@ -3557,19 +3262,10 @@ function showDashboard(){
   }
   const hBell = document.getElementById('header-bell-btn');
   if(hBell) hBell.style.display='flex';
-  const cmdkBtn = document.getElementById('cmdk-trigger');
-  if(cmdkBtn) cmdkBtn.style.display='flex';
 
   // ── Header subtitle ─────────────────────────────────────
   const sub = document.getElementById('header-sub');
   if(sub) sub.textContent = perms.label;
-
-  // ── Platform-aware ⌘K label ─────────────────────────────
-  try {
-    const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent || '');
-    const k = document.getElementById('cmdk-kbd-hint');
-    if(k && !isMac) k.textContent = 'Ctrl K';
-  } catch(e){}
 
   // ── Show/hide settings menu items by permission ─────────
   applySettingsPermissions(perms);
@@ -3649,7 +3345,7 @@ function logout(){
   [
     'apm_session','apm_remember',
     'apm_projects','apm_rfis','apm_submittals','apm_rental',
-    'apm_milestones','apm_subcontractors','apm_daily_reports',
+    'apm_milestones','apm_subcontractors',
     // Legacy global todo keys — kept here so pre-namespacing data is cleaned up.
     // New per-user keys are swept by the prefix loop below.
     'apm_done_todos','apm_dissolved_todos','apm_snoozed_todos','apm_reminder_days',
@@ -3681,8 +3377,6 @@ function logout(){
   document.getElementById('current-user-badge').style.display='none';
   const hBell = document.getElementById('header-bell-btn');
   if(hBell) hBell.style.display='none';
-  const cmdkBtn = document.getElementById('cmdk-trigger');
-  if(cmdkBtn) cmdkBtn.style.display='none';
 }
 </script>
 
@@ -3853,6 +3547,16 @@ function applyWritePermissions(){
   });
   document.querySelectorAll('.btn-sm[onclick*="editMaterial"]').forEach(btn=>{
     btn.style.display = canWrite('materials') ? '' : 'none';
+  });
+  // Overview Milestones — add / edit / delete
+  document.querySelectorAll('.btn-add[onclick*="addMilestoneInline"]').forEach(btn=>{
+    btn.style.display = p.canEdit ? '' : 'none';
+  });
+  document.querySelectorAll('.btn-icon[onclick*="editMilestoneInline"]').forEach(btn=>{
+    btn.style.display = p.canEdit ? '' : 'none';
+  });
+  document.querySelectorAll('.btn-icon[onclick*="deleteMilestoneInline"]').forEach(btn=>{
+    btn.style.display = p.canDelete ? '' : 'none';
   });
   // Order and Log Reply buttons require write permission
   document.querySelectorAll('.mat-order-btn,.mat-response-btn').forEach(btn=>{
@@ -4128,7 +3832,12 @@ function renderRFI(){
   const stat=getFDValue('fd-rfi-status');
   renderRFIRecentlyApproved();
   renderRFIArchive();
-  const activeRfis=rfis.filter(r=>r.status!=='Closed');
+  // Active = not Closed AND not currently in the Recently Approved bucket
+  const activeRfis=rfis.filter(r=>{
+    if(r.status==='Closed') return false;
+    if(r.status==='Answered' && _withinRecentWindow(r.closed_at)) return false;
+    return true;
+  });
   let rows=activeRfis.filter(r=>{
     if(proj && r.project!==proj) return false;
     if(stat && r.status!==stat) return false;
@@ -4437,15 +4146,16 @@ function archiveGroupHTML(items, rowFn, headers){
 function renderRFIRecentlyApproved(){
   const proj = getFDValue('fd-rfi-project');
   const recent = rfis
-    .filter(r => r.status==='Closed' && _withinRecentWindow(r.closed_at) && (!proj||r.project===proj))
+    .filter(r => r.status==='Answered' && _withinRecentWindow(r.closed_at) && (!proj||r.project===proj))
     .sort((a,b) => new Date(b.closed_at) - new Date(a.closed_at));
-  const section = document.getElementById('rfi-recent-section');
   const countEl = document.getElementById('rfi-recent-count');
   const body = document.getElementById('rfi-recent-body');
   if(countEl) countEl.textContent = recent.length;
-  if(section) section.style.display = recent.length ? '' : 'none';
   if(!body) return;
-  if(!recent.length){ body.innerHTML = ''; return; }
+  if(!recent.length){
+    body.innerHTML = `<div style="padding:20px;text-align:center;font-size:13px;color:var(--text-muted)">No RFIs answered in the last 7 days${proj?' for this project':''}. Mark an RFI Answered and it will appear here for 7 days before auto-closing into the Archive.</div>`;
+    return;
+  }
   body.innerHTML = `
     <div class="archive-proj-group">
       <div class="table-wrap">
@@ -4454,7 +4164,7 @@ function renderRFIRecentlyApproved(){
             <th style="width:70px">RFI #</th>
             <th style="width:26%">Subject</th>
             <th style="width:14%">Project</th>
-            <th style="width:13%">Closed</th>
+            <th style="width:13%">Answered</th>
             <th style="width:12%">Status</th>
             <th style="width:10%">Time Left</th>
             <th style="width:120px">Actions</th>
@@ -4479,38 +4189,61 @@ function renderRFIRecentlyApproved(){
 
 function renderRFIArchive(){
   const proj = getFDValue('fd-rfi-project');
-  const archived = rfis.filter(r=>r.status==='Closed' && !_withinRecentWindow(r.closed_at) && (!proj||r.project===proj));
+  const archived = rfis.filter(r => {
+    if(!(!proj || r.project===proj)) return false;
+    if(r.status === 'Closed') return true;
+    // Answered items that aged past the 7-day window get archived too (a background
+    // sweep on load flips their status to Closed, but the filter is correct either way).
+    if(r.status === 'Answered' && r.closed_at && !_withinRecentWindow(r.closed_at)) return true;
+    return false;
+  });
   const countEl = document.getElementById('rfi-archive-count');
   if(countEl) countEl.textContent = archived.length;
   const hintEl = document.querySelector('#rfi-archive-section .archive-hint');
   if(hintEl) hintEl.textContent = proj ? `Closed — ${proj}` : 'Closed RFIs';
   const body = document.getElementById('rfi-archive-body');
   if(!body) return;
+  const thead = `<thead><tr>
+    <th style="width:70px">RFI #</th>
+    <th>Subject / Project</th>
+    <th style="width:120px">Submitted</th>
+    <th style="width:120px">Due</th>
+    <th style="width:130px">Status</th>
+    <th style="width:100px">Priority</th>
+    <th style="width:70px"></th>
+  </tr></thead>`;
   if(!archived.length){
-    body.innerHTML=`<div style="padding:20px;text-align:center;font-size:13px;color:var(--text-muted)">No archived RFIs${proj?' for this project':''}.</div>`;
+    body.innerHTML = `<div class="table-wrap"><table>${thead}<tbody><tr><td colspan="7" class="empty">No archived RFIs${proj?' for this project':''}.</td></tr></tbody></table></div>`;
     return;
   }
-  body.innerHTML = archiveGroupHTML(archived, r=>`
-    <tr>
-      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px;width:70px">${h(r.num)}</td>
-      <td class="truncate">
-        <div>${h(r.subject)}</div>
-        ${r.spec_section?`<div style="font-size:11px;color:var(--text-muted);margin-top:2px">${h(r.spec_section)}</div>`:''}
-      </td>
-      <td>${fmt(r.submitted)}</td>
-      <td>${fmt(r.due)}</td>
-      <td>${badge(r.status)}</td>
-      <td>${prio(r.priority)}</td>
-      <td style="white-space:nowrap;width:120px"><button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
-    </tr>`, [
-    {label:'RFI #',    style:'width:70px'},
-    {label:'Subject',  style:'width:22%'},
-    {label:'Submitted',style:'width:13%'},
-    {label:'Due',      style:'width:13%'},
-    {label:'Status',   style:'width:12%'},
-    {label:'Priority', style:'width:10%'},
-    {label:'Actions',  style:'width:120px'},
-  ]);
+  // Group by spec_section — named sections alphabetically, unclassified last (mirrors renderRFI())
+  const groups = {};
+  archived.forEach(r => { const k = r.spec_section || ''; if(!groups[k]) groups[k] = []; groups[k].push(r); });
+  const sortedKeys = Object.keys(groups).sort((a,b) => { if(!a&&!b) return 0; if(!a) return 1; if(!b) return -1; return a.localeCompare(b); });
+  const showHeaders = sortedKeys.length > 1 || (sortedKeys.length === 1 && sortedKeys[0] !== '');
+  let rowsHTML = '';
+  sortedKeys.forEach(key => {
+    if(showHeaders){
+      const label = key || 'Unclassified';
+      rowsHTML += `<tr class="spec-section-row"><td colspan="7"><span class="spec-section-badge">${h(label)}</span></td></tr>`;
+    }
+    groups[key].forEach(r => {
+      rowsHTML += `
+        <tr>
+          <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${h(r.num)}</td>
+          <td class="truncate">
+            <div class="cell-primary">${h(r.subject)}</div>
+            <div class="cell-secondary">${h(r.project)}</div>
+          </td>
+          <td>${fmt(r.submitted)}</td>
+          <td>${fmt(r.due)}</td>
+          <td>${badge(r.status)}</td>
+          <td>${prio(r.priority)}</td>
+          <td style="white-space:nowrap"><button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
+        </tr>`;
+    });
+  });
+  body.innerHTML = `<div class="table-wrap"><table>${thead}<tbody>${rowsHTML}</tbody></table></div>`;
 }
 
 function renderSubmittalRecentlyApproved(){
@@ -4518,13 +4251,14 @@ function renderSubmittalRecentlyApproved(){
   const recent = submittals
     .filter(s => ['Approved','Approved as Noted'].includes(s.status) && _withinRecentWindow(s.approved_at) && (!proj||s.project===proj))
     .sort((a,b) => new Date(b.approved_at) - new Date(a.approved_at));
-  const section = document.getElementById('submittal-recent-section');
   const countEl = document.getElementById('submittal-recent-count');
   const body = document.getElementById('submittal-recent-body');
   if(countEl) countEl.textContent = recent.length;
-  if(section) section.style.display = recent.length ? '' : 'none';
   if(!body) return;
-  if(!recent.length){ body.innerHTML = ''; return; }
+  if(!recent.length){
+    body.innerHTML = `<div style="padding:20px;text-align:center;font-size:13px;color:var(--text-muted)">No submittals approved in the last 7 days${proj?' for this project':''}. Mark a submittal Approved or Approved as Noted and it will appear here.</div>`;
+    return;
+  }
   body.innerHTML = `
     <div class="archive-proj-group">
       <div class="table-wrap">
@@ -4568,28 +4302,47 @@ function renderSubmittalArchive(){
   if(hintEl) hintEl.textContent = proj ? `Approved & rejected — ${proj}` : 'Approved & rejected submittals';
   const body = document.getElementById('submittal-archive-body');
   if(!body) return;
+  const thead = `<thead><tr>
+    <th style="width:80px">Sub #</th>
+    <th>Description / Project</th>
+    <th style="width:13%">Spec Section</th>
+    <th style="width:120px">Submitted</th>
+    <th style="width:130px">Status</th>
+    <th style="width:120px">Ball in Court</th>
+    <th style="width:70px"></th>
+  </tr></thead>`;
   if(!archived.length){
-    body.innerHTML=`<div style="padding:20px;text-align:center;font-size:13px;color:var(--text-muted)">No archived submittals${proj?' for this project':''}.</div>`;
+    body.innerHTML = `<div class="table-wrap"><table>${thead}<tbody><tr><td colspan="7" class="empty">No archived submittals${proj?' for this project':''}.</td></tr></tbody></table></div>`;
     return;
   }
-  body.innerHTML = archiveGroupHTML(archived, s=>`
-    <tr>
-      <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px;width:80px">${h(s.num)}</td>
-      <td class="truncate">${h(s.desc)}</td>
-      <td class="truncate">${h(s.spec)}</td>
-      <td>${fmt(s.date)}</td>
-      <td>${badge(s.status)}</td>
-      <td class="truncate">${h(s.bic)}</td>
-      <td style="white-space:nowrap;width:120px"><button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
-    </tr>`, [
-    {label:'Sub #',        style:'width:80px'},
-    {label:'Description',  style:'width:22%'},
-    {label:'Spec Section', style:'width:13%'},
-    {label:'Submitted',    style:'width:13%'},
-    {label:'Status',       style:'width:12%'},
-    {label:'Ball in Court',style:'width:10%'},
-    {label:'Actions',      style:'width:120px'},
-  ]);
+  // Group by spec section — named sections alphabetically, unclassified last (mirrors renderSubmittals())
+  const groups = {};
+  archived.forEach(s => { const k = s.spec || ''; if(!groups[k]) groups[k] = []; groups[k].push(s); });
+  const sortedKeys = Object.keys(groups).sort((a,b) => { if(!a&&!b) return 0; if(!a) return 1; if(!b) return -1; return a.localeCompare(b); });
+  const showHeaders = sortedKeys.length > 1 || (sortedKeys.length === 1 && sortedKeys[0] !== '');
+  let rowsHTML = '';
+  sortedKeys.forEach(key => {
+    if(showHeaders){
+      const label = key || 'Unclassified';
+      rowsHTML += `<tr class="spec-section-row"><td colspan="7"><span class="spec-section-badge">${h(label)}</span></td></tr>`;
+    }
+    groups[key].forEach(s => {
+      rowsHTML += `
+        <tr>
+          <td class="truncate" style="font-family:'DM Mono',monospace;font-size:12px">${h(s.num)}</td>
+          <td class="truncate">
+            <div class="cell-primary">${h(s.desc)}</div>
+            <div class="cell-secondary">${h(s.project)}</div>
+          </td>
+          <td class="truncate" style="font-size:12px;color:var(--text-mid)">${h(s.spec)||'—'}</td>
+          <td>${fmt(s.date)}</td>
+          <td>${badge(s.status)}</td>
+          <td class="truncate" style="font-size:12px">${h(s.bic)||'—'}</td>
+          <td style="white-space:nowrap"><button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
+        </tr>`;
+    });
+  });
+  body.innerHTML = `<div class="table-wrap"><table>${thead}<tbody>${rowsHTML}</tbody></table></div>`;
 }
 
 function renderRentalArchive(){
@@ -4633,7 +4386,7 @@ function selectFDOptionEl(ddId, el){
 
 function populateProjectSelects(){
   // Form selects in modals
-  const formIds=['rfi-project','sub-project','ren-project','dr-project','proc-project','mat-project'];
+  const formIds=['rfi-project','sub-project','ren-project','proc-project','mat-project'];
   formIds.forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
@@ -4646,7 +4399,6 @@ function populateProjectSelects(){
     {id:'fd-rfi-project',defLabel:'All Projects'},
     {id:'fd-sub-project',defLabel:'All Projects'},
     {id:'fd-ren-project',defLabel:'All Projects'},
-    {id:'fd-daily-project',defLabel:'All Projects'},
     {id:'fd-proc-project',defLabel:'All Projects'},
     {id:'fd-mat-project',defLabel:'All Projects'},
   ].forEach(({id,defLabel})=>{
@@ -4702,6 +4454,7 @@ let _ovStatsAnimated = false;
 
 let _ovJobsFilter = 'all';
 let _ovAttFilter = 'all';
+let _ovMsTimeFilter = 'upcoming';
 
 function _ovDateLocal(s){
   if(!s) return null;
@@ -5088,7 +4841,7 @@ function renderOvThisWeek(){
 function renderOvActivity(){
   const wrap = document.getElementById('ov-activity-wrap');
   if(!wrap) return;
-  const acts = (Array.isArray(window.activityLog) ? window.activityLog : []).slice(0, 5);
+  const acts = (Array.isArray(activityLog) ? activityLog : []).slice(0, 5);
 
   let body;
   if(acts.length === 0){
@@ -5100,7 +4853,6 @@ function renderOvActivity(){
         t.indexOf('rfi') >= 0 ? '' :
         t.indexOf('submittal') >= 0 ? 'amber' :
         t.indexOf('procurement') >= 0 ? 'red' :
-        t.indexOf('daily') >= 0 ? 'blue' :
         'grey'
       );
       const when = (function(ts){
@@ -5121,7 +4873,7 @@ function renderOvActivity(){
           '<div class="ov-act-pip '+pip+'"></div>'+
           '<div>'+
             '<div class="ov-act-txt">'+h(labelText)+'</div>'+
-            '<div class="ov-act-meta">'+h(when)+(a.username?' · '+h(a.username):'')+'</div>'+
+            '<div class="ov-act-meta">'+h(when)+(a.user?' · '+h(a.user):'')+'</div>'+
           '</div>'+
         '</div>'
       );
@@ -5134,7 +4886,7 @@ function renderOvActivity(){
         '<div class="ov-side-meta">last 5</div>'+
       '</div>'+
       body+
-      '<button class="ov-act-view" onclick="toggleNotifPanel(document.getElementById(\'header-bell-btn\'))">View all activity →</button>'+
+      '<button class="ov-act-view" onclick="event.stopPropagation(); toggleNotifPanel(document.getElementById(\'header-bell-btn\'))">View all activity →</button>'+
     '</div>'
   );
 }
@@ -5312,12 +5064,129 @@ function setOvJobsFilter(f){
   renderOvJobs();
 }
 
+function setOvMsFilter(f){
+  _ovMsTimeFilter = f;
+  const bar = document.getElementById('ov-ms-filter');
+  if(bar){ bar.querySelectorAll('.ov-sf-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-filter')===f);
+  }); }
+  renderOvMilestones();
+}
+
+function renderOvMilestones(){
+  const wrap = document.getElementById('ov-milestones-wrap');
+  if(!wrap) return;
+
+  // Populate project filter menu (same pattern as the legacy milestone table)
+  const menu = document.getElementById('fd-ovms-project-menu');
+  if(menu){
+    const names = [...new Set((milestones||[]).map(m => {
+      const p = (projects||[]).find(x => String(x.id)===String(m.project_id));
+      return p ? p.name : 'Unknown';
+    }))].sort();
+    menu.innerHTML =
+      '<div class="filter-dd-opt opt-all" data-val="" data-label="All Projects" onclick="selectFDOptionEl(\'fd-ovms-project\',this)">All Projects</div>'
+      + names.map(n => `<div class="filter-dd-opt" data-val="${h(n)}" data-label="${h(n)}" onclick="selectFDOptionEl('fd-ovms-project',this)">${h(n)}</div>`).join('');
+  }
+
+  const projFilter = getFDValue('fd-ovms-project');
+  const visNames = new Set(_ovVisibleProjects().map(p => p.name));
+
+  let rows = (milestones||[]).map(m => {
+    const p = (projects||[]).find(x => String(x.id)===String(m.project_id));
+    return Object.assign({}, m, { projectName: p ? p.name : 'Unknown' });
+  }).filter(m => visNames.has(m.projectName));
+
+  if(projFilter) rows = rows.filter(r => r.projectName === projFilter);
+
+  // Time partition (upcoming includes today and TBD; past is strictly negative days)
+  const upcoming = rows.filter(r => {
+    if(r.is_tbd) return true;
+    const d = milestoneDaysDiff(r.milestone_date);
+    return d === null || d >= 0;
+  });
+  const past = rows.filter(r => {
+    if(r.is_tbd) return false;
+    const d = milestoneDaysDiff(r.milestone_date);
+    return d !== null && d < 0;
+  });
+
+  let shown;
+  if(_ovMsTimeFilter === 'past') shown = past;
+  else if(_ovMsTimeFilter === 'all') shown = rows;
+  else shown = upcoming;
+
+  shown.sort((a,b) => {
+    if(!a.milestone_date && !b.milestone_date) return 0;
+    if(!a.milestone_date) return 1;
+    if(!b.milestone_date) return -1;
+    return a.milestone_date.localeCompare(b.milestone_date);
+  });
+
+  const countEl = document.getElementById('ov-ms-count');
+  if(countEl) countEl.textContent = `${upcoming.length} upcoming · ${past.length} past`;
+
+  const hasEditNew = (typeof _msEditId !== 'undefined' && _msEditId === 'new');
+  const headHTML =
+    '<table class="ov-ms-table"><thead><tr>'+
+      '<th style="width:26%">Milestone</th>'+
+      '<th style="width:20%">Project</th>'+
+      '<th style="width:110px">Start</th>'+
+      '<th style="width:110px">End</th>'+
+      '<th style="width:120px">Type</th>'+
+      '<th style="width:90px">Days</th>'+
+      '<th style="width:110px">Actions</th>'+
+    '</tr></thead><tbody>';
+
+  if(!shown.length && !hasEditNew){
+    wrap.innerHTML = headHTML +
+      '<tr><td colspan="7" class="empty"><div class="empty-icon">📅</div>No milestones in this view.</td></tr>'+
+      '</tbody></table>';
+    return;
+  }
+
+  let body = '';
+  if(hasEditNew) body += _msEditRow(null);
+
+  body += shown.map(m => {
+    if(typeof _msEditId !== 'undefined' && _msEditId === m.id) return _msEditRow(m);
+    const startStr = m.milestone_date ? fmt(m.milestone_date) : '—';
+    const endStr = m.is_tbd ? 'TBD' : (m.milestone_end_date ? fmt(m.milestone_end_date) : '—');
+    const diff = m.is_tbd ? null : milestoneDaysDiff(m.milestone_date);
+    let daysChip = '<span style="color:var(--text-muted);font-size:12px">—</span>';
+    if(m.is_tbd){
+      daysChip = '<span class="ov-ms-chip ov-ms-chip-muted">TBD</span>';
+    } else if(diff !== null){
+      const cls = diff < 0 ? 'ov-ms-chip-late' : (diff <= 3 ? 'ov-ms-chip-soon' : 'ov-ms-chip-ok');
+      const label = diff < 0 ? `${Math.abs(diff)}d overdue` : (diff === 0 ? 'Today' : `${diff}d`);
+      daysChip = `<span class="ov-ms-chip ${cls}">${h(label)}</span>`;
+    }
+    return `<tr class="data-row">
+      <td><div class="cell-primary">${h(m.name||'(untitled)')}</div></td>
+      <td>${h(m.projectName)}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${startStr}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${endStr}</td>
+      <td>${badge(_msTypeLabel(m.type))}</td>
+      <td>${daysChip}</td>
+      <td>
+        <div class="row-actions" style="opacity:1">
+          <button type="button" class="btn-icon" aria-label="Edit" onclick="editMilestoneInline(${m.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteMilestoneInline(${m.id})" title="Delete">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = headHTML + body + '</tbody></table>';
+}
+
 function renderOverview(){
   try { renderOvGreeting();    } catch(e){ console.error('renderOvGreeting', e); }
   try { renderOvStatStrip();   } catch(e){ console.error('renderOvStatStrip', e); }
   try { renderOvAttention();   } catch(e){ console.error('renderOvAttention', e); }
   try { renderOvThisWeek();    } catch(e){ console.error('renderOvThisWeek', e); }
   try { renderOvActivity();    } catch(e){ console.error('renderOvActivity', e); }
+  try { renderOvMilestones();  } catch(e){ console.error('renderOvMilestones', e); }
   try { renderOvJobs();        } catch(e){ console.error('renderOvJobs', e); }
 }
 </script>
@@ -5330,74 +5199,20 @@ function _msTypeLabel(t){return({'ntp':'NTP','substantial_completion':'Substanti
 function _msTypeOpts(sel){return['custom','ntp','substantial_completion','final_completion','phase'].map(t=>`<option value="${t}"${t===sel?' selected':''}>${_msTypeLabel(t)}</option>`).join('');}
 function _msProjOpts(sel){return'<option value="">Select project</option>'+projects.map(p=>`<option value="${p.id}"${String(p.id)===String(sel)?' selected':''}>${h(p.name)}</option>`).join('');}
 
-function renderMilestoneTable(){
-  const body=document.getElementById('milestone-body');
-  if(!body) return;
-
-  const menu=document.getElementById('fd-ms-project-menu');
-  if(menu){
-    const names=[...new Set(milestones.map(m=>{
-      const p=projects.find(x=>String(x.id)===String(m.project_id));
-      return p?p.name:'Unknown';
-    }))].sort();
-    menu.innerHTML='<div class="filter-dd-opt opt-all" data-val="" data-label="All Projects" onclick="selectFDOptionEl(\'fd-ms-project\',this)">All Projects</div>'
-      +names.map(n=>`<div class="filter-dd-opt" data-val="${h(n)}" data-label="${h(n)}" onclick="selectFDOptionEl('fd-ms-project',this)">${h(n)}</div>`).join('');
-  }
-
-  const proj=getFDValue('fd-ms-project');
-
-  let rows=milestones.map(m=>{
-    const p=projects.find(x=>String(x.id)===String(m.project_id));
-    return {...m, projectName: p?p.name:'Unknown'};
-  });
-
-  if(proj) rows=rows.filter(r=>r.projectName===proj);
-
-  rows.sort((a,b)=>{
-    if(!a.milestone_date&&!b.milestone_date) return 0;
-    if(!a.milestone_date) return 1;
-    if(!b.milestone_date) return -1;
-    return a.milestone_date.localeCompare(b.milestone_date);
-  });
-
-  if(!rows.length && _msEditId!=='new'){
-    body.innerHTML='<tr><td colspan="6" class="empty"><div class="empty-icon">📅</div>No milestones found.</td></tr>';
-    return;
-  }
-
-  let html='';
-  if(_msEditId==='new') html+=_msEditRow(null);
-  html+=rows.map(m=>{
-    if(_msEditId===m.id) return _msEditRow(m);
-    const startStr=m.milestone_date?fmt(m.milestone_date):'—';
-    const endStr=m.is_tbd?'TBD':(m.milestone_end_date?fmt(m.milestone_end_date):'—');
-    return `<tr class="data-row">
-      <td>${h(m.name||'')}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px">${startStr}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px">${endStr}</td>
-      <td>${badge(_msTypeLabel(m.type))}</td>
-      <td>${h(m.projectName)}</td>
-      <td>
-        <div class="row-actions" style="opacity:1">
-          <button type="button" class="btn-icon" aria-label="Edit" onclick="editMilestoneInline(${m.id})" title="Edit">✎</button>
-          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteMilestoneInline(${m.id})" title="Delete">✕</button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-  body.innerHTML=html;
+function _msRender(){
+  if(typeof renderOvMilestones === 'function') renderOvMilestones();
 }
 
 function _msEditRow(m){
   const isTbd=!!m?.is_tbd;
   return `<tr class="data-row" style="background:var(--surface-hover)">
     <td><input type="text" id="ms-ed-name" value="${h(m?.name||'')}" placeholder="Milestone name" style="width:100%;padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
-    <td><input type="date" id="ms-ed-date" value="${m?.milestone_date||''}" style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
-    <td><input type="date" id="ms-ed-end-date" value="${m?.milestone_end_date||''}" ${isTbd?'disabled':''} style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
-    <td><select id="ms-ed-type" style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit">${_msTypeOpts(m?.type||'custom')}</select></td>
-    <td><select id="ms-ed-project" style="padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit">${_msProjOpts(m?.project_id)}</select></td>
+    <td><select id="ms-ed-project" style="width:100%;padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit">${_msProjOpts(m?.project_id)}</select></td>
+    <td><input type="date" id="ms-ed-date" value="${m?.milestone_date||''}" style="width:100%;padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
+    <td><input type="date" id="ms-ed-end-date" value="${m?.milestone_end_date||''}" ${isTbd?'disabled':''} style="width:100%;padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit"></td>
+    <td><select id="ms-ed-type" style="width:100%;padding:4px 6px;font-size:13px;border:1px solid var(--border);border-radius:4px;font-family:inherit">${_msTypeOpts(m?.type||'custom')}</select></td>
+    <td><label style="font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px"><input type="checkbox" id="ms-ed-tbd" ${isTbd?'checked':''} onchange="_msToggleTbd(this)" style="width:14px;height:14px"> TBD</label></td>
     <td style="white-space:nowrap">
-      <label style="font-size:13px;font-weight:600;margin-right:8px;cursor:pointer;display:inline-flex;align-items:center;gap:4px"><input type="checkbox" id="ms-ed-tbd" ${isTbd?'checked':''} onchange="_msToggleTbd(this)" style="width:16px;height:16px"> TBD</label>
       <button class="btn-add" onclick="saveMilestoneInline(${m?.id||'null'})" style="font-size:11px;padding:4px 10px">Save</button>
       <button class="btn-sm" onclick="cancelMilestoneInline()" style="font-size:11px;padding:4px 10px">Cancel</button>
     </td>
@@ -5411,8 +5226,8 @@ function _msToggleTbd(cb){
 }
 
 function _msInitEditRow(){
-  renderMilestoneTable();
-  initDatePickers();
+  _msRender();
+  if(typeof initDatePickers === 'function') initDatePickers();
   document.getElementById('ms-ed-name')?.focus();
 }
 
@@ -5430,7 +5245,7 @@ function editMilestoneInline(id){
 
 function cancelMilestoneInline(){
   _msEditId=null;
-  renderMilestoneTable();
+  _msRender();
 }
 
 async function saveMilestoneInline(id){
@@ -5461,7 +5276,7 @@ async function saveMilestoneInline(id){
   if(!sb) localStorage.setItem('apm_milestones',JSON.stringify(milestones));
   _msEditId=null;
   showToast(id?'Milestone updated.':'Milestone added.','success');
-  renderMilestoneTable();
+  _msRender();
 }
 
 async function deleteMilestoneInline(id){
@@ -5474,7 +5289,7 @@ async function deleteMilestoneInline(id){
   if(!sb) localStorage.setItem('apm_milestones',JSON.stringify(milestones));
   logActivity('milestone','deleted',m?.name||'','Milestone deleted');
   showToast('Milestone deleted.','success');
-  renderMilestoneTable();
+  _msRender();
 }
 </script>
 <!-- ── materials.js ── -->
@@ -6657,14 +6472,17 @@ async function saveRFI(){
   const num=val('rfi-num'),subject=val('rfi-subject');if(!num||!subject)return alert('RFI # and subject required.');
   const editId=document.getElementById('rfi-edit-id').value;
   const data={num,project:val('rfi-project'),subject,submitted:val('rfi-submitted'),due:val('rfi-due'),status:val('rfi-status'),priority:val('rfi-priority'),description:val('rfi-desc'),spec_section:getSpecSectionFromModal()};
-  // Stamp / clear closed_at on transition in and out of the Closed terminal state.
-  // Fresh stamp when transitioning INTO Closed (or if the existing row was Closed
-  // but had no timestamp — pre-migration data). Clear otherwise to reset the clock.
+  // closed_at = timestamp when the RFI entered the Recently Approved bucket.
+  // Stamp on transition → Answered. Manual → Closed leaves the stamp alone
+  // (already set if they went via Answered, null if they skipped straight to Closed —
+  // either way ends up in Archive). Transition back to Open/Under Review clears.
   const existingRFI = editId ? rfis.find(x=>x.id===parseInt(editId)) : null;
-  const nowClosed = data.status === 'Closed';
-  if(nowClosed && (!existingRFI || existingRFI.status !== 'Closed' || !existingRFI.closed_at)){
-    data.closed_at = new Date().toISOString();
-  } else if(!nowClosed){
+  if(data.status === 'Answered'){
+    const wasAnswered = existingRFI && existingRFI.status === 'Answered';
+    if(!wasAnswered || !existingRFI.closed_at){
+      data.closed_at = new Date().toISOString();
+    }
+  } else if(data.status !== 'Closed'){
     data.closed_at = null;
   }
   if(editId){
@@ -6750,10 +6568,10 @@ async function saveRental(){
 async function deleteItem(store,id){
   if(!getPerms().canDelete){ alert('You do not have permission to delete records.'); return; }
   if(!confirm('Delete this record? This cannot be undone.')) return;
-  const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental','daily':'daily_reports','materials':'materials','vendors':'vendors','procurement':'procurement'};
-  const _delArr=store==='projects'?projects:store==='rfis'?rfis:store==='submittals'?submittals:store==='daily'?dailyReports:store==='materials'?materials:store==='vendors'?vendors:store==='procurement'?procurement:rental;
+  const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental','materials':'materials','vendors':'vendors','procurement':'procurement'};
+  const _delArr=store==='projects'?projects:store==='rfis'?rfis:store==='submittals'?submittals:store==='materials'?materials:store==='vendors'?vendors:store==='procurement'?procurement:rental;
   const _delItem=_delArr.find(x=>x.id===id);
-  const _delLabel=_delItem?(_delItem.name||_delItem.subject||_delItem.num||(_delItem.report_date?'Report '+fmt(_delItem.report_date):'Record')):'Record';
+  const _delLabel=_delItem?(_delItem.name||_delItem.subject||_delItem.num||'Record'):'Record';
   if(tableMap[store]){
     const res=await sbDelete(tableMap[store],id);
     if(res.error){ showToast('Failed to delete record: '+res.error.message, 'error'); return; }
@@ -6762,7 +6580,6 @@ async function deleteItem(store,id){
   else if(store==='rfis')rfis=rfis.filter(x=>x.id!==id);
   else if(store==='submittals')submittals=submittals.filter(x=>x.id!==id);
   else if(store==='rental')rental=rental.filter(x=>x.id!==id);
-  else if(store==='daily')dailyReports=dailyReports.filter(x=>x.id!==id);
   else if(store==='materials')materials=materials.filter(x=>x.id!==id);
   else if(store==='vendors')vendors=vendors.filter(x=>x.id!==id);
   else if(store==='procurement')procurement=procurement.filter(x=>x.id!==id);
@@ -6848,6 +6665,11 @@ async function generateSummaryPDF(){
   await document.fonts.ready;
 
   const fmtD=d=>{if(!d)return'—';const p=d.split('-');return`${p[1]}/${p[2]}/${p[0]}`;};
+  // Recently Approved / Active bucket predicates (mirror UI logic in 11_js_render.html)
+  const isRfiRecent = r => r.status === 'Answered' && _withinRecentWindow(r.closed_at);
+  const isRfiActive = r => !['Answered','Closed'].includes(r.status);
+  const isSubRecent = s => ['Approved','Approved as Noted'].includes(s.status) && _withinRecentWindow(s.approved_at);
+  const isSubActive = s => !['Approved','Approved as Noted','Rejected'].includes(s.status);
   const todayStr=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const preparedBy=(typeof currentUser!=='undefined'&&currentUser)?(currentUser.displayName||currentUser.username):'APM';
 
@@ -6923,25 +6745,6 @@ async function generateSummaryPDF(){
     doc.text(c.label.toUpperCase(),cx+(cw-3)/2,y+18,{align:'center'});
   });
   y+=28;
-
-  // Health indicators
-  y=secTitle('OVERALL PROJECT HEALTH',y);
-  const maxPerRow=4; const hcw=(pw-20)/Math.min(filtered.length,maxPerRow);
-  filtered.forEach((p,i)=>{
-    if(i>0&&i%maxPerRow===0) y+=32;
-    const hlth=projectHealth(p);
-    const pct=calcPct(p.start_date||p.start,p.end_date||p.end,p.status);
-    const cx=10+(i%maxPerRow)*hcw;
-    doc.setFillColor(...hlth.bg); doc.roundedRect(cx,y,hcw-4,28,2,2,'F');
-    doc.setFillColor(...hlth.color); doc.rect(cx,y,hcw-4,2,'F');
-    doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
-    doc.text(p.name.substring(0,22),cx+(hcw-4)/2,y+9,{align:'center'});
-    doc.setFontSize(13); doc.setFont('helvetica','bold'); doc.setTextColor(...hlth.color);
-    doc.text(hlth.label,cx+(hcw-4)/2,y+19,{align:'center'});
-    doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
-    doc.text(`${pct}% complete`,cx+(hcw-4)/2,y+25,{align:'center'});
-  });
-  y+=36;
 
   const overdueRFIs=rfis.filter(r=>{
     if(['Answered','Closed'].includes(r.status)) return false;
@@ -7066,8 +6869,14 @@ async function generateSummaryPDF(){
 
     const pct=calcPct(p.start_date||p.start,p.end_date||p.end,p.status);
     const hlth=projectHealth(p);
-    const projRFIs=rfis.filter(r=>r.project===p.name);
-    const projSubs=submittals.filter(s=>s.project===p.name);
+    const projRFIsAll  = rfis.filter(r=>r.project===p.name);
+    const projRFIs     = projRFIsAll.filter(isRfiActive);
+    const projRFIsRecent = projRFIsAll.filter(isRfiRecent)
+                                      .sort((a,b)=>(b.closed_at||'').localeCompare(a.closed_at||''));
+    const projSubsAll  = submittals.filter(s=>s.project===p.name);
+    const projSubs     = projSubsAll.filter(isSubActive);
+    const projSubsRecent = projSubsAll.filter(isSubRecent)
+                                      .sort((a,b)=>(b.approved_at||'').localeCompare(a.approved_at||''));
     const projRental=rental.filter(r=>r.project===p.name);
     const projProc=procurement.filter(r=>r.project===p.name);
     const pc=openCounts(p.name);
@@ -7078,15 +6887,12 @@ async function generateSummaryPDF(){
 
     // Title card
     doc.setFillColor(...lightGray); doc.roundedRect(10,y,pw-20,24,3,3,'F');
-    doc.setFillColor(...hlth.color); doc.rect(10,y,4,24,'F');
+    doc.setFillColor(...red); doc.rect(10,y,4,24,'F');
     doc.setFontSize(15); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
     doc.text(p.name||'',17,y+10);
     doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
     const meta=[p.client&&`Client: ${p.client}`,p.number&&`#${p.number}`,p.start&&`Start: ${fmtD(p.start_date||p.start)}`,p.end&&`End: ${fmtD(p.end_date||p.end)}`].filter(Boolean).join('   |   ');
     doc.text(meta,17,y+18);
-    doc.setFillColor(...hlth.bg); doc.roundedRect(pw-50,y+5,38,13,2,2,'F');
-    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...hlth.color);
-    doc.text(hlth.label,pw-31,y+13.5,{align:'center'});
     y+=32;
 
     // Stat cards
@@ -7179,77 +6985,119 @@ async function generateSummaryPDF(){
       }
     };
 
+    // Recently Approved sub-block: flat table with green accent, rendered under the
+    // active RFI/Submittal table. No-op when `rows` is empty so project pages stay tight.
+    const renderRecentBlock = (title, rows, cols, rowMapper, statusCol, dueCol) => {
+      if(!rows.length) return;
+      if(y > ph - 45){ drawFooter(`${p.name}  |  Page ${pi+2}`); doc.addPage(); drawHeader(`Project Status  —  ${pi+1} of ${filtered.length}`); y=36; }
+      doc.setFillColor(21,128,61); doc.rect(10,y,pw-20,0.8,'F');
+      doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(21,128,61);
+      doc.text(`${title} — past ${RECENTLY_APPROVED_DAYS} days`, 12, y+6);
+      doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(...darkGray);
+      doc.text(`${rows.length} item${rows.length===1?'':'s'}`, pw-12, y+6, {align:'right'});
+      doc.autoTable({
+        head:[cols], body: rows.map(rowMapper),
+        startY: y+9, theme:'grid',
+        headStyles:{fillColor:[21,128,61],textColor:white,fontStyle:'bold',fontSize:8,cellPadding:{top:2.5,bottom:2.5,left:3,right:3}},
+        bodyStyles:{fontSize:8,textColor:[30,30,30],cellPadding:{top:2.5,bottom:2.5,left:3,right:3}},
+        alternateRowStyles:{fillColor:[240,253,244]},
+        styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
+        margin:{left:10,right:10},
+        rowPageBreak:'avoid',
+        didParseCell:(data)=>cellColor(data, statusCol, -1, dueCol),
+      });
+      y = doc.lastAutoTable.finalY + 7;
+    };
+
     if(!projRFIs.length){
       doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...midGray);
-      doc.text('No RFIs logged for this project.',10,y); y+=10;
+      doc.text(projRFIsRecent.length ? 'No active RFIs.' : 'No RFIs logged for this project.',10,y); y+=10;
     } else {
       const rfiBySpec={};
       projRFIs.forEach(r=>{const k=r.spec_section||'General';if(!rfiBySpec[k])rfiBySpec[k]=[];rfiBySpec[k].push(r);});
       const rfiSpecs=Object.keys(rfiBySpec).sort((a,b)=>a==='General'?1:b==='General'?-1:a.localeCompare(b));
       let rfiFirst=true;
       rfiSpecs.forEach(spec=>{
-        const sy=rfiFirst?y:(doc.lastAutoTable.finalY+4);
+        const sy=rfiFirst?y:(doc.lastAutoTable.finalY+2);
         if(sy>ph-30){drawFooter(`${p.name}  |  Page ${pi+2}`);doc.addPage();drawHeader(`Project Status  —  ${pi+1} of ${filtered.length}`);y=36;}
         if(!rfiFirst){doc.setFillColor(...red); doc.rect(10,sy,pw-20,0.8,'F');}
-        doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
-        doc.text(spec,12,sy+6);
-        const dataY=sy+9;
+        doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+        doc.text(spec,12,sy+4);
+        const dataY=sy+6;
         doc.autoTable({
           head:rfiFirst?[['RFI #','Subject','Submitted','Due','Status','Priority']]:undefined,
           showHead:rfiFirst,
           body:rfiBySpec[spec].map(r=>[r.num||'',r.subject||'',fmtD(r.submitted),fmtD(r.due),r.status||'',r.priority||'']),
           startY:dataY,
           theme:'grid',
-          headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:4,right:4}},
-          bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:4,right:4}},
+          headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8,cellPadding:{top:2.5,bottom:2.5,left:3,right:3}},
+          bodyStyles:{fontSize:8,textColor:[30,30,30],cellPadding:{top:2.5,bottom:2.5,left:3,right:3}},
           alternateRowStyles:{fillColor:[249,248,248]},
           styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
-          columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:24},3:{cellWidth:24},4:{cellWidth:28},5:{cellWidth:22}},
+          columnStyles:{0:{cellWidth:15},1:{cellWidth:'auto'},2:{cellWidth:20},3:{cellWidth:20},4:{cellWidth:24},5:{cellWidth:18}},
           margin:{left:10,right:10},
           rowPageBreak:'avoid',
           didParseCell:(data)=>cellColor(data,4,5,3),
         });
         rfiFirst=false;
       });
-      y=doc.lastAutoTable.finalY+10;
+      y=doc.lastAutoTable.finalY+5;
     }
+
+    renderRecentBlock(
+      'Recently Approved RFIs',
+      projRFIsRecent,
+      ['RFI #','Subject','Spec','Submitted','Approved','Status'],
+      r => [r.num||'', r.subject||'', r.spec_section||'General',
+            fmtD(r.submitted), _recentDaysAgoLabel(r.closed_at), r.status||''],
+      5, -1
+    );
 
     // Submittal Table
     y=secTitle('Submittals',y);
     if(!projSubs.length){
       doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...midGray);
-      doc.text('No submittals logged for this project.',10,y); y+=10;
+      doc.text(projSubsRecent.length ? 'No active submittals.' : 'No submittals logged for this project.',10,y); y+=10;
     } else {
       const subBySpec={};
       projSubs.forEach(s=>{const k=s.spec||'General';if(!subBySpec[k])subBySpec[k]=[];subBySpec[k].push(s);});
       const subSpecs=Object.keys(subBySpec).sort((a,b)=>a==='General'?1:b==='General'?-1:a.localeCompare(b));
       let subFirst=true;
       subSpecs.forEach(spec=>{
-        const sy=subFirst?y:(doc.lastAutoTable.finalY+4);
+        const sy=subFirst?y:(doc.lastAutoTable.finalY+2);
         if(sy>ph-30){drawFooter(`${p.name}  |  Page ${pi+2}`);doc.addPage();drawHeader(`Project Status  —  ${pi+1} of ${filtered.length}`);y=36;}
         if(!subFirst){doc.setFillColor(...red); doc.rect(10,sy,pw-20,0.8,'F');}
-        doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
-        doc.text(spec,12,sy+6);
-        const dataY=sy+9;
+        doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+        doc.text(spec,12,sy+4);
+        const dataY=sy+6;
         doc.autoTable({
           head:subFirst?[['Sub #','Description','Submitted','Due','Status','Ball in Court']]:undefined,
           showHead:subFirst,
           body:subBySpec[spec].map(s=>[s.num||'',s.desc||s.description||'',fmtD(s.submitted_date||s.date),fmtD(s.need_date),s.status||'',s.bic||'']),
           startY:dataY,
           theme:'grid',
-          headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8.5,cellPadding:{top:4,bottom:4,left:4,right:4}},
-          bodyStyles:{fontSize:8.5,textColor:[30,30,30],cellPadding:{top:4,bottom:4,left:4,right:4}},
+          headStyles:{fillColor:black,textColor:white,fontStyle:'bold',fontSize:8,cellPadding:{top:2.5,bottom:2.5,left:3,right:3}},
+          bodyStyles:{fontSize:8,textColor:[30,30,30],cellPadding:{top:2.5,bottom:2.5,left:3,right:3}},
           alternateRowStyles:{fillColor:[249,248,248]},
           styles:{lineColor:borderGray,lineWidth:0.35,overflow:'linebreak'},
-          columnStyles:{0:{cellWidth:18},1:{cellWidth:'auto'},2:{cellWidth:24},3:{cellWidth:24},4:{cellWidth:28},5:{cellWidth:28}},
+          columnStyles:{0:{cellWidth:15},1:{cellWidth:'auto'},2:{cellWidth:20},3:{cellWidth:20},4:{cellWidth:24},5:{cellWidth:22}},
           margin:{left:10,right:10},
           rowPageBreak:'avoid',
           didParseCell:(data)=>cellColor(data,4,undefined,3),
         });
         subFirst=false;
       });
-      y=doc.lastAutoTable.finalY+10;
+      y=doc.lastAutoTable.finalY+5;
     }
+
+    renderRecentBlock(
+      'Recently Approved Submittals',
+      projSubsRecent,
+      ['Sub #','Description','Spec','Submitted','Approved','Status'],
+      s => [s.num||'', s.desc||s.description||'', s.spec||'General',
+            fmtD(s.submitted_date||s.date), _recentDaysAgoLabel(s.approved_at), s.status||''],
+      5, -1
+    );
 
     // Rental Table
     if(projRental.length){
@@ -7313,193 +7161,6 @@ async function generateSummaryPDF(){
   drawFooter(`Page ${filtered.length+2}  |  Sign-Off`);
 
   doc.save('Michels_Project_Summary_Report.pdf');
-}
-</script>
-
-<!-- ── daily.js ── -->
-<script>
-// Daily Field Report CRUD, render, and filter logic
-
-function weatherBadge(w){
-  if(!w) return '&mdash;';
-  return badge(w);
-}
-
-function renderDailyReports(){
-  const body = document.getElementById('daily-body');
-  if(!body) return;
-
-  const txt  = (document.getElementById('daily-filter-text')?.value||'').toLowerCase();
-  const proj = getFDValue('fd-daily-project');
-  const from = document.getElementById('daily-filter-from')?.value||'';
-  const to   = document.getElementById('daily-filter-to')?.value||'';
-
-  if(!dailyReports.length){
-    body.innerHTML='<tr><td colspan="8" class="empty"><div class="empty-icon">📋</div>No daily reports yet — click &ldquo;+ New Report&rdquo; to log today&rsquo;s field activity.</td></tr>';
-    return;
-  }
-
-  let rows = [...dailyReports].sort((a,b)=>(b.report_date||'').localeCompare(a.report_date||''));
-
-  if(proj) rows = rows.filter(r=>r.project===proj);
-  if(from) rows = rows.filter(r=>r.report_date >= from);
-  if(to)   rows = rows.filter(r=>r.report_date <= to);
-  if(txt)  rows = rows.filter(r=>{
-    return (r.project||'').toLowerCase().includes(txt)
-      || (r.work_performed||'').toLowerCase().includes(txt)
-      || (r.issues_notes||'').toLowerCase().includes(txt)
-      || (r.equipment_used||'').toLowerCase().includes(txt);
-  });
-
-  if(!rows.length){
-    body.innerHTML='<tr><td colspan="8" class="empty">No daily reports match the current filters.</td></tr>';
-    return;
-  }
-
-  body.innerHTML = rows.map(r=>{
-    const summary = (r.work_performed||'').split('\n')[0].slice(0,60) + ((r.work_performed||'').length>60?'…':'');
-    const hasTemp = (r.temp_high!=null) || (r.temp_low!=null);
-    const tempStr = hasTemp
-      ? [(r.temp_high!=null?r.temp_high+'°':''), (r.temp_low!=null?r.temp_low+'°':'')].filter(Boolean).join(' / ')
-      : '&mdash;';
-    const issueFlag = r.issues_notes
-      ? `<span class="status badge-amber" style="margin-left:4px;font-size:10px;padding:1px 5px" title="Has issues/notes">!</span>`
-      : '';
-    return `
-    <tr id="dr-row-${r.id}" class="data-row" onclick="toggleDrDetail(${r.id})">
-      <td style="font-family:'DM Mono',monospace;font-size:12px;white-space:nowrap">
-        <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>${fmt(r.report_date)}
-      </td>
-      <td class="truncate">${h(r.project)||'&mdash;'}</td>
-      <td>${weatherBadge(r.weather)}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:11px">${tempStr}</td>
-      <td style="text-align:center;font-weight:600">${r.crew_count??'&mdash;'}</td>
-      <td class="truncate"><span class="cell-primary">${h(summary)}</span>${issueFlag}</td>
-      <td class="truncate"><span class="cell-secondary">${h(r.created_by||'')}</span></td>
-      <td onclick="event.stopPropagation()" style="white-space:nowrap">
-        <div class="row-actions">
-          <button type="button" class="btn-icon" aria-label="Edit" onclick="editDailyReport(${r.id})" title="Edit">✎</button>
-          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteItem('daily',${r.id})" title="Delete">✕</button>
-        </div>
-      </td>
-    </tr>
-    <tr id="dr-detail-${r.id}" class="detail-row" style="display:none">
-      <td colspan="8">
-        <div class="detail-panel">
-          <div class="detail-grid">
-            ${r.weather   ? `<div><div class="detail-field-label">Weather</div><div class="detail-field-value">${weatherBadge(r.weather)} ${r.temp_high!=null?r.temp_high+'°F high':''}${r.temp_low!=null?' / '+r.temp_low+'°F low':''}</div></div>` : ''}
-            ${r.crew_count != null ? `<div><div class="detail-field-label">Crew Count</div><div class="detail-field-value">${r.crew_count} workers</div></div>` : ''}
-            ${r.visitors  ? `<div><div class="detail-field-label">Visitors / Inspections</div><div class="detail-field-value">${h(r.visitors)}</div></div>` : ''}
-          </div>
-          ${r.work_performed ? `<div class="detail-field-label">Work Performed</div><div class="detail-desc-block">${h(r.work_performed)}</div>` : ''}
-          ${r.equipment_used ? `<div class="detail-field-label">Equipment Used</div><div class="detail-desc-block">${h(r.equipment_used)}</div>` : ''}
-          ${r.issues_notes   ? `<div class="detail-field-label">Issues / Notes</div><div class="detail-desc-block detail-desc-block-warn">${h(r.issues_notes)}</div>` : ''}
-          <div class="detail-actions">
-            <button class="btn-sm" onclick="event.stopPropagation();editDailyReport(${r.id})">Edit Report</button>
-            <button class="btn-sm btn-danger" onclick="event.stopPropagation();deleteItem('daily',${r.id})">Delete</button>
-          </div>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-function toggleDrDetail(id){
-  const row    = document.getElementById(`dr-row-${id}`);
-  const detail = document.getElementById(`dr-detail-${id}`);
-  if(!row||!detail) return;
-  const opening = !row.classList.contains('expanded');
-  document.querySelectorAll('[id^="dr-row-"]').forEach(r=>r.classList.remove('expanded'));
-  document.querySelectorAll('[id^="dr-detail-"]').forEach(r=>r.style.display='none');
-  if(opening){ row.classList.add('expanded'); detail.style.display=''; }
-}
-
-function clearDailyFilters(){
-  const t = document.getElementById('daily-filter-text');
-  const f = document.getElementById('daily-filter-from');
-  const to = document.getElementById('daily-filter-to');
-  if(t) t.value=''; if(f) f.value=''; if(to) to.value='';
-  clearFD('fd-daily-project');
-  renderDailyReports();
-}
-
-// ── MODAL RESET ──────────────────────────────────────────
-function resetDailyReportModal(){
-  clearFields(['dr-edit-id','dr-work','dr-equipment','dr-visitors','dr-issues','dr-temp-high','dr-temp-low','dr-crew']);
-  document.getElementById('dr-project').value='';
-  document.getElementById('dr-weather').value='';
-  // Default date to today
-  const today = new Date().toISOString().split('T')[0];
-  const dateEl = document.getElementById('dr-date');
-  if(dateEl){ if(dateEl._flatpickr) dateEl._flatpickr.setDate(today); else dateEl.value=today; }
-  document.getElementById('daily-modal-title').textContent='New Daily Report';
-  document.getElementById('dr-save-btn').textContent='Save Report';
-}
-
-// ── SAVE ─────────────────────────────────────────────────
-async function saveDailyReport(){
-  if(!getPerms().canEdit){ alert('You do not have permission to create or edit daily reports.'); return; }
-  const work = val('dr-work');
-  if(!work) return alert('Work Performed is required.');
-  const project = val('dr-project');
-  if(!project) return alert('Please select a project.');
-  const editId = document.getElementById('dr-edit-id').value;
-  const data = {
-    project,
-    report_date:    val('dr-date') || new Date().toISOString().split('T')[0],
-    weather:        val('dr-weather')||null,
-    temp_high:      document.getElementById('dr-temp-high').value ? parseInt(document.getElementById('dr-temp-high').value) : null,
-    temp_low:       document.getElementById('dr-temp-low').value  ? parseInt(document.getElementById('dr-temp-low').value)  : null,
-    crew_count:     document.getElementById('dr-crew').value      ? parseInt(document.getElementById('dr-crew').value)      : null,
-    work_performed: work,
-    equipment_used: val('dr-equipment')||null,
-    visitors:       val('dr-visitors')||null,
-    issues_notes:   val('dr-issues')||null,
-    created_by:     currentUser?.displayName||currentUser?.username||'',
-  };
-  if(editId){
-    const id = parseInt(editId);
-    const idx = dailyReports.findIndex(x=>x.id===id);
-    if(idx>-1){
-      const res = await sbUpdate('daily_reports', id, data);
-      if(res.error){ showToast('Failed to update report: '+res.error.message, 'error'); return; }
-      dailyReports[idx] = {...dailyReports[idx], ...data};
-    }
-  } else {
-    if(sb){
-      const res = await sb.from('daily_reports').insert(data).select();
-      if(res.error){ showToast('Failed to save report: '+res.error.message, 'error'); return; }
-      if(res.data?.[0]) dailyReports.unshift(res.data[0]);
-    } else {
-      dailyReports.unshift({id:nextId++, ...data});
-    }
-  }
-  resetDailyReportModal();
-  closeModal('daily-modal');
-  saveLocal(); renderAll();
-  showToast(editId ? 'Report updated.' : 'Daily report saved.');
-  logActivity('daily', editId?'updated':'created', `Daily Report — ${data.project} ${fmt(data.report_date)}`, editId?'Report updated':'New daily report filed');
-}
-
-// ── EDIT ─────────────────────────────────────────────────
-function editDailyReport(id){
-  if(!getPerms().canEdit){ alert('You do not have permission to edit daily reports.'); return; }
-  const r = dailyReports.find(x=>x.id===id);
-  if(!r) return;
-  document.getElementById('daily-modal-title').textContent='Edit Daily Report';
-  document.getElementById('dr-save-btn').textContent='Update Report';
-  document.getElementById('dr-edit-id').value=id;
-  document.getElementById('dr-project').value=r.project||'';
-  setDateVal('dr-date', r.report_date||'');
-  document.getElementById('dr-weather').value=r.weather||'';
-  document.getElementById('dr-temp-high').value=r.temp_high!=null?r.temp_high:'';
-  document.getElementById('dr-temp-low').value=r.temp_low!=null?r.temp_low:'';
-  document.getElementById('dr-crew').value=r.crew_count!=null?r.crew_count:'';
-  document.getElementById('dr-work').value=r.work_performed||'';
-  document.getElementById('dr-equipment').value=r.equipment_used||'';
-  document.getElementById('dr-visitors').value=r.visitors||'';
-  document.getElementById('dr-issues').value=r.issues_notes||'';
-  openModal('daily-modal', true);
 }
 </script>
 
@@ -8077,21 +7738,6 @@ function exportToExcel(type, btn){
       'Release Date': r.offsite||r.release_date||'',
       'Status':       r.status||''
     }));
-  } else if(type === 'daily'){
-    filename = 'Daily_Field_Reports.xlsx';
-    data = [...dailyReports].sort((a,b)=>(b.report_date||'').localeCompare(a.report_date||'')).map(r=>({
-      'Date':            r.report_date||'',
-      'Project':         r.project||'',
-      'Weather':         r.weather||'',
-      'High (°F)':       r.temp_high!=null ? r.temp_high : '',
-      'Low (°F)':        r.temp_low!=null  ? r.temp_low  : '',
-      'Crew Count':      r.crew_count!=null ? r.crew_count : '',
-      'Work Performed':  r.work_performed||'',
-      'Equipment Used':  r.equipment_used||'',
-      'Visitors':        r.visitors||'',
-      'Issues / Notes':  r.issues_notes||'',
-      'Reported By':     r.created_by||'',
-    }));
   } else if(type === 'procurement'){
     filename = 'Procurement_Orders.xlsx';
     data = procurement.map(r=>({
@@ -8119,7 +7765,7 @@ function exportToExcel(type, btn){
   ws['!cols'] = colWidths;
 
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, type==='rfi'?'RFI Log':type==='submittal'?'Submittal Log':type==='daily'?'Daily Reports':type==='procurement'?'Procurement Orders':'Rental Equipment');
+  XLSX.utils.book_append_sheet(wb, ws, type==='rfi'?'RFI Log':type==='submittal'?'Submittal Log':type==='procurement'?'Procurement Orders':'Rental Equipment');
 
   // Add metadata sheet
   const meta = XLSX.utils.aoa_to_sheet([
@@ -8503,6 +8149,7 @@ async function loadActivity(){
         }));
         _saveActivity(); // cache for offline fallback
         renderActivity();
+        if(typeof renderOvActivity === 'function') try { renderOvActivity(); } catch(e){}
         updateNotifDot();
         return;
       }
@@ -8514,6 +8161,7 @@ async function loadActivity(){
     activityLog = raw ? JSON.parse(raw) : [];
   } catch(e){ activityLog = []; }
   renderActivity();
+  if(typeof renderOvActivity === 'function') try { renderOvActivity(); } catch(e){}
   updateNotifDot();
 }
 
@@ -8553,6 +8201,7 @@ function logActivity(type, action, label, detail){
   activityLog.unshift(entry);
   _saveActivity();
   renderActivity();
+  if(typeof renderOvActivity === 'function') try { renderOvActivity(); } catch(e){}
   updateNotifDot();
   // Mirror to Supabase for a tamper-proof server-side audit trail.
   // INSERT-only RLS on activity_log means no client can delete or modify records.
