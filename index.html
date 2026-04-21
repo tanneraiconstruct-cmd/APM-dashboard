@@ -24,18 +24,105 @@
   --michels-red:#c8102e;--michels-red-dark:#a00d24;--michels-red-light:#fef2f2;
   --michels-black:#09090b;--michels-dark:#18181b;
   --accent:#c8102e;--accent-light:#fef2f2;
-  --amber:#d97706;--amber-light:#fffbeb;
+  --amber:#d97706;--amber-light:#fffbeb;--amber-dark:#b45309;--amber-soft:#fef3c7;--amber-border:#fcd34d;
   --green:#059669;--green-light:#ecfdf5;
-  --red:#dc2626;--red-light:#fef2f2;
-  --blue-light:#eff6ff;
-  --text:#09090b;--text-mid:#52525b;--text-muted:#71717a;
-  --border:#e4e4e7;--surface:#f4f4f5;--white:#ffffff;
+  --success:#15803d;--success-light:#dcfce7;
+  --red:#dc2626;--red-light:#fef2f2;--red-border:#fca5a5;--red-soft:#fee2e2;
+  --blue-light:#eff6ff;--blue:#1d4ed8;
+  --text:#09090b;--text-mid:#52525b;--text-muted:#71717a;--text-dim:#666;
+  --border:#e4e4e7;--border-hover:#bbb;--border-alt:#e2e0e0;
+  --surface:#f4f4f5;--surface-alt:#edebeb;--surface-hover:#fafafa;
+  --white:#ffffff;
+  --row-hover:#fdf0f2;--row-expanded:#fef7f8;
+  --header-muted:#aaaaaa;
+  --badge-blue-bg:#eef2f7;--badge-blue-fg:#374151;
+  --badge-gray-bg:#f1f5f9;
+  --badge-purple-bg:#f3e8ff;--badge-purple-fg:#7c3aed;
+  --toast-error-bg:#3b1416;--toast-error-border:#7a1d23;--toast-error-bar:#ef4444;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
   --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px;
 }
+
+/* ── DARK THEME ─────────────────────────────────────────
+   Applied via <html data-theme="dark">. Only overrides the
+   generic UI tokens; brand red stays the same, header is
+   already black. Soft status backgrounds flip to dark variants
+   so white-on-light becomes light-on-dark with equal contrast. */
+[data-theme="dark"]{
+  --text:#f4f4f5;--text-mid:#a1a1aa;--text-muted:#71717a;--text-dim:#a1a1aa;
+  --surface:#18181b;--surface-alt:#222226;--surface-hover:#27272a;
+  --white:#0d0d10;
+  --border:#3f3f46;--border-hover:#52525b;--border-alt:#3f3f46;
+  --row-hover:#2a1518;--row-expanded:#2a1a1e;
+  --michels-red-light:#2a1518;
+  --accent-light:#2a1518;
+  --green-light:#0a2e1f;--success-light:#0a2e1f;
+  --amber-light:#2a1f0a;--amber-soft:#2a1f0a;--amber-border:#6b4a20;
+  --red-light:#2a1518;--red-soft:#3a1e22;--red-border:#7a1d23;
+  --blue-light:#0a1a2e;
+  --badge-blue-bg:#1e293b;--badge-blue-fg:#93c5fd;
+  --badge-gray-bg:#262626;
+  --badge-purple-bg:#2a1f3a;--badge-purple-fg:#c4b5fd;
+  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.35);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.45), 0 4px 6px -4px rgba(0,0,0,0.3);
+  --shadow-hover: 0 20px 25px -5px rgba(0,0,0,0.55), 0 8px 10px -6px rgba(0,0,0,0.4);
+}
+/* Dark-mode tweaks for surfaces the tokens alone can't reach */
+[data-theme="dark"] body{background:var(--surface)}
+[data-theme="dark"] tbody tr:nth-child(even) td{background:#1f1f22}
+[data-theme="dark"] tbody tr:not(.spec-section-row):hover td{background:var(--row-hover)!important}
+[data-theme="dark"] .ov-att-item:hover{background:#1f1f22}
+[data-theme="dark"] .ov-att-head,[data-theme="dark"] .ov-side-head{background:linear-gradient(180deg,#1f1f22 0%,var(--white) 100%)}
+[data-theme="dark"] .proc-col-head{background:linear-gradient(180deg,#1f1f22 0%,var(--white) 100%)}
+[data-theme="dark"] .skeleton-bar{background:linear-gradient(to right,#27272a 8%,#333337 18%,#27272a 33%);background-size:800px 100px}
+[data-theme="dark"] .date-overdue{background:var(--red-soft);color:#fca5a5;border-color:#991b1b}
+[data-theme="dark"] .date-soon{background:var(--amber-soft);color:#fcd34d;border-color:#78350f}
+[data-theme="dark"] .badge-green{color:#86efac}
+[data-theme="dark"] .badge-amber{color:#fcd34d}
+[data-theme="dark"] .badge-red{color:#fca5a5}
+[data-theme="dark"] .ov-stat-ico.alert{color:#fca5a5}
+[data-theme="dark"] .ov-stat-ico.warn{color:#fcd34d}
+[data-theme="dark"] .ov-stat-ico.ok{color:#86efac}
+[data-theme="dark"] .ov-stat-ico.info{background:#0a1a2e;color:#93c5fd}
+[data-theme="dark"] .ov-att-icon.overdue{color:#fca5a5}
+[data-theme="dark"] .ov-att-icon.due-today{color:#fcd34d}
+[data-theme="dark"] .ov-att-icon.atrisk{color:#fcd34d;background:#2a1f0a}
+[data-theme="dark"] .ov-att-icon.due-soon{background:#0a1a2e;color:#93c5fd}
+[data-theme="dark"] .ov-att-tag.overdue,[data-theme="dark"] .ov-att-tag.due-today,
+[data-theme="dark"] .ov-att-tag.due-soon,[data-theme="dark"] .ov-att-tag.atrisk{background:var(--surface-hover)}
+[data-theme="dark"] .ov-proj-status.active{color:#86efac}
+[data-theme="dark"] .ov-proj-status.risk{color:#fcd34d}
+[data-theme="dark"] .ov-proj-status.hot{color:#fca5a5}
+[data-theme="dark"] .ov-mile-days.soon{color:#fcd34d}
+[data-theme="dark"] .ov-mile-days.overdue{color:#fca5a5}
+[data-theme="dark"] .ov-pf-val.hot{color:#fca5a5}
+[data-theme="dark"] .ov-pf-val.warn{color:#fcd34d}
+[data-theme="dark"] .ov-proj-accent.ok{background:linear-gradient(90deg,#15803d 0%,#22c55e 100%)}
+[data-theme="dark"] .ov-proj-accent.warn{background:linear-gradient(90deg,#b45309 0%,#f59e0b 100%)}
+[data-theme="dark"] .ov-proj-accent.alert{background:linear-gradient(90deg,#a00d1e 0%,#ef4444 100%)}
+[data-theme="dark"] .ov-sched-fill.ok{background:linear-gradient(90deg,#15803d 0%,#22c55e 100%)}
+[data-theme="dark"] .ov-sched-fill.warn{background:linear-gradient(90deg,#b45309 0%,#f59e0b 100%)}
+[data-theme="dark"] .ov-sched-fill.alert{background:linear-gradient(90deg,#a00d1e 0%,#ef4444 100%)}
+[data-theme="dark"] .recently-approved-section .archive-count{color:#86efac;background:#0a2e1f}
+[data-theme="dark"] .recent-days-chip{color:#86efac;background:#0a2e1f}
+[data-theme="dark"] .recent-days-chip.aged{color:#fcd34d;background:#2a1f0a}
+[data-theme="dark"] .data-row.expanded > td{background:var(--row-expanded)!important}
+[data-theme="dark"] .spec-section-badge{background:#262626;color:var(--text-mid)}
+[data-theme="dark"] .settings-item.danger:hover{background:var(--red-light)}
+[data-theme="dark"] .ov-stat-card::before{background:var(--border)}
+[data-theme="dark"] .proc-card:hover{border-color:var(--border-hover)}
+[data-theme="dark"] select{background-color:var(--surface)}
+[data-theme="dark"] select:focus{background-color:var(--white)}
+[data-theme="dark"] .filter-dd-btn{background:var(--surface)}
+[data-theme="dark"] .filter-dd-btn:hover,[data-theme="dark"] .filter-dd.open .filter-dd-btn{background:var(--white)}
+[data-theme="dark"] .filter-dd.active .filter-dd-btn{background:var(--michels-red-light);color:#fca5a5}
+[data-theme="dark"] .filter-dd-opt.selected{background:var(--michels-red-light);color:#fca5a5}
+[data-theme="dark"] .filter-input{background:var(--surface)}
+[data-theme="dark"] .filter-input:focus,[data-theme="dark"] .filter-input:hover:not(:focus){background:var(--white)}
 body{font-family:'Inter',sans-serif;background:var(--surface);color:var(--text);min-height:100vh;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
 .dashboard{display:grid;grid-template-rows:auto auto 1fr;min-height:100vh}
 
@@ -43,26 +130,33 @@ body{font-family:'Inter',sans-serif;background:var(--surface);color:var(--text);
 .header-left{display:flex;align-items:center;gap:16px;min-width:0}
 .logo-img{display:block;flex-shrink:0}
 .header-divider{width:1px;height:36px;background:rgba(255,255,255,0.15)}
-.header-title{color:#fff;font-size:15px;font-weight:600;letter-spacing:-0.3px}
-.header-sub{color:#aaaaaa;font-size:11px;margin-top:2px}
-.header-date{color:#666;font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.3px;line-height:1.4;text-align:right}
+.header-title{color:var(--white);font-size:15px;font-weight:600;letter-spacing:-0.3px}
+.header-sub{color:var(--header-muted);font-size:11px;margin-top:2px}
+.header-date{color:var(--text-dim);font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.3px;line-height:1.4;text-align:right}
 .settings-wrap{position:relative}
-.btn-settings{background:transparent;border:1px solid rgba(255,255,255,0.15);color:#aaa;padding:5px 11px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background .15s,border-color .15s}
-.btn-settings:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.25);color:#fff}
+.btn-settings{background:transparent;border:1px solid rgba(255,255,255,0.15);color:var(--header-muted);padding:5px 11px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background .15s,border-color .15s}
+.btn-settings:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.25);color:var(--white)}
 .settings-dropdown{display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.14);min-width:180px;z-index:200;overflow:hidden}
 .settings-dropdown.open{display:block}
 .settings-item{display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:13px;color:var(--text);cursor:pointer;transition:background .12s;border:none;background:none;width:100%;font-family:'Inter',sans-serif;text-align:left}
 .settings-item:hover{background:var(--surface)}
 .settings-item svg{flex-shrink:0;opacity:.6}
 .settings-divider{height:1px;background:var(--border);margin:4px 0}
+.settings-theme-row{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;gap:10px}
+.settings-theme-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+.settings-theme-group{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:2px;gap:2px}
+.settings-theme-btn{background:transparent;border:none;color:var(--text-mid);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:4px 9px;border-radius:5px;cursor:pointer;transition:all .12s}
+.settings-theme-btn:hover{color:var(--text)}
+.settings-theme-btn.active{background:var(--michels-black);color:var(--white)}
+[data-theme="dark"] .settings-theme-btn.active{background:var(--michels-red);color:#fff}
 .settings-item.danger{color:var(--red)}
-.settings-item.danger:hover{background:#fff1f1}
+.settings-item.danger:hover{background:var(--red-light)}
 .settings-item.danger svg{opacity:.7}
 
 .nav{background:var(--michels-dark);padding:0 24px;display:flex;gap:2px;border-bottom:1px solid rgba(255,255,255,0.07)}
-.nav-tab{padding:10px 16px;font-size:13px;font-weight:500;color:#aaaaaa;cursor:pointer;border-bottom:2px solid transparent; padding: 14px 18px;transition:color .15s,border-color .15s;white-space:nowrap}
-.nav-tab:hover{color:#ffffff}
-.nav-tab.active{color:#fff;border-bottom-color:var(--michels-red)}
+.nav-tab{background:transparent;border:none;border-bottom:2px solid transparent;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--header-muted);cursor:pointer;padding:14px 18px;transition:color .15s,border-color .15s;white-space:nowrap}
+.nav-tab:hover{color:var(--white)}
+.nav-tab.active{color:var(--white);border-bottom-color:var(--michels-red)}
 
 .main{padding:20px 24px;display:none}
 .main.active{display:block}
@@ -74,16 +168,16 @@ body{font-family:'Inter',sans-serif;background:var(--surface);color:var(--text);
 .btn-pdf{padding:9px 20px;font-size:13px;box-shadow:0 1px 4px rgba(200,16,46,.3)}
 .btn-sm{background:transparent;border:1px solid var(--border);color:var(--text-mid);padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
 .btn-sm:hover{background:var(--surface)}
-.btn-danger{border-color:#fca5a5;color:var(--red)}
-.btn-danger:hover{background:#fee2e2}
+.btn-danger{border-color:var(--red-border);color:var(--red)}
+.btn-danger:hover{background:var(--red-soft)}
 
 
 .badge-green{background:var(--green-light);color:var(--green)}
 .badge-amber{background:var(--amber-light);color:var(--amber)}
 .badge-red{background:var(--red-light);color:var(--red)}
-.badge-blue{background:#eef2f7;color:#374151}
-.badge-gray{background:#f1f5f9;color:var(--text-mid)}
-.badge-purple{background:#f3e8ff;color:#7c3aed}
+.badge-blue{background:var(--badge-blue-bg);color:var(--badge-blue-fg)}
+.badge-gray{background:var(--badge-gray-bg);color:var(--text-mid)}
+.badge-purple{background:var(--badge-purple-bg);color:var(--badge-purple-fg)}
 
 .table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);overflow-x:auto;overflow-y:hidden;margin-bottom:20px;box-shadow:var(--shadow-sm);}
 table{width:100%;min-width:900px;border-collapse:collapse;table-layout:fixed}
@@ -91,9 +185,9 @@ thead tr{background:var(--michels-black)}
 th{padding:14px 16px;font-size:10.5px;font-weight:700;color:rgba(255,255,255,.82);text-transform:uppercase;letter-spacing:.65px;text-align:left;border-bottom:2px solid var(--michels-red)}
 td{padding:14px 16px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tbody tr:nth-child(even) td{background:#fafafa}
+tbody tr:nth-child(even) td{background:var(--surface-hover)}
 tbody tr{transition:background .1s}
-tbody tr:not(.spec-section-row):hover td{background:#fdf0f2!important}
+tbody tr:not(.spec-section-row):hover td{background:var(--row-hover)!important}
 tbody tr:not(.spec-section-row):hover td:first-child{box-shadow:inset 3px 0 0 var(--michels-red)}
 .truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
@@ -114,7 +208,7 @@ tbody tr:not(.spec-section-row):hover td:first-child{box-shadow:inset 3px 0 0 va
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .form-row-full{margin-bottom:12px}
 label{display:block;font-size:11px;font-weight:600;color:var(--text-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
-input[type=text],input[type=password],input[type=date],input[type=number],input[type=email],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--white);outline:none;transition:all .15s ease;box-shadow:var(--shadow-sm)}
+input[type=text],input[type=password],input[type=date],input[type=number],input[type=email],input[type=url],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--white);outline:none;transition:all .15s ease;box-shadow:var(--shadow-sm)}
 input:focus,select:focus,textarea:focus{border-color:var(--michels-red)}
 select{appearance:none;-webkit-appearance:none;background-color:var(--surface);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23c8102e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:32px;cursor:pointer;font-weight:500;transition:border-color .15s,box-shadow .15s,background .15s}
 select:focus{background-color:var(--white);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
@@ -128,6 +222,7 @@ textarea{resize:vertical;min-height:72px}
 
 .empty{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px}
 .empty-icon{font-size:28px;margin-bottom:8px}
+.empty-row{text-align:center;padding:28px 16px;color:var(--text-muted);font-size:13px}
 
 /* LOGIN SCREEN */
 .login-overlay{position:fixed;inset:0;background:var(--michels-black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;padding:24px}
@@ -135,7 +230,7 @@ textarea{resize:vertical;min-height:72px}
 .login-header{background:var(--michels-black);padding:28px 32px 24px;text-align:center;border-bottom:3px solid var(--michels-red);display:flex;flex-direction:column;align-items:center;justify-content:center}
 .login-body{padding:28px 32px}
 .login-footer{padding:16px 32px 24px;text-align:center}
-.login-error{background:var(--red-light);color:var(--red);font-size:12px;padding:8px 12px;border-radius:6px;margin-bottom:14px;display:none;border:1px solid #fca5a5}
+.login-error{background:var(--red-light);color:var(--red);font-size:12px;padding:8px 12px;border-radius:6px;margin-bottom:14px;display:none;border:1px solid var(--red-border)}
 .login-input-wrap{margin-bottom:14px}
 .login-input-wrap label{font-size:11px;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block}
 .login-input-wrap input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:border-color .15s}
@@ -146,49 +241,49 @@ textarea{resize:vertical;min-height:72px}
 .login-user-list{margin-top:8px;font-size:11px;color:var(--text-muted);text-align:center}
 
 /* USER MANAGEMENT */
-.user-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border-radius:20px;padding:4px 10px;font-size:12px;color:#ddd;cursor:pointer;border:1px solid rgba(255,255,255,0.15);transition:background .15s}
+.user-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border-radius:20px;padding:4px 10px;font-family:'Inter',sans-serif;font-size:12px;color:#ddd;cursor:pointer;border:1px solid rgba(255,255,255,0.15);transition:background .15s}
 .user-badge:hover{background:rgba(255,255,255,0.18)}
 .user-avatar{width:22px;height:22px;border-radius:50%;background:var(--michels-red);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
 
 /* ARCHIVE SECTION */
 .archive-section{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:16px}
 .archive-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;user-select:none;background:var(--surface);transition:background .12s;border:none;width:100%;font-family:'Inter',sans-serif;text-align:left}
-.archive-header:hover{background:#edebeb}
+.archive-header:hover{background:var(--surface-alt)}
 .archive-header-left{display:flex;align-items:center;gap:9px}
 .archive-chevron{flex-shrink:0;color:var(--text-muted);transition:transform .2s}
 .archive-section.open .archive-chevron{transform:rotate(90deg)}
-.archive-section.open .archive-header{background:#edebeb}
+.archive-section.open .archive-header{background:var(--surface-alt)}
 .archive-title-text{font-size:13px;font-weight:600;color:var(--text-mid)}
-.archive-count{background:#e2e0e0;color:var(--text-muted);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace;letter-spacing:.3px}
+.archive-count{background:var(--border-alt);color:var(--text-muted);font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace;letter-spacing:.3px}
 .archive-hint{font-size:11px;color:var(--text-muted)}
 .archive-body{display:none}
 .archive-section.open .archive-body{display:block}
 /* RECENTLY APPROVED — green accent + count pill to distinguish from grey Archive */
-.recently-approved-section{border-left:3px solid #15803d}
-.recently-approved-section .archive-title-text{color:#15803d}
-.recently-approved-section .archive-count{background:#dcfce7;color:#15803d}
-.recent-days-chip{display:inline-block;font-size:11px;font-weight:600;color:#15803d;background:#dcfce7;padding:2px 8px;border-radius:10px;font-family:'DM Mono',monospace;letter-spacing:.3px;white-space:nowrap}
-.recent-days-chip.aged{color:#b45309;background:#fef3c7}
+.recently-approved-section{border-left:3px solid var(--success)}
+.recently-approved-section .archive-title-text{color:var(--success)}
+.recently-approved-section .archive-count{background:var(--success-light);color:var(--success)}
+.recent-days-chip{display:inline-block;font-size:11px;font-weight:500;color:var(--success);background:var(--success-light);padding:2px 8px;border-radius:10px;font-family:'DM Mono',monospace;letter-spacing:.3px;white-space:nowrap}
+.recent-days-chip.aged{color:var(--amber-dark);background:var(--amber-soft)}
 /* Archive project groups */
 .archive-proj-group{border-top:1px solid var(--border)}
 .archive-proj-group:first-child{border-top:none}
 .archive-proj-label{display:flex;align-items:center;gap:8px;padding:7px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
-.archive-proj-name{font-size:11px;font-weight:700;color:var(--michels-red);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace}
-.archive-proj-count{background:#e2e0e0;color:var(--text-muted);font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;font-family:'DM Mono',monospace}
+.archive-proj-name{font-size:11px;font-weight:500;color:var(--michels-red);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace}
+.archive-proj-count{background:var(--border-alt);color:var(--text-muted);font-size:10px;font-weight:500;padding:1px 6px;border-radius:10px;font-family:'DM Mono',monospace}
 .archive-proj-group .table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);overflow-x:auto;overflow-y:hidden;margin-bottom:20px;box-shadow:var(--shadow-sm);}
 /* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--michels-black);color:#fff;padding:11px 16px;border-radius:8px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);max-width:320px}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast-bar{width:3px;min-height:18px;background:var(--michels-red);border-radius:2px;flex-shrink:0;align-self:stretch}
-.toast.toast-error{background:#3b1416;border:1px solid #7a1d23}
-.toast.toast-error .toast-bar{background:#ef4444}
+.toast.toast-error{background:var(--toast-error-bg);border:1px solid var(--toast-error-border)}
+.toast.toast-error .toast-bar{background:var(--toast-error-bar)}
 /* TABLE FILTER BAR */
 .filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 16px;box-shadow:var(--shadow-sm);}
 .filter-bar-label{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;flex-shrink:0;user-select:none}
 .filter-bar-sep{width:1px;height:18px;background:var(--border);flex-shrink:0;margin:0 4px}
 .filter-input{height:32px;padding:0 12px;font-size:12.5px;border:1.5px solid var(--border);border-radius:20px;font-family:'Inter',sans-serif;color:var(--text);font-weight:500;background:var(--surface);outline:none;transition:border-color .15s,background .15s,box-shadow .15s;box-sizing:border-box}
 .filter-input:focus{border-color:var(--michels-red);background:var(--white);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
-.filter-input:hover:not(:focus){border-color:#bbb;background:var(--white)}
+.filter-input:hover:not(:focus){border-color:var(--border-hover);background:var(--white)}
 select.filter-input{appearance:none;-webkit-appearance:none;background-color:var(--surface);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding:0 30px 0 14px;cursor:pointer}
 select.filter-input.filter-active{border-color:var(--michels-red)!important;background-color:#fff5f6!important;color:var(--michels-red)!important;font-weight:600;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23c8102e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")!important}
 input.filter-input{width:200px}
@@ -197,15 +292,15 @@ input.filter-input{width:200px}
 /* CUSTOM FILTER DROPDOWN */
 .filter-dd{position:relative;flex-shrink:0}
 .filter-dd-btn{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 13px 0 14px;border:1.5px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text);font-size:12.5px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;white-space:nowrap;outline:none;line-height:1}
-.filter-dd-btn:hover{border-color:#bbb;background:var(--white)}
-.filter-dd.open .filter-dd-btn{border-color:#bbb;background:var(--white);box-shadow:0 0 0 3px rgba(0,0,0,.04)}
+.filter-dd-btn:hover{border-color:var(--border-hover);background:var(--white)}
+.filter-dd.open .filter-dd-btn{border-color:var(--border-hover);background:var(--white);box-shadow:0 0 0 3px rgba(0,0,0,.04)}
 .filter-dd.active .filter-dd-btn{border-color:var(--michels-red);background:#fff5f6;color:var(--michels-red);font-weight:600}
 .filter-dd-btn .dd-chevron{flex-shrink:0;color:var(--text-muted);transition:transform .18s;opacity:.65}
 .filter-dd.open .filter-dd-btn .dd-chevron{transform:rotate(180deg)}
 .filter-dd.active .filter-dd-btn .dd-chevron{color:var(--michels-red);opacity:1}
 .filter-dd-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;min-width:175px;max-height:280px;overflow-y:auto;overscroll-behavior:contain;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.13);z-index:500;padding:5px}
 .filter-dd.open .filter-dd-menu{display:block}
-.filter-dd-opt{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:6px;font-size:12.5px;font-weight:500;color:var(--text);cursor:pointer;transition:background .1s;white-space:nowrap;user-select:none;line-height:1.3}
+.filter-dd-opt{display:flex;align-items:center;gap:8px;padding:8px 11px;border:none;border-radius:6px;width:100%;background:var(--white);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;color:var(--text);cursor:pointer;transition:background .1s;white-space:nowrap;user-select:none;line-height:1.3;text-align:left}
 .filter-dd-opt:hover{background:var(--surface)}
 .filter-dd-opt.selected{background:#fff5f6;color:var(--michels-red);font-weight:600}
 .filter-dd-opt.opt-all{color:var(--text-muted);font-size:12px;font-weight:400;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:4px}
@@ -322,14 +417,25 @@ input.filter-input{width:200px}
   padding-right:32px!important;
 }
 
-/* FOCUS STATES */
-button:focus-visible,
-.nav-tab:focus-visible,
-.user-badge:focus-visible,
-.modal-close:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
+/* FOCUS STATES — broad coverage so keyboard users get a ring on every interactive target */
+:where(button,a,[role="button"],[role="option"],[role="tab"],input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid var(--michels-red);outline-offset:2px;border-radius:5px
+}
+/* Filter dropdown options sit flush inside a white menu — inset the ring so it stays visible */
+.filter-dd-opt:focus-visible{outline-offset:-2px}
+
+/* SKIP-TO-CONTENT LINK — hidden off-screen until focused */
+.skip-link{position:absolute;top:-40px;left:0;background:var(--michels-red);color:#fff;padding:8px 14px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;z-index:10000;text-decoration:none;border-radius:0 0 6px 0;transition:top .15s}
+.skip-link:focus{top:0;outline:2px solid #fff;outline-offset:-2px}
+
+/* PREFERS-REDUCED-MOTION — honour OS setting for vestibular sensitivity */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .skeleton-bar{animation:none;background:var(--surface)}
+}
+
+/* SCREEN-READER-ONLY utility for hidden labels */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* RESPONSIVE — 768px and below */
 @media(max-width:768px){
@@ -370,7 +476,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .landing-notif-meta{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
 .landing-notif-empty{padding:32px;text-align:center;color:var(--text-muted);font-size:13px}
 .activity-filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
-.activity-filter-btn{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;transition:background .12s,color .12s,border-color .12s;letter-spacing:.2px;font-family:'DM Mono',monospace}
+.activity-filter-btn{font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;transition:background .12s,color .12s,border-color .12s;letter-spacing:.2px;font-family:'DM Mono',monospace}
 .activity-filter-btn:hover{border-color:var(--michels-red);color:var(--michels-red)}
 .activity-filter-btn.active{background:var(--michels-red);border-color:var(--michels-red);color:#fff}
 .activity-custom-range{display:none;gap:6px;align-items:center;margin-bottom:10px}
@@ -384,7 +490,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .notif-panel-close{background:none;border:none;cursor:pointer;color:#aaa;font-size:18px;line-height:1;padding:0 2px;font-family:sans-serif;transition:color .12s}
 .notif-panel-close:hover{color:#fff}
 .notif-panel-filters{display:flex;gap:5px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface)}
-.notif-panel-filter-btn{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;transition:background .12s,color .12s,border-color .12s;letter-spacing:.2px;font-family:'DM Mono',monospace}
+.notif-panel-filter-btn{font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;transition:background .12s,color .12s,border-color .12s;letter-spacing:.2px;font-family:'DM Mono',monospace}
 .notif-panel-filter-btn:hover{border-color:var(--michels-red);color:var(--michels-red)}
 .notif-panel-filter-btn.active{background:var(--michels-red);border-color:var(--michels-red);color:#fff}
 .notif-panel-body{overflow-y:auto;overscroll-behavior:contain;flex:1}
@@ -402,15 +508,15 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .chart-pill{display:flex;align-items:center;gap:5px}
 .chart-pip{display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .chart-pill-label{font-size:11px;color:var(--text-mid);font-weight:500}
-.chart-pill-count{font-size:11px;font-weight:700;padding:1px 7px;border-radius:10px;font-family:'DM Mono',monospace;letter-spacing:.2px}
+.chart-pill-count{font-size:11px;font-weight:500;padding:1px 7px;border-radius:10px;font-family:'DM Mono',monospace;letter-spacing:.2px}
 .chart-pill-divider{width:1px;height:18px;background:var(--border);flex-shrink:0}
-.chart-pill-total{margin-left:auto;font-size:11px;color:var(--text-muted);font-weight:600;font-family:'DM Mono',monospace;align-self:center;padding-left:4px}
+.chart-pill-total{margin-left:auto;font-size:11px;color:var(--text-muted);font-weight:500;font-family:'DM Mono',monospace;align-self:center;padding-left:4px}
 .chart-bar{display:flex;height:7px;border-radius:4px;overflow:hidden;background:var(--surface);border:1px solid var(--border)}
 .chart-seg{height:100%;min-width:3px;transition:width .4s}
 
 /* EXPANDABLE ROW DETAILS */
 .data-row{cursor:pointer}
-.data-row.expanded>td{background:#fef7f8!important;border-bottom:none!important}
+.data-row.expanded>td{background:var(--row-expanded)!important;border-bottom:none!important}
 .data-row.expanded>td:first-child{box-shadow:inset 3px 0 0 var(--michels-red)}
 .expand-icon{display:inline-flex;align-items:center;width:14px;height:14px;margin-right:6px;flex-shrink:0;color:var(--text-muted);transition:transform .18s;vertical-align:middle;opacity:.4}
 .data-row.expanded .expand-icon{transform:rotate(90deg);color:var(--michels-red);opacity:1}
@@ -420,24 +526,24 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .detail-field-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
 .detail-field-value{font-size:13px;color:var(--text);font-weight:500;word-break:break-word;line-height:1.4}
 .detail-desc-block{font-size:12.5px;color:var(--text-mid);line-height:1.55;padding:10px 12px;background:var(--white);border-radius:6px;border:1px solid var(--border);margin-bottom:12px;white-space:pre-wrap}
-.detail-desc-block-warn{border-color:#fcd34d;background:var(--amber-light)}
+.detail-desc-block-warn{border-color:var(--amber-border);background:var(--amber-light)}
 .detail-actions{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap}
 .spec-section-row>td{background:var(--surface);padding:6px 14px;border-bottom:1px solid var(--border)}
-.spec-section-badge{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10.5px;font-weight:700;color:var(--text-mid);background:#eef2f7;padding:3px 10px;border-radius:20px;letter-spacing:.3px;text-transform:uppercase}
+.spec-section-badge{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10.5px;font-weight:500;color:var(--text-mid);background:#eef2f7;padding:3px 10px;border-radius:20px;letter-spacing:.3px;text-transform:uppercase}
 .spec-section-badge::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--michels-red);flex-shrink:0}
 .spec-new-wrap{margin-top:8px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
 /* STATUS PILL SWITCHER */
 .status-switcher{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-right:4px}
 .status-switcher-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;flex-shrink:0}
 .status-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all .15s;font-family:'Inter',sans-serif;white-space:nowrap;line-height:1}
-.status-btn:hover:not(.status-btn-current){background:var(--white);color:var(--text);border-color:#bbb;transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.status-btn:hover:not(.status-btn-current){background:var(--white);color:var(--text);border-color:var(--border-hover);transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .status-btn-current{cursor:default;transform:none!important;box-shadow:none!important}
 .status-btn-pip{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 /* DATE CHIPS */
 .date-chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-family:'DM Mono',monospace;padding:3px 8px;border-radius:5px;font-weight:500;white-space:nowrap;letter-spacing:.2px}
 .date-normal{background:var(--surface);color:var(--text-mid);border:1px solid var(--border)}
-.date-overdue{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5}
-.date-soon{background:var(--amber-light);color:var(--amber);border:1px solid #fcd34d}
+.date-overdue{background:var(--red-soft);color:var(--red);border:1px solid var(--red-border)}
+.date-soon{background:var(--amber-light);color:var(--amber);border:1px solid var(--amber-border)}
 /* STACKED CELL CONTENT */
 .cell-primary{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cell-secondary{font-size:11px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -447,8 +553,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 @media (hover:none){.row-actions{opacity:1}}
 .btn-icon{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:5px;background:var(--white);cursor:pointer;color:var(--text-mid);transition:background .1s,color .1s;flex-shrink:0;font-size:14px;line-height:1;padding:0;font-family:inherit}
 .btn-icon:hover{background:var(--surface);color:var(--text)}
-.btn-icon-danger{border-color:#fca5a5;color:var(--red)!important}
-.btn-icon-danger:hover{background:#fee2e2!important}
+.btn-icon-danger{border-color:var(--red-border);color:var(--red)!important}
+.btn-icon-danger:hover{background:var(--red-soft)!important}
+/* ROW SOURCE LINK — display-only chip to open an RFI/Submittal in its source system.
+   Editing lives in the row's Edit modal, not inline. */
+.row-link-btn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;margin-right:4px;border:1px solid var(--border);border-radius:5px;background:var(--white);color:var(--text-mid);font-size:13px;line-height:1;text-decoration:none;cursor:pointer;flex-shrink:0;transition:background .1s,color .1s,border-color .1s;vertical-align:middle}
+.row-link-btn:hover{background:var(--michels-red-light);color:var(--michels-red);border-color:var(--michels-red)}
+.row-link-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-size:12px;line-height:1;text-decoration:none;cursor:pointer;max-width:100%;transition:background .1s,color .1s,border-color .1s}
+.row-link-chip:hover{background:var(--michels-red-light);color:var(--michels-red);border-color:var(--michels-red)}
 /* CONTROLS MODAL TABS */
 .ctrl-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin:-20px -20px 20px;padding:0 16px;background:var(--surface);overflow-x:auto}
 .ctrl-tab-btn{padding:10px 15px;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;border:none;background:none;font-family:'Inter',sans-serif;border-bottom:2px solid transparent; padding: 14px 18px;margin-bottom:-2px;transition:color .15s,border-color .15s;white-space:nowrap}
@@ -526,8 +638,8 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .ov-stat-label{font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
 .ov-stat-value{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.6px;line-height:1.1;font-family:'Inter',sans-serif}
 .ov-stat-value .ov-stat-sub{font-size:12px;color:var(--text-muted);font-weight:500;margin-left:6px;font-family:'DM Mono',monospace}
-.ov-stat-value .ov-stat-sub.alert{color:var(--red);font-weight:600}
-.ov-stat-value .ov-stat-sub.warn{color:var(--amber);font-weight:600}
+.ov-stat-value .ov-stat-sub.alert{color:var(--red);font-weight:500}
+.ov-stat-value .ov-stat-sub.warn{color:var(--amber);font-weight:500}
 
 /* MAIN GRID */
 .ov-main-grid{display:grid;grid-template-columns:1.8fr 1fr;gap:22px;align-items:start;margin-bottom:26px}
@@ -537,7 +649,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .ov-att-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)}
 .ov-att-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#fafafa 0%,var(--white) 100%)}
 .ov-att-title{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;letter-spacing:-.2px}
-.ov-att-count{background:var(--michels-red);color:#fff;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace}
+.ov-att-count{background:var(--michels-red);color:#fff;font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace}
 .ov-att-tabs{display:flex;gap:3px;padding:8px 14px;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto}
 .ov-att-tab{font-size:11.5px;font-weight:600;color:var(--text-mid);padding:5px 11px;border-radius:20px;cursor:pointer;background:transparent;border:1px solid transparent;transition:all .12s;font-family:'Inter',sans-serif;white-space:nowrap}
 .ov-att-tab:hover{background:var(--white);border-color:var(--border)}
@@ -555,7 +667,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .ov-att-icon.atrisk{background:#fef3c7;color:#b45309}
 .ov-att-main{min-width:0}
 .ov-att-hd{display:flex;align-items:center;gap:8px;margin-bottom:3px}
-.ov-att-tag{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:4px;font-family:'DM Mono',monospace}
+.ov-att-tag{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:4px;font-family:'DM Mono',monospace}
 .ov-att-tag.overdue{background:var(--red-light);color:var(--red)}
 .ov-att-tag.due-today{background:var(--amber-light);color:var(--amber)}
 .ov-att-tag.due-soon{background:#eff6ff;color:#1d4ed8}
@@ -566,7 +678,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .ov-att-project{color:var(--michels-red);font-weight:600}
 .ov-att-dot{color:var(--border)}
 .ov-att-cta{display:flex;align-items:center;gap:8px;opacity:.4;transition:opacity .15s;flex-shrink:0}
-.ov-att-due{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;white-space:nowrap}
+.ov-att-due{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;white-space:nowrap}
 .ov-att-due.overdue{color:var(--red)}
 .ov-att-due.due-today{color:var(--amber)}
 .ov-att-due.due-soon{color:#1d4ed8}
@@ -586,11 +698,11 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .ov-week-item:last-child{border-bottom:none}
 .ov-week-date{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:4px 0;min-width:48px}
 .ov-week-date.today{background:var(--michels-red);border-color:var(--michels-red);color:#fff}
-.ov-week-date-day{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace;opacity:.8;line-height:1}
+.ov-week-date-day{font-size:9.5px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace;opacity:.8;line-height:1}
 .ov-week-date-num{font-size:16px;font-weight:700;line-height:1.1}
 .ov-week-title{font-size:12.5px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:2px}
 .ov-week-sub{font-size:10.5px;color:var(--text-muted);font-family:'DM Mono',monospace}
-.ov-week-type{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:4px;font-family:'DM Mono',monospace;white-space:nowrap;background:var(--surface);color:var(--text-mid)}
+.ov-week-type{font-size:9.5px;font-weight:500;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:4px;font-family:'DM Mono',monospace;white-space:nowrap;background:var(--surface);color:var(--text-mid)}
 .ov-week-empty{padding:22px 16px;text-align:center;font-size:12px;color:var(--text-muted)}
 
 .ov-act-list{padding:6px 0}
@@ -626,14 +738,14 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .ov-proj-titles{min-width:0;flex:1}
 .ov-proj-name{font-size:16px;font-weight:700;color:var(--text);line-height:1.25;margin-bottom:3px;letter-spacing:-.3px}
 .ov-proj-num{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace;letter-spacing:.2px}
-.ov-proj-status{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap;text-transform:uppercase;letter-spacing:.4px;font-family:'DM Mono',monospace;flex-shrink:0}
+.ov-proj-status{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:10.5px;font-weight:500;white-space:nowrap;text-transform:uppercase;letter-spacing:.4px;font-family:'DM Mono',monospace;flex-shrink:0}
 .ov-proj-status.active{background:var(--green-light);color:var(--green)}
 .ov-proj-status.risk{background:var(--amber-light);color:var(--amber)}
 .ov-proj-status.hot{background:var(--red-light);color:var(--red)}
 .ov-proj-sched{margin-bottom:16px}
 .ov-sched-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .ov-sched-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
-.ov-sched-pct{font-size:11.5px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text)}
+.ov-sched-pct{font-size:11.5px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
 .ov-sched-bar{height:7px;background:var(--surface);border-radius:4px;overflow:hidden;margin-bottom:6px}
 .ov-sched-fill{height:100%;border-radius:4px;transition:width .4s}
 .ov-sched-fill.ok{background:linear-gradient(90deg,var(--green) 0%,#34d399 100%)}
@@ -645,15 +757,15 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .ov-proj-sec-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
 .ov-team-pills{display:flex;flex-wrap:wrap;gap:4px}
 .ov-team-pill{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500;color:var(--text-mid)}
-.ov-team-pill .ov-role{font-family:'DM Mono',monospace;font-size:9.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px}
+.ov-team-pill .ov-role{font-family:'DM Mono',monospace;font-size:9.5px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px}
 .ov-milestone-row{display:flex;align-items:center;gap:12px;padding:9px 11px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
 .ov-mile-date{text-align:center;background:var(--white);border:1px solid var(--border);border-radius:6px;padding:3px 6px;min-width:42px}
-.ov-mile-date-day{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace;color:var(--text-muted);line-height:1}
+.ov-mile-date-day{font-size:8.5px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace;color:var(--text-muted);line-height:1}
 .ov-mile-date-num{font-size:14px;font-weight:700;line-height:1.1;color:var(--text)}
 .ov-mile-main{min-width:0;flex:1}
 .ov-mile-title{font-size:12.5px;font-weight:600;color:var(--text);line-height:1.25;margin-bottom:2px}
 .ov-mile-sub{font-size:10.5px;color:var(--text-muted);font-family:'DM Mono',monospace}
-.ov-mile-days{margin-left:auto;font-size:10.5px;font-family:'DM Mono',monospace;font-weight:700;padding:3px 7px;border-radius:5px;white-space:nowrap;background:var(--surface);color:var(--text-mid);border:1px solid var(--border)}
+.ov-mile-days{margin-left:auto;font-size:10.5px;font-family:'DM Mono',monospace;font-weight:500;padding:3px 7px;border-radius:5px;white-space:nowrap;background:var(--surface);color:var(--text-mid);border:1px solid var(--border)}
 .ov-mile-days.soon{background:var(--amber-light);color:var(--amber);border-color:var(--amber-light)}
 .ov-mile-days.overdue{background:var(--red-light);color:var(--red);border-color:var(--red-light)}
 .ov-proj-footer{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);background:var(--surface)}
@@ -664,7 +776,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .ov-pf-val.hot{color:var(--red)}
 .ov-pf-val.warn{color:var(--amber)}
 .ov-pf-sub{font-size:9.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
-.ov-pf-badge{display:inline-block;font-size:8.5px;font-family:'DM Mono',monospace;font-weight:700;color:#fff;background:var(--red);padding:1px 4px;border-radius:3px;margin-left:3px;letter-spacing:.2px}
+.ov-pf-badge{display:inline-block;font-size:8.5px;font-family:'DM Mono',monospace;font-weight:500;color:#fff;background:var(--red);padding:1px 4px;border-radius:3px;margin-left:3px;letter-spacing:.2px}
 
 /* OVERVIEW EMPTY (no projects at all) */
 .ov-empty{background:var(--white);border:1px dashed var(--border);border-radius:var(--radius-md);padding:44px 20px;text-align:center}
@@ -682,7 +794,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .ov-ms-table .empty{text-align:center;padding:28px 16px;color:var(--text-muted);font-size:13px}
 .ov-ms-table .empty-icon{font-size:24px;margin-bottom:6px}
 .ov-ms-table .cell-primary{font-weight:600;color:var(--text)}
-.ov-ms-chip{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:20px;letter-spacing:.2px}
+.ov-ms-chip{display:inline-flex;align-items:center;font-size:10.5px;font-weight:500;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:20px;letter-spacing:.2px}
 .ov-ms-chip-ok{background:var(--green-light);color:var(--green)}
 .ov-ms-chip-soon{background:var(--amber-light);color:var(--amber)}
 .ov-ms-chip-late{background:var(--red-light);color:var(--red)}
@@ -717,7 +829,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 
 /* MULTI-SELECT STATUS FILTER (inline checkboxes in filter-dd) */
 .filter-dd-opt-check{display:flex;align-items:center;gap:8px}
-.filter-dd-opt-check .proc-status-check{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:3px;border:1.5px solid var(--border);background:var(--white);color:transparent;font-size:10px;font-weight:700;font-family:'DM Mono',monospace;flex-shrink:0;transition:all .1s}
+.filter-dd-opt-check .proc-status-check{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:3px;border:1.5px solid var(--border);background:var(--white);color:transparent;font-size:10px;font-weight:500;font-family:'DM Mono',monospace;flex-shrink:0;transition:all .1s}
 .filter-dd-opt-check.checked .proc-status-check{background:var(--michels-black);border-color:var(--michels-black);color:#fff}
 
 /* KANBAN BOARD */
@@ -730,7 +842,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .proc-col-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#fafafa 0%,var(--white) 100%)}
 .proc-col-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.4px}
 .proc-col-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.proc-col-count{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:2px 8px;border-radius:20px;min-width:28px;text-align:center}
+.proc-col-count{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:2px 8px;border-radius:20px;min-width:28px;text-align:center}
 .proc-col-body{display:flex;flex-direction:column;gap:8px;padding:10px;overflow-y:auto;overscroll-behavior:contain;flex:1}
 .proc-col-empty{padding:24px 10px;text-align:center;font-size:11.5px;color:var(--text-muted);font-style:italic}
 
@@ -744,11 +856,11 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .proc-card-vendor{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);margin-bottom:6px;white-space:nowrap;overflow:hidden}
 .proc-card-vendor svg{flex-shrink:0;opacity:.75}
 .proc-card-vendor .proc-vendor-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.proc-card-date{font-family:'DM Mono',monospace;font-size:10.5px;font-weight:600;color:var(--text-mid);display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.proc-card-date{font-family:'DM Mono',monospace;font-size:10.5px;font-weight:500;color:var(--text-mid);display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
 .proc-card-date.late{color:var(--red)}
 .proc-card-date.soon{color:#1d4ed8}
 
-.proc-urgency{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;white-space:nowrap;flex-shrink:0}
+.proc-urgency{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;white-space:nowrap;flex-shrink:0}
 .proc-urgency.late{background:var(--red-light);color:var(--red)}
 .proc-urgency.soon{background:#eff6ff;color:#1d4ed8}
 
@@ -798,9 +910,89 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 .proc-card-skeleton .skeleton-bar{margin-bottom:6px}
 .proc-card-skeleton .skeleton-bar:last-child{margin-bottom:0}
 
+/* ══════════════════════════════════════════════════════════════
+   MOBILE (≤ 500px) — narrow-screen adjustments
+   Tables get a horizontal scroll container + smaller cells;
+   modals, filter bar, overview grid, and kanban collapse to 1-col.
+   ══════════════════════════════════════════════════════════════ */
+@media(max-width:500px){
+  /* App chrome */
+  .header{padding:8px 14px}
+  .nav{padding:0 8px}
+  .main{padding:14px 10px}
+
+  /* Tables — allow horizontal scroll when min-width wins */
+  .table-wrap{border-radius:8px}
+  table{min-width:720px;font-size:12px}
+  th{padding:10px 8px;font-size:10px}
+  td{padding:10px 8px;font-size:12px}
+  .cell-primary{font-size:12px}
+  .cell-secondary{font-size:10.5px}
+
+  /* Modals */
+  .modal{width:min(460px,96vw);max-height:92vh;border-radius:10px}
+  .modal-header{padding:14px 14px 10px}
+  .modal-body{padding:14px}
+  .modal-footer{padding:10px 14px;flex-direction:column-reverse;gap:6px}
+  .modal-footer > *{width:100%}
+  .form-row{grid-template-columns:1fr;gap:10px}
+
+  /* Filter bar — stack vertically */
+  .filter-bar{padding:8px 12px;gap:6px}
+  .filter-bar-label{display:none}
+  .filter-bar-sep{display:none}
+  input.filter-input{width:100%}
+  .filter-dd,.filter-dd-btn{width:100%}
+  .filter-clear{margin-left:0;width:auto}
+
+  /* Overview grid + proj cards */
+  .ov-proj-grid{grid-template-columns:1fr;gap:12px}
+  .ov-stat-strip{grid-template-columns:1fr;gap:8px}
+  .ov-page-head{flex-direction:column;align-items:stretch}
+  .ov-actions{flex-wrap:wrap}
+  .ov-att-list{font-size:12px}
+  .ov-att-item{grid-template-columns:auto 1fr;padding:10px 12px}
+  .ov-att-cta{grid-column:2;justify-self:end}
+
+  /* Procurement */
+  .proc-board{grid-template-columns:1fr}
+  #proc-stat-strip{grid-template-columns:1fr}
+  .proc-view-toggle{width:100%}
+  .proc-view-btn{flex:1;justify-content:center}
+
+  /* Job dashboard */
+  .job-dash-name{font-size:18px}
+  .job-dash-grid{grid-template-columns:1fr}
+
+  /* Controls card grid */
+  .ctrl-card-grid{grid-template-columns:1fr}
+
+  /* Login box */
+  .login-box{width:100%}
+  .login-body{padding:22px 20px}
+  .login-header{padding:22px 20px 18px}
+
+  /* Row-action buttons always visible (already set via hover:none) */
+  .row-actions{opacity:1}
+}
+
 </style>
+<script>
+// Theme init — runs before the body renders to prevent flash-of-wrong-theme on first paint.
+// Reads 'apm_theme' from localStorage (values: 'light' | 'dark' | 'system'; default 'system').
+// On 'system', follows prefers-color-scheme: dark.
+(function(){
+  try {
+    const pref = localStorage.getItem('apm_theme') || 'system';
+    const dark = pref === 'dark' || (pref === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if(dark) document.documentElement.setAttribute('data-theme','dark');
+  } catch(e){}
+})();
+</script>
 </head>
 <body>
+
+<a href="#main-dashboard" class="skip-link">Skip to main content</a>
 
 <!-- LOGIN OVERLAY -->
 <div class="login-overlay" id="login-overlay">
@@ -828,11 +1020,11 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="login-body">
       <div class="login-error" id="login-error">Incorrect username or password. Please try again.</div>
       <div class="login-input-wrap">
-        <label>Username</label>
+        <label for="login-username">Username</label>
         <input type="text" id="login-username" placeholder="Enter your username" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-password').focus()">
       </div>
       <div class="login-input-wrap">
-        <label>Password</label>
+        <label for="login-password">Password</label>
         <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')attemptLogin()">
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
@@ -848,10 +1040,11 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
 </div>
 
 
-<div class="dashboard" id="main-dashboard" style="display:none">
+<main class="dashboard" id="main-dashboard" style="display:none">
   <div class="header">
     <div class="header-left">
-      <svg class="logo-img" viewBox="0 0 260 60" xmlns="http://www.w3.org/2000/svg" style="height:50px;width:240px;cursor:pointer" onclick="switchTab('tab-projects')" title="Overview">
+      <button type="button" class="logo-btn" onclick="switchTab('tab-projects')" aria-label="Go to Overview" style="background:none;border:none;padding:0;cursor:pointer;display:block">
+      <svg class="logo-img" viewBox="0 0 260 60" xmlns="http://www.w3.org/2000/svg" style="height:50px;width:240px;display:block" aria-hidden="true">
   <defs>
     <linearGradient id="michels-grad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%"   stop-color="#a00d1e"/>
@@ -868,6 +1061,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
   <text x="252" y="12" class="m-reg">&#174;</text>
   <text x="130" y="57" class="m-sub">POWER, INC.</text>
 </svg>
+      </button>
       <div class="header-divider"></div>
       <div>
         <div class="header-title">Project Dashboard</div>
@@ -880,7 +1074,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-dot" id="header-bell-dot"></span>
       </button>
-      <span id="current-user-badge" class="user-badge" style="display:none" onclick="toggleSettings()" title="Settings"><span class="user-avatar" id="user-avatar-initials">?</span><span id="current-user-name">User</span></span>
+      <button type="button" id="current-user-badge" class="user-badge" style="display:none" onclick="toggleSettings()" title="Settings" aria-label="User menu"><span class="user-avatar" id="user-avatar-initials" aria-hidden="true">?</span><span id="current-user-name">User</span></button>
       <!-- Settings dropdown -->
       <div class="settings-wrap" id="settings-wrap">
         <button class="btn-settings" onclick="toggleSettings()" id="btn-settings" aria-haspopup="true" aria-expanded="false">
@@ -900,6 +1094,15 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
             DB Setup
           </button>
+          <div class="settings-divider"></div>
+          <div class="settings-theme-row" role="radiogroup" aria-label="Theme">
+            <span class="settings-theme-label">Theme</span>
+            <div class="settings-theme-group">
+              <button type="button" class="settings-theme-btn" data-theme="light" onclick="setTheme('light')" role="radio" aria-checked="false" title="Light theme">Light</button>
+              <button type="button" class="settings-theme-btn" data-theme="dark" onclick="setTheme('dark')" role="radio" aria-checked="false" title="Dark theme">Dark</button>
+              <button type="button" class="settings-theme-btn" data-theme="system" onclick="setTheme('system')" role="radio" aria-checked="false" title="Match system preference">Auto</button>
+            </div>
+          </div>
           <div class="settings-divider" id="settings-divider" style="display:none"></div>
           <button class="settings-item danger" onclick="closeSettings();logout()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -910,15 +1113,15 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
   </div>
 
-  <div class="nav">
-    <div class="nav-tab active" data-tab="projects">Overview</div>
-    <div class="nav-tab" data-tab="rfi">RFI Log</div>
-    <div class="nav-tab" data-tab="submittal">Submittal Log</div>
-    <div class="nav-tab" data-tab="rental">Rental Equipment</div>
-    <div class="nav-tab" data-tab="procurement">Procurement</div>
-    <div class="nav-tab" data-tab="materials">Material Log</div>
-    <div class="nav-tab" data-tab="controls">Project Controls</div>
-  </div>
+  <nav class="nav" aria-label="Primary">
+    <button type="button" class="nav-tab active" data-tab="projects">Overview</button>
+    <button type="button" class="nav-tab" data-tab="rfi">RFI Log</button>
+    <button type="button" class="nav-tab" data-tab="submittal">Submittal Log</button>
+    <button type="button" class="nav-tab" data-tab="rental">Rental Equipment</button>
+    <button type="button" class="nav-tab" data-tab="procurement">Procurement</button>
+    <button type="button" class="nav-tab" data-tab="materials">Material Log</button>
+    <button type="button" class="nav-tab" data-tab="controls">Project Controls</button>
+  </nav>
 
   <!-- PROJECT CONTROLS -->
   <div class="main" id="tab-controls">
@@ -934,17 +1137,17 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <div class="filter-bar-sep"></div>
         <input class="filter-input" id="ctrl-filter-text" placeholder="Search job name, number, client…" oninput="renderProjectControls()">
         <div class="filter-dd" id="fd-ctrl-status" data-fd-val="" data-default-label="All Statuses" data-render="renderProjectControls">
-          <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-ctrl-status')">
+          <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-ctrl-status')">
             <span class="filter-dd-val">All Statuses</span>
             <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
-          <div class="filter-dd-menu">
-            <div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-ctrl-status','','All Statuses')">All Statuses</div>
-            <div class="filter-dd-opt" data-val="Pre-Construction" onclick="selectFDOption('fd-ctrl-status','Pre-Construction','Pre-Construction')"><span class="filter-dd-opt-dot" style="background:#94a3b8"></span>Pre-Construction</div>
-            <div class="filter-dd-opt" data-val="In Progress" onclick="selectFDOption('fd-ctrl-status','In Progress','In Progress')"><span class="filter-dd-opt-dot" style="background:#3b82f6"></span>In Progress</div>
-            <div class="filter-dd-opt" data-val="On Hold" onclick="selectFDOption('fd-ctrl-status','On Hold','On Hold')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>On Hold</div>
-            <div class="filter-dd-opt" data-val="Closeout" onclick="selectFDOption('fd-ctrl-status','Closeout','Closeout')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>Closeout</div>
-            <div class="filter-dd-opt" data-val="Complete" onclick="selectFDOption('fd-ctrl-status','Complete','Complete')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>Complete</div>
+          <div class="filter-dd-menu" role="listbox">
+            <button type="button" role="option" class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-ctrl-status','','All Statuses')">All Statuses</button>
+            <button type="button" role="option" class="filter-dd-opt" data-val="Pre-Construction" onclick="selectFDOption('fd-ctrl-status','Pre-Construction','Pre-Construction')"><span class="filter-dd-opt-dot" style="background:#94a3b8"></span>Pre-Construction</button>
+            <button type="button" role="option" class="filter-dd-opt" data-val="In Progress" onclick="selectFDOption('fd-ctrl-status','In Progress','In Progress')"><span class="filter-dd-opt-dot" style="background:#3b82f6"></span>In Progress</button>
+            <button type="button" role="option" class="filter-dd-opt" data-val="On Hold" onclick="selectFDOption('fd-ctrl-status','On Hold','On Hold')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>On Hold</button>
+            <button type="button" role="option" class="filter-dd-opt" data-val="Closeout" onclick="selectFDOption('fd-ctrl-status','Closeout','Closeout')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>Closeout</button>
+            <button type="button" role="option" class="filter-dd-opt" data-val="Complete" onclick="selectFDOption('fd-ctrl-status','Complete','Complete')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>Complete</button>
           </div>
         </div>
         <button class="filter-clear" onclick="clearControlsFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
@@ -1001,11 +1204,11 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <button class="ov-sf-btn" data-filter="past" onclick="setOvMsFilter('past')">Past</button>
         <button class="ov-sf-btn" data-filter="all" onclick="setOvMsFilter('all')">All</button>
         <div class="filter-dd" id="fd-ovms-project" data-fd-val="" data-default-label="All Projects" data-render="renderOvMilestones">
-          <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-ovms-project')">
+          <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-ovms-project')">
             <span class="filter-dd-val">All Projects</span>
             <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
-          <div class="filter-dd-menu" id="fd-ovms-project-menu"></div>
+          <div class="filter-dd-menu" role="listbox" id="fd-ovms-project-menu"></div>
         </div>
         <button class="btn-add btn-ov-ms-add" onclick="addMilestoneInline()">+ Add Milestone</button>
       </div>
@@ -1048,21 +1251,21 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <div class="filter-bar-sep"></div>
       <input class="filter-input" id="rfi-filter-text" placeholder="Search # or subject…" oninput="renderRFI()">
       <div class="filter-dd" id="fd-rfi-project" data-fd-val="" data-default-label="All Projects" data-render="renderRFI">
-        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-rfi-project')">
+        <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-rfi-project')">
           <span class="filter-dd-val">All Projects</span>
           <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="filter-dd-menu"><div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-rfi-project','','All Projects')">All Projects</div></div>
+        <div class="filter-dd-menu" role="listbox"><button type="button" role="option" class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-rfi-project','','All Projects')">All Projects</button></div>
       </div>
       <div class="filter-dd" id="fd-rfi-status" data-fd-val="" data-default-label="All Statuses" data-render="renderRFI">
-        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-rfi-status')">
+        <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-rfi-status')">
           <span class="filter-dd-val">All Statuses</span>
           <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="filter-dd-menu">
-          <div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-rfi-status','','All Statuses')">All Statuses</div>
-          <div class="filter-dd-opt" data-val="Open" onclick="selectFDOption('fd-rfi-status','Open','Open')"><span class="filter-dd-opt-dot" style="background:#c8102e"></span>Open</div>
-          <div class="filter-dd-opt" data-val="Under Review" onclick="selectFDOption('fd-rfi-status','Under Review','Under Review')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Under Review</div>
+        <div class="filter-dd-menu" role="listbox">
+          <button type="button" role="option" class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-rfi-status','','All Statuses')">All Statuses</button>
+          <button type="button" role="option" class="filter-dd-opt" data-val="Open" onclick="selectFDOption('fd-rfi-status','Open','Open')"><span class="filter-dd-opt-dot" style="background:#c8102e"></span>Open</button>
+          <button type="button" role="option" class="filter-dd-opt" data-val="Under Review" onclick="selectFDOption('fd-rfi-status','Under Review','Under Review')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Under Review</button>
         </div>
       </div>
       <button class="filter-clear" onclick="clearRFIFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
@@ -1070,13 +1273,13 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th style="width:70px">RFI #</th>
-          <th>Subject / Project</th>
-          <th style="width:120px">Submitted</th>
-          <th style="width:120px">Due</th>
-          <th style="width:130px">Status</th>
-          <th style="width:100px">Priority</th>
-          <th style="width:70px"></th>
+          <th scope="col" style="width:70px">RFI #</th>
+          <th scope="col">Subject / Project</th>
+          <th scope="col" style="width:120px">Submitted</th>
+          <th scope="col" style="width:120px">Due</th>
+          <th scope="col" style="width:130px">Status</th>
+          <th scope="col" style="width:100px">Priority</th>
+          <th scope="col" style="width:70px"></th>
         </tr></thead>
         <tbody id="rfi-body"></tbody>
       </table>
@@ -1123,22 +1326,22 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <div class="filter-bar-sep"></div>
       <input class="filter-input" id="sub-filter-text" placeholder="Search # or description…" oninput="renderSubmittals()">
       <div class="filter-dd" id="fd-sub-project" data-fd-val="" data-default-label="All Projects" data-render="renderSubmittals">
-        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-sub-project')">
+        <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-sub-project')">
           <span class="filter-dd-val">All Projects</span>
           <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="filter-dd-menu"><div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-sub-project','','All Projects')">All Projects</div></div>
+        <div class="filter-dd-menu" role="listbox"><button type="button" role="option" class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-sub-project','','All Projects')">All Projects</button></div>
       </div>
       <div class="filter-dd" id="fd-sub-status" data-fd-val="" data-default-label="All Statuses" data-render="renderSubmittals">
-        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-sub-status')">
+        <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-sub-status')">
           <span class="filter-dd-val">All Statuses</span>
           <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="filter-dd-menu">
-          <div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-sub-status','','All Statuses')">All Statuses</div>
-          <div class="filter-dd-opt" data-val="Pending" onclick="selectFDOption('fd-sub-status','Pending','Pending')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Pending</div>
-          <div class="filter-dd-opt" data-val="Under Review" onclick="selectFDOption('fd-sub-status','Under Review','Under Review')"><span class="filter-dd-opt-dot" style="background:#2563eb"></span>Under Review</div>
-          <div class="filter-dd-opt" data-val="Revise &amp; Resubmit" onclick="selectFDOption('fd-sub-status','Revise &amp; Resubmit','Revise &amp; Resubmit')"><span class="filter-dd-opt-dot" style="background:#c8102e"></span>Revise &amp; Resubmit</div>
+        <div class="filter-dd-menu" role="listbox">
+          <button type="button" role="option" class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-sub-status','','All Statuses')">All Statuses</button>
+          <button type="button" role="option" class="filter-dd-opt" data-val="Pending" onclick="selectFDOption('fd-sub-status','Pending','Pending')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Pending</button>
+          <button type="button" role="option" class="filter-dd-opt" data-val="Under Review" onclick="selectFDOption('fd-sub-status','Under Review','Under Review')"><span class="filter-dd-opt-dot" style="background:#2563eb"></span>Under Review</button>
+          <button type="button" role="option" class="filter-dd-opt" data-val="Revise &amp; Resubmit" onclick="selectFDOption('fd-sub-status','Revise &amp; Resubmit','Revise &amp; Resubmit')"><span class="filter-dd-opt-dot" style="background:#c8102e"></span>Revise &amp; Resubmit</button>
         </div>
       </div>
       <button class="filter-clear" onclick="clearSubFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
@@ -1146,13 +1349,13 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th style="width:80px">Sub #</th>
-          <th>Description / Project</th>
-          <th style="width:13%">Spec Section</th>
-          <th style="width:120px">Submitted</th>
-          <th style="width:130px">Status</th>
-          <th style="width:120px">Ball in Court</th>
-          <th style="width:70px"></th>
+          <th scope="col" style="width:80px">Sub #</th>
+          <th scope="col">Description / Project</th>
+          <th scope="col" style="width:13%">Spec Section</th>
+          <th scope="col" style="width:120px">Submitted</th>
+          <th scope="col" style="width:130px">Status</th>
+          <th scope="col" style="width:120px">Ball in Court</th>
+          <th scope="col" style="width:70px"></th>
         </tr></thead>
         <tbody id="submittal-body"></tbody>
       </table>
@@ -1199,21 +1402,21 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <div class="filter-bar-sep"></div>
       <input class="filter-input" id="ren-filter-text" placeholder="Search equipment or vendor…" oninput="renderRental()">
       <div class="filter-dd" id="fd-ren-project" data-fd-val="" data-default-label="All Projects" data-render="renderRental">
-        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-ren-project')">
+        <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-ren-project')">
           <span class="filter-dd-val">All Projects</span>
           <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="filter-dd-menu"><div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-ren-project','','All Projects')">All Projects</div></div>
+        <div class="filter-dd-menu" role="listbox"><button type="button" role="option" class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-ren-project','','All Projects')">All Projects</button></div>
       </div>
       <div class="filter-dd" id="fd-ren-status" data-fd-val="" data-default-label="All Statuses" data-render="renderRental">
-        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-ren-status')">
+        <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-ren-status')">
           <span class="filter-dd-val">All Statuses</span>
           <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="filter-dd-menu">
-          <div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-ren-status','','All Statuses')">All Statuses</div>
-          <div class="filter-dd-opt" data-val="Ordered" onclick="selectFDOption('fd-ren-status','Ordered','Ordered')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Ordered</div>
-          <div class="filter-dd-opt" data-val="On Site" onclick="selectFDOption('fd-ren-status','On Site','On Site')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>On Site</div>
+        <div class="filter-dd-menu" role="listbox">
+          <button type="button" role="option" class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-ren-status','','All Statuses')">All Statuses</button>
+          <button type="button" role="option" class="filter-dd-opt" data-val="Ordered" onclick="selectFDOption('fd-ren-status','Ordered','Ordered')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Ordered</button>
+          <button type="button" role="option" class="filter-dd-opt" data-val="On Site" onclick="selectFDOption('fd-ren-status','On Site','On Site')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>On Site</button>
         </div>
       </div>
       <button class="filter-clear" onclick="clearRentalFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
@@ -1221,12 +1424,12 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th>Equipment / Vendor</th>
-          <th style="width:16%">Project</th>
-          <th style="width:120px">On Site</th>
-          <th style="width:130px">Release Date</th>
-          <th style="width:130px">Status</th>
-          <th style="width:70px"></th>
+          <th scope="col">Equipment / Vendor</th>
+          <th scope="col" style="width:16%">Project</th>
+          <th scope="col" style="width:120px">On Site</th>
+          <th scope="col" style="width:130px">Release Date</th>
+          <th scope="col" style="width:130px">Status</th>
+          <th scope="col" style="width:70px"></th>
         </tr></thead>
         <tbody id="rental-body"></tbody>
       </table>
@@ -1282,22 +1485,22 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <div class="filter-bar-sep"></div>
       <input class="filter-input" id="proc-filter-text" placeholder="Search material or vendor…" oninput="renderProcurement()">
       <div class="filter-dd" id="fd-proc-project" data-fd-val="" data-default-label="All Projects" data-render="renderProcurement">
-        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-proc-project')">
+        <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-proc-project')">
           <span class="filter-dd-val">All Projects</span>
           <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="filter-dd-menu"><div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-proc-project','','All Projects')">All Projects</div></div>
+        <div class="filter-dd-menu" role="listbox"><button type="button" role="option" class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-proc-project','','All Projects')">All Projects</button></div>
       </div>
       <div class="filter-dd filter-dd-multi" id="fd-proc-status" data-default-label="All Statuses">
-        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-proc-status')">
+        <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-proc-status')">
           <span class="filter-dd-val" id="proc-status-label">All Statuses</span>
           <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="filter-dd-menu">
-          <div class="filter-dd-opt filter-dd-opt-check" data-val="Pending" onclick="toggleProcStatus('Pending')"><span class="proc-status-check" aria-hidden="true">✓</span><span class="filter-dd-opt-dot" style="background:#94a3b8"></span>Pending</div>
-          <div class="filter-dd-opt filter-dd-opt-check" data-val="Ordered" onclick="toggleProcStatus('Ordered')"><span class="proc-status-check" aria-hidden="true">✓</span><span class="filter-dd-opt-dot" style="background:#d97706"></span>Ordered</div>
-          <div class="filter-dd-opt filter-dd-opt-check" data-val="Shipped" onclick="toggleProcStatus('Shipped')"><span class="proc-status-check" aria-hidden="true">✓</span><span class="filter-dd-opt-dot" style="background:#7c3aed"></span>Shipped</div>
-          <div class="filter-dd-opt filter-dd-opt-check" data-val="Delivered" onclick="toggleProcStatus('Delivered')"><span class="proc-status-check" aria-hidden="true">✓</span><span class="filter-dd-opt-dot" style="background:#15803d"></span>Delivered</div>
+        <div class="filter-dd-menu" role="listbox">
+          <button type="button" role="option" class="filter-dd-opt filter-dd-opt-check" data-val="Pending" onclick="toggleProcStatus('Pending')"><span class="proc-status-check" aria-hidden="true">✓</span><span class="filter-dd-opt-dot" style="background:#94a3b8"></span>Pending</button>
+          <button type="button" role="option" class="filter-dd-opt filter-dd-opt-check" data-val="Ordered" onclick="toggleProcStatus('Ordered')"><span class="proc-status-check" aria-hidden="true">✓</span><span class="filter-dd-opt-dot" style="background:#d97706"></span>Ordered</button>
+          <button type="button" role="option" class="filter-dd-opt filter-dd-opt-check" data-val="Shipped" onclick="toggleProcStatus('Shipped')"><span class="proc-status-check" aria-hidden="true">✓</span><span class="filter-dd-opt-dot" style="background:#7c3aed"></span>Shipped</button>
+          <button type="button" role="option" class="filter-dd-opt filter-dd-opt-check" data-val="Delivered" onclick="toggleProcStatus('Delivered')"><span class="proc-status-check" aria-hidden="true">✓</span><span class="filter-dd-opt-dot" style="background:#15803d"></span>Delivered</button>
         </div>
       </div>
       <button class="filter-clear" onclick="clearProcFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
@@ -1327,13 +1530,13 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="table-wrap" id="proc-table-wrap">
       <table>
         <thead><tr>
-          <th>Material</th>
-          <th style="width:180px">Project</th>
-          <th style="width:110px">Status</th>
-          <th style="width:115px;white-space:nowrap">Order Date</th>
-          <th style="width:115px;white-space:nowrap">Ship Date</th>
-          <th class="proc-th-sortable" data-sort-key="requested_onsite_date" style="width:170px;white-space:nowrap" onclick="toggleProcSort('requested_onsite_date')" title="Click to sort by on-site date">Requested On-Site <span class="proc-sort-caret"></span></th>
-          <th style="width:60px"></th>
+          <th scope="col">Material</th>
+          <th scope="col" style="width:180px">Project</th>
+          <th scope="col" style="width:110px">Status</th>
+          <th scope="col" style="width:115px;white-space:nowrap">Order Date</th>
+          <th scope="col" style="width:115px;white-space:nowrap">Ship Date</th>
+          <th scope="col" class="proc-th-sortable" data-sort-key="requested_onsite_date" style="width:170px;white-space:nowrap" onclick="toggleProcSort('requested_onsite_date')" title="Click to sort by on-site date">Requested On-Site <span class="proc-sort-caret"></span></th>
+          <th scope="col" style="width:60px"></th>
         </tr></thead>
         <tbody id="proc-body"></tbody>
       </table>
@@ -1358,23 +1561,23 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
       <div class="filter-bar-sep"></div>
       <input class="filter-input" id="mat-filter-text" placeholder="Search material or vendor…" oninput="renderMaterials()">
       <div class="filter-dd" id="fd-mat-project" data-fd-val="" data-default-label="All Projects" data-render="renderMaterials">
-        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-mat-project')">
+        <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-mat-project')">
           <span class="filter-dd-val">All Projects</span>
           <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="filter-dd-menu"><div class="filter-dd-opt opt-all" data-val="" data-label="All Projects" onclick="selectFDOptionEl('fd-mat-project',this)">All Projects</div></div>
+        <div class="filter-dd-menu" role="listbox"><button type="button" role="option" class="filter-dd-opt opt-all" data-val="" data-label="All Projects" onclick="selectFDOptionEl('fd-mat-project',this)">All Projects</button></div>
       </div>
       <div class="filter-dd" id="fd-mat-status" data-fd-val="" data-default-label="All Statuses" data-render="renderMaterials">
-        <button class="filter-dd-btn" type="button" onclick="toggleFD('fd-mat-status')">
+        <button class="filter-dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" onclick="toggleFD('fd-mat-status')">
           <span class="filter-dd-val">All Statuses</span>
           <svg class="dd-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="filter-dd-menu">
-          <div class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-mat-status','','All Statuses')">All Statuses</div>
-          <div class="filter-dd-opt" data-val="Needed"      onclick="selectFDOption('fd-mat-status','Needed','Needed')"><span class="filter-dd-opt-dot" style="background:#2563eb"></span>Needed</div>
-          <div class="filter-dd-opt" data-val="Ordered"     onclick="selectFDOption('fd-mat-status','Ordered','Ordered')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Ordered</div>
-          <div class="filter-dd-opt" data-val="Backordered" onclick="selectFDOption('fd-mat-status','Backordered','Backordered')"><span class="filter-dd-opt-dot" style="background:#dc2626"></span>Backordered</div>
-          <div class="filter-dd-opt" data-val="Delivered"   onclick="selectFDOption('fd-mat-status','Delivered','Delivered')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>Delivered</div>
+        <div class="filter-dd-menu" role="listbox">
+          <button type="button" role="option" class="filter-dd-opt opt-all" data-val="" onclick="selectFDOption('fd-mat-status','','All Statuses')">All Statuses</button>
+          <button type="button" role="option" class="filter-dd-opt" data-val="Needed"      onclick="selectFDOption('fd-mat-status','Needed','Needed')"><span class="filter-dd-opt-dot" style="background:#2563eb"></span>Needed</button>
+          <button type="button" role="option" class="filter-dd-opt" data-val="Ordered"     onclick="selectFDOption('fd-mat-status','Ordered','Ordered')"><span class="filter-dd-opt-dot" style="background:#d97706"></span>Ordered</button>
+          <button type="button" role="option" class="filter-dd-opt" data-val="Backordered" onclick="selectFDOption('fd-mat-status','Backordered','Backordered')"><span class="filter-dd-opt-dot" style="background:#dc2626"></span>Backordered</button>
+          <button type="button" role="option" class="filter-dd-opt" data-val="Delivered"   onclick="selectFDOption('fd-mat-status','Delivered','Delivered')"><span class="filter-dd-opt-dot" style="background:#15803d"></span>Delivered</button>
         </div>
       </div>
       <button class="filter-clear" onclick="clearMatFilters()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clear</button>
@@ -1382,23 +1585,23 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th>Material</th>
-          <th style="width:17%">Project</th>
-          <th style="width:80px">Qty / Unit</th>
-          <th style="width:110px">Status</th>
-          <th style="width:15%">Vendor</th>
-          <th style="width:95px">Ordered</th>
-          <th style="width:95px">Expected</th>
-          <th style="width:90px">PO #</th>
-          <th style="width:80px">Price</th>
-          <th style="width:100px"></th>
+          <th scope="col">Material</th>
+          <th scope="col" style="width:17%">Project</th>
+          <th scope="col" style="width:80px">Qty / Unit</th>
+          <th scope="col" style="width:110px">Status</th>
+          <th scope="col" style="width:15%">Vendor</th>
+          <th scope="col" style="width:95px">Ordered</th>
+          <th scope="col" style="width:95px">Expected</th>
+          <th scope="col" style="width:90px">PO #</th>
+          <th scope="col" style="width:80px">Price</th>
+          <th scope="col" style="width:100px"></th>
         </tr></thead>
         <tbody id="mat-tbody"></tbody>
       </table>
     </div>
   </div>
 
-</div>
+</main>
 
 <!-- MODALS -->
 <div class="modal-overlay" id="controls-modal" role="dialog" aria-modal="true" aria-labelledby="controls-modal-title">
@@ -1464,12 +1667,12 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <div class="modal-section-title">Milestones</div>
         <table class="inline-item-table">
           <thead><tr>
-            <th style="width:26%">Milestone Name</th>
-            <th style="width:17%">Start Date</th>
-            <th style="width:17%">End Date</th>
-            <th style="width:20%">Type</th>
-            <th style="width:8%">TBD</th>
-            <th style="width:6%"></th>
+            <th scope="col" style="width:26%">Milestone Name</th>
+            <th scope="col" style="width:17%">Start Date</th>
+            <th scope="col" style="width:17%">End Date</th>
+            <th scope="col" style="width:20%">Type</th>
+            <th scope="col" style="width:8%">TBD</th>
+            <th scope="col" style="width:6%"></th>
           </tr></thead>
           <tbody id="ctrl-milestone-body"></tbody>
         </table>
@@ -1490,12 +1693,12 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         <div class="modal-section-title">Subcontractors</div>
         <table class="inline-item-table">
           <thead><tr>
-            <th style="width:26%">Company</th>
-            <th style="width:16%">Trade</th>
-            <th style="width:20%">Contact</th>
-            <th style="width:18%">Phone</th>
-            <th style="width:12%">Status</th>
-            <th style="width:8%"></th>
+            <th scope="col" style="width:26%">Company</th>
+            <th scope="col" style="width:16%">Trade</th>
+            <th scope="col" style="width:20%">Contact</th>
+            <th scope="col" style="width:18%">Phone</th>
+            <th scope="col" style="width:12%">Status</th>
+            <th scope="col" style="width:8%"></th>
           </tr></thead>
           <tbody id="ctrl-sub-body"></tbody>
         </table>
@@ -1566,6 +1769,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
         </div>
       </div>
       <div class="form-row-full"><label>Description / Question</label><textarea id="rfi-desc" placeholder="Detailed question or description..."></textarea></div>
+      <div class="form-row-full"><label>Source Link <span style="font-weight:400;color:var(--text-muted);font-size:11px">(optional — Procore, ACC, Bluebeam, etc.)</span></label><input type="url" id="rfi-source-url" placeholder="https://..." autocomplete="off" spellcheck="false"></div>
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('rfi-modal')">Cancel</button>
@@ -1621,6 +1825,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
           </select>
         </div>
       </div>
+      <div class="form-row-full"><label>Source Link <span style="font-weight:400;color:var(--text-muted);font-size:11px">(optional — Procore, ACC, Bluebeam, etc.)</span></label><input type="url" id="sub-source-url" placeholder="https://..." autocomplete="off" spellcheck="false"></div>
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('submittal-modal')">Cancel</button>
@@ -1783,7 +1988,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('order-modal')">Cancel</button>
       <button class="btn-sm" id="btn-send-email" onclick="sendOrderEmail()">&#9993; Send Email</button>
-      <button class="btn-add" onclick="confirmOrderSent()">&#10003; Confirm Order Sent</button>
+      <button class="btn-add" id="order-confirm-btn" onclick="withSaving('order-confirm-btn', confirmOrderSent)">&#10003; Confirm Order Sent</button>
     </div>
   </div>
 </div>
@@ -1823,7 +2028,7 @@ textarea:focus-visible{outline:2px solid var(--michels-red);outline-offset:2px}
     </div>
     <div class="modal-footer">
       <button class="btn-sm" onclick="closeModal('vendor-response-modal')">Cancel</button>
-      <button class="btn-add" onclick="saveVendorResponse()">Save Response</button>
+      <button class="btn-add" id="vresp-save-btn" onclick="withSaving('vresp-save-btn', saveVendorResponse)">Save Response</button>
     </div>
   </div>
 </div>
@@ -1940,7 +2145,8 @@ create table if not exists rfis (
   priority text default 'Low',
   description text,
   spec_section text,
-  closed_at timestamptz
+  closed_at timestamptz,
+  source_url text
 );
 
 create table if not exists submittals (
@@ -1953,7 +2159,8 @@ create table if not exists submittals (
   need_date text,
   status text default 'Pending',
   bic text,
-  approved_at timestamptz
+  approved_at timestamptz,
+  source_url text
 );
 
 create table if not exists rental (
@@ -2023,6 +2230,10 @@ alter table activity_log add column if not exists entry_id text;
 -- "Recently Approved" 7-day section on the RFI and Submittal tabs
 alter table rfis       add column if not exists closed_at   timestamptz;
 alter table submittals add column if not exists approved_at timestamptz;
+
+-- IF UPGRADING rfis/submittals: add external source URL (link back to Procore/ACC/Bluebeam/etc.)
+alter table rfis       add column if not exists source_url text;
+alter table submittals add column if not exists source_url text;
 
 -- ── Project detail tables ───────────────────────────────────
 
@@ -2241,6 +2452,11 @@ const ROLE_COLORS = {
   superadmin: { bg: '#3b0764', text: '#d8b4fe' },
 };
 
+// Dashboard badge CSS-class map — maps every status value the app emits to a
+// `.badge-*` class defined in src/01_head.html.
+// ⚠ Coupled with the PDF RGB maps in src/17_js_exports.html (statusPDF +
+// barColors). When adding a new status value here, add matching entries in
+// exports so the PDF doesn't render the cell uncolored.
 const statusColors = {
   'In Progress':'badge-blue','Pre-Construction':'badge-gray','On Hold':'badge-amber','Closeout':'badge-green','Complete':'badge-green',
   'Open':'badge-red','Under Review':'badge-amber','Answered':'badge-green','Closed':'badge-gray',
@@ -2290,7 +2506,7 @@ document.getElementById('header-date').innerHTML =
 // ── UTILITY FUNCTIONS ────────────────────────────────────
 function badge(text,cls){return`<span class="status ${cls||statusColors[text]||'badge-gray'}">${h(text)}</span>`}
 function prio(text){return`<span class="priority ${priorityColors[text]||'badge-gray'}">${h(text)}</span>`}
-function fmt(d){if(!d)return'—';const p=d.split('-');return`${p[1]}/${p[2]}/${p[0]}`}
+function fmt(d){if(!d)return'—';const p=String(d).split('-');return p.length===3?`${p[1]}/${p[2]}/${p[0]}`:String(d)}
 function val(id){return document.getElementById(id).value.trim()}
 // h() — HTML-escape user-supplied strings before inserting into innerHTML
 function h(s){if(!s&&s!==0)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
@@ -2320,6 +2536,7 @@ function resetModal(id){
   else if(id==='procurement-modal') resetProcurementModal();
   else if(id==='materials-modal') resetMaterialModal();
   else if(id==='vendor-response-modal') resetVendorResponseModal();
+  else if(id==='vendors-modal' && typeof resetVendorForm === 'function') resetVendorForm();
 }
 
 function openModal(id, noReset=false){
@@ -2327,7 +2544,7 @@ function openModal(id, noReset=false){
     alert('Data is still loading. Please try again in a moment.'); return;
   }
   if(id==='user-modal'){
-    if(!getPerms().canManageUsers){ alert('You do not have permission to manage users.'); return; }
+    if(!getPerms().canManageUsers){ showToast('You do not have permission to manage users.','error'); return; }
     renderUserList();
   }
   if(id==='controls-modal') populateTeamSelects();
@@ -2378,7 +2595,10 @@ function applySettingsPermissions(perms){
 document.addEventListener('click', e=>{
   const wrap = document.getElementById('settings-wrap');
   if(!(wrap && wrap.contains(e.target))) closeSettings();
-  if(!e.target.closest('.filter-dd')) document.querySelectorAll('.filter-dd.open').forEach(dd=>dd.classList.remove('open'));
+  if(!e.target.closest('.filter-dd')) document.querySelectorAll('.filter-dd.open').forEach(dd=>{
+    dd.classList.remove('open');
+    const b = dd.querySelector('.filter-dd-btn'); if(b) b.setAttribute('aria-expanded','false');
+  });
 });
 // Escape key closes modals and settings dropdown
 document.addEventListener('keydown', e=>{
@@ -2448,6 +2668,95 @@ function showToast(msg, type){
   t._timer = setTimeout(()=>t.classList.remove('show'), type === 'error' ? 4500 : 2800);
 }
 
+// ── THEME (light / dark / system) ────────────────────────
+// Initial application happens in src/01_head.html via an IIFE so the
+// page doesn't flash the wrong theme on first paint. These helpers
+// handle runtime toggling and keep the settings UI in sync.
+function _applyTheme(pref){
+  const useDark = pref === 'dark' || (pref === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.removeAttribute('data-theme');
+  if(useDark) document.documentElement.setAttribute('data-theme','dark');
+  // Sync the settings dropdown buttons
+  document.querySelectorAll('.settings-theme-btn').forEach(b => {
+    const on = b.dataset.theme === pref;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-checked', on ? 'true' : 'false');
+  });
+}
+function _getTheme(){
+  try { return localStorage.getItem('apm_theme') || 'system'; } catch(e){ return 'system'; }
+}
+function setTheme(pref){
+  if(!['light','dark','system'].includes(pref)) return;
+  try { localStorage.setItem('apm_theme', pref); } catch(e){}
+  _applyTheme(pref);
+}
+// React to OS-level preference changes while the user has 'system' selected
+(function(){
+  try {
+    const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+    if(mq && mq.addEventListener){
+      mq.addEventListener('change', () => { if(_getTheme() === 'system') _applyTheme('system'); });
+    }
+  } catch(e){}
+})();
+// Apply saved theme once (syncs the settings buttons if they're present at DOMContentLoaded;
+// the initial html[data-theme] is already set by the IIFE in src/01_head.html so no flash).
+document.addEventListener('DOMContentLoaded', () => _applyTheme(_getTheme()));
+
+// ── CONFIRM MODAL ────────────────────────────────────────
+// Promise-based styled replacement for native confirm().
+// Returns Promise<boolean>. Supports `danger:true` for a red confirm button.
+function confirmModal(message, opts){
+  opts = opts || {};
+  return new Promise(resolve=>{
+    // Remove any previous instance first so calls don't stack.
+    document.getElementById('_cm-overlay')?.remove();
+    const overlay = document.createElement('div');
+    overlay.id = '_cm-overlay';
+    overlay.className = 'modal-overlay open';
+    overlay.setAttribute('role','dialog');
+    overlay.setAttribute('aria-modal','true');
+    overlay.setAttribute('aria-labelledby','_cm-title');
+    const dangerBtn = opts.danger ? 'style="background:var(--red);border-color:var(--red);color:#fff"' : '';
+    overlay.innerHTML = `
+      <div class="modal" style="width:min(380px,94vw)">
+        <div class="modal-header">
+          <span class="modal-title" id="_cm-title">${h(opts.title||'Confirm')}</span>
+        </div>
+        <div class="modal-body">
+          <p style="margin:0;font-size:13px;line-height:1.5;color:var(--text-mid)">${h(message)}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-sm" id="_cm-cancel">${h(opts.cancelLabel||'Cancel')}</button>
+          <button type="button" class="btn-add" id="_cm-ok" ${dangerBtn}>${h(opts.okLabel||'OK')}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    const cleanup = (v) => { overlay.remove(); resolve(v); };
+    overlay.querySelector('#_cm-ok').addEventListener('click', ()=>cleanup(true));
+    overlay.querySelector('#_cm-cancel').addEventListener('click', ()=>cleanup(false));
+    overlay.addEventListener('click', e=>{ if(e.target===overlay) cleanup(false); });
+    const onKey = e=>{
+      if(e.key==='Escape'){ e.preventDefault(); cleanup(false); }
+      else if(e.key==='Enter' && document.activeElement?.id!=='_cm-cancel'){ e.preventDefault(); cleanup(true); }
+    };
+    document.addEventListener('keydown', onKey);
+    const wrappedResolve = resolve;
+    resolve = v => { document.removeEventListener('keydown', onKey); wrappedResolve(v); };
+    setTimeout(()=>{ try{ overlay.querySelector('#_cm-ok').focus(); }catch(e){} }, 30);
+  });
+}
+
+// ── EMPTY ROW HELPER ─────────────────────────────────────
+// Consistent "no items found" table row. Use inside any tbody render when result set is empty.
+function emptyRow(cols, msg, icon){
+  icon = icon || '📋';
+  return `<tr><td colspan="${cols}" class="empty">
+    <div class="empty-icon">${icon}</div>${h(msg||'No items found.')}
+  </td></tr>`;
+}
+
 // ── IN-FLIGHT SAVE GUARD ─────────────────────────────────
 // Prevents double-submit on any modal save button. Also toggles button label/disabled.
 let _isSaving = false;
@@ -2499,20 +2808,29 @@ function setLoadingState(){
   }
 }
 
-// ── RENDER ALL ───────────────────────────────────────────
-function renderAll(){
-  try { renderOverview(); } catch(e){ console.error('renderOverview', e); }
-  renderProjectControls();
-  renderReportPreview();
-  renderRFI();
-  renderSubmittals();
-  renderRental();
-  renderProcurement();
-  renderMaterials();
-  renderChartStrips();
-  populateProjectSelects();
+// ── RENDER SCOPE ─────────────────────────────────────────
+// Targeted re-render. Pass one or more tags; '*' does everything.
+// Tags: overview | controls | report | rfi | submittal | rental |
+//       procurement | materials | charts | projselects
+// applyWritePermissions always runs (cheap).
+function renderScope(...tags){
+  const s = new Set(tags);
+  const w = t => s.has('*') || s.has(t);
+  if(w('overview'))    try { renderOverview(); } catch(e){ console.error('renderOverview', e); }
+  if(w('controls'))    renderProjectControls();
+  if(w('report'))      renderReportPreview();
+  if(w('rfi'))         renderRFI();
+  if(w('submittal'))   renderSubmittals();
+  if(w('rental'))      renderRental();
+  if(w('procurement')) renderProcurement();
+  if(w('materials'))   renderMaterials();
+  if(w('charts'))      renderChartStrips();
+  if(w('*') || w('projselects')) populateProjectSelects();
   applyWritePermissions();
 }
+
+// Legacy alias — initial load / large-scope operations.
+function renderAll(){ renderScope('*'); }
 
 // ── SCHEDULE RISK ENGINE ─────────────────────────────────
 // Returns open RFIs and pending submittals due within windowDays days (or already overdue).
@@ -2552,7 +2870,7 @@ function toggleDetail(type,id){
 // so a bounce-back-and-re-approve restarts the clock cleanly.
 async function quickStatusChange(type,id,newStatus){
   if(!newStatus) return;
-  if(!getPerms().canEdit){ alert('You do not have permission to edit records.'); return; }
+  if(!getPerms().canEdit){ showToast('You do not have permission to edit records.','error'); return; }
   const tableMap={rfi:'rfis',submittal:'submittals',rental:'rental'};
   const arr=type==='rfi'?rfis:type==='submittal'?submittals:rental;
   const item=arr.find(x=>x.id===id);
@@ -2563,8 +2881,18 @@ async function quickStatusChange(type,id,newStatus){
   const oldClosedAt   = item.closed_at;
   if(type === 'submittal'){
     const nowTerminal = ['Approved','Approved as Noted'].includes(newStatus);
-    patch.approved_at = nowTerminal ? new Date().toISOString() : null;
-    item.approved_at  = patch.approved_at;
+    const wasTerminal = ['Approved','Approved as Noted'].includes(oldStatus);
+    // Preserve the existing stamp across lateral Approved ↔ Approved as Noted
+    // moves so the 7-day Recently Approved clock doesn't restart on relabeling.
+    if(nowTerminal){
+      if(!wasTerminal || !item.approved_at){
+        patch.approved_at = new Date().toISOString();
+        item.approved_at  = patch.approved_at;
+      }
+    } else {
+      patch.approved_at = null;
+      item.approved_at  = null;
+    }
   } else if(type === 'rfi'){
     // closed_at semantically = "when the RFI entered the Recently Approved bucket."
     // Stamped on transition → Answered. Manual transition → Closed leaves the stamp
@@ -2590,28 +2918,45 @@ async function quickStatusChange(type,id,newStatus){
     return;
   }
   saveLocal();
-  renderAll();
+  // Scoped re-render — status flip only affects its own tab + overview (attention feed) + chart strip
+  renderScope(type === 'rfi' ? 'rfi' : type === 'submittal' ? 'submittal' : 'rental', 'overview', 'charts');
   showToast('Status updated to '+newStatus);
   const _scLabel = item.subject||item.name||item.num||(type+' #'+id);
   logActivity('status','status change',_scLabel,type.charAt(0).toUpperCase()+type.slice(1)+' → '+newStatus);
 }
 
 // ── STATUS PILL SWITCHER ─────────────────────────────────
+// Status values are stored as data-* attributes so no user/runtime string
+// ever lands inside a JS string literal in an onclick attribute.
+// See Patterns/onclick Attribute XSS.
 function statusSwitcherHTML(type, id, currentStatus, options){
   const btns = options.map(o=>{
     const isCurrent = o.value===currentStatus;
     const style = isCurrent
       ? `background:${o.bg};color:${o.color};border-color:${o.color}`
       : '';
-    const onclick = isCurrent
+    const dataAttrs = isCurrent
       ? ''
-      : `onclick="event.stopPropagation();quickStatusChange('${type}',${id},'${o.value.replace(/'/g,"\\'")}')"`;
-    return `<button class="status-btn${isCurrent?' status-btn-current':''}" style="${style}" ${onclick}>
-      <span class="status-btn-pip" style="background:${o.color}"></span>${o.label}
+      : `data-qsc-type="${h(type)}" data-qsc-id="${h(String(id))}" data-qsc-status="${h(o.value)}"`;
+    return `<button class="status-btn${isCurrent?' status-btn-current':''}" style="${style}" ${dataAttrs}>
+      <span class="status-btn-pip" style="background:${o.color}"></span>${h(o.label)}
     </button>`;
   }).join('');
   return `<div class="status-switcher"><span class="status-switcher-label">Status</span>${btns}</div>`;
 }
+
+// Delegated click handler for status pills — reads type/id/status from data-*
+// attributes set by statusSwitcherHTML. Stops propagation so parent rows don't
+// swallow the click.
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-qsc-status]');
+  if(!btn) return;
+  e.stopPropagation();
+  const type   = btn.getAttribute('data-qsc-type');
+  const id     = +btn.getAttribute('data-qsc-id');
+  const status = btn.getAttribute('data-qsc-status');
+  if(type && id && status) quickStatusChange(type, id, status);
+});
 
 // ── CHART STRIPS ─────────────────────────────────────────
 function chartStripHTML(segments, total, extra){
@@ -2695,9 +3040,10 @@ function renderChartStrips(){
 // ── TAB NAVIGATION EVENT LISTENERS ──────────────────────
 document.querySelectorAll('.nav-tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
-    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t=>{ t.classList.remove('active'); t.removeAttribute('aria-current'); });
     document.querySelectorAll('.main').forEach(m=>m.classList.remove('active'));
     tab.classList.add('active');
+    tab.setAttribute('aria-current','page');
     document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
     // Auto-open the Recently Approved section (RFI + Submittal only).
     // Archive stays collapsed by default — user clicks the header to expand.
@@ -2707,12 +3053,28 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
     const dv=document.getElementById('ctrl-detail-view');
     const lv=document.getElementById('ctrl-list-view');
     if(dv&&lv){ dv.style.display='none'; lv.style.display=''; }
+    // Re-animate the Overview stat count-up on re-entry so returning doesn't paint silently
+    if(tab.dataset.tab === 'projects' && typeof window.resetOvStatsAnimated === 'function'){
+      window.resetOvStatsAnimated();
+      if(typeof renderOvStatStrip === 'function') renderOvStatStrip();
+    }
+    if(tab.dataset.tab === 'procurement' && typeof window.resetProcStatStripAnimated === 'function'){
+      window.resetProcStatStripAnimated();
+    }
   });
 });
 
+// Programmatic tab switch — called from Overview stat cards, attention feed,
+// header logo, etc. Accepts either 'tab-rfi' or 'rfi'.
+function switchTab(id){
+  const key = String(id||'').replace(/^tab-/,'');
+  const btn = document.querySelector('.nav-tab[data-tab="'+key+'"]');
+  if(btn) btn.click();
+}
+
 // ── MODAL OVERLAY CLICK-TO-CLOSE ────────────────────────
 document.querySelectorAll('.modal-overlay').forEach(o=>{
-  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')});
+  o.addEventListener('click',e=>{if(e.target===o){ if(typeof closeModal==='function') closeModal(o.id); else o.classList.remove('open'); }});
 });
 
 </script>
@@ -2838,6 +3200,12 @@ function saveData(){
 async function loadData(){
   // Reset state at the top of every load — prevents stale "ready" state during reconnect
   dataLoaded = false;
+  // Reset count-up animation flags so fresh data re-animates the stat strips
+  // (otherwise new totals paint silently after a reconnect / refresh).
+  if(typeof window.resetOvStatsAnimated === 'function') window.resetOvStatsAnimated();
+  if(typeof window.resetProcStatStripAnimated === 'function') window.resetProcStatStripAnimated();
+  // Restore per-user saved procurement filter state (view, status set, sort)
+  if(typeof window.restoreProcFilterState === 'function') window.restoreProcFilterState();
   const token = ++loadToken;
   if(sb) setLoadingState();
 
@@ -2873,26 +3241,39 @@ async function loadData(){
     ]);
     // Discard results if a newer load has started
     if(token !== loadToken) return;
-    // Check each table for Supabase errors before overwriting local state.
-    // Without this, a permission error or missing table silently looks like "no data"
-    // and would wipe the localStorage cache with empty arrays.
-    if(p.error || r.error || s.error || rn.error){
-      const err = p.error || r.error || s.error || rn.error;
-      console.error('Supabase table error', err);
-      throw new Error(err.message || 'Failed to load one or more tables — check table permissions in Supabase.');
+    // Check EVERY table for Supabase errors before overwriting local state.
+    // Previously only projects/rfis/submittals/rental were inspected, so a
+    // policy failure on milestones/subs/materials/vendors/procurement would
+    // silently clear those arrays with no user feedback.
+    const tableErrs = [
+      ['projects',p],['rfis',r],['submittals',s],['rental',rn],
+      ['milestones',ms],['subcontractors',sbs],['materials',mat],['vendors',ven],['procurement',proc]
+    ].filter(([, res]) => res && res.error);
+    if(tableErrs.length){
+      const firstErr = tableErrs[0][1].error;
+      console.error('Supabase table errors', tableErrs.map(([n,res])=>({table:n, error:res.error})));
+      throw new Error(firstErr.message || 'Failed to load one or more tables — check table permissions in Supabase.');
     }
     projects       = (p.data||[]).map(x=>({...x, start:x.start_date, end:x.end_date}));
     rfis           = (r.data||[]).map(x=>({...x, desc:x.description}));
     submittals     = (s.data||[]).map(x=>({...x, date:x.submitted_date, desc:x.description}));
     rental         = (rn.data||[]).map(x=>({...x, onsite:x.onsite_date, offsite:x.release_date}));
-    milestones     = ms.error  ? [] : (ms.data||[]);
-    subcontractors = sbs.error ? [] : (sbs.data||[]);
-    materials      = mat.error ? [] : (mat.data||[]);
-    vendors        = ven.error ? [] : (ven.data||[]);
-    procurement    = proc.error ? [] : (proc.data||[]);
+    milestones     = ms.data || [];
+    subcontractors = sbs.data || [];
+    materials      = mat.data || [];
+    vendors        = ven.data || [];
+    procurement    = proc.data || [];
     nextId = Math.max(0,...[...projects,...rfis,...submittals,...rental,...milestones,...subcontractors].map(x=>x.id||0)) + 1;
     saveLocal();
-  }catch(e){ console.error('Supabase load error',e); return; }
+  }catch(e){
+    if(token !== loadToken) return;
+    console.error('Supabase load error',e);
+    showToast('Failed to load data: '+(e.message||'connection error'),'error');
+    // Clear skeletons so the user doesn't stare at spinners forever.
+    // renderAll paints whatever's currently in state (may be empty — that's fine).
+    try { renderAll(); } catch(_){}
+    return;
+  }
   if(token !== loadToken) return;
   await sweepExpiredAnsweredRFIs();
   dataLoaded = true; renderAll();
@@ -2933,11 +3314,20 @@ async function callClaude(messages, model, systemPrompt, caller){
     showToast('Not signed in — cannot call AI.', 'error');
     return null;
   }
+  if(!Array.isArray(messages) || messages.length === 0){
+    showToast('AI request has no content.', 'error');
+    return null;
+  }
   const body = { model, max_tokens: 1024, messages, caller: caller || 'unknown' };
   if(systemPrompt) body.system = systemPrompt; // server wraps with cache_control: ephemeral
+  // Timeout guards against hung Edge Function cold-starts (documented 546 WORKER_LIMIT)
+  // that would otherwise leave draftOrderEmail / parseVendorEmail stuck forever.
+  const ctrl = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), 30000);
   try{
     const res = await fetch(`${SUPABASE_URL}/functions/v1/Claude-proxy`, {
       method: 'POST',
+      signal: ctrl.signal,
       headers: {
         'content-type':         'application/json',
         'x-dashboard-username': currentUser.username,
@@ -2953,16 +3343,23 @@ async function callClaude(messages, model, systemPrompt, caller){
     }
     return data.content ?? null;
   }catch(e){
-    showToast('AI request failed: '+e.message, 'error');
+    const msg = e && e.name === 'AbortError' ? 'AI request timed out.' : 'AI request failed: '+(e?.message||e);
+    showToast(msg, 'error');
     return null;
+  }finally{
+    clearTimeout(timer);
   }
 }
 
 // ── SUPABASE WRITE HELPERS ────────────────────────────────
-// All helpers return {error} so callers can abort before mutating local state.
-async function sbInsert(table, row){ if(sb) return await sb.from(table).insert(row).select(); return {error:null}; }
+// All helpers return {error, data?, offline?} so callers can distinguish offline
+// from server-empty explicitly instead of inferring it from !res.data?.[0].
+async function sbInsert(table, row){
+  if(sb) return await sb.from(table).insert(row).select();
+  return {error:null, data:null, offline:true};
+}
 async function sbUpdate(table, id, row){
-  if(!sb) return {error:null};
+  if(!sb) return {error:null, data:null, offline:true};
   const res = await sb.from(table).update(row).eq('id',id);
   return res; // {data, error}
 }
@@ -3145,7 +3542,14 @@ async function deleteUserFromDB(username){
   return true;
 }
 
+let _loggingIn = false;
 async function attemptLogin(){
+  // Holding Enter on the password input fires onkeydown through auto-repeat,
+  // which btn.disabled doesn't stop. Guard against N concurrent invocations
+  // so each mistyped password only counts once against the rate limiter.
+  if(_loggingIn) return;
+  _loggingIn = true;
+  try {
   const username = document.getElementById('login-username').value.trim().toLowerCase();
   const password = document.getElementById('login-password').value;
   const errEl = document.getElementById('login-error');
@@ -3223,6 +3627,7 @@ async function attemptLogin(){
     localStorage.removeItem('apm_remember');
   }
   showDashboard();
+  } finally { _loggingIn = false; }
 }
 
 function checkSession(){
@@ -3346,6 +3751,7 @@ function logout(){
     'apm_session','apm_remember',
     'apm_projects','apm_rfis','apm_submittals','apm_rental',
     'apm_milestones','apm_subcontractors',
+    'apm_materials','apm_vendors','apm_procurement',
     // Legacy global todo keys — kept here so pre-namespacing data is cleaned up.
     // New per-user keys are swept by the prefix loop below.
     'apm_done_todos','apm_dissolved_todos','apm_snoozed_todos','apm_reminder_days',
@@ -3358,6 +3764,7 @@ function logout(){
   try{
     const _userPrefixes = [
       'apm_activity_seen_',
+      'apm_activity_',
       'apm_done_todos_',
       'apm_dissolved_todos_',
       'apm_snoozed_todos_',
@@ -3407,7 +3814,7 @@ async function renderUserList(){
         <div>
           <div style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px">
             ${h(u.displayName||u.username)}
-            <span style="font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace;${rolePillStyle[u.role]||rolePillStyle.user}">${roleLabels[u.role]||h(u.role)}</span>
+            <span style="font-size:10px;font-weight:500;letter-spacing:.5px;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace;${rolePillStyle[u.role]||rolePillStyle.user}">${roleLabels[u.role]||h(u.role)}</span>
           </div>
           <div style="font-size:11px;color:var(--text-muted);margin-top:2px">@${h(u.username)}</div>
         </div>
@@ -3563,8 +3970,9 @@ function applyWritePermissions(){
     btn.style.display = canWrite('materials') ? '' : 'none';
   });
 
-  // Export buttons — always show if canExport
-  const exportBtns = document.querySelectorAll('.btn-sm[onclick*="exportTo"]');
+  // Export buttons — always show if canExport.
+  // Broadened to catch Overview/Procurement .btn-xlsx and .btn-pdf buttons too.
+  const exportBtns = document.querySelectorAll('[onclick*="exportTo"], .btn-xlsx, .btn-pdf');
   exportBtns.forEach(btn=>{ btn.style.display = p.canExport ? '' : 'none'; });
 
   // PDF summary button
@@ -3613,6 +4021,30 @@ function milestoneDaysDiff(dateStr){
   const d=new Date(dateStr+'T00:00:00'), now=new Date();
   now.setHours(0,0,0,0);
   return Math.ceil((d-now)/(1000*60*60*24));
+}
+
+// Shared spec-section grouping for RFI + Submittal archives (and anywhere
+// else rows are grouped by spec). Named sections sort alphabetically,
+// unclassified ('') goes last. Returns {groups, sortedKeys, showHeaders}.
+function _groupBySpecSection(items, specKey){
+  const groups = {};
+  (items||[]).forEach(r => {
+    const k = r[specKey] || '';
+    if(!groups[k]) groups[k] = [];
+    groups[k].push(r);
+  });
+  const sortedKeys = Object.keys(groups).sort((a,b) => {
+    if(!a && !b) return 0;
+    if(!a) return 1;
+    if(!b) return -1;
+    return a.localeCompare(b);
+  });
+  const showHeaders = sortedKeys.length > 1 || (sortedKeys.length === 1 && sortedKeys[0] !== '');
+  return { groups, sortedKeys, showHeaders };
+}
+
+function _specSectionHeaderRow(label, colspan){
+  return `<tr class="spec-section-row"><td colspan="${colspan}"><span class="spec-section-badge">${h(label || 'Unclassified')}</span></td></tr>`;
 }
 </script>
 <!-- ── render.js ── -->
@@ -3803,8 +4235,24 @@ function toggleFD(id){
   const el=document.getElementById(id);
   if(!el) return;
   const wasOpen=el.classList.contains('open');
-  document.querySelectorAll('.filter-dd.open').forEach(dd=>dd.classList.remove('open'));
-  if(!wasOpen) el.classList.add('open');
+  // Close every other dropdown and sync their triggers' aria-expanded
+  document.querySelectorAll('.filter-dd.open').forEach(dd=>{
+    dd.classList.remove('open');
+    const b=dd.querySelector('.filter-dd-btn'); if(b) b.setAttribute('aria-expanded','false');
+  });
+  if(!wasOpen){
+    el.classList.add('open');
+    const btn = el.querySelector('.filter-dd-btn');
+    if(btn) btn.setAttribute('aria-expanded','true');
+    // Focus the selected option, or the first non-header option, so keyboard nav has a starting point
+    setTimeout(()=>{
+      const sel = el.querySelector('.filter-dd-opt.selected') || el.querySelector('.filter-dd-opt:not(.opt-all)') || el.querySelector('.filter-dd-opt');
+      if(sel) try{ sel.focus(); }catch(e){}
+    }, 10);
+  } else {
+    const btn = el.querySelector('.filter-dd-btn');
+    if(btn) btn.setAttribute('aria-expanded','false');
+  }
 }
 function selectFDOption(id,value,label){
   const el=document.getElementById(id);
@@ -3814,8 +4262,12 @@ function selectFDOption(id,value,label){
   if(span) span.textContent=label||(el.dataset.defaultLabel||'All');
   el.classList.toggle('active',!!value);
   el.classList.remove('open');
+  const btn = el.querySelector('.filter-dd-btn');
+  if(btn){ btn.setAttribute('aria-expanded','false'); try{ btn.focus(); }catch(e){} }
   el.querySelectorAll('.filter-dd-opt').forEach(o=>{
-    o.classList.toggle('selected',!!value&&o.dataset.val===value);
+    const isSel = !!value && o.dataset.val===value;
+    o.classList.toggle('selected', isSel);
+    o.setAttribute('aria-selected', isSel ? 'true' : 'false');
   });
   const fn=el.dataset.render;
   if(fn&&window[fn]) window[fn]();
@@ -3824,6 +4276,32 @@ function clearFD(id){
   const el=document.getElementById(id);
   if(el) selectFDOption(id,'',el.dataset.defaultLabel||'All');
 }
+
+/* KEYBOARD NAVIGATION — Up/Down/Home/End/Escape/Enter inside any open filter-dd */
+document.addEventListener('keydown', e=>{
+  const dd = document.querySelector('.filter-dd.open');
+  if(!dd) return;
+  const opts = Array.from(dd.querySelectorAll('.filter-dd-opt'));
+  if(!opts.length) return;
+  const active = document.activeElement;
+  const i = opts.indexOf(active);
+  let next = -1;
+  switch(e.key){
+    case 'Escape':
+      e.preventDefault();
+      dd.classList.remove('open');
+      const btn = dd.querySelector('.filter-dd-btn');
+      if(btn){ btn.setAttribute('aria-expanded','false'); try{ btn.focus(); }catch(_){} }
+      return;
+    case 'ArrowDown': next = (i<0 || i===opts.length-1) ? 0 : i+1; break;
+    case 'ArrowUp':   next = (i<=0) ? opts.length-1 : i-1; break;
+    case 'Home':      next = 0; break;
+    case 'End':       next = opts.length-1; break;
+    default: return;
+  }
+  e.preventDefault();
+  try{ opts[next].focus(); }catch(_){}
+});
 
 function renderRFI(){
   const body=document.getElementById('rfi-body');
@@ -3880,8 +4358,8 @@ function renderRFI(){
       <td>${prio(r.priority)}</td>
       <td onclick="event.stopPropagation()">
         <div class="row-actions">
-          <button type="button" class="btn-icon" aria-label="Edit" onclick="editRFI(${r.id})" title="Edit">✎</button>
-          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteItem('rfis',${r.id})" title="Delete">✕</button>
+          <button type="button" class="btn-icon" aria-label="Edit RFI ${h(r.num||r.id)}" onclick="editRFI(${r.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete RFI ${h(r.num||r.id)}" onclick="deleteItem('rfis',${r.id})" title="Delete">✕</button>
         </div>
       </td>
     </tr>
@@ -3896,6 +4374,7 @@ function renderRFI(){
             <div><div class="detail-field-label">Response Due</div><div class="detail-field-value">${dateChip(r.due,true)}</div></div>
             <div><div class="detail-field-label">Priority</div><div class="detail-field-value">${prio(r.priority)}</div></div>
             <div><div class="detail-field-label">Status</div><div class="detail-field-value">${badge(r.status)}</div></div>
+            <div><div class="detail-field-label">Source Link</div><div class="detail-field-value">${sourceLinkFieldHTML('rfi',r.id,r.source_url)}</div></div>
           </div>
           ${desc?`<div class="detail-field-label" style="margin-bottom:6px">Description / Question</div><div class="detail-desc-block">${desc}</div>`:''}
           <div class="detail-actions">
@@ -3969,8 +4448,8 @@ function renderSubmittals(){
       <td class="truncate" style="font-size:12px">${h(s.bic)||'—'}</td>
       <td onclick="event.stopPropagation()">
         <div class="row-actions">
-          <button type="button" class="btn-icon" aria-label="Edit" onclick="editSubmittal(${s.id})" title="Edit">✎</button>
-          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteItem('submittals',${s.id})" title="Delete">✕</button>
+          <button type="button" class="btn-icon" aria-label="Edit submittal ${h(s.num||s.id)}" onclick="editSubmittal(${s.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete submittal ${h(s.num||s.id)}" onclick="deleteItem('submittals',${s.id})" title="Delete">✕</button>
         </div>
       </td>
     </tr>
@@ -3985,6 +4464,7 @@ function renderSubmittals(){
             ${s.need_date?`<div><div class="detail-field-label">Required By</div><div class="detail-field-value">${dateChip(s.need_date,true)}</div></div>`:''}
             <div><div class="detail-field-label">Ball in Court</div><div class="detail-field-value">${h(s.bic)||'—'}</div></div>
             <div><div class="detail-field-label">Status</div><div class="detail-field-value">${badge(s.status)}</div></div>
+            <div><div class="detail-field-label">Source Link</div><div class="detail-field-value">${sourceLinkFieldHTML('sub',s.id,s.source_url)}</div></div>
           </div>
           <div class="detail-actions">
             ${statusSwitcherHTML('submittal',s.id,s.status,[
@@ -4040,8 +4520,8 @@ function renderRental(){
       <td>${badge(r.status)}</td>
       <td onclick="event.stopPropagation()">
         <div class="row-actions">
-          <button type="button" class="btn-icon" aria-label="Edit" onclick="editRental(${r.id})" title="Edit">✎</button>
-          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteItem('rental',${r.id})" title="Delete">✕</button>
+          <button type="button" class="btn-icon" aria-label="Edit rental ${h(r.name||r.id)}" onclick="editRental(${r.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete rental ${h(r.name||r.id)}" onclick="deleteItem('rental',${r.id})" title="Delete">✕</button>
         </div>
       </td>
     </tr>
@@ -4117,6 +4597,38 @@ function _recentDaysLeftHTML(iso){
   return `<span class="recent-days-chip${aged?' aged':''}">${label}</span>`;
 }
 
+// Source link display-only renderers.
+// Editing happens through the RFI / Submittal edit modal — these helpers just surface
+// the link so users can click to open the item in its source system.
+
+// Compact inline variant used in non-drawer tables (Recently Approved + Archive).
+// Renders just the ↗ icon anchor when url is set; nothing when url is empty.
+// type: 'rfi' | 'sub'. id: row id (reserved for future use). url: row.source_url.
+function sourceLinkHTML(type, id, url){
+  if(!url) return '';
+  // Defense-in-depth: re-validate the scheme at render time. h() does not block
+  // javascript:/data:/vbscript: URIs — a future write-path bypass would be an
+  // immediate XSS vector since CSP doesn't gate <a href="javascript:...">.
+  let parsed; try { parsed = new URL(url); } catch(e){ return ''; }
+  if(parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
+  const safe = h(parsed.toString());
+  const host = parsed.hostname.replace(/^www\./,'');
+  return `<a href="${safe}" target="_blank" rel="noopener noreferrer" class="row-link-btn" title="Open in ${h(host)}" onclick="event.stopPropagation()" aria-label="Open source">↗</a>`;
+}
+
+// Drawer field variant — returned as the content of a .detail-field-value cell.
+// Always returns a string so the caller can render the field unconditionally (users
+// see where the link lives even before they add one). When empty, renders an em-dash
+// placeholder matching the other "not-set" fields in the drawer.
+function sourceLinkFieldHTML(type, id, url){
+  if(!url) return '<span style="color:var(--text-muted)">—</span>';
+  let parsed; try { parsed = new URL(url); } catch(e){ return '<span style="color:var(--text-muted)">—</span>'; }
+  if(parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '<span style="color:var(--text-muted)">—</span>';
+  const safe = h(parsed.toString());
+  const host = parsed.hostname.replace(/^www\./,'');
+  return `<a href="${safe}" target="_blank" rel="noopener noreferrer" class="row-link-chip" title="${safe}" onclick="event.stopPropagation()" aria-label="Open source">↗ ${h(host)}</a>`;
+}
+
 function archiveGroupHTML(items, rowFn, headers){
   if(!items.length) return `<div class="archive-proj-group"><div class="empty" style="padding:20px">No archived records.</div></div>`;
   const groups = {};
@@ -4126,7 +4638,7 @@ function archiveGroupHTML(items, rowFn, headers){
     groups[key].push(item);
   });
   const thead = headers
-    ? `<thead><tr>${headers.map(col=>typeof col==='object'?`<th style="${col.style||''}">${col.label}</th>`:`<th>${col}</th>`).join('')}</tr></thead>`
+    ? `<thead><tr>${headers.map(col=>typeof col==='object'?`<th scope="col" style="${col.style||''}">${col.label}</th>`:`<th scope="col">${col}</th>`).join('')}</tr></thead>`
     : '';
   return Object.entries(groups).map(([projName, groupItems])=>`
     <div class="archive-proj-group">
@@ -4161,13 +4673,13 @@ function renderRFIRecentlyApproved(){
       <div class="table-wrap">
         <table>
           <thead><tr>
-            <th style="width:70px">RFI #</th>
-            <th style="width:26%">Subject</th>
-            <th style="width:14%">Project</th>
-            <th style="width:13%">Answered</th>
-            <th style="width:12%">Status</th>
-            <th style="width:10%">Time Left</th>
-            <th style="width:120px">Actions</th>
+            <th scope="col" style="width:70px">RFI #</th>
+            <th scope="col" style="width:26%">Subject</th>
+            <th scope="col" style="width:14%">Project</th>
+            <th scope="col" style="width:13%">Answered</th>
+            <th scope="col" style="width:12%">Status</th>
+            <th scope="col" style="width:10%">Time Left</th>
+            <th scope="col" style="width:120px">Actions</th>
           </tr></thead>
           <tbody>${recent.map(r=>`
             <tr>
@@ -4180,7 +4692,7 @@ function renderRFIRecentlyApproved(){
               <td><span style="font-size:12px">${fmt((r.closed_at||'').slice(0,10))}</span><div style="font-size:10px;color:var(--text-muted);margin-top:2px">${_recentDaysAgoLabel(r.closed_at)}</div></td>
               <td>${badge(r.status)}</td>
               <td>${_recentDaysLeftHTML(r.closed_at)}</td>
-              <td style="white-space:nowrap"><button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
+              <td style="white-space:nowrap">${sourceLinkHTML('rfi',r.id,r.source_url)}<button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
             </tr>`).join('')}</tbody>
         </table>
       </div>
@@ -4204,29 +4716,23 @@ function renderRFIArchive(){
   const body = document.getElementById('rfi-archive-body');
   if(!body) return;
   const thead = `<thead><tr>
-    <th style="width:70px">RFI #</th>
-    <th>Subject / Project</th>
-    <th style="width:120px">Submitted</th>
-    <th style="width:120px">Due</th>
-    <th style="width:130px">Status</th>
-    <th style="width:100px">Priority</th>
-    <th style="width:70px"></th>
+    <th scope="col" style="width:70px">RFI #</th>
+    <th scope="col">Subject / Project</th>
+    <th scope="col" style="width:120px">Submitted</th>
+    <th scope="col" style="width:120px">Due</th>
+    <th scope="col" style="width:130px">Status</th>
+    <th scope="col" style="width:100px">Priority</th>
+    <th scope="col" style="width:70px"></th>
   </tr></thead>`;
   if(!archived.length){
     body.innerHTML = `<div class="table-wrap"><table>${thead}<tbody><tr><td colspan="7" class="empty">No archived RFIs${proj?' for this project':''}.</td></tr></tbody></table></div>`;
     return;
   }
   // Group by spec_section — named sections alphabetically, unclassified last (mirrors renderRFI())
-  const groups = {};
-  archived.forEach(r => { const k = r.spec_section || ''; if(!groups[k]) groups[k] = []; groups[k].push(r); });
-  const sortedKeys = Object.keys(groups).sort((a,b) => { if(!a&&!b) return 0; if(!a) return 1; if(!b) return -1; return a.localeCompare(b); });
-  const showHeaders = sortedKeys.length > 1 || (sortedKeys.length === 1 && sortedKeys[0] !== '');
+  const { groups, sortedKeys, showHeaders } = _groupBySpecSection(archived, 'spec_section');
   let rowsHTML = '';
   sortedKeys.forEach(key => {
-    if(showHeaders){
-      const label = key || 'Unclassified';
-      rowsHTML += `<tr class="spec-section-row"><td colspan="7"><span class="spec-section-badge">${h(label)}</span></td></tr>`;
-    }
+    if(showHeaders) rowsHTML += _specSectionHeaderRow(key, 7);
     groups[key].forEach(r => {
       rowsHTML += `
         <tr>
@@ -4239,7 +4745,7 @@ function renderRFIArchive(){
           <td>${fmt(r.due)}</td>
           <td>${badge(r.status)}</td>
           <td>${prio(r.priority)}</td>
-          <td style="white-space:nowrap"><button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
+          <td style="white-space:nowrap">${sourceLinkHTML('rfi',r.id,r.source_url)}<button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
         </tr>`;
     });
   });
@@ -4264,14 +4770,14 @@ function renderSubmittalRecentlyApproved(){
       <div class="table-wrap">
         <table>
           <thead><tr>
-            <th style="width:80px">Sub #</th>
-            <th style="width:26%">Description</th>
-            <th style="width:14%">Project</th>
-            <th style="width:13%">Spec</th>
-            <th style="width:13%">Approved</th>
-            <th style="width:13%">Status</th>
-            <th style="width:10%">Time Left</th>
-            <th style="width:120px">Actions</th>
+            <th scope="col" style="width:80px">Sub #</th>
+            <th scope="col" style="width:26%">Description</th>
+            <th scope="col" style="width:14%">Project</th>
+            <th scope="col" style="width:13%">Spec</th>
+            <th scope="col" style="width:13%">Approved</th>
+            <th scope="col" style="width:13%">Status</th>
+            <th scope="col" style="width:10%">Time Left</th>
+            <th scope="col" style="width:120px">Actions</th>
           </tr></thead>
           <tbody>${recent.map(s=>`
             <tr>
@@ -4282,7 +4788,7 @@ function renderSubmittalRecentlyApproved(){
               <td><span style="font-size:12px">${fmt((s.approved_at||'').slice(0,10))}</span><div style="font-size:10px;color:var(--text-muted);margin-top:2px">${_recentDaysAgoLabel(s.approved_at)}</div></td>
               <td>${badge(s.status)}</td>
               <td>${_recentDaysLeftHTML(s.approved_at)}</td>
-              <td style="white-space:nowrap"><button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
+              <td style="white-space:nowrap">${sourceLinkHTML('sub',s.id,s.source_url)}<button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
             </tr>`).join('')}</tbody>
         </table>
       </div>
@@ -4303,29 +4809,23 @@ function renderSubmittalArchive(){
   const body = document.getElementById('submittal-archive-body');
   if(!body) return;
   const thead = `<thead><tr>
-    <th style="width:80px">Sub #</th>
-    <th>Description / Project</th>
-    <th style="width:13%">Spec Section</th>
-    <th style="width:120px">Submitted</th>
-    <th style="width:130px">Status</th>
-    <th style="width:120px">Ball in Court</th>
-    <th style="width:70px"></th>
+    <th scope="col" style="width:80px">Sub #</th>
+    <th scope="col">Description / Project</th>
+    <th scope="col" style="width:13%">Spec Section</th>
+    <th scope="col" style="width:120px">Submitted</th>
+    <th scope="col" style="width:130px">Status</th>
+    <th scope="col" style="width:120px">Ball in Court</th>
+    <th scope="col" style="width:70px"></th>
   </tr></thead>`;
   if(!archived.length){
     body.innerHTML = `<div class="table-wrap"><table>${thead}<tbody><tr><td colspan="7" class="empty">No archived submittals${proj?' for this project':''}.</td></tr></tbody></table></div>`;
     return;
   }
   // Group by spec section — named sections alphabetically, unclassified last (mirrors renderSubmittals())
-  const groups = {};
-  archived.forEach(s => { const k = s.spec || ''; if(!groups[k]) groups[k] = []; groups[k].push(s); });
-  const sortedKeys = Object.keys(groups).sort((a,b) => { if(!a&&!b) return 0; if(!a) return 1; if(!b) return -1; return a.localeCompare(b); });
-  const showHeaders = sortedKeys.length > 1 || (sortedKeys.length === 1 && sortedKeys[0] !== '');
+  const { groups, sortedKeys, showHeaders } = _groupBySpecSection(archived, 'spec');
   let rowsHTML = '';
   sortedKeys.forEach(key => {
-    if(showHeaders){
-      const label = key || 'Unclassified';
-      rowsHTML += `<tr class="spec-section-row"><td colspan="7"><span class="spec-section-badge">${h(label)}</span></td></tr>`;
-    }
+    if(showHeaders) rowsHTML += _specSectionHeaderRow(key, 7);
     groups[key].forEach(s => {
       rowsHTML += `
         <tr>
@@ -4338,7 +4838,7 @@ function renderSubmittalArchive(){
           <td>${fmt(s.date)}</td>
           <td>${badge(s.status)}</td>
           <td class="truncate" style="font-size:12px">${h(s.bic)||'—'}</td>
-          <td style="white-space:nowrap"><button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
+          <td style="white-space:nowrap">${sourceLinkHTML('sub',s.id,s.source_url)}<button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
         </tr>`;
     });
   });
@@ -4409,9 +4909,9 @@ function populateProjectSelects(){
     const cur=el.dataset.fdVal||'';
     // Use data-val + data-label attributes so no user-controlled text ever appears
     // inside a JS string in an onclick attribute — eliminates stored XSS vector.
-    menu.innerHTML=`<div class="filter-dd-opt opt-all" data-val="" data-label="${h(defLabel)}" onclick="selectFDOptionEl('${id}',this)">${h(defLabel)}</div>`+
-      projects.map(p=>`<div class="filter-dd-opt${cur===p.name?' selected':''}" data-val="${h(p.name)}" data-label="${h(p.name)}" onclick="selectFDOptionEl('${id}',this)">`+
-        `<span class="filter-dd-opt-dot" style="background:var(--michels-red)"></span>${h(p.name)}</div>`).join('');
+    menu.innerHTML=`<button type="button" role="option" class="filter-dd-opt opt-all" data-val="" data-label="${h(defLabel)}" onclick="selectFDOptionEl('${id}',this)">${h(defLabel)}</button>`+
+      projects.map(p=>`<button type="button" role="option" class="filter-dd-opt${cur===p.name?' selected':''}"${cur===p.name?' aria-selected="true"':''} data-val="${h(p.name)}" data-label="${h(p.name)}" onclick="selectFDOptionEl('${id}',this)">`+
+        `<span class="filter-dd-opt-dot" style="background:var(--michels-red)"></span>${h(p.name)}</button>`).join('');
     if(cur&&!projects.find(p=>p.name===cur)) clearFD(id);
   });
 }
@@ -4451,6 +4951,9 @@ function _ovCountUp(el, target){
   } catch(e) {}
 }
 let _ovStatsAnimated = false;
+// Exposed so loadData() can reset the flag on a fresh fetch — new totals
+// should re-animate, not paint silently.
+window.resetOvStatsAnimated = () => { _ovStatsAnimated = false; };
 
 let _ovJobsFilter = 'all';
 let _ovAttFilter = 'all';
@@ -4960,16 +5463,37 @@ function renderOvJobs(){
     return;
   }
 
+  // Build per-project index maps ONCE — previously this loop did 6+ full-array
+  // .filter() scans per card (N_projects × ~5000 comparisons). Keyed by project
+  // name, matching the denormalized schema.
+  const _emptyArr = Object.freeze([]);
+  const _indexByName = (arr, openFilter) => {
+    const m = new Map();
+    (arr||[]).forEach(r => {
+      if(openFilter && !openFilter(r)) return;
+      const k = r.project;
+      if(!k) return;
+      let bucket = m.get(k);
+      if(!bucket){ bucket = []; m.set(k, bucket); }
+      bucket.push(r);
+    });
+    return m;
+  };
+  const openRByProject   = _indexByName(rfis,       r => _ovIsOpenStatus('rfi', r.status));
+  const openSByProject   = _indexByName(submittals, s => _ovIsOpenStatus('submittal', s.status));
+  const onSiteRByProject = _indexByName(rental,     r => (r.status||'').toLowerCase()==='on site');
+  const riskyMByProject  = _indexByName(materials,  mt => (mt.status||'').toLowerCase()==='backordered');
+
   grid.innerHTML = list.map(p => {
     const bucket = _ovProjectBucket(p);
     const st = _ovStatusLabel(bucket);
     const pct = _ovSchedPct(p);
-    const openR = (rfis||[]).filter(r => r.project === p.name && _ovIsOpenStatus('rfi', r.status));
+    const openR   = openRByProject.get(p.name)   || _emptyArr;
+    const openS   = openSByProject.get(p.name)   || _emptyArr;
+    const onSiteR = onSiteRByProject.get(p.name) || _emptyArr;
+    const riskyM  = riskyMByProject.get(p.name)  || _emptyArr;
     const overR = openR.filter(r => { const d=_ovDaysDiff(r.due); return d!==null && d<0; });
-    const openS = (submittals||[]).filter(x => x.project === p.name && _ovIsOpenStatus('submittal', x.status));
     const overS = openS.filter(x => { const d=_ovDaysDiff(x.need_date); return d!==null && d<0; });
-    const onSiteR = (rental||[]).filter(r => r.project === p.name && (r.status||'').toLowerCase()==='on site');
-    const riskyM = (materials||[]).filter(mt => mt.project === p.name && (mt.status||'').toLowerCase()==='backordered');
     const nextM = _ovNextMilestone(p);
     let mileRow = '<div class="ov-milestone-row"><div style="flex:1;color:var(--text-muted);font-size:12px;font-style:italic">No upcoming milestones.</div></div>';
     if(nextM){
@@ -5036,9 +5560,14 @@ function renderOvJobs(){
     );
   }).join('');
 
-  grid.querySelectorAll('.ov-proj-card').forEach(card => {
-    const pid = +card.getAttribute('data-proj-id');
-    card.addEventListener('click', (e) => {
+  // Delegated click handler — bound once per render on the grid itself.
+  // Survives innerHTML rewrites because the grid element persists, and
+  // avoids re-binding per-card listeners on every renderOvJobs call.
+  if(!grid._ovClickBound){
+    grid.addEventListener('click', (e) => {
+      const card = e.target.closest('.ov-proj-card');
+      if(!card || !grid.contains(card)) return;
+      const pid = +card.getAttribute('data-proj-id');
       const cell = e.target.closest('.ov-pf-stat');
       if(cell){
         const nav = cell.getAttribute('data-nav');
@@ -5052,7 +5581,8 @@ function renderOvJobs(){
         setTimeout(() => openJobDetail(pid), 50);
       }
     });
-  });
+    grid._ovClickBound = true;
+  }
 }
 
 function setOvJobsFilter(f){
@@ -5085,8 +5615,8 @@ function renderOvMilestones(){
       return p ? p.name : 'Unknown';
     }))].sort();
     menu.innerHTML =
-      '<div class="filter-dd-opt opt-all" data-val="" data-label="All Projects" onclick="selectFDOptionEl(\'fd-ovms-project\',this)">All Projects</div>'
-      + names.map(n => `<div class="filter-dd-opt" data-val="${h(n)}" data-label="${h(n)}" onclick="selectFDOptionEl('fd-ovms-project',this)">${h(n)}</div>`).join('');
+      '<button type="button" role="option" class="filter-dd-opt opt-all" data-val="" data-label="All Projects" onclick="selectFDOptionEl(\'fd-ovms-project\',this)">All Projects</button>'
+      + names.map(n => `<button type="button" role="option" class="filter-dd-opt" data-val="${h(n)}" data-label="${h(n)}" onclick="selectFDOptionEl('fd-ovms-project',this)">${h(n)}</button>`).join('');
   }
 
   const projFilter = getFDValue('fd-ovms-project');
@@ -5129,13 +5659,13 @@ function renderOvMilestones(){
   const hasEditNew = (typeof _msEditId !== 'undefined' && _msEditId === 'new');
   const headHTML =
     '<table class="ov-ms-table"><thead><tr>'+
-      '<th style="width:26%">Milestone</th>'+
-      '<th style="width:20%">Project</th>'+
-      '<th style="width:110px">Start</th>'+
-      '<th style="width:110px">End</th>'+
-      '<th style="width:120px">Type</th>'+
-      '<th style="width:90px">Days</th>'+
-      '<th style="width:110px">Actions</th>'+
+      '<th scope="col" style="width:26%">Milestone</th>'+
+      '<th scope="col" style="width:20%">Project</th>'+
+      '<th scope="col" style="width:110px">Start</th>'+
+      '<th scope="col" style="width:110px">End</th>'+
+      '<th scope="col" style="width:120px">Type</th>'+
+      '<th scope="col" style="width:90px">Days</th>'+
+      '<th scope="col" style="width:110px">Actions</th>'+
     '</tr></thead><tbody>';
 
   if(!shown.length && !hasEditNew){
@@ -5170,8 +5700,8 @@ function renderOvMilestones(){
       <td>${daysChip}</td>
       <td>
         <div class="row-actions" style="opacity:1">
-          <button type="button" class="btn-icon" aria-label="Edit" onclick="editMilestoneInline(${m.id})" title="Edit">✎</button>
-          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteMilestoneInline(${m.id})" title="Delete">✕</button>
+          <button type="button" class="btn-icon" aria-label="Edit milestone ${h(m.name||m.id)}" onclick="editMilestoneInline(${m.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete milestone ${h(m.name||m.id)}" onclick="deleteMilestoneInline(${m.id})" title="Delete">✕</button>
         </div>
       </td>
     </tr>`;
@@ -5248,8 +5778,12 @@ function cancelMilestoneInline(){
   _msRender();
 }
 
+let _msInFlight = false;
 async function saveMilestoneInline(id){
   if(!getPerms().canEdit){ showToast('You do not have permission to edit.','error'); return; }
+  if(_msInFlight) return;
+  _msInFlight = true;
+  try {
   const name=document.getElementById('ms-ed-name')?.value?.trim();
   const date=document.getElementById('ms-ed-date')?.value||null;
   const endDate=document.getElementById('ms-ed-end-date')?.value||null;
@@ -5277,12 +5811,17 @@ async function saveMilestoneInline(id){
   _msEditId=null;
   showToast(id?'Milestone updated.':'Milestone added.','success');
   _msRender();
+  } finally { _msInFlight = false; }
 }
 
 async function deleteMilestoneInline(id){
   if(!getPerms().canDelete){showToast('You do not have permission to delete.','error');return;}
-  if(!confirm('Delete this milestone? This cannot be undone.')) return;
+  if(_msInFlight) return;
+  _msInFlight = true;
+  try {
   const m=milestones.find(x=>x.id===id);
+  const ok = await confirmModal(`Delete milestone "${m?.name||'this milestone'}"? This cannot be undone.`, {title:'Delete milestone', okLabel:'Delete', danger:true});
+  if(!ok) return;
   const res=await sbDelete('milestones',id);
   if(res.error){showToast('Failed to delete: '+res.error.message,'error');return;}
   milestones=milestones.filter(x=>x.id!==id);
@@ -5290,12 +5829,47 @@ async function deleteMilestoneInline(id){
   logActivity('milestone','deleted',m?.name||'','Milestone deleted');
   showToast('Milestone deleted.','success');
   _msRender();
+  } finally { _msInFlight = false; }
 }
 </script>
 <!-- ── materials.js ── -->
 <script>
 // Material Log: render, CRUD, vendor management, order workflow,
 // vendor response parsing, and CSV import
+
+// ── CSV PARSER ───────────────────────────────────────────
+// State-machine parser that correctly handles quoted fields containing
+// commas AND embedded newlines. Returns an array of row-arrays.
+// Used by both importMaterialsCSV and importVendorsCSV.
+function _parseCSV(text){
+  const rows = [];
+  let row = [], cur = '', inQ = false, i = 0;
+  const s = String(text || '');
+  while(i < s.length){
+    const ch = s[i];
+    if(inQ){
+      if(ch === '"'){
+        if(s[i+1] === '"'){ cur += '"'; i += 2; continue; } // escaped quote
+        inQ = false; i++; continue;
+      }
+      cur += ch; i++; continue;
+    }
+    if(ch === '"'){ inQ = true; i++; continue; }
+    if(ch === ','){ row.push(cur); cur = ''; i++; continue; }
+    if(ch === '\r'){ i++; continue; } // ignore CR
+    if(ch === '\n'){
+      row.push(cur);
+      if(row.some(c => c !== '')) rows.push(row);
+      row = []; cur = ''; i++; continue;
+    }
+    cur += ch; i++;
+  }
+  if(cur !== '' || row.length){
+    row.push(cur);
+    if(row.some(c => c !== '')) rows.push(row);
+  }
+  return rows;
+}
 
 // ── RENDER ───────────────────────────────────────────────
 function renderMaterials(){
@@ -5363,7 +5937,7 @@ function renderVendorList(){
     return;
   }
   body.innerHTML = `<table style="width:100%;font-size:12px"><thead><tr>
-    <th>Vendor</th><th>Category</th><th>Contact</th><th style="width:60px"></th>
+    <th scope="col">Vendor</th><th scope="col">Category</th><th scope="col">Contact</th><th scope="col" style="width:60px"></th>
   </tr></thead><tbody>` +
   vendors.map(v => `<tr>
     <td><div style="font-weight:600">${h(v.name)}</div>${v.email?`<div style="color:var(--text-muted);font-size:11px">${h(v.email)}</div>`:''}</td>
@@ -5386,7 +5960,7 @@ function resetMaterialModal(){
 }
 
 function editMaterial(id){
-  if(!canWrite('materials')){ alert('You do not have permission to edit materials.'); return; }
+  if(!canWrite('materials')){ showToast('You do not have permission to edit materials.','error'); return; }
   const m = materials.find(x => x.id === id);
   if(!m) return;
   document.getElementById('mat-modal-title').textContent = 'Edit Material';
@@ -5405,7 +5979,7 @@ function editMaterial(id){
 }
 
 async function saveMaterial(){
-  if(!canWrite('materials')){ alert('You do not have permission to save materials.'); return; }
+  if(!canWrite('materials')){ showToast('You do not have permission to save materials.','error'); return; }
   const id = val('mat-id');
   const row = {
     name:        val('mat-name'),
@@ -5428,12 +6002,13 @@ async function saveMaterial(){
     err = res.error;
     if(!err && res.data?.[0]) materials.push(res.data[0]);
     else if(!err && !res.data?.[0]){
-      // Supabase offline mode: add a temp record for immediate UI feedback
-      materials.push({...row, id: Date.now()});
+      // Supabase offline mode: add a temp record for immediate UI feedback.
+      // Stamp created_at so the record carries a timestamp if it later syncs.
+      materials.push({...row, id: nextId++, created_at: new Date().toISOString()});
     }
   }
   if(err){ showToast('Save failed: '+err.message, 'error'); return; }
-  saveLocal(); renderAll(); closeModal('materials-modal');
+  saveLocal(); renderScope('materials','overview'); closeModal('materials-modal');
   showToast(id ? 'Material updated.' : 'Material added.');
   logActivity('materials', id ? 'updated' : 'created', row.name, row.project||'');
 }
@@ -5481,7 +6056,7 @@ async function saveVendor(){
     const res = await sbInsert('vendors', row);
     err = res.error;
     if(!err && res.data?.[0]) vendors.push(res.data[0]);
-    else if(!err && !res.data?.[0]) vendors.push({...row, id: Date.now()});
+    else if(!err && !res.data?.[0]) vendors.push({...row, id: nextId++, created_at: new Date().toISOString()});
   }
   if(err){ showToast('Save failed: '+err.message, 'error'); return; }
   saveLocal(); renderMaterials(); resetVendorForm();
@@ -5489,8 +6064,10 @@ async function saveVendor(){
 }
 
 async function deleteVendor(id){
-  if(!getPerms().canDelete){ alert('You do not have permission to delete vendors.'); return; }
-  if(!confirm('Delete this vendor? This cannot be undone.')) return;
+  if(!getPerms().canDelete){ showToast('You do not have permission to delete vendors.','error'); return; }
+  const v = vendors.find(x=>x.id===id);
+  const ok = await confirmModal(`Delete vendor "${v?.name||'this vendor'}"? This cannot be undone.`, {title:'Delete vendor', okLabel:'Delete', danger:true});
+  if(!ok) return;
   const res = await sbDelete('vendors', id);
   if(res.error){ showToast('Failed to delete vendor: '+res.error.message, 'error'); return; }
   vendors = vendors.filter(x=>x.id!==id);
@@ -5602,11 +6179,12 @@ async function sendOrderEmail(){
 }
 
 async function confirmOrderSent(){
+  if(!canWrite('materials')){ showToast('You do not have permission to order materials.','error'); return; }
   const id  = val('order-mat-id');
-  if(!id){ alert('No material selected.'); return; }
+  if(!id){ showToast('No material selected.','error'); return; }
   const sel = document.getElementById('order-vendor-select');
   const opt = sel.options[sel.selectedIndex];
-  if(!opt || !opt.value){ alert('Please select a vendor.'); return; }
+  if(!opt || !opt.value){ showToast('Please select a vendor.','error'); return; }
   const vendorId   = +opt.value;
   const vendorName = opt.text;
   const today      = new Date().toISOString().slice(0,10);
@@ -5622,10 +6200,10 @@ async function confirmOrderSent(){
     ordered_by:       username
   };
   const res = await sbUpdate('materials', +id, row);
-  if(res.error){ alert('Update failed: '+res.error.message); return; }
+  if(res.error){ showToast('Update failed: '+res.error.message,'error'); return; }
   const i = materials.findIndex(x=>x.id===+id);
   if(i>=0) materials[i]={...materials[i],...row};
-  saveLocal(); renderAll(); closeModal('order-modal');
+  saveLocal(); renderScope('materials','overview'); closeModal('order-modal');
   showToast('Order confirmed. Status set to Ordered.');
   logActivity('materials','status change',materials.find(x=>x.id===+id)?.name||'','Ordered from '+vendorName);
 }
@@ -5639,6 +6217,7 @@ function resetVendorResponseModal(){
 }
 
 function logVendorResponse(id){
+  if(!canWrite('materials')){ showToast('You do not have permission to log vendor responses.','error'); return; }
   resetVendorResponseModal();
   document.getElementById('vr-mat-id').value = id;
   openModal('vendor-response-modal', true);
@@ -5676,8 +6255,9 @@ async function parseVendorEmail(){
 }
 
 async function saveVendorResponse(){
+  if(!canWrite('materials')){ showToast('You do not have permission to save vendor responses.','error'); return; }
   const id = val('vr-mat-id');
-  if(!id){ alert('No material selected.'); return; }
+  if(!id){ showToast('No material selected.','error'); return; }
   const row = {
     po_number:         val('vr-po')         || null,
     lead_time_days:    val('vr-lead-time')!==''?parseInt(val('vr-lead-time'),10):null,
@@ -5689,7 +6269,7 @@ async function saveVendorResponse(){
   if(res.error){ showToast('Save failed: '+res.error.message, 'error'); return; }
   const i = materials.findIndex(x=>x.id===+id);
   if(i>=0) materials[i]={...materials[i],...row};
-  saveLocal(); renderAll(); closeModal('vendor-response-modal');
+  saveLocal(); renderScope('materials','overview'); closeModal('vendor-response-modal');
   showToast('Vendor response logged.');
   logActivity('materials','updated',materials.find(x=>x.id===+id)?.name||'','Vendor response logged');
 }
@@ -5697,27 +6277,18 @@ async function saveVendorResponse(){
 // ── CSV IMPORT ────────────────────────────────────────────
 // Expected columns (case-insensitive): name, project, description, quantity, unit, date_needed, notes
 function importMaterialsCSV(input){
+  if(!canWrite('materials')){ showToast('You do not have permission to import materials.','error'); input.value=''; return; }
   const file = input.files?.[0];
   if(!file) return;
   const reader = new FileReader();
   reader.onload = async (e) => {
-    const lines = (e.target.result||'').split('\n').map(l=>l.trim()).filter(Boolean);
-    if(lines.length < 2){ alert('CSV appears to be empty or has no data rows.'); input.value=''; return; }
+    const parsed = _parseCSV(e.target.result);
+    if(parsed.length < 2){ showToast('CSV appears to be empty or has no data rows.','error'); input.value=''; return; }
 
-    const headers = lines[0].split(',').map(col=>col.trim().toLowerCase().replace(/^"|"$/g,''));
-    const rows = lines.slice(1).map(line=>{
-      // Simple CSV parser — handles quoted fields with commas
-      const cols = [];
-      let cur='', inQ=false;
-      for(let i=0;i<line.length;i++){
-        const ch=line[i];
-        if(ch==='"') inQ=!inQ;
-        else if(ch===','&&!inQ){ cols.push(cur); cur=''; }
-        else cur+=ch;
-      }
-      cols.push(cur);
-      const obj={};
-      headers.forEach((h,i)=>{ obj[h]=(cols[i]||'').trim().replace(/^"|"$/g,''); });
+    const headers = parsed[0].map(col => String(col||'').trim().toLowerCase());
+    const rows = parsed.slice(1).map(cols => {
+      const obj = {};
+      headers.forEach((h,i) => { obj[h] = String(cols[i]||'').trim(); });
       return obj;
     });
 
@@ -5734,22 +6305,31 @@ function importMaterialsCSV(input){
         status:      'Needed'
       }));
 
-    if(!toInsert.length){ alert('No valid rows found. Make sure your CSV has a "name" column.'); input.value=''; return; }
+    if(!toInsert.length){ showToast('No valid rows found. Make sure your CSV has a "name" column.','error'); input.value=''; return; }
 
-    if(!confirm(`Import ${toInsert.length} material${toInsert.length===1?'':'s'}?`)) { input.value=''; return; }
+    const okMat = await confirmModal(`Import ${toInsert.length} material${toInsert.length===1?'':'s'}?`, {title:'Import CSV', okLabel:'Import'});
+    if(!okMat) { input.value=''; return; }
 
-    let successCount=0;
+    let successCount = 0;
+    const failures = [];
     for(const row of toInsert){
       const res = await sbInsert('materials', row);
-      if(!res.error){
-        if(res.data?.[0]) materials.push(res.data[0]);
-        else materials.push({...row, id:Date.now()+successCount});
-        successCount++;
+      if(res.error){
+        failures.push({ name: row.name, reason: res.error.message || 'Unknown error' });
+        console.warn('importMaterialsCSV row failed', row.name, res.error);
+        continue;
       }
+      if(res.data?.[0]) materials.push(res.data[0]);
+      else materials.push({...row, id: nextId++, created_at: new Date().toISOString()});
+      successCount++;
     }
-    saveLocal(); renderAll();
+    saveLocal(); renderScope('materials','overview');
     logActivity('materials','created',`Imported ${successCount} material${successCount===1?'':'s'}`,'CSV import');
-    showToast(`Imported ${successCount} of ${toInsert.length} materials.`);
+    if(failures.length){
+      showToast(`Imported ${successCount} of ${toInsert.length} — ${failures.length} failed (see console).`,'error');
+    } else {
+      showToast(`Imported ${successCount} of ${toInsert.length} materials.`);
+    }
     input.value='';
   };
   reader.readAsText(file);
@@ -5758,26 +6338,18 @@ function importMaterialsCSV(input){
 // ── VENDOR CSV IMPORT ─────────────────────────────────────
 // Expected columns (case-insensitive): name, contact_name, email, phone, category, lead_time_days, notes
 function importVendorsCSV(input){
+  if(!canWrite('materials')){ showToast('You do not have permission to import vendors.','error'); input.value=''; return; }
   const file = input.files?.[0];
   if(!file) return;
   const reader = new FileReader();
   reader.onload = async (e) => {
-    const lines = (e.target.result||'').split('\n').map(l=>l.trim()).filter(Boolean);
-    if(lines.length < 2){ alert('CSV appears to be empty or has no data rows.'); input.value=''; return; }
+    const parsed = _parseCSV(e.target.result);
+    if(parsed.length < 2){ showToast('CSV appears to be empty or has no data rows.','error'); input.value=''; return; }
 
-    const headers = lines[0].split(',').map(col=>col.trim().toLowerCase().replace(/^"|"$/g,''));
-    const rows = lines.slice(1).map(line=>{
-      const cols = [];
-      let cur='', inQ=false;
-      for(let i=0;i<line.length;i++){
-        const ch=line[i];
-        if(ch==='"') inQ=!inQ;
-        else if(ch===','&&!inQ){ cols.push(cur); cur=''; }
-        else cur+=ch;
-      }
-      cols.push(cur);
-      const obj={};
-      headers.forEach((h,i)=>{ obj[h]=(cols[i]||'').trim().replace(/^"|"$/g,''); });
+    const headers = parsed[0].map(col => String(col||'').trim().toLowerCase());
+    const rows = parsed.slice(1).map(cols => {
+      const obj = {};
+      headers.forEach((h,i) => { obj[h] = String(cols[i]||'').trim(); });
       return obj;
     });
 
@@ -5792,21 +6364,30 @@ function importVendorsCSV(input){
         notes:         r.notes         || ''
       }));
 
-    if(!toInsert.length){ alert('No valid rows found. Make sure your CSV has a "name" column.'); input.value=''; return; }
+    if(!toInsert.length){ showToast('No valid rows found. Make sure your CSV has a "name" column.','error'); input.value=''; return; }
 
-    if(!confirm(`Import ${toInsert.length} vendor${toInsert.length===1?'':'s'}?`)){ input.value=''; return; }
+    const okVen = await confirmModal(`Import ${toInsert.length} vendor${toInsert.length===1?'':'s'}?`, {title:'Import CSV', okLabel:'Import'});
+    if(!okVen){ input.value=''; return; }
 
-    let successCount=0;
+    let successCount = 0;
+    const failures = [];
     for(const row of toInsert){
       const res = await sbInsert('vendors', row);
-      if(!res.error){
-        if(res.data?.[0]) vendors.push(res.data[0]);
-        else vendors.push({...row, id: Date.now()+successCount});
-        successCount++;
+      if(res.error){
+        failures.push({ name: row.name, reason: res.error.message || 'Unknown error' });
+        console.warn('importVendorsCSV row failed', row.name, res.error);
+        continue;
       }
+      if(res.data?.[0]) vendors.push(res.data[0]);
+      else vendors.push({...row, id: nextId++, created_at: new Date().toISOString()});
+      successCount++;
     }
     saveLocal(); renderVendorList();
-    showToast(`Imported ${successCount} of ${toInsert.length} vendors.`);
+    if(failures.length){
+      showToast(`Imported ${successCount} of ${toInsert.length} — ${failures.length} failed (see console).`,'error');
+    } else {
+      showToast(`Imported ${successCount} of ${toInsert.length} vendors.`);
+    }
     input.value='';
   };
   reader.readAsText(file);
@@ -6051,7 +6632,7 @@ function getSpecSectionFromModal(){
 }
 
 function resetRFIModal(){
-  clearFields(['rfi-edit-id','rfi-num','rfi-subject','rfi-submitted','rfi-due','rfi-desc']);
+  clearFields(['rfi-edit-id','rfi-num','rfi-subject','rfi-submitted','rfi-due','rfi-desc','rfi-source-url']);
   document.getElementById('rfi-project').value='';
   document.getElementById('rfi-status').value='Open';
   document.getElementById('rfi-priority').value='Low';
@@ -6073,7 +6654,7 @@ function resetRFIModal(){
   if(specDescEl) specDescEl.value = '';
 }
 function resetSubmittalModal(){
-  clearFields(['sub-edit-id','sub-num','sub-desc','sub-date','sub-need-date']);
+  clearFields(['sub-edit-id','sub-num','sub-desc','sub-date','sub-need-date','sub-source-url']);
   document.getElementById('sub-project').value='';
   document.getElementById('sub-status').value='Pending';
   document.getElementById('sub-bic').value='Contractor';
@@ -6103,7 +6684,7 @@ function resetRentalModal(){
 }
 
 function editJobControls(id){
-  if(!canWrite('controls')){ alert('You do not have permission to edit jobs.'); return; }
+  if(!canWrite('controls')){ showToast('You do not have permission to edit jobs.','error'); return; }
   const p=projects.find(x=>x.id===id);
   if(!p)return;
   document.getElementById('controls-modal-title').textContent='Edit Job';
@@ -6144,7 +6725,7 @@ function editJobControls(id){
 }
 
 function editRFI(id){
-  if(!canWrite('rfi')){ alert('You do not have permission to edit RFIs.'); return; }
+  if(!canWrite('rfi')){ showToast('You do not have permission to edit RFIs.','error'); return; }
   const r=rfis.find(x=>x.id===id);
   if(!r)return;
   document.getElementById('rfi-modal-title').textContent='Edit RFI';
@@ -6159,6 +6740,7 @@ function editRFI(id){
   document.getElementById('rfi-status').value=r.status||'Open';
   document.getElementById('rfi-priority').value=r.priority||'Low';
   document.getElementById('rfi-desc').value=r.desc||r.description||'';
+  document.getElementById('rfi-source-url').value=r.source_url||'';
   // Editing an existing RFI — hide auto badge, number is the saved value
   const badge = document.getElementById('rfi-num-auto-badge');
   if(badge) badge.style.display = 'none';
@@ -6180,7 +6762,7 @@ function editRFI(id){
 }
 
 function editSubmittal(id){
-  if(!canWrite('submittal')){ alert('You do not have permission to edit submittals.'); return; }
+  if(!canWrite('submittal')){ showToast('You do not have permission to edit submittals.','error'); return; }
   const s=submittals.find(x=>x.id===id);
   if(!s)return;
   document.getElementById('sub-modal-title').textContent='Edit Submittal';
@@ -6196,6 +6778,7 @@ function editSubmittal(id){
   setDateVal('sub-need-date', s.need_date||'');
   document.getElementById('sub-status').value=s.status||'Pending';
   document.getElementById('sub-bic').value=s.bic||'Contractor';
+  document.getElementById('sub-source-url').value=s.source_url||'';
   // Populate spec section dropdown for this project, then restore saved value
   autoFillSubSpec(s.spec||'');
   const specSel = document.getElementById('sub-spec-select');
@@ -6212,7 +6795,7 @@ function editSubmittal(id){
 }
 
 function editRental(id){
-  if(!canWrite('rental')){ alert('You do not have permission to edit rental records.'); return; }
+  if(!canWrite('rental')){ showToast('You do not have permission to edit rental records.','error'); return; }
   const r=rental.find(x=>x.id===id);
   if(!r)return;
   document.getElementById('ren-modal-title').textContent='Edit Rental Equipment';
@@ -6317,9 +6900,9 @@ function renderPendingSubs(){
       <td><input type="text" data-tid="${s._tid}" data-field="contact_name" value="${h(s.contact_name)}" placeholder="Contact" oninput="updatePendingSub(this)"></td>
       <td><input type="text" data-tid="${s._tid}" data-field="contact_phone" value="${h(s.contact_phone)}" placeholder="(555) 000-0000" oninput="updatePendingSub(this)"></td>
       <td><select data-tid="${s._tid}" data-field="status" onchange="updatePendingSub(this)">
-        <option${s.status==='Active'?' selected':''}>Active</option>
-        <option${s.status==='Complete'?' selected':''}>Complete</option>
-        <option${s.status==='Inactive'?' selected':''}>Inactive</option>
+        <option value="Active"${s.status==='Active'?' selected':''}>Active</option>
+        <option value="Complete"${s.status==='Complete'?' selected':''}>Complete</option>
+        <option value="Inactive"${s.status==='Inactive'?' selected':''}>Inactive</option>
       </select></td>
       <td style="text-align:center"><button class="btn-icon btn-icon-danger" onclick="removeSubRow(${s._tid})" title="Remove">✕</button></td>
     </tr>`).join('');
@@ -6346,8 +6929,8 @@ function updatePendingSub(el){
 }
 
 async function saveJobControls(){
-  if(!canWrite('controls')){ alert('You do not have permission to create or edit jobs.'); return; }
-  const name=val('ctrl-name');if(!name){ switchCtrlTab(0); return alert('Job name required.'); }
+  if(!canWrite('controls')){ showToast('You do not have permission to create or edit jobs.','error'); return; }
+  const name=val('ctrl-name');if(!name){ switchCtrlTab(0); showToast('Job name required.','error'); return; }
   const editId=document.getElementById('ctrl-id').value;
   const rawVal=document.getElementById('ctrl-value').value.trim();
   const data={
@@ -6467,11 +7050,29 @@ async function saveJobControls(){
   logActivity('project', editId ? 'updated' : 'created', _jobLabel, editId ? 'Job updated' : 'New job created');
 }
 
+// Normalize an optional source-link URL from a modal input.
+// Returns:  {url: string|null}            on success (null = cleared)
+//           {error: 'msg for toast'}      on invalid input
+// Empty / whitespace → cleared. Non-empty must parse and use http(s).
+function _normalizeSourceUrl(raw){
+  const trimmed = (raw||'').trim();
+  if(trimmed === '') return {url: null};
+  let parsed;
+  try { parsed = new URL(trimmed); }
+  catch(e){ return {error: 'Source Link must be a valid URL (including https://).'}; }
+  if(parsed.protocol !== 'http:' && parsed.protocol !== 'https:'){
+    return {error: 'Source Link must use http:// or https://.'};
+  }
+  return {url: parsed.toString()};
+}
+
 async function saveRFI(){
   if(!canWrite('rfi')){ showToast('You do not have permission to create or edit RFIs.','error'); return; }
   const num=val('rfi-num'),subject=val('rfi-subject');if(!num||!subject)return alert('RFI # and subject required.');
+  const srcRes = _normalizeSourceUrl(val('rfi-source-url'));
+  if(srcRes.error){ showToast(srcRes.error,'error'); return; }
   const editId=document.getElementById('rfi-edit-id').value;
-  const data={num,project:val('rfi-project'),subject,submitted:val('rfi-submitted'),due:val('rfi-due'),status:val('rfi-status'),priority:val('rfi-priority'),description:val('rfi-desc'),spec_section:getSpecSectionFromModal()};
+  const data={num,project:val('rfi-project'),subject,submitted:val('rfi-submitted'),due:val('rfi-due'),status:val('rfi-status'),priority:val('rfi-priority'),description:val('rfi-desc'),spec_section:getSpecSectionFromModal(),source_url:srcRes.url};
   // closed_at = timestamp when the RFI entered the Recently Approved bucket.
   // Stamp on transition → Answered. Manual → Closed leaves the stamp alone
   // (already set if they went via Answered, null if they skipped straight to Closed —
@@ -6499,7 +7100,7 @@ async function saveRFI(){
   }
   const _rfiLabel = (data.num ? 'RFI #'+data.num+' — ' : '') + (data.subject || 'RFI');
   resetRFIModal();
-  closeModal('rfi-modal');saveLocal();renderAll();
+  closeModal('rfi-modal');saveLocal();renderScope('rfi','overview','charts');
   showToast(editId ? 'RFI updated.' : 'RFI saved.');
   logActivity('rfi', editId ? 'updated' : 'created', _rfiLabel, editId ? 'RFI updated' : 'New RFI created');
 }
@@ -6507,8 +7108,10 @@ async function saveRFI(){
 async function saveSubmittal(){
   if(!canWrite('submittal')){ showToast('You do not have permission to create or edit submittals.','error'); return; }
   const num=val('sub-num'),desc=val('sub-desc');if(!num||!desc)return alert('Submittal # and description required.');
+  const srcRes = _normalizeSourceUrl(val('sub-source-url'));
+  if(srcRes.error){ showToast(srcRes.error,'error'); return; }
   const editId=document.getElementById('sub-edit-id').value;
-  const data={num,project:val('sub-project'),description:desc,spec:getSubSpecFromModal(),submitted_date:val('sub-date'),need_date:val('sub-need-date')||null,status:val('sub-status'),bic:val('sub-bic')};
+  const data={num,project:val('sub-project'),description:desc,spec:getSubSpecFromModal(),submitted_date:val('sub-date'),need_date:val('sub-need-date')||null,status:val('sub-status'),bic:val('sub-bic'),source_url:srcRes.url};
   // Stamp / clear approved_at on transition in and out of an approved terminal state.
   // Fresh stamp when the new status is Approved/Approved as Noted AND the row
   // either wasn't already in that state or has no existing timestamp. Clear
@@ -6536,7 +7139,7 @@ async function saveSubmittal(){
   }
   const _subLabel = (data.num ? '#'+data.num+' — ' : '') + (data.description || 'Submittal');
   resetSubmittalModal();
-  closeModal('submittal-modal');saveLocal();renderAll();
+  closeModal('submittal-modal');saveLocal();renderScope('submittal','overview','charts');
   showToast(editId ? 'Submittal updated.' : 'Submittal saved.');
   logActivity('submittal', editId ? 'updated' : 'created', _subLabel, editId ? 'Submittal updated' : 'New submittal created');
 }
@@ -6560,18 +7163,19 @@ async function saveRental(){
   }
   const _renLabel = data.name || 'Equipment';
   resetRentalModal();
-  closeModal('rental-modal');saveLocal();renderAll();
+  closeModal('rental-modal');saveLocal();renderScope('rental','overview','charts');
   showToast(editId ? 'Rental updated.' : 'Rental saved.');
   logActivity('rental', editId ? 'updated' : 'created', _renLabel, editId ? 'Rental updated' : 'New rental record created');
 }
 
 async function deleteItem(store,id){
-  if(!getPerms().canDelete){ alert('You do not have permission to delete records.'); return; }
-  if(!confirm('Delete this record? This cannot be undone.')) return;
+  if(!getPerms().canDelete){ showToast('You do not have permission to delete records.','error'); return; }
   const tableMap={'projects':'projects','rfis':'rfis','submittals':'submittals','rental':'rental','materials':'materials','vendors':'vendors','procurement':'procurement'};
   const _delArr=store==='projects'?projects:store==='rfis'?rfis:store==='submittals'?submittals:store==='materials'?materials:store==='vendors'?vendors:store==='procurement'?procurement:rental;
   const _delItem=_delArr.find(x=>x.id===id);
   const _delLabel=_delItem?(_delItem.name||_delItem.subject||_delItem.num||'Record'):'Record';
+  const ok = await confirmModal(`Delete "${_delLabel}"? This cannot be undone.`, {title:'Delete record', okLabel:'Delete', danger:true});
+  if(!ok) return;
   if(tableMap[store]){
     const res=await sbDelete(tableMap[store],id);
     if(res.error){ showToast('Failed to delete record: '+res.error.message, 'error'); return; }
@@ -6583,7 +7187,10 @@ async function deleteItem(store,id){
   else if(store==='materials')materials=materials.filter(x=>x.id!==id);
   else if(store==='vendors')vendors=vendors.filter(x=>x.id!==id);
   else if(store==='procurement')procurement=procurement.filter(x=>x.id!==id);
-  saveLocal();renderAll();
+  saveLocal();
+  // Scope to the affected surface (plus overview since the attention feed aggregates all).
+  const delScopeMap = {projects:'controls',rfis:'rfi',submittals:'submittal',rental:'rental',materials:'materials',vendors:'materials',procurement:'procurement'};
+  renderScope(delScopeMap[store] || '*', 'overview', 'charts');
   showToast('Record deleted.');
   logActivity('delete','deleted',_delLabel,store.charAt(0).toUpperCase()+store.slice(1)+' deleted');
 }
@@ -6664,7 +7271,8 @@ async function generateSummaryPDF(){
 
   await document.fonts.ready;
 
-  const fmtD=d=>{if(!d)return'—';const p=d.split('-');return`${p[1]}/${p[2]}/${p[0]}`;};
+  // Uses the global fmt() defined in src/06_js_app.html.
+  const fmtD = fmt;
   // Recently Approved / Active bucket predicates (mirror UI logic in 11_js_render.html)
   const isRfiRecent = r => r.status === 'Answered' && _withinRecentWindow(r.closed_at);
   const isRfiActive = r => !['Answered','Closed'].includes(r.status);
@@ -7171,9 +7779,44 @@ const PROC_STATUSES = ['Pending','Ordered','Shipped','Delivered'];
 let _procView = 'table';
 let _procStatusSel = new Set(PROC_STATUSES);
 let _procStatStripAnimated = false;
+// Exposed so loadData() can reset the flag on a fresh fetch — new totals
+// should re-animate, not paint silently.
+window.resetProcStatStripAnimated = () => { _procStatStripAnimated = false; };
 let _procSortKey = 'requested_onsite_date';  // default column
 let _procSortDir = 'asc';                    // 'asc' (oldest first) or 'desc'
 const _procAdvInFlight = new Set();
+
+/* ── Filter persistence (per-user) ──────────────────────── */
+function _procFilterKey(){
+  const u = (typeof currentUser === 'object' && currentUser?.username) ? currentUser.username : '_';
+  return 'apm_procfilters_' + u;
+}
+function saveProcFilterState(){
+  try {
+    localStorage.setItem(_procFilterKey(), JSON.stringify({
+      view: _procView,
+      statusSel: Array.from(_procStatusSel),
+      sortKey: _procSortKey,
+      sortDir: _procSortDir,
+    }));
+  } catch(e){}
+}
+function restoreProcFilterState(){
+  try {
+    const raw = localStorage.getItem(_procFilterKey());
+    if(!raw) return;
+    const s = JSON.parse(raw);
+    if(s.view === 'kanban' || s.view === 'table') _procView = s.view;
+    if(Array.isArray(s.statusSel) && s.statusSel.length){
+      _procStatusSel = new Set(s.statusSel.filter(x => PROC_STATUSES.includes(x)));
+      if(_procStatusSel.size === 0) _procStatusSel = new Set(PROC_STATUSES);
+    }
+    if(typeof s.sortKey === 'string') _procSortKey = s.sortKey;
+    if(s.sortDir === 'asc' || s.sortDir === 'desc') _procSortDir = s.sortDir;
+  } catch(e){}
+}
+// Expose so loadData() can call this once the current user is known.
+window.restoreProcFilterState = restoreProcFilterState;
 
 /* ── Helpers ────────────────────────────────────────────── */
 function _procToday(){ return new Date().toISOString().slice(0,10); }
@@ -7324,12 +7967,15 @@ function procCardHTML(po){
   const readonlyCls = canW ? '' : ' readonly';
 
   const dateToneCls = urgency ? (' '+urgency.tone) : '';
-  const backBtn = idx > 0
+  const backBtn = (canW && idx > 0)
     ? `<button type="button" class="proc-card-nav proc-card-nav-back" aria-label="Move to ${h(PROC_STATUSES[idx-1])}" title="Back to ${h(PROC_STATUSES[idx-1])}" onclick="advanceProcStatus(${po.id},-1)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>`
     : `<span class="proc-card-nav spacer" aria-hidden="true"></span>`;
-  const fwdBtn = idx < PROC_STATUSES.length-1
+  const fwdBtn = (canW && idx < PROC_STATUSES.length-1)
     ? `<button type="button" class="proc-card-nav proc-card-nav-fwd" aria-label="Advance to ${h(PROC_STATUSES[idx+1])}" title="Advance to ${h(PROC_STATUSES[idx+1])}" onclick="advanceProcStatus(${po.id},1)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`
     : `<span class="proc-card-nav spacer" aria-hidden="true"></span>`;
+  const editBtn = canW
+    ? `<button type="button" class="proc-card-edit" aria-label="Edit order ${h(po.name||po.id)}" title="Edit order" onclick="editProcurement(${po.id})">✎</button>`
+    : '';
 
   const vendorHTML = po.vendor
     ? `<div class="proc-card-vendor"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span class="proc-vendor-name">${h(po.vendor)}</span></div>`
@@ -7343,7 +7989,7 @@ function procCardHTML(po){
 
   return `
   <div class="proc-card${readonlyCls}" data-id="${po.id}">
-    <button type="button" class="proc-card-edit" aria-label="Edit" title="Edit order" onclick="editProcurement(${po.id})">✎</button>
+    ${editBtn}
     <div class="proc-card-head">
       <div class="proc-card-title" title="${h(po.name||'')}">${h(po.name||'(untitled)')}</div>
       ${urgencyHTML}
@@ -7430,8 +8076,8 @@ function renderProcTable(rows){
       <td style="font-family:'DM Mono',monospace;font-size:12px;white-space:nowrap">${fmt(r.requested_onsite_date)}</td>
       <td onclick="event.stopPropagation()" style="white-space:nowrap">
         <div class="row-actions">
-          <button type="button" class="btn-icon" aria-label="Edit" onclick="editProcurement(${r.id})" title="Edit">✎</button>
-          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete" onclick="deleteItem('procurement',${r.id})" title="Delete">✕</button>
+          <button type="button" class="btn-icon" aria-label="Edit order ${h(r.name||r.id)}" onclick="editProcurement(${r.id})" title="Edit">✎</button>
+          <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete order ${h(r.name||r.id)}" onclick="deleteItem('procurement',${r.id})" title="Delete">✕</button>
         </div>
       </td>
     </tr>`).join('');
@@ -7468,7 +8114,7 @@ function renderProcurement(){
       Array.from(board.querySelectorAll('.proc-col')).forEach(c => c.classList.remove('hidden'));
     }
     const tb = document.getElementById('proc-body');
-    if(tb) tb.innerHTML = '<tr><td colspan="9" class="empty"><div class="empty-icon">📦</div>No procurement orders yet — click &ldquo;+ New Order&rdquo; to track a delivery.</td></tr>';
+    if(tb) tb.innerHTML = '<tr><td colspan="7" class="empty"><div class="empty-icon">📦</div>No procurement orders yet — click &ldquo;+ New Order&rdquo; to track a delivery.</td></tr>';
     syncProcStatusMenuUI();
     return;
   }
@@ -7497,6 +8143,7 @@ function setProcView(view){
     b.classList.toggle('active', on);
     b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
+  saveProcFilterState();
   renderProcurement();
 }
 
@@ -7505,6 +8152,7 @@ function toggleProcStatus(name){
   if(_procStatusSel.has(name)) _procStatusSel.delete(name);
   else _procStatusSel.add(name);
   syncProcStatusMenuUI();
+  saveProcFilterState();
   renderProcurement();
 }
 
@@ -7515,6 +8163,7 @@ function toggleProcSort(key){
     _procSortKey = key;
     _procSortDir = 'asc';
   }
+  saveProcFilterState();
   renderProcurement();
 }
 
@@ -7587,7 +8236,8 @@ async function advanceProcStatus(id, dir){
     if(typeof logActivity === 'function'){
       logActivity('procurement', 'status', (po.name||'')+' — '+(po.project||''), 'Moved to '+nextStatus);
     }
-    if(typeof renderAll === 'function') renderAll();
+    if(typeof renderScope === 'function') renderScope('procurement','overview');
+    else if(typeof renderAll === 'function') renderAll();
     else renderProcurement();
     showToast(dir>0 ? ('Moved → '+nextStatus) : ('Back to '+nextStatus));
   } finally {
@@ -7665,7 +8315,7 @@ async function saveProcurement(){
   }
   resetProcurementModal();
   closeModal('procurement-modal');
-  saveLocal(); renderAll();
+  saveLocal(); renderScope('procurement','overview');
   showToast(editId ? 'Order updated.' : 'Procurement order saved.');
   logActivity('procurement', editId?'updated':'created', `${data.name} — ${data.project}`, editId?'Order updated':'New procurement order');
 }
@@ -7695,7 +8345,8 @@ function editProcurement(id){
 
 // ── EXCEL EXPORT ─────────────────────────────────────────
 function exportToExcel(type, btn){
-  if(typeof XLSX === 'undefined'){ alert('Excel library not loaded yet. Please try again in a moment.'); return; }
+  if(!getPerms().canExport){ showToast('You do not have permission to export.','error'); return; }
+  if(typeof XLSX === 'undefined'){ showToast('Excel library not loaded yet. Please try again in a moment.','error'); return; }
 
   const origHTML = btn ? btn.innerHTML : null;
   if(btn){ btn.disabled=true; btn.innerHTML='Generating…'; }
@@ -7755,7 +8406,7 @@ function exportToExcel(type, btn){
 
   if(!data.length){
     if(btn){ btn.disabled=false; btn.innerHTML=origHTML; }
-    alert('No data to export yet.'); return;
+    showToast('No data to export yet.','error'); return;
   }
 
   const ws = XLSX.utils.json_to_sheet(data);
@@ -7781,8 +8432,9 @@ function exportToExcel(type, btn){
 
 // ── PDF EXPORT ────────────────────────────────────────────
 async function exportToPDF(type, btn){
+  if(!getPerms().canExport){ showToast('You do not have permission to export.','error'); return; }
   if(typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined'){
-    alert('PDF library not loaded yet. Please try again in a moment.'); return;
+    showToast('PDF library not loaded yet. Please try again in a moment.','error'); return;
   }
   const origHTML = btn ? btn.innerHTML : null;
   if(btn){ btn.disabled=true; btn.innerHTML='Generating…'; }
@@ -7793,7 +8445,10 @@ async function exportToPDF(type, btn){
   const red = [200,16,46]; const black = [26,26,26]; const white = [255,255,255];
   const lightGray = [249,248,248]; const midGray = [226,224,224]; const darkGray = [80,80,80];
 
-  // Status / priority color map — mirrors dashboard badge palette exactly
+  // Status / priority color map — mirrors dashboard badge palette exactly.
+  // ⚠ Coupled with statusColors in src/05_js_config.html. When adding a status
+  // value, update BOTH maps plus `barColors` below or the PDF renders a blank
+  // cell (same class of bug as the Release/Released legacy-status incident).
   const statusPDF = {
     'Open':              {bg:[253,234,237], fg:[180,16,30]},
     'Under Review':      {bg:[254,243,200], fg:[161,98,7]},
@@ -7822,12 +8477,9 @@ async function exportToPDF(type, btn){
     'Shipped':[124,58,237],'Delivered':[21,128,61],
   };
 
-  // Format YYYY-MM-DD → MM/DD/YYYY for table display
-  const fmtDate = d => {
-    if(!d) return '—';
-    const p = d.split('-');
-    return p.length===3 ? `${p[1]}/${p[2]}/${p[0]}` : d;
-  };
+  // Uses the global fmt() defined in src/06_js_app.html — returns '—' for
+  // empty values and handles non-3-part strings gracefully.
+  const fmtDate = fmt;
 
   let title='', filename='', columns=[], rows=[],
    stats=[], columnStyles={};
@@ -7882,10 +8534,10 @@ async function exportToPDF(type, btn){
     ];
   } else if(type==='procurement'){
     title='Procurement Orders'; filename='Procurement_Orders.pdf';
-    columns=['Material','Project','Status','Order Date','Ship Date','Requested On-Site','Vendor'];
-    rows=procurement.map(r=>[r.name||'',r.project||'',r.status||'',fmtDate(r.order_date),fmtDate(r.shipping_date),fmtDate(r.requested_onsite_date),r.vendor||'']);
+    columns=['Material','Project','Status','Order Date','Ship Date','Requested On-Site','Vendor','Vendor Contact'];
+    rows=procurement.map(r=>[r.name||'',r.project||'',r.status||'',fmtDate(r.order_date),fmtDate(r.shipping_date),fmtDate(r.requested_onsite_date),r.vendor||'',r.vendor_contact||'']);
     statusColIdx=2; dueDateColIdx=5;
-    columnStyles={0:{fontStyle:'bold'},2:{cellWidth:30},3:{cellWidth:26},4:{cellWidth:26},5:{cellWidth:28}};
+    columnStyles={0:{fontStyle:'bold'},2:{cellWidth:28},3:{cellWidth:24},4:{cellWidth:24},5:{cellWidth:26},7:{cellWidth:28}};
     const pending=procurement.filter(r=>r.status==='Pending').length;
     const ordered=procurement.filter(r=>r.status==='Ordered').length;
     const shipped=procurement.filter(r=>r.status==='Shipped').length;
@@ -7901,7 +8553,7 @@ async function exportToPDF(type, btn){
 
   if(!rows.length){
     if(btn){ btn.disabled=false; btn.innerHTML=origHTML; }
-    alert('No data to export yet.'); return;
+    showToast('No data to export yet.','error'); return;
   }
 
   try{
@@ -8088,6 +8740,9 @@ async function exportToPDF(type, btn){
     }
 
     doc.save(filename);
+  } catch(err){
+    console.error('PDF generation failed', err);
+    showToast('PDF generation failed: '+(err?.message||'unknown error'), 'error');
   } finally {
     if(btn){ btn.disabled=false; btn.innerHTML=origHTML; }
   }
@@ -8491,7 +9146,7 @@ initFirstRun().then(() => {
     <div class="notif-panel-title">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       Notifications
-      <span id="notif-panel-badge" style="display:none;background:var(--michels-red);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;font-family:'DM Mono',monospace">0</span>
+      <span id="notif-panel-badge" style="display:none;background:var(--michels-red);color:#fff;font-size:9px;font-weight:500;padding:1px 6px;border-radius:20px;font-family:'DM Mono',monospace">0</span>
     </div>
     <button type="button" class="notif-panel-close" aria-label="Close notifications" onclick="closeNotifPanel()" title="Close">&times;</button>
   </div>
@@ -8504,7 +9159,7 @@ initFirstRun().then(() => {
   </div>
   <div class="notif-panel-body" id="notif-panel-body"></div>
   <div class="notif-panel-footer">
-    <button onclick="dissolveNotifPanel()" style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;font-family:'DM Mono',monospace;transition:background .12s,color .12s,border-color .12s;letter-spacing:.2px">Check All</button>
+    <button onclick="dissolveNotifPanel()" style="font-size:11px;font-weight:500;padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;font-family:'DM Mono',monospace;transition:background .12s,color .12s,border-color .12s;letter-spacing:.2px">Check All</button>
   </div>
 </div>
 
