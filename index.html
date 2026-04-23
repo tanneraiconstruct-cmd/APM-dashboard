@@ -22,28 +22,28 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --michels-red:#c8102e;--michels-red-dark:#a00d24;--michels-red-light:#fef2f2;
-  --michels-black:#09090b;--michels-dark:#18181b;
+  --michels-black:#0f172a;--michels-dark:#1e293b;
   --accent:#c8102e;--accent-light:#fef2f2;
   --amber:#d97706;--amber-light:#fffbeb;--amber-dark:#b45309;--amber-soft:#fef3c7;--amber-border:#fcd34d;
   --green:#059669;--green-light:#ecfdf5;
   --success:#15803d;--success-light:#dcfce7;
   --red:#dc2626;--red-light:#fef2f2;--red-border:#fca5a5;--red-soft:#fee2e2;
   --blue-light:#eff6ff;--blue:#1d4ed8;
-  --text:#09090b;--text-mid:#52525b;--text-muted:#71717a;--text-dim:#666;
-  --border:#e4e4e7;--border-hover:#bbb;--border-alt:#e2e0e0;
-  --surface:#f4f4f5;--surface-alt:#edebeb;--surface-hover:#fafafa;
+  --text:#0f172a;--text-mid:#475569;--text-muted:#64748b;--text-dim:#94a3b8;
+  --border:#e2e8f0;--border-hover:#cbd5e1;--border-alt:#f1f5f9;
+  --surface:#f8fafc;--surface-alt:#f1f5f9;--surface-hover:#f1f5f9;
   --white:#ffffff;
-  --row-hover:#fdf0f2;--row-expanded:#fef7f8;
-  --header-muted:#aaaaaa;
+  --row-hover:#fdf0f2;--row-expanded:#fef7f8;--row-stripe:#eef2f7;
+  --header-muted:#94a3b8;
   --badge-blue-bg:#eef2f7;--badge-blue-fg:#374151;
   --badge-gray-bg:#f1f5f9;
   --badge-purple-bg:#f3e8ff;--badge-purple-fg:#7c3aed;
   --toast-error-bg:#3b1416;--toast-error-border:#7a1d23;--toast-error-bar:#ef4444;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
-  --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 10px 20px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
 }
 
 /* ── DARK THEME ─────────────────────────────────────────
@@ -52,11 +52,11 @@
    already black. Soft status backgrounds flip to dark variants
    so white-on-light becomes light-on-dark with equal contrast. */
 [data-theme="dark"]{
-  --text:#f4f4f5;--text-mid:#a1a1aa;--text-muted:#71717a;--text-dim:#a1a1aa;
-  --surface:#18181b;--surface-alt:#222226;--surface-hover:#27272a;
-  --white:#0d0d10;
-  --border:#3f3f46;--border-hover:#52525b;--border-alt:#3f3f46;
-  --row-hover:#2a1518;--row-expanded:#2a1a1e;
+  --text:#f8fafc;--text-mid:#94a3b8;--text-muted:#64748b;--text-dim:#94a3b8;
+  --surface:#0f172a;--surface-alt:#1e293b;--surface-hover:#1e293b;
+  --white:#020617;
+  --border:#334155;--border-hover:#475569;--border-alt:#1e293b;
+  --row-hover:#2a1518;--row-expanded:#2a1a1e;--row-stripe:#1a1f2e;
   --michels-red-light:#2a1518;
   --accent-light:#2a1518;
   --green-light:#0a2e1f;--success-light:#0a2e1f;
@@ -64,16 +64,16 @@
   --red-light:#2a1518;--red-soft:#3a1e22;--red-border:#7a1d23;
   --blue-light:#0a1a2e;
   --badge-blue-bg:#1e293b;--badge-blue-fg:#93c5fd;
-  --badge-gray-bg:#262626;
+  --badge-gray-bg:#1e293b;
   --badge-purple-bg:#2a1f3a;--badge-purple-fg:#c4b5fd;
-  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.4);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.35);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.45), 0 4px 6px -4px rgba(0,0,0,0.3);
-  --shadow-hover: 0 20px 25px -5px rgba(0,0,0,0.55), 0 8px 10px -6px rgba(0,0,0,0.4);
+  --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.6), 0 2px 4px -1px rgba(0,0,0,0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.6), 0 4px 6px -2px rgba(0,0,0,0.4);
+  --shadow-hover: 0 10px 20px -5px rgba(0,0,0,0.7), 0 4px 6px -2px rgba(0,0,0,0.5);
 }
 /* Dark-mode tweaks for surfaces the tokens alone can't reach */
 [data-theme="dark"] body{background:var(--surface)}
-[data-theme="dark"] tbody tr:nth-child(even) td{background:#1f1f22}
+[data-theme="dark"] tbody tr:nth-child(even):not(.spec-section-row) td{background:var(--row-stripe)}
 [data-theme="dark"] tbody tr:not(.spec-section-row):hover td{background:var(--row-hover)!important}
 [data-theme="dark"] .ov-att-item:hover{background:#1f1f22}
 [data-theme="dark"] .ov-att-head,[data-theme="dark"] .ov-side-head{background:linear-gradient(180deg,#1f1f22 0%,var(--white) 100%)}
@@ -164,7 +164,7 @@ body{font-family:'Inter',sans-serif;background:var(--surface);color:var(--text);
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .section-title{font-size:15px;font-weight:600;color:var(--text)}
 .btn-add{background:var(--michels-red);color:#fff;border:none;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;box-shadow:var(--shadow-sm);}
-.btn-add:hover{background:var(--michels-red-dark);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.btn-add:hover{background:var(--michels-red-dark);box-shadow:var(--shadow-md);}
 .btn-pdf{padding:9px 20px;font-size:13px;box-shadow:0 1px 4px rgba(200,16,46,.3)}
 .btn-sm{background:transparent;border:1px solid var(--border);color:var(--text-mid);padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
 .btn-sm:hover{background:var(--surface)}
@@ -185,7 +185,12 @@ thead tr{background:var(--michels-black)}
 th{padding:14px 16px;font-size:10.5px;font-weight:700;color:rgba(255,255,255,.82);text-transform:uppercase;letter-spacing:.65px;text-align:left;border-bottom:2px solid var(--michels-red)}
 td{padding:14px 16px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tbody tr:nth-child(even) td{background:var(--surface-hover)}
+tbody tr:nth-child(even):not(.spec-section-row) td{background:var(--row-stripe)}
+/* Active RFI/Sub/Rental tables interleave hidden detail-rows with data-rows, so every data-row
+   lands on an even DOM position and the nth-child rule above paints them all the same.
+   Suppress for those bodies and let renderRFI/Submittals/Rental apply .row-stripe via JS instead. */
+#rfi-body tr.data-row>td,#submittal-body tr.data-row>td,#rental-body tr.data-row>td{background:var(--white)}
+#rfi-body tr.data-row.row-stripe>td,#submittal-body tr.data-row.row-stripe>td,#rental-body tr.data-row.row-stripe>td{background:var(--row-stripe)}
 tbody tr{transition:background .1s}
 tbody tr:not(.spec-section-row):hover td{background:var(--row-hover)!important}
 tbody tr:not(.spec-section-row):hover td:first-child{box-shadow:inset 3px 0 0 var(--michels-red)}
@@ -214,8 +219,8 @@ select{appearance:none;-webkit-appearance:none;background-color:var(--surface);b
 select:focus{background-color:var(--white);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
 textarea{resize:vertical;min-height:72px}
 
-.project-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);padding:20px;transition:box-shadow .2s ease, transform .2s ease;border-top:3px solid var(--michels-red);box-shadow:var(--shadow-md);}
-.project-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-3px);}
+.project-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);padding:20px;transition:box-shadow .2s ease;border-top:3px solid var(--michels-red);box-shadow:var(--shadow-md);}
+.project-card:hover{box-shadow:var(--shadow-hover);}
 .project-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;min-width:0}
 .project-name{font-size:14px;font-weight:600;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis}
 .project-actions{display:flex;gap:6px;margin-top:12px}
@@ -460,8 +465,8 @@ input.filter-input{width:200px}
 .notif-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--michels-red);border:2px solid var(--michels-black);display:none}
 .header-notif-bell{position:relative;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#aaa;transition:background .15s,border-color .15s;flex-shrink:0}
 .header-notif-bell:hover{background:rgba(255,255,255,.18);color:#fff}
-.landing-nav-card{background:var(--white);border:2px solid var(--border);border-radius:14px;padding:28px 24px;cursor:pointer;transition:box-shadow .18s,border-color .18s,transform .15s;text-align:left;font-family:'Inter',sans-serif;outline:none}
-.landing-nav-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.1);border-color:var(--michels-red);transform:translateY(-2px)}
+.landing-nav-card{background:var(--white);border:2px solid var(--border);border-radius:14px;padding:28px 24px;cursor:pointer;transition:box-shadow .18s,border-color .18s;text-align:left;font-family:'Inter',sans-serif;outline:none}
+.landing-nav-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.1);border-color:var(--michels-red)}
 .landing-nav-card-icon{width:42px;height:42px;border-radius:10px;background:var(--michels-red-light);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
 .landing-nav-card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:5px}
 .landing-nav-card-desc{font-size:12px;color:var(--text-muted);line-height:1.6}
@@ -536,7 +541,7 @@ input.filter-input{width:200px}
 .status-switcher{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-right:4px}
 .status-switcher-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;flex-shrink:0}
 .status-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all .15s;font-family:'Inter',sans-serif;white-space:nowrap;line-height:1}
-.status-btn:hover:not(.status-btn-current){background:var(--white);color:var(--text);border-color:var(--border-hover);transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.status-btn:hover:not(.status-btn-current){background:var(--white);color:var(--text);border-color:var(--border-hover);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .status-btn-current{cursor:default;transform:none!important;box-shadow:none!important}
 .status-btn-pip{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 /* DATE CHIPS */
@@ -548,8 +553,10 @@ input.filter-input{width:200px}
 .cell-primary{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cell-secondary{font-size:11px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* HOVER ACTIONS */
-.row-actions{display:flex;gap:4px;justify-content:flex-end;opacity:0;transition:opacity .12s}
+.row-actions{display:flex;gap:4px;justify-content:flex-end;align-items:center;opacity:0;transition:opacity .12s}
 .data-row:hover .row-actions,.data-row.expanded .row-actions{opacity:1}
+.archive-body .row-actions,.recently-approved-section .row-actions,#mat-tbody .row-actions,#vendor-list-body .row-actions{opacity:1}
+#mat-tbody .row-actions{flex-wrap:wrap}
 @media (hover:none){.row-actions{opacity:1}}
 .btn-icon{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:5px;background:var(--white);cursor:pointer;color:var(--text-mid);transition:background .1s,color .1s;flex-shrink:0;font-size:14px;line-height:1;padding:0;font-family:inherit}
 .btn-icon:hover{background:var(--surface);color:var(--text)}
@@ -576,8 +583,8 @@ input.filter-input{width:200px}
 .inline-item-table input[type=text],.inline-item-table input[type=date],.inline-item-table select{width:100%;font-size:12px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;background:var(--white);font-family:'Inter',sans-serif;color:var(--text)}
 /* ── JOB CARD LIST ─────────────────────────────────────────────── */
 .ctrl-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:4px}
-.ctrl-job-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;border-top-width:3px;cursor:pointer;transition:box-shadow .18s,transform .15s}
-.ctrl-job-card:hover{box-shadow:0 6px 22px rgba(0,0,0,.1);transform:translateY(-2px)}
+.ctrl-job-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;border-top-width:3px;cursor:pointer;transition:box-shadow .18s}
+.ctrl-job-card:hover{box-shadow:0 6px 22px rgba(0,0,0,.1)}
 .ctrl-job-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px}
 .ctrl-job-name{font-size:14px;font-weight:700;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ctrl-job-num{font-size:11px;font-family:'DM Mono',monospace;color:var(--text-muted);margin-bottom:6px}
@@ -624,7 +631,7 @@ input.filter-input{width:200px}
 .ov-stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
 @media(max-width:900px){.ov-stat-strip{grid-template-columns:repeat(2,1fr)}}
 .ov-stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:all .12s;cursor:pointer;display:flex;align-items:center;gap:14px}
-.ov-stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.ov-stat-card:hover{box-shadow:var(--shadow-md)}
 .ov-stat-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--border)}
 .ov-stat-card.alert::before{background:var(--michels-red)}
 .ov-stat-card.warn::before{background:var(--amber)}
@@ -728,7 +735,7 @@ input.filter-input{width:200px}
 .ov-sf-btn.active{background:var(--michels-black);color:#fff;border-color:var(--michels-black)}
 .ov-proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px;margin-bottom:24px}
 .ov-proj-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm);cursor:pointer;transition:all .18s;position:relative;display:flex;flex-direction:column}
-.ov-proj-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);border-color:#d4d4d8}
+.ov-proj-card:hover{box-shadow:var(--shadow-lg);border-color:#d4d4d8}
 .ov-proj-accent{height:4px;width:100%}
 .ov-proj-accent.ok{background:linear-gradient(90deg,var(--green) 0%,#34d399 100%)}
 .ov-proj-accent.warn{background:linear-gradient(90deg,var(--amber) 0%,#fbbf24 100%)}
@@ -848,7 +855,7 @@ input.filter-input{width:200px}
 
 /* KANBAN CARD */
 .proc-card{position:relative;background:var(--white);border:1px solid var(--border);border-radius:9px;box-shadow:var(--shadow-sm);padding:11px 12px 10px;transition:all .14s;cursor:default}
-.proc-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);border-color:#d4d4d8}
+.proc-card:hover{box-shadow:var(--shadow-md);border-color:#d4d4d8}
 .proc-card:hover .proc-card-edit{opacity:1}
 .proc-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;min-width:0}
 .proc-card-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.25;letter-spacing:-.15px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -4336,6 +4343,7 @@ function renderRFI(){
   const sortedKeys=Object.keys(groups).sort((a,b)=>{ if(!a&&!b)return 0; if(!a)return 1; if(!b)return -1; return a.localeCompare(b); });
   const showHeaders=sortedKeys.length>1||(sortedKeys.length===1&&sortedKeys[0]!=='');
   let html='';
+  let _rowIdx=0;
   sortedKeys.forEach(key=>{
     if(showHeaders){
       const label=key||'Unclassified';
@@ -4343,8 +4351,9 @@ function renderRFI(){
     }
     groups[key].forEach(r=>{
       const desc=h(r.desc||r.description||'');
+      const _stripe=(_rowIdx++%2)?' row-stripe':'';
       html+=`
-    <tr id="rfi-row-${r.id}" class="data-row" onclick="toggleDetail('rfi',${r.id})">
+    <tr id="rfi-row-${r.id}" class="data-row${_stripe}" onclick="toggleDetail('rfi',${r.id})">
       <td style="font-family:'DM Mono',monospace;font-size:12px;white-space:nowrap">
         <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>${h(r.num)}
       </td>
@@ -4427,14 +4436,16 @@ function renderSubmittals(){
   const sortedKeys=Object.keys(groups).sort((a,b)=>{ if(!a&&!b)return 0; if(!a)return 1; if(!b)return -1; return a.localeCompare(b); });
   const showHeaders=sortedKeys.length>1||(sortedKeys.length===1&&sortedKeys[0]!=='');
   let html='';
+  let _rowIdx=0;
   sortedKeys.forEach(key=>{
     if(showHeaders){
       const label=key||'Unclassified';
       html+=`<tr class="spec-section-row"><td colspan="7"><span class="spec-section-badge">${h(label)}</span></td></tr>`;
     }
     groups[key].forEach(s=>{
+      const _stripe=(_rowIdx++%2)?' row-stripe':'';
       html+=`
-    <tr id="submittal-row-${s.id}" class="data-row" onclick="toggleDetail('submittal',${s.id})">
+    <tr id="submittal-row-${s.id}" class="data-row${_stripe}" onclick="toggleDetail('submittal',${s.id})">
       <td style="font-family:'DM Mono',monospace;font-size:12px;white-space:nowrap">
         <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>${h(s.num)}
       </td>
@@ -4506,9 +4517,10 @@ function renderRental(){
   });
   if(!activeRental.length){body.innerHTML=`<tr><td colspan="6" class="empty"><div class="empty-icon">🚧</div>No active rental equipment. Released equipment is in the Archive below.</td></tr>`;return}
   if(!rows.length){body.innerHTML=`<tr><td colspan="6" class="empty">No equipment matches the current filters.</td></tr>`;return}
-  body.innerHTML=rows.map(r=>{
+  body.innerHTML=rows.map((r,i)=>{
+    const _stripe=(i%2)?' row-stripe':'';
     return `
-    <tr id="rental-row-${r.id}" class="data-row" onclick="toggleDetail('rental',${r.id})">
+    <tr id="rental-row-${r.id}" class="data-row${_stripe}" onclick="toggleDetail('rental',${r.id})">
       <td class="truncate">
         <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         <div class="cell-primary" style="display:inline-block;vertical-align:middle;max-width:calc(100% - 22px)">${h(r.name)}</div>
@@ -4692,7 +4704,7 @@ function renderRFIRecentlyApproved(){
               <td><span style="font-size:12px">${fmt((r.closed_at||'').slice(0,10))}</span><div style="font-size:10px;color:var(--text-muted);margin-top:2px">${_recentDaysAgoLabel(r.closed_at)}</div></td>
               <td>${badge(r.status)}</td>
               <td>${_recentDaysLeftHTML(r.closed_at)}</td>
-              <td style="white-space:nowrap">${sourceLinkHTML('rfi',r.id,r.source_url)}<button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
+              <td>${sourceLinkHTML('rfi',r.id,r.source_url)}<div class="row-actions"><button type="button" class="btn-icon" aria-label="Edit RFI ${h(r.num||r.id)}" onclick="editRFI(${r.id})" title="Edit">✎</button><button type="button" class="btn-icon btn-icon-danger" aria-label="Delete RFI ${h(r.num||r.id)}" onclick="deleteItem('rfis',${r.id})" title="Delete">✕</button></div></td>
             </tr>`).join('')}</tbody>
         </table>
       </div>
@@ -4745,7 +4757,7 @@ function renderRFIArchive(){
           <td>${fmt(r.due)}</td>
           <td>${badge(r.status)}</td>
           <td>${prio(r.priority)}</td>
-          <td style="white-space:nowrap">${sourceLinkHTML('rfi',r.id,r.source_url)}<button class="btn-sm" onclick="editRFI(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rfis',${r.id})">Delete</button></td>
+          <td>${sourceLinkHTML('rfi',r.id,r.source_url)}<div class="row-actions"><button type="button" class="btn-icon" aria-label="Edit RFI ${h(r.num||r.id)}" onclick="editRFI(${r.id})" title="Edit">✎</button><button type="button" class="btn-icon btn-icon-danger" aria-label="Delete RFI ${h(r.num||r.id)}" onclick="deleteItem('rfis',${r.id})" title="Delete">✕</button></div></td>
         </tr>`;
     });
   });
@@ -4788,7 +4800,7 @@ function renderSubmittalRecentlyApproved(){
               <td><span style="font-size:12px">${fmt((s.approved_at||'').slice(0,10))}</span><div style="font-size:10px;color:var(--text-muted);margin-top:2px">${_recentDaysAgoLabel(s.approved_at)}</div></td>
               <td>${badge(s.status)}</td>
               <td>${_recentDaysLeftHTML(s.approved_at)}</td>
-              <td style="white-space:nowrap">${sourceLinkHTML('sub',s.id,s.source_url)}<button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
+              <td>${sourceLinkHTML('sub',s.id,s.source_url)}<div class="row-actions"><button type="button" class="btn-icon" aria-label="Edit submittal ${h(s.num||s.id)}" onclick="editSubmittal(${s.id})" title="Edit">✎</button><button type="button" class="btn-icon btn-icon-danger" aria-label="Delete submittal ${h(s.num||s.id)}" onclick="deleteItem('submittals',${s.id})" title="Delete">✕</button></div></td>
             </tr>`).join('')}</tbody>
         </table>
       </div>
@@ -4838,7 +4850,7 @@ function renderSubmittalArchive(){
           <td>${fmt(s.date)}</td>
           <td>${badge(s.status)}</td>
           <td class="truncate" style="font-size:12px">${h(s.bic)||'—'}</td>
-          <td style="white-space:nowrap">${sourceLinkHTML('sub',s.id,s.source_url)}<button class="btn-sm" onclick="editSubmittal(${s.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('submittals',${s.id})">Delete</button></td>
+          <td>${sourceLinkHTML('sub',s.id,s.source_url)}<div class="row-actions"><button type="button" class="btn-icon" aria-label="Edit submittal ${h(s.num||s.id)}" onclick="editSubmittal(${s.id})" title="Edit">✎</button><button type="button" class="btn-icon btn-icon-danger" aria-label="Delete submittal ${h(s.num||s.id)}" onclick="deleteItem('submittals',${s.id})" title="Delete">✕</button></div></td>
         </tr>`;
     });
   });
@@ -4865,7 +4877,7 @@ function renderRentalArchive(){
       <td>${fmt(r.onsite)}</td>
       <td>${fmt(r.offsite)}</td>
       <td>${badge(r.status)}</td>
-      <td style="white-space:nowrap;width:120px"><button class="btn-sm" onclick="editRental(${r.id})">Edit</button> <button class="btn-sm btn-danger" onclick="deleteItem('rental',${r.id})">Delete</button></td>
+      <td><div class="row-actions"><button type="button" class="btn-icon" aria-label="Edit rental ${h(r.name||r.id)}" onclick="editRental(${r.id})" title="Edit">✎</button><button type="button" class="btn-icon btn-icon-danger" aria-label="Delete rental ${h(r.name||r.id)}" onclick="deleteItem('rental',${r.id})" title="Delete">✕</button></div></td>
     </tr>`, [
     {label:'Equipment',    style:'width:20%'},
     {label:'Vendor',       style:'width:14%'},
@@ -5904,12 +5916,12 @@ function renderMaterials(){
         <td style="font-size:12px">${m.expected_delivery?fmt(m.expected_delivery):'—'}</td>
         <td style="font-size:12px;font-family:'DM Mono',monospace">${h(m.po_number)||'—'}</td>
         <td style="font-size:12px">${price}</td>
-        <td style="white-space:nowrap">
-          <div style="display:flex;gap:4px;flex-wrap:wrap">
-            <button class="btn-sm" data-id="${m.id}" onclick="editMaterial(+this.dataset.id)">Edit</button>
+        <td>
+          <div class="row-actions">
+            <button type="button" class="btn-icon" aria-label="Edit material ${h(m.name||m.id)}" data-id="${m.id}" onclick="editMaterial(+this.dataset.id)" title="Edit">✎</button>
             ${canOrd?`<button class="btn-sm mat-order-btn" data-id="${m.id}" onclick="orderMaterial(+this.dataset.id)" style="background:#d97706;color:#fff;border-color:#d97706">Order</button>`:''}
             ${canRes?`<button class="btn-sm mat-response-btn" data-id="${m.id}" onclick="logVendorResponse(+this.dataset.id)" style="background:#15803d;color:#fff;border-color:#15803d">Log Reply</button>`:''}
-            <button class="btn-danger btn-sm" data-id="${m.id}" onclick="deleteItem('materials',+this.dataset.id)">Del</button>
+            <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete material ${h(m.name||m.id)}" data-id="${m.id}" onclick="deleteItem('materials',+this.dataset.id)" title="Delete">✕</button>
           </div>
         </td>
       </tr>`;
@@ -5943,9 +5955,11 @@ function renderVendorList(){
     <td><div style="font-weight:600">${h(v.name)}</div>${v.email?`<div style="color:var(--text-muted);font-size:11px">${h(v.email)}</div>`:''}</td>
     <td>${h(v.category)||'—'}</td>
     <td>${h(v.contact_name)||'—'}${v.phone?`<div style="color:var(--text-muted);font-size:11px">${h(v.phone)}</div>`:''}</td>
-    <td style="white-space:nowrap">
-      <button class="btn-sm" data-id="${v.id}" onclick="editVendor(+this.dataset.id)" style="font-size:10px;padding:2px 7px">Edit</button>
-      <button class="btn-danger btn-sm" data-id="${v.id}" onclick="deleteVendor(+this.dataset.id)" style="font-size:10px;padding:2px 7px">Del</button>
+    <td>
+      <div class="row-actions">
+        <button type="button" class="btn-icon" aria-label="Edit vendor ${h(v.name||v.id)}" data-id="${v.id}" onclick="editVendor(+this.dataset.id)" title="Edit">✎</button>
+        <button type="button" class="btn-icon btn-icon-danger" aria-label="Delete vendor ${h(v.name||v.id)}" data-id="${v.id}" onclick="deleteVendor(+this.dataset.id)" title="Delete">✕</button>
+      </div>
     </td>
   </tr>`).join('') +
   '</tbody></table>';
